@@ -129,7 +129,7 @@ export function PopupDetailLesson() {
               Edit
             </Button>
             <Button variant="outline">Reschedule</Button>
-            <Button
+            {/* <Button
               variant="outline"
               onClick={async () => {
                 await CancelLesson(lesson.id);
@@ -141,7 +141,7 @@ export function PopupDetailLesson() {
               }}
             >
               Cancel Class
-            </Button>
+            </Button> */}
           </div>
           <div>
             <Button

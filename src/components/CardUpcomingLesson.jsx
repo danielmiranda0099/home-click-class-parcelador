@@ -15,7 +15,7 @@ export function CardUpcomingLesson() {
     <Card className="w-[fit-content]">
       <CardHeader className="flex-row justify-between	 items-center	">
         <CardTitle>Upcoming Classes</CardTitle>
-        <FormLesson />
+        {/* <FormLesson /> */}
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
@@ -27,7 +27,7 @@ export function CardUpcomingLesson() {
               </div>
             </div>
             <Button variant="outline" size="sm" className="mr-2">
-              Ir
+              Ver
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -48,16 +48,7 @@ export function CardUpcomingLesson() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-2"
-                    prefetch={false}
-                  >
-                    <div className="h-4 w-4" />
-                    <span>Editar</span>
-                  </Link>
-                </DropdownMenuItem>
+
                 <DropdownMenuItem>
                   <Link
                     href="#"
@@ -79,7 +70,7 @@ export function CardUpcomingLesson() {
               </div>
             </div>
             <Button variant="outline" size="sm" className="mr-2">
-              Ir
+              Ver
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -100,16 +91,7 @@ export function CardUpcomingLesson() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-2"
-                    prefetch={false}
-                  >
-                    <div className="h-4 w-4" />
-                    <span>Editar</span>
-                  </Link>
-                </DropdownMenuItem>
+
                 <DropdownMenuItem>
                   <Link
                     href="#"
@@ -131,7 +113,7 @@ export function CardUpcomingLesson() {
               </div>
             </div>
             <Button variant="outline" size="sm" className="mr-2">
-              Ir
+              Ver
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -152,16 +134,7 @@ export function CardUpcomingLesson() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-2"
-                    prefetch={false}
-                  >
-                    <div className="h-4 w-4" />
-                    <span>Editar</span>
-                  </Link>
-                </DropdownMenuItem>
+
                 <DropdownMenuItem>
                   <Link
                     href="#"
