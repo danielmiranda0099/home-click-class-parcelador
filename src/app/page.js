@@ -7,8 +7,8 @@ import { Input } from "@/components/ui/input"
 
 const USERS = {
   "daniel@gmail.com": "admin",
-  "sadisisabelcastillo@gmail.com": "student",
-  "profenane@gmail.com": "teacher",
+  "estudiante@gmail.com": "student",
+  "profe@gmail.com": "teacher",
 }
 
 const handleSignIn = async(formData) => {

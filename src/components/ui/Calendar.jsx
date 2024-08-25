@@ -1,29 +1,94 @@
-'use client'
-import { useCalendarApp, ScheduleXCalendar } from '@schedule-x/react'
-import { createEventModalPlugin } from '@schedule-x/event-modal'
+"use client";
+
 import {
-  createViewDay,
-  createViewMonthAgenda,
-  createViewMonthGrid,
-  createViewWeek,
-} from '@schedule-x/calendar'
-import '@schedule-x/theme-default/dist/index.css'
- 
-export function CalendarUI({events=[]}) {
-  const calendar = useCalendarApp({
-    views: [createViewDay(), createViewWeek(), createViewMonthGrid(), createViewMonthAgenda()],
-    plugins: [],
-    callbacks: {
-      onEventClick(calendarEvent) {
-        console.log('onEventClick', calendarEvent)
-      },
+  Calendar,
+  momentLocalizer,
+  Views,
+  View,
+  dayjsLocalizer,
+} from "react-big-calendar";
+import moment from "moment";
+import { GetLessons } from "@/actions/CrudLesson";
+import { useLessonStore } from "@/store/lessonStore";
+
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import { useCallback, useEffect, useState } from "react";
+import { FormattedLessons } from "@/utils/formattedLessons";
+import { PopupDetailLesson } from "../PopupDetailLesson";
+import { useUiStore } from "@/store/uiStores";
+
+const localizer = momentLocalizer(moment);
+
+export function CalendarUI() {
+  const lessons = useLessonStore((state) => state.lessons);
+  const SetLessons = useLessonStore((state) => state.SetLessons);
+  const selected_lesson = useLessonStore((state) => state.selected_lesson);
+  const setSelectedLesson = useLessonStore((state) => state.setSelectedLesson);
+  const setPopupDetailLesson = useUiStore(
+    (state) => state.setPopupDetailLesson
+  );
+
+  //TODO esto no tiene sentido
+  useEffect(() => {
+    GetLessons()
+      .then((data) => {
+        const lessons = FormattedLessons(data);
+        console.log("lessons", lessons);
+        SetLessons(lessons);
+        console.log(lessons);
+      })
+      .catch((error) => {
+        console.error("Error fetching lessons:", error);
+      });
+  }, []);
+
+  const [view, setView] = useState(Views.MONTH);
+
+  const handleOnChangeView = (selectedView) => {
+    setView(selectedView);
+  };
+
+  const [date, setDate] = useState(new Date());
+  const onNavigate = useCallback(
+    (newDate) => {
+      return setDate(newDate);
     },
-    events: events 
-  })
- 
+    [setDate]
+  );
+
+  const handleSelectEvent = (event) => {
+    setSelectedLesson(event);
+    console.log("Click", event);
+    setPopupDetailLesson(true);
+  };
+
   return (
-    <div>
-      <ScheduleXCalendar calendarApp={calendar}/>
-    </div>
-  )
+    <>
+      <PopupDetailLesson />
+      <Calendar
+        localizer={localizer}
+        events={lessons}
+        startAccessor="start"
+        endAccessor="end"
+        view={view}
+        views={[Views.MONTH, Views.WEEK, Views.DAY, Views.AGENDA]}
+        style={{ height: 500 }}
+        showMultiDayTimes
+        defaultView={Views.MONTH}
+        date={date}
+        onNavigate={onNavigate}
+        onView={handleOnChangeView}
+        selectable
+        onSelectEvent={handleSelectEvent}
+        eventPropGetter={(event) => {
+          
+          return {
+            style: {
+              backgroundColor: event.color || "#b64fc8",
+            },
+          }
+        }}
+      />
+    </>
+  );
 }
