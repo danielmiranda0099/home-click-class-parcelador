@@ -56,7 +56,7 @@ export function CardUpcomingLesson() {
                     prefetch={false}
                   >
                     <div className="h-4 w-4" />
-                    <span>Cancelar</span>
+                    <span>Editar</span>
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -99,7 +99,7 @@ export function CardUpcomingLesson() {
                     prefetch={false}
                   >
                     <div className="h-4 w-4" />
-                    <span>Cancelar</span>
+                    <span>Editar</span>
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -142,7 +142,7 @@ export function CardUpcomingLesson() {
                     prefetch={false}
                   >
                     <div className="h-4 w-4" />
-                    <span>Cancelar</span>
+                    <span>Editar</span>
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
