@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { FormLesson } from "@/components/FormLesson";
 
-export function CardUpcomingLesson() {
+export function CardUpcomingLesson({ rol }) {
   return (
     <Card className="w-[fit-content]">
       <CardHeader className="flex-row justify-between	 items-center	">
@@ -29,38 +29,40 @@ export function CardUpcomingLesson() {
             <Button variant="outline" size="sm" className="mr-2">
               Ver
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full">
-                  <MoreOptionsIcon className="h-5 w-5" />
-                  <span className="sr-only">Toggle user menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-2"
-                    prefetch={false}
-                  >
-                    <div className="h-4 w-4" />
-                    <span>Reagendar</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
+            {rol !== "student" && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <MoreOptionsIcon className="h-5 w-5" />
+                    <span className="sr-only">Toggle user menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem>
+                    <Link
+                      href="#"
+                      className="flex items-center gap-2"
+                      prefetch={false}
+                    >
+                      <div className="h-4 w-4" />
+                      <span>Reagendar</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
 
-                <DropdownMenuItem>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-2"
-                    prefetch={false}
-                  >
-                    <div className="h-4 w-4" />
-                    <span>Editar</span>
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <DropdownMenuItem>
+                    <Link
+                      href="#"
+                      className="flex items-center gap-2"
+                      prefetch={false}
+                    >
+                      <div className="h-4 w-4" />
+                      <span>Editar</span>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
           <div className="flex items-center justify-between">
             <div className="grid gap-1 mr-4">
@@ -72,38 +74,40 @@ export function CardUpcomingLesson() {
             <Button variant="outline" size="sm" className="mr-2">
               Ver
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full">
-                  <MoreOptionsIcon className="h-5 w-5" />
-                  <span className="sr-only">Toggle user menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-2"
-                    prefetch={false}
-                  >
-                    <div className="h-4 w-4" />
-                    <span>Reagendar</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
+            {rol !== "student" && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <MoreOptionsIcon className="h-5 w-5" />
+                    <span className="sr-only">Toggle user menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem>
+                    <Link
+                      href="#"
+                      className="flex items-center gap-2"
+                      prefetch={false}
+                    >
+                      <div className="h-4 w-4" />
+                      <span>Reagendar</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
 
-                <DropdownMenuItem>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-2"
-                    prefetch={false}
-                  >
-                    <div className="h-4 w-4" />
-                    <span>Editar</span>
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <DropdownMenuItem>
+                    <Link
+                      href="#"
+                      className="flex items-center gap-2"
+                      prefetch={false}
+                    >
+                      <div className="h-4 w-4" />
+                      <span>Editar</span>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
           <div className="flex items-center justify-between">
             <div className="grid gap-1 mr-4">
@@ -115,38 +119,40 @@ export function CardUpcomingLesson() {
             <Button variant="outline" size="sm" className="mr-2">
               Ver
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full">
-                  <MoreOptionsIcon className="h-5 w-5" />
-                  <span className="sr-only">Toggle user menu</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-2"
-                    prefetch={false}
-                  >
-                    <div className="h-4 w-4" />
-                    <span>Reagendar</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
+            {rol !== "student" && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <MoreOptionsIcon className="h-5 w-5" />
+                    <span className="sr-only">Toggle user menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem>
+                    <Link
+                      href="#"
+                      className="flex items-center gap-2"
+                      prefetch={false}
+                    >
+                      <div className="h-4 w-4" />
+                      <span>Reagendar</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
 
-                <DropdownMenuItem>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-2"
-                    prefetch={false}
-                  >
-                    <div className="h-4 w-4" />
-                    <span>Editar</span>
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <DropdownMenuItem>
+                    <Link
+                      href="#"
+                      className="flex items-center gap-2"
+                      prefetch={false}
+                    >
+                      <div className="h-4 w-4" />
+                      <span>Editar</span>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         </div>
       </CardContent>

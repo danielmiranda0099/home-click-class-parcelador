@@ -15,7 +15,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 
 const localizer = momentLocalizer(moment);
 
-export function CalendarUI() {
+export function CalendarUI({ rol }) {
   const lessons = useLessonStore((state) => state.lessons);
   const SetLessons = useLessonStore((state) => state.SetLessons);
   const setSelectedLesson = useLessonStore((state) => state.setSelectedLesson);
@@ -59,7 +59,7 @@ export function CalendarUI() {
 
   return (
     <>
-      <PopupDetailLesson />
+      <PopupDetailLesson rol={rol} />
       <Calendar
         localizer={localizer}
         events={lessons}

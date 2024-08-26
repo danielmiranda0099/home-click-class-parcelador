@@ -14,6 +14,7 @@ import { useUiStore } from "@/store/uiStores";
 import { useLessonStore } from "@/store/lessonStore";
 import { CancelLesson, GetLessons } from "@/actions/CrudLesson";
 import { FormattedLessons } from "@/utils/formattedLessons";
+import { FormLesson } from ".";
 
 const options = {
   year: "numeric",
@@ -27,7 +28,7 @@ const formattedDate = (date) => {
   return new Intl.DateTimeFormat("es-ES", options).format(date);
 };
 
-export function PopupDetailLesson() {
+export function PopupDetailLesson({ rol }) {
   const lesson = useLessonStore((state) => state.selected_lesson);
   const setPoppupFormLesson = useUiStore((state) => state.setPopupFormLesson);
   const is_open = useUiStore((state) => state.popupDetailLesson);
@@ -41,95 +42,102 @@ export function PopupDetailLesson() {
 
   console.log("lesson en modal", lesson);
   return (
-    <Dialog open={is_open} onOpenChange={setPopupDetailLesson}>
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle>Class Details</DialogTitle>
-          <div>
-            {/* <p className="text-sm text-muted-foreground">Start: June 1, 2023 - End: June 30, 2023</p> */}
-            <p className="text-sm text-muted-foreground">
-              Start: {formattedDate(lesson.start)}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              End: {formattedDate(lesson.end)}
-            </p>
-          </div>
-        </DialogHeader>
-        <div className="grid gap-6 py-6">
-          <div className="flex items-start gap-4">
-            <CircleCheckIcon className="h-8 w-8 text-primary" />
+    <>
+      {rol !== "student" && <FormLesson />}
+      <Dialog open={is_open} onOpenChange={setPopupDetailLesson}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Class Details</DialogTitle>
             <div>
-              <p className="font-medium">Class Status</p>
-              <p className="text-muted-foreground">
-                {lesson &&
-                  (lesson?.is_canceled
-                    ? "Canceled"
-                    : lesson?.is_scheduled &&
-                      lesson?.is_approved &&
-                      lesson?.is_paid
-                    ? "Approved and Paid"
-                    : lesson?.is_scheduled && lesson?.is_approved
-                    ? "Approved"
-                    : lesson?.is_scheduled
-                    ? "Scheduled"
-                    : "Unknown Status")}
+              {/* <p className="text-sm text-muted-foreground">Start: June 1, 2023 - End: June 30, 2023</p> */}
+              <p className="text-sm text-muted-foreground">
+                Start: {formattedDate(lesson.start)}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                End: {formattedDate(lesson.end)}
               </p>
             </div>
-          </div>
-          {/* <div className="flex items-start gap-4">
+          </DialogHeader>
+          <div className="grid gap-6 py-6">
+            <div className="flex items-start gap-4">
+              <CircleCheckIcon className="h-8 w-8 text-primary" />
+              <div>
+                <p className="font-medium">Class Status</p>
+                <p className="text-muted-foreground">
+                  {lesson &&
+                    (lesson?.is_canceled
+                      ? "Canceled"
+                      : lesson?.is_scheduled &&
+                          lesson?.is_approved &&
+                          lesson?.is_paid
+                        ? "Approved and Paid"
+                        : lesson?.is_scheduled && lesson?.is_approved
+                          ? "Approved"
+                          : lesson?.is_scheduled
+                            ? "Scheduled"
+                            : "Unknown Status")}
+                </p>
+              </div>
+            </div>
+            {/* <div className="flex items-start gap-4">
             <CreditCardIcon className="h-8 w-8 text-primary" />
             <div>
               <p className="font-medium">Payment Status</p>
               <p className="text-muted-foreground">Paid</p>
             </div>
           </div> */}
-          <Separator />
-          {/* <div className="flex items-start gap-4">
+            <Separator />
+            {/* <div className="flex items-start gap-4">
             <UserIcon className="h-8 w-8 text-primary" />
             <div>
               <p className="font-medium">Teacher</p>
               <p className="text-muted-foreground">John Doe</p>
             </div>
           </div> */}
-          <div className="flex items-start gap-4">
-            <UsersIcon className="h-8 w-8 text-primary" />
-            <div>
-              <p className="font-medium">Participants</p>
-              <p className="text-muted-foreground">
-                John Doe, Jane Smith, Bob Johnson
-              </p>
+            <div className="flex items-start gap-4">
+              <UsersIcon className="h-8 w-8 text-primary" />
+              <div>
+                <p className="font-medium">Participants</p>
+                <p className="text-muted-foreground">
+                  John Doe, Jane Smith, Bob Johnson
+                </p>
+              </div>
             </div>
-          </div>
-          <Separator />
-          <div className="flex items-start gap-4">
-            <BookIcon className="h-8 w-8 text-primary" />
-            <div>
-              <p className="font-medium">Topic</p>
-              <p className="text-muted-foreground">{lesson?.topic}</p>
+            <Separator />
+            <div className="flex items-start gap-4">
+              <BookIcon className="h-8 w-8 text-primary" />
+              <div>
+                <p className="font-medium">Topic</p>
+                <p className="text-muted-foreground">{lesson?.topic}</p>
+              </div>
             </div>
-          </div>
-          {/* <div className="flex items-start gap-4">
+            {/* <div className="flex items-start gap-4">
             <StickyNoteIcon className="h-8 w-8 text-primary" />
             <div>
               <p className="font-medium">Observations/Issues</p>
               <p className="text-muted-foreground">No major issues reported.</p>
             </div>
           </div> */}
-        </div>
-        <DialogFooter className="flex justify-between">
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setPopupDetailLesson(false);
-                setPopupFormLessonState("EDIT");
-                setPoppupFormLesson(true);
-              }}
-            >
-              Edit
-            </Button>
-            <Button variant="outline">Reschedule</Button>
-            {/* <Button
+          </div>
+          <DialogFooter className="flex justify-between">
+            <div className="flex gap-2">
+              {rol !== "student" && (
+                <>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setPopupDetailLesson(false);
+                      setPopupFormLessonState("EDIT");
+                      setPoppupFormLesson(true);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <Button variant="outline">Reschedule</Button>
+                </>
+              )}
+
+              {/* <Button
               variant="outline"
               onClick={async () => {
                 await CancelLesson(lesson.id);
@@ -142,18 +150,19 @@ export function PopupDetailLesson() {
             >
               Cancel Class
             </Button> */}
-          </div>
-          <div>
-            <Button
-              variant="outline"
-              onClick={() => setPopupDetailLesson(false)}
-            >
-              Exit
-            </Button>
-          </div>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            </div>
+            <div>
+              <Button
+                variant="outline"
+                onClick={() => setPopupDetailLesson(false)}
+              >
+                Exit
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 function BookIcon(props) {
