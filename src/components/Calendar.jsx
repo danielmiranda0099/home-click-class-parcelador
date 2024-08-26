@@ -1,28 +1,23 @@
 "use client";
 
-import {
-  Calendar,
-  momentLocalizer,
-  Views,
-  View,
-  dayjsLocalizer,
-} from "react-big-calendar";
+import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import { GetLessons } from "@/actions/CrudLesson";
 import { useLessonStore } from "@/store/lessonStore";
 
-import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useCallback, useEffect, useState } from "react";
 import { FormattedLessons } from "@/utils/formattedLessons";
-import { PopupDetailLesson } from "../PopupDetailLesson";
+
 import { useUiStore } from "@/store/uiStores";
+import { PopupDetailLesson } from ".";
+
+import "react-big-calendar/lib/css/react-big-calendar.css";
 
 const localizer = momentLocalizer(moment);
 
 export function CalendarUI() {
   const lessons = useLessonStore((state) => state.lessons);
   const SetLessons = useLessonStore((state) => state.SetLessons);
-  const selected_lesson = useLessonStore((state) => state.selected_lesson);
   const setSelectedLesson = useLessonStore((state) => state.setSelectedLesson);
   const setPopupDetailLesson = useUiStore(
     (state) => state.setPopupDetailLesson
@@ -81,12 +76,11 @@ export function CalendarUI() {
         selectable
         onSelectEvent={handleSelectEvent}
         eventPropGetter={(event) => {
-          
           return {
             style: {
               backgroundColor: event.color || "#b64fc8",
             },
-          }
+          };
         }}
       />
     </>
