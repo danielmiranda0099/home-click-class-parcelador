@@ -36,7 +36,6 @@ import { formattedDateForInput } from "@/utils/formattedDateForInput";
 //   EDIT
 //   RESCHEDULE
 export function FormLesson() {
-  
   const AddNewLesson = useLessonStore((state) => state.AddNewLesson);
   //TODO FORMSTATE EN UN OBJETO POR FAVOR
   const setPopupFormLessonState = useUiStore(
@@ -64,30 +63,30 @@ export function FormLesson() {
       const lessons = FormattedLessons(data);
 
       SetLessons(lessons);
-      setIsOpen(false)
     }
+    setIsOpen(false);
   };
 
   return (
     <Dialog open={is_open} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
+      {/* <DialogTrigger asChild>
         <Button
           variant="outline"
           onClick={() => setPopupFormLessonState("CREATE")}
         >
           New Class
         </Button>
-      </DialogTrigger>
+      </DialogTrigger> */}
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>
             {popupFormLessonState === "CREATE"
               ? "Create New Class"
               : popupFormLessonState === "EDIT"
-              ? "Edit Class"
-              : popupFormLessonState === "RESCHEDULE"
-              ? "Reschedule Class"
-              : "UNKNOWN"}
+                ? "Edit Class"
+                : popupFormLessonState === "RESCHEDULE"
+                  ? "Reschedule Class"
+                  : "UNKNOWN"}
           </DialogTitle>
         </DialogHeader>
         <div>
@@ -141,7 +140,6 @@ export function FormLesson() {
                       ? formattedDateForInput(selected_lesson?.start)
                       : ""
                   }
-                  
                 />
               </div>
               <div className="grid gap-2">
@@ -185,10 +183,10 @@ export function FormLesson() {
                 {popupFormLessonState === "CREATE"
                   ? "Create"
                   : popupFormLessonState === "EDIT"
-                  ? "Edit"
-                  : popupFormLessonState === "RESCHEDULE"
-                  ? "Reschedule"
-                  : "UNKNOWN"}
+                    ? "Edit"
+                    : popupFormLessonState === "RESCHEDULE"
+                      ? "Reschedule"
+                      : "UNKNOWN"}
               </Button>
             </DialogFooter>
           </form>
