@@ -11,10 +11,10 @@ const formattedLessonForBD = (lesson) => {
   };
 
   return event_formated;
-}
+};
 
 export async function CreateNewLesson(form_dada) {
-  const lesson_formated = formattedLessonForBD(form_dada)
+  const lesson_formated = formattedLessonForBD(form_dada);
   const { data, error } = await supabase
     .from("lesson")
     .insert([lesson_formated])
@@ -22,7 +22,7 @@ export async function CreateNewLesson(form_dada) {
   if (error) console.error("Error adding item:", error);
 
   console.log(data);
-  return data
+  return data;
 }
 
 export async function GetLessons() {
@@ -37,8 +37,11 @@ export async function GetLessons() {
 }
 
 export async function UpdateLesson(id, updated_lesson) {
-  const formated_lesson = formattedLessonForBD(updated_lesson)
-  const { data, error } = await supabase.from("lesson").update(formated_lesson).eq('id', id)
+  const formated_lesson = formattedLessonForBD(updated_lesson);
+  const { data, error } = await supabase
+    .from("lesson")
+    .update(formated_lesson)
+    .eq("id", id);
   console.log(data);
   if (error) {
     console.log("error database", error);
@@ -48,7 +51,23 @@ export async function UpdateLesson(id, updated_lesson) {
 }
 
 export async function CancelLesson(id) {
-  const { data, error } = await supabase.from("lesson").update({is_canceled: true}).eq('id', id)
+  const { data, error } = await supabase
+    .from("lesson")
+    .update({ is_canceled: true })
+    .eq("id", id);
+  console.log(data);
+  if (error) {
+    console.log("error database", error);
+    return [];
+  }
+  console.log("Update database", data);
+}
+
+export async function RegisterLesson(id) {
+  const { data, error } = await supabase
+    .from("lesson")
+    .update({ is_registered: true })
+    .eq("id", id);
   console.log(data);
   if (error) {
     console.log("error database", error);

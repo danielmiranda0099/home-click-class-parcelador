@@ -38,9 +38,6 @@ import { formattedDateForInput } from "@/utils/formattedDateForInput";
 export function FormLesson() {
   const AddNewLesson = useLessonStore((state) => state.AddNewLesson);
   //TODO FORMSTATE EN UN OBJETO POR FAVOR
-  const setPopupFormLessonState = useUiStore(
-    (state) => state.setPopupFormLessonState
-  );
   const popupFormLessonState = useUiStore(
     (state) => state.popupFormLessonState
   );
@@ -69,14 +66,6 @@ export function FormLesson() {
 
   return (
     <Dialog open={is_open} onOpenChange={setIsOpen}>
-      {/* <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          onClick={() => setPopupFormLessonState("CREATE")}
-        >
-          New Class
-        </Button>
-      </DialogTrigger> */}
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>

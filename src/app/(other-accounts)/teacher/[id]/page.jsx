@@ -10,7 +10,7 @@ export default async function TeacherPage() {
       </section>
 
       <section className="px-48 py-3">
-        <CalendarUI />
+        <CalendarUI rol="teacher" />
       </section>
     </>
   );

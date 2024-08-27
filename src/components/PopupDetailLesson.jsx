@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useUiStore } from "@/store/uiStores";
 import { useLessonStore } from "@/store/lessonStore";
-import { CancelLesson, GetLessons } from "@/actions/CrudLesson";
+import { CancelLesson, GetLessons, RegisterLesson } from "@/actions/CrudLesson";
 import { FormattedLessons } from "@/utils/formattedLessons";
 import { FormLesson } from ".";
 
@@ -63,37 +63,30 @@ export function PopupDetailLesson({ rol }) {
               <CircleCheckIcon className="h-8 w-8 text-primary" />
               <div>
                 <p className="font-medium">Class Status</p>
+                {/*TODO: hacer funcion para esto */}
                 <p className="text-muted-foreground">
                   {lesson &&
                     (lesson?.is_canceled
                       ? "Canceled"
                       : lesson?.is_scheduled &&
                           lesson?.is_approved &&
+                          lesson?.is_registered &&
                           lesson?.is_paid
-                        ? "Approved and Paid"
-                        : lesson?.is_scheduled && lesson?.is_approved
-                          ? "Approved"
-                          : lesson?.is_scheduled
-                            ? "Scheduled"
-                            : "Unknown Status")}
+                        ? "Registrada y Pagada"
+                        : lesson?.is_scheduled &&
+                            lesson?.is_approved &&
+                            lesson?.is_registered &&
+                            !lesson?.is_paid
+                          ? "Registrada y Pendiente De Pago"
+                          : lesson?.is_scheduled && lesson?.is_approved
+                            ? "Approved"
+                            : lesson?.is_scheduled
+                              ? "Scheduled"
+                              : "Unknown Status")}
                 </p>
               </div>
             </div>
-            {/* <div className="flex items-start gap-4">
-            <CreditCardIcon className="h-8 w-8 text-primary" />
-            <div>
-              <p className="font-medium">Payment Status</p>
-              <p className="text-muted-foreground">Paid</p>
-            </div>
-          </div> */}
             <Separator />
-            {/* <div className="flex items-start gap-4">
-            <UserIcon className="h-8 w-8 text-primary" />
-            <div>
-              <p className="font-medium">Teacher</p>
-              <p className="text-muted-foreground">John Doe</p>
-            </div>
-          </div> */}
             <div className="flex items-start gap-4">
               <UsersIcon className="h-8 w-8 text-primary" />
               <div>
@@ -111,47 +104,51 @@ export function PopupDetailLesson({ rol }) {
                 <p className="text-muted-foreground">{lesson?.topic}</p>
               </div>
             </div>
-            {/* <div className="flex items-start gap-4">
-            <StickyNoteIcon className="h-8 w-8 text-primary" />
-            <div>
-              <p className="font-medium">Observations/Issues</p>
-              <p className="text-muted-foreground">No major issues reported.</p>
-            </div>
-          </div> */}
           </div>
-          <DialogFooter className="flex justify-between">
+          <DialogFooter className="flex justify-start 	items-start">
             <div className="flex gap-2">
-              {rol !== "student" && (
-                <>
+              {/* TODO: Refact todo este mierdero */}
+              {rol === "teacher" &&
+                lesson?.is_approved &&
+                !lesson?.is_registered &&
+                !lesson?.is_canceled && (
                   <Button
-                    variant="outline"
-                    onClick={() => {
+                    onClick={async () => {
+                      await RegisterLesson(lesson.id);
+
+                      const data = await GetLessons();
+                      const lessons = FormattedLessons(data);
+
+                      SetLessons(lessons);
+
                       setPopupDetailLesson(false);
-                      setPopupFormLessonState("EDIT");
-                      setPoppupFormLesson(true);
                     }}
                   >
-                    Edit
+                    Register Class
                   </Button>
-                  <Button variant="outline">Reschedule</Button>
-                </>
-              )}
-
-              {/* <Button
-              variant="outline"
-              onClick={async () => {
-                await CancelLesson(lesson.id);
-                const data = await GetLessons();
-                const lessons = FormattedLessons(data);
-
-                SetLessons(lessons);
-                setPopupDetailLesson(false)
-              }}
-            >
-              Cancel Class
-            </Button> */}
+                )}
             </div>
-            <div>
+            <div className="flex gap-2">
+              {rol !== "student" &&
+                !lesson?.is_registered &&
+                !lesson?.is_canceled && (
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setPopupDetailLesson(false);
+                        setPopupFormLessonState("EDIT");
+                        setPoppupFormLesson(true);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                    {!lesson?.is_approved && (
+                      <Button variant="outline">Reschedule</Button>
+                    )}
+                  </>
+                )}
+
               <Button
                 variant="outline"
                 onClick={() => setPopupDetailLesson(false)}
