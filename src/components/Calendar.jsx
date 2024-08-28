@@ -27,7 +27,7 @@ export function CalendarUI({ rol }) {
   useEffect(() => {
     GetLessons()
       .then((data) => {
-        const lessons = FormattedLessons(data);
+        const lessons = FormattedLessons(data, rol);
         console.log("lessons", lessons);
         SetLessons(lessons);
         console.log(lessons);
@@ -78,7 +78,8 @@ export function CalendarUI({ rol }) {
         eventPropGetter={(event) => {
           return {
             style: {
-              backgroundColor: event.color || "#b64fc8",
+              backgroundColor: event.background || "#adb5bd",
+              color: event.color || "white",
             },
           };
         }}

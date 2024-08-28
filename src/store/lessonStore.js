@@ -3,9 +3,9 @@ import { create } from "zustand";
 
 export const useLessonStore = create((set) => ({
   lessons: [],
-  AddNewLesson: (new_lesson) =>
+  AddNewLesson: (new_lesson, rol) =>
     set((state) => {
-      const lesson_formated = FormattedLessons(new_lesson);
+      const lesson_formated = FormattedLessons(new_lesson, rol);
       if (lesson_formated.length === 1) {
         console.log("Adding new lesson:", lesson_formated);
         return { lessons: [...state.lessons, lesson_formated[0]] };

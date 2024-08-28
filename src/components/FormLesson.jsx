@@ -51,13 +51,13 @@ export function FormLesson() {
   const OnSubmit = async (form_data) => {
     if (popupFormLessonState === "CREATE") {
       const new_lesson = await CreateNewLesson(form_data);
-      AddNewLesson(new_lesson);
+      AddNewLesson(new_lesson, "admin");
     }
     if (popupFormLessonState === "EDIT") {
       await UpdateLesson(selected_lesson.id, form_data);
 
       const data = await GetLessons();
-      const lessons = FormattedLessons(data);
+      const lessons = FormattedLessons(data, "admin");
 
       SetLessons(lessons);
     }

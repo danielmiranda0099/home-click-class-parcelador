@@ -18,16 +18,24 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
-import { ConfirmLesson } from "@/actions/CrudLesson";
+import { ConfirmLesson, GetLessons } from "@/actions/CrudLesson";
 import { useLessonStore } from "@/store/lessonStore";
+import { FormattedLessons } from "@/utils/formattedLessons";
 
 export function FormConfirmClass() {
   const lesson = useLessonStore((state) => state.selected_lesson);
+  const SetLessons = useLessonStore((state) => state.SetLessons);
   const is_open = useUiStore((state) => state.popupFormConfirmClass);
   const setIsOpen = useUiStore((state) => state.setPopupFormConfirmClass);
 
   const OnSubmit = async () => {
     await ConfirmLesson(lesson?.id);
+
+    const data = await GetLessons();
+    const lessons = FormattedLessons(data, "student");
+
+    SetLessons(lessons);
+
     setIsOpen(false);
   };
 
