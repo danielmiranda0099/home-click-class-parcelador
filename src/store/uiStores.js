@@ -1,5 +1,5 @@
 import { create } from "zustand";
-
+//TODO: Change Name file uiStores quitar la "s"
 export const useUiStore = create((set) => ({
   popupFormLesson: false,
   setPopupFormLesson: (is_open) =>
@@ -20,5 +20,11 @@ export const useUiStore = create((set) => ({
   setPopupDetailLesson: (is_open) =>
     set(() => ({
       popupDetailLesson: is_open,
+    })),
+
+  popupFormConfirmClass: false,
+  setPopupFormConfirmClass: (is_open) =>
+    set(() => ({
+      popupFormConfirmClass: is_open,
     })),
 }));

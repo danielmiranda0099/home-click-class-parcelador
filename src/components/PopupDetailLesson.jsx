@@ -39,6 +39,9 @@ export function PopupDetailLesson({ rol }) {
     (state) => state.setPopupFormLessonState
   );
   const SetLessons = useLessonStore((state) => state.SetLessons);
+  const setPopupFormConfirmClass = useUiStore(
+    (state) => state.setPopupFormConfirmClass
+  );
 
   console.log("lesson en modal", lesson);
   return (
@@ -69,16 +72,16 @@ export function PopupDetailLesson({ rol }) {
                     (lesson?.is_canceled
                       ? "Canceled"
                       : lesson?.is_scheduled &&
-                          lesson?.is_approved &&
+                          lesson?.is_confirmed &&
                           lesson?.is_registered &&
                           lesson?.is_paid
                         ? "Registrada y Pagada"
                         : lesson?.is_scheduled &&
-                            lesson?.is_approved &&
+                            lesson?.is_confirmed &&
                             lesson?.is_registered &&
                             !lesson?.is_paid
                           ? "Registrada y Pendiente De Pago"
-                          : lesson?.is_scheduled && lesson?.is_approved
+                          : lesson?.is_scheduled && lesson?.is_confirmed
                             ? "Approved"
                             : lesson?.is_scheduled
                               ? "Scheduled"
@@ -108,8 +111,18 @@ export function PopupDetailLesson({ rol }) {
           <DialogFooter className="flex justify-start 	items-start">
             <div className="flex gap-2">
               {/* TODO: Refact todo este mierdero */}
+              {rol === "student" && !lesson?.is_confirmed && (
+                <Button
+                  onClick={async () => {
+                    setPopupDetailLesson(false);
+                    setPopupFormConfirmClass(true);
+                  }}
+                >
+                  Confirm Class
+                </Button>
+              )}
               {rol === "teacher" &&
-                lesson?.is_approved &&
+                lesson?.is_confirmed &&
                 !lesson?.is_registered &&
                 !lesson?.is_canceled && (
                   <Button
@@ -143,7 +156,7 @@ export function PopupDetailLesson({ rol }) {
                     >
                       Edit
                     </Button>
-                    {!lesson?.is_approved && (
+                    {!lesson?.is_confirmed && (
                       <Button variant="outline">Reschedule</Button>
                     )}
                   </>
