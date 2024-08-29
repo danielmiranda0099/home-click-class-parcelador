@@ -89,3 +89,17 @@ export async function ConfirmLesson(data_form) {
   }
   console.log("Update database", data);
 }
+
+export async function RescheduleLesson(data_form) {
+  const { id, start_date, end_date } = data_form;
+  const { data, error } = await supabase
+    .from("lesson")
+    .update({ start_date, end_date, is_rescheduled: true })
+    .eq("id", id);
+  console.log(data);
+  if (error) {
+    console.log("error database", error);
+    return [];
+  }
+  console.log("RESCHEDULE Lesson", data);
+}

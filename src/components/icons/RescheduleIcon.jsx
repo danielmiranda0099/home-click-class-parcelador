@@ -15,7 +15,12 @@ export const RescheduleIcon = ({
     strokeLinejoin="round"
     className={className}
   >
-    <circle cx="12" cy="12" r="10" />
-    <polyline points="12 6 12 12 16 14" />
+    {/* Arrow loop */}
+    <path d="M21 8C19.5 5 17 3 12 3C7 3 3 7 3 12C3 17 7 21 12 21C17 21 21 17 21 12" />
+    <polyline points="21 3 21 8 16 8" />
+
+    {/* Clock */}
+    <circle cx="12" cy="12" r="6" />
+    <polyline points="12 8 12 12 14 14" />
   </svg>
 );

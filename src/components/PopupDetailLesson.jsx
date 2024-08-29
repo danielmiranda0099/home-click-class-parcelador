@@ -20,6 +20,7 @@ import {
   CircleCheckIcon,
   FeedbackIcon,
   RatingIcon,
+  RescheduleIcon,
   UsersIcon,
 } from "./icons";
 
@@ -53,7 +54,7 @@ export function PopupDetailLesson({ rol }) {
   console.log("lesson en modal", lesson);
   return (
     <>
-      {rol !== "student" && <FormLesson />}
+      {rol !== "student" && <FormLesson rol={rol} />}
       <Dialog open={is_open} onOpenChange={setPopupDetailLesson}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
@@ -107,6 +108,17 @@ export function PopupDetailLesson({ rol }) {
                     <p className="text-muted-foreground">
                       {lesson?.lesson_score}
                     </p>
+                  </div>
+                </div>
+              </>
+            )}
+            {rol === "admin" && lesson?.is_rescheduled && (
+              <>
+                <Separator />
+                <div className="flex items-start gap-4">
+                  <RescheduleIcon className="h-8 w-8 text-primary" />
+                  <div>
+                    <p className="font-medium">Reagendada</p>
                   </div>
                 </div>
               </>
@@ -177,7 +189,16 @@ export function PopupDetailLesson({ rol }) {
                       Edit
                     </Button>
                     {!lesson?.is_confirmed && (
-                      <Button variant="outline">Reschedule</Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setPopupDetailLesson(false);
+                          setPopupFormLessonState("RESCHEDULE");
+                          setPoppupFormLesson(true);
+                        }}
+                      >
+                        Reschedule
+                      </Button>
                     )}
                   </>
                 )}

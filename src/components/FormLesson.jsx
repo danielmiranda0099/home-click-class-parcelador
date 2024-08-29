@@ -24,6 +24,7 @@ import {
 import {
   CreateNewLesson,
   GetLessons,
+  RescheduleLesson,
   UpdateLesson,
 } from "@/actions/CrudLesson";
 import { useLessonStore } from "@/store/lessonStore";
@@ -35,7 +36,7 @@ import { formattedDateForInput } from "@/utils/formattedDateForInput";
 //   CREATE
 //   EDIT
 //   RESCHEDULE
-export function FormLesson() {
+export function FormLesson({ rol }) {
   const AddNewLesson = useLessonStore((state) => state.AddNewLesson);
   //TODO FORMSTATE EN UN OBJETO POR FAVOR
   const popupFormLessonState = useUiStore(
@@ -57,7 +58,21 @@ export function FormLesson() {
       await UpdateLesson(selected_lesson.id, form_data);
 
       const data = await GetLessons();
-      const lessons = FormattedLessons(data, "admin");
+      const lessons = FormattedLessons(data, rol);
+
+      SetLessons(lessons);
+    }
+    if (popupFormLessonState === "RESCHEDULE") {
+      const new_date = {
+        id: selected_lesson?.id,
+        start_date: form_data.get("start-date"),
+        end_date: form_data.get("end-date"),
+      };
+      console.log("RESCHEDULE", new_date);
+      await RescheduleLesson(new_date);
+
+      const data = await GetLessons();
+      const lessons = FormattedLessons(data, rol);
 
       SetLessons(lessons);
     }
@@ -80,89 +95,98 @@ export function FormLesson() {
         </DialogHeader>
         <div>
           <form action={OnSubmit} className="grid gap-4">
-            <div
-              className={`grid gap-2 ${
-                popupFormLessonState === "RESCHEDULE"
-                  ? "pointer-events-none opacity-30"
-                  : ""
-              }`}
-            >
-              <Label htmlFor="topic">Class Topic</Label>
-              <Textarea
-                id="topic"
-                name="topic"
-                placeholder="Enter class topic"
-                defaultValue={
-                  popupFormLessonState === "EDIT" ? selected_lesson.topic : ""
-                }
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="teams-link">Teams Link</Label>
-              <Input
-                id="teams-link"
-                type="url"
-                placeholder="Enter Teams link"
-                defaultValue={
-                  popupFormLessonState === "EDIT"
-                    ? selected_lesson?.url_teams
-                    : ""
-                }
-              />
-            </div>
-            <div
-              className={`grid grid-cols-2 gap-4 ${
-                popupFormLessonState === "EDIT"
-                  ? "pointer-events-none opacity-30"
-                  : ""
-              }`}
-            >
-              <div className="grid gap-2">
-                <Label htmlFor="start-date">Start Date</Label>
-                <Input
-                  id="start-date"
-                  name="start-date"
-                  type="datetime-local"
-                  defaultValue={
-                    popupFormLessonState === "EDIT"
-                      ? formattedDateForInput(selected_lesson?.start)
+            {popupFormLessonState !== "RESCHEDULE" && (
+              <>
+                <div
+                  className={`grid gap-2 ${
+                    popupFormLessonState === "RESCHEDULE"
+                      ? "pointer-events-none opacity-30"
                       : ""
-                  }
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="end-date">End Date</Label>
-                <Input
-                  id="end-date"
-                  name="end-date"
-                  type="datetime-local"
-                  defaultValue={
-                    popupFormLessonState === "EDIT"
-                      ? formattedDateForInput(selected_lesson?.end)
-                      : ""
-                  }
-                />
-              </div>
-            </div>
+                  }`}
+                >
+                  <Label htmlFor="topic">Class Topic</Label>
+                  <Textarea
+                    id="topic"
+                    name="topic"
+                    placeholder="Enter class topic"
+                    defaultValue={
+                      popupFormLessonState !== "CREATE"
+                        ? selected_lesson.topic
+                        : ""
+                    }
+                    required
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="teams-link">Teams Link</Label>
+                  <Input
+                    id="teams-link"
+                    type="url"
+                    placeholder="Enter Teams link"
+                    defaultValue={
+                      popupFormLessonState !== "CREATE"
+                        ? selected_lesson?.url_teams
+                        : ""
+                    }
+                  />
+                </div>
+              </>
+            )}
 
-            <div className="grid gap-2">
-              <Label htmlFor="participants">Participants</Label>
-              <div className="flex items-center gap-2">
-                <Checkbox id="group-class" />
-                <Label htmlFor="group-class">Group Class</Label>
+            {popupFormLessonState !== "EDIT" && (
+              <div
+                className={`grid grid-cols-2 gap-4
+                }`}
+              >
+                <div className="grid gap-2">
+                  <Label htmlFor="start-date">Start Date</Label>
+                  <Input
+                    id="start-date"
+                    name="start-date"
+                    type="datetime-local"
+                    defaultValue={
+                      popupFormLessonState !== "CREATE"
+                        ? formattedDateForInput(selected_lesson?.start)
+                        : ""
+                    }
+                    required={popupFormLessonState !== "CREATE"}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="end-date">End Date</Label>
+                  <Input
+                    id="end-date"
+                    name="end-date"
+                    type="datetime-local"
+                    defaultValue={
+                      popupFormLessonState !== "CREATE"
+                        ? formattedDateForInput(selected_lesson?.end)
+                        : ""
+                    }
+                  />
+                </div>
               </div>
-              <Select id="participants">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select participants" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="participant1">Participant 1</SelectItem>
-                  <SelectItem value="participant2">Participant 2</SelectItem>
-                  <SelectItem value="participant3">Participant 3</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            )}
+            {popupFormLessonState !== "RESCHEDULE" && (
+              <div className="grid gap-2">
+                <Label htmlFor="participants">Participants</Label>
+                <div className="flex items-center gap-2">
+                  <Checkbox id="group-class" />
+                  <Label htmlFor="group-class">Group Class</Label>
+                </div>
+                <Select id="participants">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select participants" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="participant1">Participant 1</SelectItem>
+                    <SelectItem value="participant2">Participant 2</SelectItem>
+                    <SelectItem value="participant3">Participant 3</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline">Cancel</Button>
