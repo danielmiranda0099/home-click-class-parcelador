@@ -28,13 +28,20 @@ export function FormConfirmClass() {
   const is_open = useUiStore((state) => state.popupFormConfirmClass);
   const setIsOpen = useUiStore((state) => state.setPopupFormConfirmClass);
 
-  const OnSubmit = async () => {
-    await ConfirmLesson(lesson?.id);
+  const OnSubmit = async (form_data) => {
+    const confirm_lesson_data = {
+      id: lesson?.id,
+      lesson_score: parseInt(form_data.get("lesson-score")),
+      student_observations: form_data.get("student-observations"),
+    };
+    await ConfirmLesson(confirm_lesson_data);
 
     const data = await GetLessons();
     const lessons = FormattedLessons(data, "student");
 
     SetLessons(lessons);
+
+    console.log(confirm_lesson_data);
 
     setIsOpen(false);
   };
@@ -48,44 +55,42 @@ export function FormConfirmClass() {
         <div>
           <form action={OnSubmit} className="grid gap-4">
             <div className={`grid gap-2`}>
-              <Label htmlFor="topic">Opinion</Label>
+              <Label htmlFor="observations">Opinion</Label>
               <Textarea
-                id="topic"
-                name="topic"
-                placeholder="Enter class topic"
+                id="observations"
+                name="student-observations"
+                placeholder="Enter class Opinion"
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="participants">
+              <Label htmlFor="lesson-score">
                 Select a score from 1 to 10 for the class
               </Label>
               <span> (where 1 is the lowest rating and 10 is the highest)</span>
-              <Select id="participants">
+              <Select name="lesson-score" id="lesson-score" required>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Rank" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="participant1">1</SelectItem>
-                  <SelectItem value="participant2">2</SelectItem>
-                  <SelectItem value="participant3">3</SelectItem>
-                  <SelectItem value="participant4">4</SelectItem>
-                  <SelectItem value="participant5">5</SelectItem>
-                  <SelectItem value="participant6">6</SelectItem>
-                  <SelectItem value="participant7">7</SelectItem>
-                  <SelectItem value="participant8">8</SelectItem>
-                  <SelectItem value="participant9">9</SelectItem>
-                  <SelectItem value="participant10">10</SelectItem>
+                  <SelectItem value="1">1</SelectItem>
+                  <SelectItem value="2">2</SelectItem>
+                  <SelectItem value="3">3</SelectItem>
+                  <SelectItem value="4">4</SelectItem>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="6">6</SelectItem>
+                  <SelectItem value="7">7</SelectItem>
+                  <SelectItem value="8">8</SelectItem>
+                  <SelectItem value="9">9</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <DialogFooter>
-              <Button variant="primary" type="submit">
-                Confirm
-              </Button>
+              <Button type="submit">Confirm</Button>
 
               <DialogClose asChild>
-                <Button>Exit</Button>
+                <Button variant="outline">Exit</Button>
               </DialogClose>
             </DialogFooter>
           </form>

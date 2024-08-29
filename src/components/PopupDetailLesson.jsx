@@ -15,7 +15,13 @@ import { useLessonStore } from "@/store/lessonStore";
 import { CancelLesson, GetLessons, RegisterLesson } from "@/actions/CrudLesson";
 import { FormattedLessons } from "@/utils/formattedLessons";
 import { FormLesson } from ".";
-import { BookIcon, CircleCheckIcon, UsersIcon } from "./icons";
+import {
+  BookIcon,
+  CircleCheckIcon,
+  FeedbackIcon,
+  RatingIcon,
+  UsersIcon,
+} from "./icons";
 
 const options = {
   year: "numeric",
@@ -91,6 +97,36 @@ export function PopupDetailLesson({ rol }) {
                 <p className="text-muted-foreground">{lesson?.topic}</p>
               </div>
             </div>
+            {rol === "admin" && lesson?.is_confirmed && (
+              <>
+                <Separator />
+                <div className="flex items-start gap-4">
+                  <RatingIcon className="h-8 w-8 text-primary" />
+                  <div>
+                    <p className="font-medium">Rating Class</p>
+                    <p className="text-muted-foreground">
+                      {lesson?.lesson_score}
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
+            {rol === "admin" &&
+              lesson?.is_confirmed &&
+              lesson?.student_observations && (
+                <>
+                  <Separator />
+                  <div className="flex items-start gap-4">
+                    <FeedbackIcon className="h-8 w-8 text-primary" />
+                    <div>
+                      <p className="font-medium">Student Observations</p>
+                      <p className="text-muted-foreground">
+                        {lesson?.student_observations}
+                      </p>
+                    </div>
+                  </div>
+                </>
+              )}
           </div>
           <DialogFooter className="flex justify-start 	items-start">
             <div className="flex gap-2">

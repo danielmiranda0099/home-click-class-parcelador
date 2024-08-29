@@ -8,3 +8,8 @@ export * from "./StickyNoteIcon";
 export * from "./UserIcon";
 export * from "./UsersIcon";
 export * from "./XIcon";
+export * from "./RatingIcon";
+export * from "./FeedbackIcon";
+export * from "./CancellationIcon";
+export * from "./CancellationIcon";
+export * from "./IssueIcon";

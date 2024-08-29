@@ -76,10 +76,11 @@ export async function RegisterLesson(id) {
   console.log("Update database", data);
 }
 
-export async function ConfirmLesson(id) {
+export async function ConfirmLesson(data_form) {
+  const { id, lesson_score, student_observations } = data_form;
   const { data, error } = await supabase
     .from("lesson")
-    .update({ is_confirmed: true })
+    .update({ is_confirmed: true, lesson_score, student_observations })
     .eq("id", id);
   console.log(data);
   if (error) {
