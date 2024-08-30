@@ -210,6 +210,8 @@ export function PopupDetailLesson({ rol }) {
                           title: "Por Favor Rellene El Campo De Observación",
                         });
                         console.log("Toast");
+                        setPopupDetailLesson(false);
+                        return;
                       }
                       await RegisterLesson(lesson.id);
 
