@@ -228,10 +228,9 @@ export function PopupDetailLesson({ rol }) {
                 )}
             </div>
             <div className="flex gap-2">
-              {rol !== "student" &&
-                !lesson?.is_registered &&
-                !lesson?.is_canceled && (
-                  <>
+              {rol !== "student" && (
+                <>
+                  {!lesson?.is_registered && (
                     <Button
                       variant="outline"
                       onClick={() => {
@@ -242,34 +241,49 @@ export function PopupDetailLesson({ rol }) {
                     >
                       Edit
                     </Button>
-                    {!lesson?.is_confirmed && (
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          setPopupDetailLesson(false);
-                          setPopupFormLessonState("RESCHEDULE");
-                          setPoppupFormLesson(true);
-                        }}
-                      >
-                        Reschedule
-                      </Button>
-                    )}
-                  </>
-                )}
-              {rol === "admin" && lesson?.is_registered && (
-                <Button
-                  onClick={async () => {
-                    await PayTeacher(lesson?.id);
-                    const data = await GetLessons();
-                    const lessons = FormattedLessons(data, rol);
+                  )}
+                  {lesson?.is_registered && rol === "admin" && (
+                    <Button
+                      onClick={() => {
+                        setPopupDetailLesson(false);
+                        setPopupFormLessonState("EDIT");
+                        setPoppupFormLesson(true);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                  )}
 
-                    SetLessons(lessons);
-                    setPopupDetailLesson(false);
-                  }}
-                >
-                  Hacer Pago
-                </Button>
+                  {!lesson?.is_confirmed && (
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setPopupDetailLesson(false);
+                        setPopupFormLessonState("RESCHEDULE");
+                        setPoppupFormLesson(true);
+                      }}
+                    >
+                      Reschedule
+                    </Button>
+                  )}
+                </>
               )}
+              {rol === "admin" &&
+                lesson?.is_registered &&
+                !lesson?.is_teacher_paid && (
+                  <Button
+                    onClick={async () => {
+                      await PayTeacher(lesson?.id);
+                      const data = await GetLessons();
+                      const lessons = FormattedLessons(data, rol);
+
+                      SetLessons(lessons);
+                      setPopupDetailLesson(false);
+                    }}
+                  >
+                    Hacer Pago
+                  </Button>
+                )}
               <Button
                 variant="outline"
                 onClick={() => setPopupDetailLesson(false)}

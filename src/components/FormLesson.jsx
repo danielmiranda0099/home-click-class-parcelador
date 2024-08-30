@@ -33,6 +33,7 @@ import { formattedDateForInput } from "@/utils/formattedDateForInput";
 import { InputSearch } from ".";
 import { InputPriceLesson } from "./InputPriceLesson";
 import { useState } from "react";
+import { Switch } from "./ui/switch";
 
 // STATE:
 //   CREATE
@@ -128,6 +129,18 @@ export function FormLesson({ rol }) {
                           setValue={setPriceLesson}
                         />
                       </div>
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label>Student Pay</Label>
+                      <Switch
+                        name="is_student_paid"
+                        defaultValue={
+                          popupFormLessonState !== "CREATE"
+                            ? selected_lesson?.is_student_paid
+                            : ""
+                        }
+                      />
                     </div>
                   </>
                 )}
