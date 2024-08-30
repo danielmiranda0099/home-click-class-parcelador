@@ -22,8 +22,10 @@ import {
   FeedbackIcon,
   RatingIcon,
   RescheduleIcon,
+  UserIcon,
   UsersIcon,
 } from "./icons";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 const options = {
   year: "numeric",
@@ -61,14 +63,21 @@ export function PopupDetailLesson({ rol }) {
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Class Details</DialogTitle>
-            <div>
-              {/* <p className="text-sm text-muted-foreground">Start: June 1, 2023 - End: June 30, 2023</p> */}
-              <p className="text-sm text-muted-foreground">
-                Start: {formattedDate(lesson.start)}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                End: {formattedDate(lesson.end)}
-              </p>
+            <div className={`grid grid-cols-2 gap-4`}>
+              <div>
+                {/* <p className="text-sm text-muted-foreground">Start: June 1, 2023 - End: June 30, 2023</p> */}
+                <p className="text-sm text-muted-foreground">
+                  Start: {formattedDate(lesson.start)}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  End: {formattedDate(lesson.end)}
+                </p>
+              </div>
+              {rol !== "student" && lesson?.price_lesson && (
+                <h2 className="text-2xl font-medium">
+                  {formatCurrency(lesson?.price_lesson.toString())}
+                </h2>
+              )}
             </div>
           </DialogHeader>
           <div className="grid gap-6 py-6">
@@ -83,6 +92,21 @@ export function PopupDetailLesson({ rol }) {
               </div>
             </div>
             <Separator />
+            {rol !== "teacher" && (
+              <>
+                <div className="flex items-start gap-4">
+                  <UserIcon className="h-8 w-8 text-primary" />
+                  <div>
+                    <p className="font-medium">Teacher</p>
+                    {/*TODO: hacer funcion para esto */}
+                    <p className="text-muted-foreground">
+                      {lesson && lesson?.teacher}
+                    </p>
+                  </div>
+                </div>
+                <Separator />
+              </>
+            )}
             <div className="flex items-start gap-4">
               <UsersIcon className="h-8 w-8 text-primary" />
               <div>
@@ -225,7 +249,6 @@ export function PopupDetailLesson({ rol }) {
                     )}
                   </>
                 )}
-
               <Button
                 variant="outline"
                 onClick={() => setPopupDetailLesson(false)}

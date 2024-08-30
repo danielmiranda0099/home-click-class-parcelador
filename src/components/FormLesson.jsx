@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectTrigger,
@@ -31,6 +30,9 @@ import { useLessonStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 import { FormattedLessons } from "@/utils/formattedLessons";
 import { formattedDateForInput } from "@/utils/formattedDateForInput";
+import { InputSearch } from ".";
+import { InputPriceLesson } from "./InputPriceLesson";
+import { useState } from "react";
 
 // STATE:
 //   CREATE
@@ -47,10 +49,23 @@ export function FormLesson({ rol }) {
   const selected_lesson = useLessonStore((state) => state.selected_lesson);
   const SetLessons = useLessonStore((state) => state.SetLessons);
 
+  const [teacher, setTeacher] = useState("");
+  const [price_lesson, setPriceLesson] = useState("");
+
   console.log("formato fecha", selected_lesson?.start);
 
   const OnSubmit = async (form_data) => {
     if (popupFormLessonState === "CREATE") {
+      console.log("Teacher", teacher);
+
+      const price_string = price_lesson.replace(/[^0-9]/g, "");
+
+      // Convertir a número
+      const price_formated = parseInt(price_string, 10);
+
+      form_data.append("teacher", teacher);
+      form_data.append("price_lesson", price_formated);
+
       const new_lesson = await CreateNewLesson(form_data);
       AddNewLesson(new_lesson, "admin");
     }
@@ -99,6 +114,23 @@ export function FormLesson({ rol }) {
           <form action={OnSubmit} className="grid gap-4">
             {popupFormLessonState !== "RESCHEDULE" && (
               <>
+                {rol === "admin" && (
+                  <>
+                    <div className={`grid grid-cols-2 gap-4`}>
+                      <div className="grid gap-2">
+                        <Label>Teacher</Label>
+                        <InputSearch value={teacher} setValue={setTeacher} />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label>Price</Label>
+                        <InputPriceLesson
+                          value={price_lesson}
+                          setValue={setPriceLesson}
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
                 <div
                   className={`grid gap-2 ${
                     popupFormLessonState === "RESCHEDULE"
@@ -174,14 +206,6 @@ export function FormLesson({ rol }) {
             {popupFormLessonState !== "RESCHEDULE" && (
               <div className="grid gap-2">
                 <Label htmlFor="participants">Participants</Label>
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    name="is_group"
-                    id="group-class"
-                    checked={selected_lesson?.is_group}
-                  />
-                  <Label htmlFor="group-class">Group Class</Label>
-                </div>
                 <Select id="participants">
                   <SelectTrigger>
                     <SelectValue placeholder="Select participants" />
