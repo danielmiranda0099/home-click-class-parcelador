@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useUiStore } from "@/store/uiStores";
 import { useLessonStore } from "@/store/lessonStore";
+import { useToast } from "@/components/ui/use-toast";
 import { CancelLesson, GetLessons, RegisterLesson } from "@/actions/CrudLesson";
 import { FormattedLessons } from "@/utils/formattedLessons";
 import { FormLesson } from ".";
@@ -50,6 +51,7 @@ export function PopupDetailLesson({ rol }) {
   const setPopupFormConfirmClass = useUiStore(
     (state) => state.setPopupFormConfirmClass
   );
+  const { toast } = useToast();
 
   console.log("lesson en modal", lesson);
   return (
@@ -123,6 +125,20 @@ export function PopupDetailLesson({ rol }) {
                 </div>
               </>
             )}
+            {rol !== "student" && lesson?.teacher_observations && (
+              <>
+                <Separator />
+                <div className="flex items-start gap-4">
+                  <FeedbackIcon className="h-8 w-8 text-primary" />
+                  <div>
+                    <p className="font-medium">Teacher Observations</p>
+                    <p className="text-muted-foreground">
+                      {lesson?.teacher_observations}
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
             {rol === "admin" &&
               lesson?.is_confirmed &&
               lesson?.student_observations && (
@@ -159,6 +175,13 @@ export function PopupDetailLesson({ rol }) {
                 !lesson?.is_canceled && (
                   <Button
                     onClick={async () => {
+                      if (!lesson?.teacher_observations) {
+                        toast({
+                          variant: "destructive",
+                          title: "Por Favor Rellene El Campo De Observación",
+                        });
+                        console.log("Toast");
+                      }
                       await RegisterLesson(lesson.id);
 
                       const data = await GetLessons();

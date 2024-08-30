@@ -61,6 +61,8 @@ export function FormLesson({ rol }) {
       const lessons = FormattedLessons(data, rol);
 
       SetLessons(lessons);
+      const formDataObject = Object.fromEntries(form_data.entries());
+      console.log(formDataObject);
     }
     if (popupFormLessonState === "RESCHEDULE") {
       const new_date = {
@@ -118,9 +120,10 @@ export function FormLesson({ rol }) {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="teams-link">Teams Link</Label>
+                  <Label htmlFor="url_teams">Teams Link</Label>
                   <Input
-                    id="teams-link"
+                    name="url_teams"
+                    id="url_teams"
                     type="url"
                     placeholder="Enter Teams link"
                     defaultValue={
@@ -139,30 +142,31 @@ export function FormLesson({ rol }) {
                 }`}
               >
                 <div className="grid gap-2">
-                  <Label htmlFor="start-date">Start Date</Label>
+                  <Label htmlFor="start_date">Start Date</Label>
                   <Input
-                    id="start-date"
-                    name="start-date"
+                    id="start_date"
+                    name="start_date"
                     type="datetime-local"
                     defaultValue={
                       popupFormLessonState !== "CREATE"
                         ? formattedDateForInput(selected_lesson?.start)
                         : ""
                     }
-                    required={popupFormLessonState !== "CREATE"}
+                    required
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="end-date">End Date</Label>
+                  <Label htmlFor="end_date">End Date</Label>
                   <Input
-                    id="end-date"
-                    name="end-date"
+                    id="end_date"
+                    name="end_date"
                     type="datetime-local"
                     defaultValue={
                       popupFormLessonState !== "CREATE"
                         ? formattedDateForInput(selected_lesson?.end)
                         : ""
                     }
+                    required
                   />
                 </div>
               </div>
@@ -171,7 +175,11 @@ export function FormLesson({ rol }) {
               <div className="grid gap-2">
                 <Label htmlFor="participants">Participants</Label>
                 <div className="flex items-center gap-2">
-                  <Checkbox id="group-class" />
+                  <Checkbox
+                    name="is_group"
+                    id="group-class"
+                    checked={selected_lesson?.is_group}
+                  />
                   <Label htmlFor="group-class">Group Class</Label>
                 </div>
                 <Select id="participants">
@@ -184,6 +192,21 @@ export function FormLesson({ rol }) {
                     <SelectItem value="participant3">Participant 3</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+            )}
+            {rol === "teacher" && (
+              <div className={`grid gap-2`}>
+                <Label htmlFor="teacher_observations">Observation Class</Label>
+                <Textarea
+                  id="teacher_observations"
+                  name="teacher_observations"
+                  placeholder="Enter Observation Class"
+                  defaultValue={
+                    popupFormLessonState !== "CREATE"
+                      ? selected_lesson?.teacher_observations
+                      : ""
+                  }
+                />
               </div>
             )}
 

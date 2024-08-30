@@ -2,15 +2,12 @@
 
 import { supabase } from "@/utils/supabase";
 
-const formattedLessonForBD = (lesson) => {
+const formattedLessonForBD = (form_dada) => {
   // TODO Mirar como adtener los de mas datos del formulario
-  const event_formated = {
-    topic: lesson.get("topic"),
-    start_date: lesson.get("start-date"),
-    end_date: lesson.get("end-date"),
-  };
-
-  return event_formated;
+  const lesson_formated = Object.fromEntries(form_dada.entries());
+  lesson_formated.is_group = Boolean(lesson_formated.is_group);
+  console.log("Formated lesson", lesson_formated);
+  return lesson_formated;
 };
 
 export async function CreateNewLesson(form_dada) {
