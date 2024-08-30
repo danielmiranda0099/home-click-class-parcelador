@@ -101,3 +101,16 @@ export async function RescheduleLesson(data_form) {
   }
   console.log("RESCHEDULE Lesson", data);
 }
+
+export async function PayTeacher(id) {
+  const { data, error } = await supabase
+    .from("lesson")
+    .update({ is_teacher_paid: true })
+    .eq("id", id);
+  console.log(data);
+  if (error) {
+    console.log("error database", error);
+    return [];
+  }
+  console.log("Paid Tecaher Lesson", data);
+}

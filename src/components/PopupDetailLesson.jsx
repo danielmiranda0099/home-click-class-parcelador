@@ -13,7 +13,12 @@ import { Separator } from "@/components/ui/separator";
 import { useUiStore } from "@/store/uiStores";
 import { useLessonStore } from "@/store/lessonStore";
 import { useToast } from "@/components/ui/use-toast";
-import { CancelLesson, GetLessons, RegisterLesson } from "@/actions/CrudLesson";
+import {
+  CancelLesson,
+  GetLessons,
+  PayTeacher,
+  RegisterLesson,
+} from "@/actions/CrudLesson";
 import { FormattedLessons } from "@/utils/formattedLessons";
 import { FormLesson } from ".";
 import {
@@ -249,6 +254,20 @@ export function PopupDetailLesson({ rol }) {
                     )}
                   </>
                 )}
+              {rol === "admin" && lesson?.is_registered && (
+                <Button
+                  onClick={async () => {
+                    await PayTeacher(lesson?.id);
+                    const data = await GetLessons();
+                    const lessons = FormattedLessons(data, rol);
+
+                    SetLessons(lessons);
+                    setPopupDetailLesson(false);
+                  }}
+                >
+                  Hacer Pago
+                </Button>
+              )}
               <Button
                 variant="outline"
                 onClick={() => setPopupDetailLesson(false)}
