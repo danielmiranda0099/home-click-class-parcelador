@@ -160,8 +160,8 @@ export function FormattedLessons(original_lesson, rol) {
     return {
       id: lesson.id,
       title: lesson.students || "UNKNOW",
-      start: FormattedDate(lesson.start_date),
-      end: FormattedDate(lesson.start_date, true),
+      start: new Date(FormattedDate(lesson.start_date)),
+      end: new Date(FormattedDate(lesson.start_date, true)),
       background,
       color,
       lesson_status,
