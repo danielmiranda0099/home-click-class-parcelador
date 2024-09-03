@@ -8,18 +8,12 @@ import {
   DialogBody,
   DialogFooter,
   DialogClose,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 import {
   CreateNewLesson,
   GetLessons,
@@ -32,8 +26,9 @@ import { FormattedLessons } from "@/utils/formattedLessons";
 import { formattedDateForInput } from "@/utils/formattedDateForInput";
 import { InputSearch } from ".";
 import { InputPriceLesson } from "./InputPriceLesson";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Switch } from "./ui/switch";
+import { students, teachers } from "@/mockData";
 
 // STATE:
 //   CREATE
@@ -51,26 +46,62 @@ export function FormLesson({ rol }) {
   const SetLessons = useLessonStore((state) => state.SetLessons);
 
   const [teacher, setTeacher] = useState("");
-  const [price_lesson, setPriceLesson] = useState("");
+  const [teacher_payment, setTeacherPayment] = useState("");
+  const [student, setStudent] = useState("");
+  const [student_fee, setStudentFee] = useState("");
 
-  console.log("formato fecha", selected_lesson?.start);
+  useEffect(() => {
+    console.log("UseEffect");
+    if (popupFormLessonState === "EDIT" && selected_lesson) {
+      console.log("UseEffect entre al if");
+      setTeacherPayment(selected_lesson.teacher_payment.toString());
+      setStudentFee(selected_lesson.student_fee.toString());
+
+      setStudent(
+        () =>
+          students.find((item) => item.label === selected_lesson.students).value
+      );
+      setTeacher(
+        () =>
+          teachers.find((item) => item.label === selected_lesson.teacher).value
+      );
+    }
+  }, [popupFormLessonState, selected_lesson]);
 
   const OnSubmit = async (form_data) => {
     if (popupFormLessonState === "CREATE") {
-      console.log("Teacher", teacher);
+      const teacher_payment_string = teacher_payment.replace(/[^0-9]/g, "");
+      const teacher_payment_formated = parseInt(teacher_payment_string, 10);
 
-      const price_string = price_lesson.replace(/[^0-9]/g, "");
+      const student_fee_string = student_fee.replace(/[^0-9]/g, "");
+      const student_fee_formated = parseInt(student_fee_string, 10);
 
-      // Convertir a número
-      const price_formated = parseInt(price_string, 10);
+      form_data.append(
+        "teacher",
+        teachers.find((item) => item.value === teacher).label
+      );
+      form_data.append("teacher_payment", teacher_payment_formated);
 
-      form_data.append("teacher", teacher);
-      form_data.append("price_lesson", price_formated);
+      form_data.append(
+        "students",
+        students.find((item) => item.value === student).label
+      );
+      form_data.append("student_fee", student_fee_formated);
+
+      form_data.forEach((value, key) => console.log(`${key}:  ${value}`));
 
       const new_lesson = await CreateNewLesson(form_data);
       AddNewLesson(new_lesson, "admin");
     }
     if (popupFormLessonState === "EDIT") {
+      form_data.append(
+        "students",
+        students.find((item) => item.value === student).label
+      );
+      form_data.append(
+        "teacher",
+        teachers.find((item) => item.value === teacher).label
+      );
       await UpdateLesson(selected_lesson.id, form_data);
 
       const data = await GetLessons();
@@ -100,6 +131,7 @@ export function FormLesson({ rol }) {
   return (
     <Dialog open={is_open} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[600px]">
+        <DialogDescription></DialogDescription>
         <DialogHeader>
           <DialogTitle>
             {popupFormLessonState === "CREATE"
@@ -120,13 +152,35 @@ export function FormLesson({ rol }) {
                     <div className={`grid grid-cols-2 gap-4`}>
                       <div className="grid gap-2">
                         <Label>Teacher</Label>
-                        <InputSearch value={teacher} setValue={setTeacher} />
+                        <InputSearch
+                          value={teacher}
+                          setValue={setTeacher}
+                          data={teachers}
+                        />
                       </div>
                       <div className="grid gap-2">
-                        <Label>Price</Label>
+                        <Label>Price Teacher</Label>
                         <InputPriceLesson
-                          value={price_lesson}
-                          setValue={setPriceLesson}
+                          value={teacher_payment}
+                          setValue={setTeacherPayment}
+                        />
+                      </div>
+                    </div>
+
+                    <div className={`grid grid-cols-2 gap-4`}>
+                      <div className="grid gap-2">
+                        <Label>Student</Label>
+                        <InputSearch
+                          value={student}
+                          setValue={setStudent}
+                          data={students}
+                        />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label>Price Student</Label>
+                        <InputPriceLesson
+                          value={student_fee}
+                          setValue={setStudentFee}
                         />
                       </div>
                     </div>
@@ -135,7 +189,7 @@ export function FormLesson({ rol }) {
                       <Label>Student Pay</Label>
                       <Switch
                         name="is_student_paid"
-                        defaultValue={
+                        defaultChecked={
                           popupFormLessonState !== "CREATE"
                             ? selected_lesson?.is_student_paid
                             : ""
@@ -144,40 +198,44 @@ export function FormLesson({ rol }) {
                     </div>
                   </>
                 )}
-                <div
-                  className={`grid gap-2 ${
-                    popupFormLessonState === "RESCHEDULE"
-                      ? "pointer-events-none opacity-30"
-                      : ""
-                  }`}
-                >
-                  <Label htmlFor="topic">Class Topic</Label>
-                  <Textarea
-                    id="topic"
-                    name="topic"
-                    placeholder="Enter class topic"
-                    defaultValue={
-                      popupFormLessonState !== "CREATE"
-                        ? selected_lesson.topic
-                        : ""
-                    }
-                    required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="url_teams">Teams Link</Label>
-                  <Input
-                    name="url_teams"
-                    id="url_teams"
-                    type="url"
-                    placeholder="Enter Teams link"
-                    defaultValue={
-                      popupFormLessonState !== "CREATE"
-                        ? selected_lesson?.url_teams
-                        : ""
-                    }
-                  />
-                </div>
+                {rol === "teacher" && (
+                  <>
+                    <div className="grid gap-2">
+                      <Label htmlFor="url_teams">Teams Link</Label>
+                      <Input
+                        name="url_teams"
+                        id="url_teams"
+                        type="url"
+                        placeholder="Enter Teams link"
+                        defaultValue={
+                          popupFormLessonState !== "CREATE"
+                            ? selected_lesson?.url_teams
+                            : ""
+                        }
+                      />
+                    </div>
+                    <div
+                      className={`grid gap-2 ${
+                        popupFormLessonState === "RESCHEDULE"
+                          ? "pointer-events-none opacity-30"
+                          : ""
+                      }`}
+                    >
+                      <Label htmlFor="topic">Class Topic</Label>
+                      <Textarea
+                        id="topic"
+                        name="topic"
+                        placeholder="Enter class topic"
+                        defaultValue={
+                          popupFormLessonState !== "CREATE"
+                            ? selected_lesson.topic
+                            : ""
+                        }
+                        required
+                      />
+                    </div>
+                  </>
+                )}
               </>
             )}
 
@@ -200,37 +258,9 @@ export function FormLesson({ rol }) {
                     required
                   />
                 </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="end_date">End Date</Label>
-                  <Input
-                    id="end_date"
-                    name="end_date"
-                    type="datetime-local"
-                    defaultValue={
-                      popupFormLessonState !== "CREATE"
-                        ? formattedDateForInput(selected_lesson?.end)
-                        : ""
-                    }
-                    required
-                  />
-                </div>
               </div>
             )}
-            {popupFormLessonState !== "RESCHEDULE" && (
-              <div className="grid gap-2">
-                <Label htmlFor="participants">Participants</Label>
-                <Select id="participants">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select participants" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="participant1">Participant 1</SelectItem>
-                    <SelectItem value="participant2">Participant 2</SelectItem>
-                    <SelectItem value="participant3">Participant 3</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
+
             {rol === "teacher" && (
               <div className={`grid gap-2`}>
                 <Label htmlFor="teacher_observations">Observation Class</Label>

@@ -149,6 +149,9 @@ const statusLesson = (lesson, rol) => {
 };
 
 export function FormattedLessons(original_lesson, rol) {
+  if (!original_lesson) {
+    return [];
+  }
   if (original_lesson.length <= 0) {
     return [];
   }
@@ -156,9 +159,9 @@ export function FormattedLessons(original_lesson, rol) {
     const [background, color, lesson_status] = statusLesson(lesson, rol);
     return {
       id: lesson.id,
-      title: lesson.topic,
+      title: lesson.students || "UNKNOW",
       start: FormattedDate(lesson.start_date),
-      end: FormattedDate(lesson.end_date),
+      end: FormattedDate(lesson.start_date, true),
       background,
       color,
       lesson_status,

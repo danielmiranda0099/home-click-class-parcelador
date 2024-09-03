@@ -6,7 +6,8 @@ const formattedLessonForBD = (form_dada) => {
   // TODO Mirar como adtener los de mas datos del formulario
   const lesson_formated = Object.fromEntries(form_dada.entries());
   lesson_formated.is_group = Boolean(lesson_formated.is_group);
-  if (lesson_formated.price_lesson) parseInt(lesson_formated.price_lesson, 10);
+  if (lesson_formated.teacher_payment)
+    parseInt(lesson_formated.teacher_payment, 10);
   console.log("Formated lesson", lesson_formated);
   return lesson_formated;
 };
@@ -87,7 +88,7 @@ export async function ConfirmLesson(data_form) {
   }
   console.log("Update database", data);
 }
-
+//TODO ELIMINAR end_dates
 export async function RescheduleLesson(data_form) {
   const { id, start_date, end_date } = data_form;
   const { data, error } = await supabase

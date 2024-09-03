@@ -1,19 +1,17 @@
 import moment from "moment";
 
-export function FormattedDate(originalDate) {
-  const date = new Date(originalDate);
+export function FormattedDate(originalDate, addHour = false) {
+  // Formatear la fecha en el formato requerido
+  const formatted_date = moment(originalDate).format("YYYY-MM-DD HH:mm");
 
-  // Formatear la fecha a 'YYYY-MM-DD HH:MM'
-  const formatted_date =
-    date.getFullYear() +
-    "-" +
-    String(date.getMonth() + 1).padStart(2, "0") +
-    "-" +
-    String(date.getDate()).padStart(2, "0") +
-    " " +
-    String(date.getHours()).padStart(2, "0") +
-    ":" +
-    String(date.getMinutes()).padStart(2, "0");
+  // Crear un objeto moment a partir de la fecha formateada
+  const date = moment(formatted_date, "YYYY-MM-DD HH:mm");
 
-  return moment(formatted_date).toDate();
+  // Sumar una hora si addHour es true
+  if (addHour) {
+    date.add(1, "hour");
+  }
+
+  // Devolver la nueva fecha en el formato deseado
+  return date.format("YYYY-MM-DD HH:mm");
 }

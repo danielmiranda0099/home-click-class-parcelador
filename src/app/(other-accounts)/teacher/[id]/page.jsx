@@ -4,8 +4,6 @@ export default async function TeacherPage() {
   return (
     <>
       <section className="px-48 py-3 flex flex-row gap-4 justify-around">
-        <CardUpcomingLesson />
-
         <CardOverView />
       </section>
 

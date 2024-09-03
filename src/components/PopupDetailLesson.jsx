@@ -31,17 +31,16 @@ import {
   UsersIcon,
 } from "./icons";
 import { formatCurrency } from "@/utils/formatCurrency";
+import moment from "moment";
 
-const options = {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-};
+const formattedDate = (old_date) => {
+  const format = "YYYY-MM-DD HH:mm"; // Especificar el formato de la cadena
 
-const formattedDate = (date) => {
-  return new Intl.DateTimeFormat("es-ES", options).format(date);
+  // Crear el objeto Moment a partir de la cadena y el formato
+  const date = moment(old_date, format);
+
+  // Formatear la fecha según las opciones deseadas
+  return date.format("LLL");
 };
 
 export function PopupDetailLesson({ rol }) {
@@ -78,9 +77,9 @@ export function PopupDetailLesson({ rol }) {
                   End: {formattedDate(lesson.end)}
                 </p>
               </div>
-              {rol !== "student" && lesson?.price_lesson && (
+              {rol !== "student" && lesson?.teacher_payment && (
                 <h2 className="text-2xl font-medium">
-                  {formatCurrency(lesson?.price_lesson.toString())}
+                  {formatCurrency(lesson?.teacher_payment.toString())}
                 </h2>
               )}
             </div>
@@ -116,9 +115,7 @@ export function PopupDetailLesson({ rol }) {
               <UsersIcon className="h-8 w-8 text-primary" />
               <div>
                 <p className="font-medium">Participants</p>
-                <p className="text-muted-foreground">
-                  John Doe, Jane Smith, Bob Johnson
-                </p>
+                <p className="text-muted-foreground">{lesson?.students}</p>
               </div>
             </div>
             <Separator />

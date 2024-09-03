@@ -10,8 +10,6 @@ export default function StudentsPage() {
     <>
       <FormConfirmClass />
       <section className="px-48 py-3 flex flex-row gap-4 justify-around">
-        <CardUpcomingLesson rol="student" />
-
         <CardOverView />
       </section>
 
