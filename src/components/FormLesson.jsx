@@ -114,8 +114,7 @@ export function FormLesson({ rol }) {
     if (popupFormLessonState === "RESCHEDULE") {
       const new_date = {
         id: selected_lesson?.id,
-        start_date: form_data.get("start-date"),
-        end_date: form_data.get("end-date"),
+        start_date: form_data.get("start_date"),
       };
       console.log("RESCHEDULE", new_date);
       await RescheduleLesson(new_date);
