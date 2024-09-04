@@ -129,9 +129,9 @@ export function FormLesson({ rol }) {
 
   return (
     <Dialog open={is_open} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[700px] pt-0">
         <DialogDescription></DialogDescription>
-        <DialogHeader>
+        <DialogHeader className="p-0">
           <DialogTitle>
             {popupFormLessonState === "CREATE"
               ? "Create New Class"
@@ -150,29 +150,12 @@ export function FormLesson({ rol }) {
                   <>
                     <div className={`grid grid-cols-2 gap-4`}>
                       <div className="grid gap-2">
-                        <Label>Teacher</Label>
-                        <InputSearch
-                          value={teacher}
-                          setValue={setTeacher}
-                          data={teachers}
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        <Label>Price Teacher</Label>
-                        <InputPriceLesson
-                          value={teacher_payment}
-                          setValue={setTeacherPayment}
-                        />
-                      </div>
-                    </div>
-
-                    <div className={`grid grid-cols-2 gap-4`}>
-                      <div className="grid gap-2">
                         <Label>Student</Label>
                         <InputSearch
                           value={student}
                           setValue={setStudent}
                           data={students}
+                          placeholder="Select a student"
                         />
                       </div>
                       <div className="grid gap-2">
@@ -180,6 +163,24 @@ export function FormLesson({ rol }) {
                         <InputPriceLesson
                           value={student_fee}
                           setValue={setStudentFee}
+                        />
+                      </div>
+                    </div>
+                    <div className={`grid grid-cols-2 gap-4`}>
+                      <div className="grid gap-2">
+                        <Label>Teacher</Label>
+                        <InputSearch
+                          value={teacher}
+                          setValue={setTeacher}
+                          data={teachers}
+                          placeholder="Select a teacher"
+                        />
+                      </div>
+                      <div className="grid gap-2">
+                        <Label>Price Teacher</Label>
+                        <InputPriceLesson
+                          value={teacher_payment}
+                          setValue={setTeacherPayment}
                         />
                       </div>
                     </div>

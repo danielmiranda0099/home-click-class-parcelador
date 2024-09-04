@@ -16,7 +16,12 @@ import {
 import { CheckIcon, SearchIcon } from "./icons";
 import { useState } from "react";
 
-export function InputSearch({ value, setValue, data = [] }) {
+export function InputSearch({
+  value,
+  setValue,
+  data = [],
+  placeholder = "Search",
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -30,15 +35,15 @@ export function InputSearch({ value, setValue, data = [] }) {
         >
           {value
             ? data.find((item) => item.value === value)?.label
-            : "Select a teacher..."}
+            : placeholder}
           <SearchIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0">
         <Command>
-          <CommandInput placeholder="Search teacher.." />
+          <CommandInput placeholder="Search" />
           <CommandList>
-            <CommandEmpty>No teacher found.</CommandEmpty>
+            <CommandEmpty>Not found.</CommandEmpty>
             <CommandGroup>
               {data.map((item) => (
                 <CommandItem
