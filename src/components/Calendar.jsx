@@ -67,6 +67,7 @@ export function CalendarUI({ rol }) {
         endAccessor="end"
         view={view}
         views={[Views.MONTH, Views.WEEK, Views.DAY, Views.AGENDA]}
+        popup
         style={{ height: "100vh" }}
         showMultiDayTimes
         defaultView={Views.MONTH}
