@@ -61,7 +61,7 @@ export default function RootLayout({ children }) {
       </header>
       <div className="flex h-screen">
         {/* Sidebar */}
-        <aside className="hidden w-64 bg-white shadow-md lg:block">
+        <aside className="hidden w-48 bg-white shadow-md lg:block">
           <div className="flex h-full flex-col">
             <div className="p-4">
               <ButtonCreateNewClass />
@@ -104,7 +104,7 @@ export default function RootLayout({ children }) {
         {/* Main Content */}
         <div className="flex flex-1 flex-col">
           {/* Page Content */}
-          <main className="flex-1 overflow-y-auto p-6">{children}</main>
+          <main className="flex-1 overflow-y-auto p-2">{children}</main>
         </div>
       </div>
     </>

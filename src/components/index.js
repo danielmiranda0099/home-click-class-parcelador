@@ -6,3 +6,4 @@ export * from "./Calendar";
 export * from "./ButtonCreateNewClass";
 export * from "./FormConfirmClass";
 export * from "./InputSearch";
+export * from "./CardStatusLegendLesson";

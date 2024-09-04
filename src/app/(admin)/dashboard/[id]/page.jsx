@@ -1,11 +1,13 @@
 "use client";
 
-import { CalendarUI } from "@/components";
+import { CalendarUI, CardStatusLegendLesson } from "@/components";
 
 export default function DashboardPage() {
   return (
     <>
-      <h1 className="text-2xl font-semibold">Welcome to the Admin Dashboard</h1>
+      <section className="mb-4">
+        <CardStatusLegendLesson rol="admin" />
+      </section>
 
       <CalendarUI rol="admin" />
     </>
