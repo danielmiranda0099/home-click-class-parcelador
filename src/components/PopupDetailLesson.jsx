@@ -33,14 +33,19 @@ import {
 import { formatCurrency } from "@/utils/formatCurrency";
 import moment from "moment";
 
-const formattedDate = (old_date) => {
-  const format = "YYYY-MM-DD HH:mm"; // Especificar el formato de la cadena
+const formattedDate = (start_date, end_date) => {
+  const startDate = moment(start_date, "YYYY-MM-DD HH:mm");
+  const endDate = moment(end_date, "YYYY-MM-DD HH:mm");
 
-  // Crear el objeto Moment a partir de la cadena y el formato
-  const date = moment(old_date, format);
+  // Formatear la fecha como "September 3"
+  const datePart = startDate.format("MMMM D");
 
-  // Formatear la fecha según las opciones deseadas
-  return date.format("LLL");
+  // Formatear las horas como "4:00p.m" y "5:00p.m"
+  const startTime = startDate.format("h:mmA").toLowerCase();
+  const endTime = endDate.format("h:mmA").toLowerCase();
+
+  // Combinar todo en el formato deseado
+  return `${datePart}, de ${startTime} a ${endTime}`;
 };
 
 export function PopupDetailLesson({ rol }) {
@@ -69,12 +74,8 @@ export function PopupDetailLesson({ rol }) {
             <DialogTitle>Class Details</DialogTitle>
             <div className={`grid grid-cols-2 gap-4`}>
               <div>
-                {/* <p className="text-sm text-muted-foreground">Start: June 1, 2023 - End: June 30, 2023</p> */}
                 <p className="text-sm text-muted-foreground">
-                  Start: {formattedDate(lesson.start)}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  End: {formattedDate(lesson.end)}
+                  {formattedDate(lesson.start, lesson.end)}
                 </p>
               </div>
               {rol !== "student" && lesson?.teacher_payment && (
