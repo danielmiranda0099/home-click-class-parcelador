@@ -19,7 +19,7 @@ export function ButtonCreateNewClass() {
       }}
     >
       <PlusCircleIcon />
-      <span>Create New Lesson</span>
+      <span>New Lesson</span>
     </Button>
   );
 }
