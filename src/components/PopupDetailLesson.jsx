@@ -69,7 +69,7 @@ export function PopupDetailLesson({ rol }) {
     <>
       {rol !== "student" && <FormLesson rol={rol} />}
       <Dialog open={is_open} onOpenChange={setPopupDetailLesson}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="sm:max-w-[700px]">
           <DialogHeader>
             <DialogTitle>Class Details</DialogTitle>
             <div className={`grid grid-cols-2 gap-4`}>
@@ -85,7 +85,7 @@ export function PopupDetailLesson({ rol }) {
               )}
             </div>
           </DialogHeader>
-          <div className="grid gap-6 py-6">
+          <div className="grid gap-3">
             <div className="flex items-start gap-4">
               <CircleCheckIcon className="h-8 w-8 text-primary" />
               <div>
@@ -97,36 +97,38 @@ export function PopupDetailLesson({ rol }) {
               </div>
             </div>
             <Separator />
-            {rol !== "teacher" && (
-              <>
-                <div className="flex items-start gap-4">
-                  <UserIcon className="h-8 w-8 text-primary" />
-                  <div>
-                    <p className="font-medium">Teacher</p>
-                    {/*TODO: hacer funcion para esto */}
-                    <p className="text-muted-foreground">
-                      {lesson && lesson?.teacher}
-                    </p>
-                  </div>
+
+            <div className="grid grid-cols-2">
+              <div className="flex items-start gap-4">
+                <UserIcon className="h-8 w-8 text-primary" />
+                <div>
+                  <p className="font-medium">Profesor</p>
+                  {/*TODO: hacer funcion para esto */}
+                  <p className="text-muted-foreground">
+                    {lesson && lesson?.teacher}
+                  </p>
                 </div>
-                <Separator />
-              </>
-            )}
-            <div className="flex items-start gap-4">
-              <UsersIcon className="h-8 w-8 text-primary" />
-              <div>
-                <p className="font-medium">Participants</p>
-                <p className="text-muted-foreground">{lesson?.students}</p>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <UsersIcon className="h-8 w-8 text-primary" />
+                <div>
+                  <p className="font-medium">Estudiantes</p>
+                  <p className="text-muted-foreground">{lesson?.students}</p>
+                </div>
               </div>
             </div>
+
             <Separator />
-            <div className="flex items-start gap-4">
-              <BookIcon className="h-8 w-8 text-primary" />
-              <div>
-                <p className="font-medium">Topic</p>
-                <p className="text-muted-foreground">{lesson?.topic}</p>
+            {lesson?.topic && (
+              <div className="flex items-start gap-4">
+                <BookIcon className="h-8 w-8 text-primary" />
+                <div>
+                  <p className="font-medium">Topic</p>
+                  <p className="text-muted-foreground">{lesson?.topic}</p>
+                </div>
               </div>
-            </div>
+            )}
             {rol === "admin" && lesson?.is_confirmed && (
               <>
                 <Separator />
