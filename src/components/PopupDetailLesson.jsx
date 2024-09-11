@@ -67,6 +67,7 @@ export function PopupDetailLesson({ rol }) {
   console.log("lesson en modal", lesson);
   return (
     <>
+      {/* TODO: QUITAR Y COLOCAR <RORMLESSON /> EN UN AMAYOR HERARQUIA */}
       {rol !== "student" && <FormLesson rol={rol} />}
       <Dialog open={is_open} onOpenChange={setPopupDetailLesson}>
         <DialogContent className="sm:max-w-[700px]">

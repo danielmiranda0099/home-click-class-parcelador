@@ -27,4 +27,10 @@ export const useUiStore = create((set) => ({
     set(() => ({
       popupFormConfirmClass: is_open,
     })),
+
+  popupFormNewStudent: false,
+  setPopupFormNewStudent: (is_open) =>
+    set(() => ({
+      popupFormNewStudent: is_open,
+    })),
 }));

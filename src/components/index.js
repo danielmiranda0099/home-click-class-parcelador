@@ -7,3 +7,5 @@ export * from "./ButtonCreateNewClass";
 export * from "./FormConfirmClass";
 export * from "./InputSearch";
 export * from "./CardStatusLegendLesson";
+export * from "./ButtonCreateNewStudent";
+export * from "./FormNewStudent";

@@ -15,3 +15,4 @@ export * from "./StickyNoteIcon";
 export * from "./UserIcon";
 export * from "./UsersIcon";
 export * from "./XIcon";
+export * from "./PlusCircleIcon";
