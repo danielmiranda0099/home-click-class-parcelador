@@ -14,10 +14,10 @@ const formattedLessonForBD = (form_dada) => {
 };
 
 export async function CreateNewLesson(form_dada) {
-  const lesson_formated = formattedLessonForBD(form_dada);
+  // const lesson_formated = formattedLessonForBD(form_dada);
   const { data, error } = await supabase
     .from("lesson")
-    .insert([lesson_formated])
+    .insert(form_dada)
     .select();
   if (error) console.error("Error adding item:", error);
 

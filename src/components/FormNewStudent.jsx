@@ -1,4 +1,5 @@
 "use client";
+const moment = require("moment");
 import { useUiStore } from "@/store/uiStores";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { useState } from "react";
@@ -6,20 +7,48 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { InputPriceLesson } from "./InputPriceLesson";
 import { InputSearch } from ".";
 import { teachers } from "@/mockData";
+import { CreateNewLesson } from "@/actions/CrudLesson";
+import { useLessonStore } from "@/store/lessonStore";
 
-const daysOfWeek = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"];
+const DAYS_OF_WEEK = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"];
+
+const DAYS_OF_WEEK_NUMBER = {
+  Do: 0,
+  Lu: 1,
+  Ma: 2,
+  Mi: 3,
+  Ju: 4,
+  Vi: 5,
+  Sa: 6,
+};
+
+function getClassDatesForNextYear(selected_days, times) {
+  // const hour = "10:00"; // Hora de la clase
+  const dates = [];
+  let currentDate = moment();
+  const endDate = moment().add(1, "year"); // Un año desde hoy
+
+  while (currentDate.isSameOrBefore(endDate)) {
+    if (selected_days.includes(currentDate.day())) {
+      // Crear una copia de la fecha actual y agregar la hora
+      const dateWithTime = currentDate
+        .clone()
+        .hour(times[currentDate.day()].split(":")[0])
+        .minute(times[currentDate.day()].split(":")[1]);
+
+      dates.push(dateWithTime.format());
+    }
+    currentDate.add(1, "days"); // Avanzar al siguiente día
+  }
+  // console.log(dates);
+  return dates;
+}
 
 export function FormNewStudent() {
+  const AddNewLesson = useLessonStore((state) => state.AddNewLesson);
   const [currentTab, setCurrentTab] = useState(0);
   const [studentInfo, setStudentInfo] = useState({
     firstName: "",
@@ -57,13 +86,11 @@ export function FormNewStudent() {
       );
       setTimes(newTimes);
     } else {
-      setTimes((prev) => ({ ...prev, [day]: time }));
+      setTimes((prev) => ({ ...prev, [DAYS_OF_WEEK_NUMBER[day]]: time }));
     }
   };
 
-  const isStudentInfoComplete = Object.values(studentInfo).every(
-    (value) => value !== ""
-  );
+  const isStudentInfoComplete = studentInfo.firstName !== "";
 
   const ProgressIndicator = () => (
     <div className="flex justify-center mb-6">
@@ -82,6 +109,35 @@ export function FormNewStudent() {
 
   const is_open = useUiStore((state) => state.popupFormNewStudent);
   const setIsOpen = useUiStore((state) => state.setPopupFormNewStudent);
+
+  const OnCreateNewStudent = async () => {
+    const student_fee_string = student_fee.replace(/[^0-9]/g, "");
+    const student_fee_formated = parseInt(student_fee_string, 10);
+
+    const teacher_payment_string = teacher_payment.replace(/[^0-9]/g, "");
+    const teacher_payment_formated = parseInt(teacher_payment_string, 10);
+
+    const all_date = getClassDatesForNextYear(
+      selectedDays.map((day) => DAYS_OF_WEEK_NUMBER[day]),
+      times
+    );
+    const lesson = {
+      teacher: teacher,
+      teacher_payment: teacher_payment_formated,
+      students: studentInfo.firstName + " " + studentInfo.lastName,
+      student_fee: student_fee_formated,
+    };
+
+    const data = all_date.map((time) => ({
+      ...lesson,
+      start_date: time,
+    }));
+
+    // console.log(data);
+    const new_lesson = await CreateNewLesson(data);
+    AddNewLesson(new_lesson, "admin");
+  };
+
   return (
     <Dialog open={is_open} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[900px] ">
@@ -211,7 +267,7 @@ export function FormNewStudent() {
                 <div className="space-y-4">
                   <Label>Select Days and Times</Label>
                   <div className="grid grid-cols-7 gap-2 ">
-                    {daysOfWeek.map((day) => (
+                    {DAYS_OF_WEEK.map((day) => (
                       <div key={day} className={"flex flex-col items-center"}>
                         <Button
                           variant={
@@ -225,7 +281,7 @@ export function FormNewStudent() {
                         <Input
                           type="time"
                           className={`w-full mt-2 border-gray-500 ${selectedDays.includes(day) && "border-blue-500"}`}
-                          value={times[day] || ""}
+                          value={times[DAYS_OF_WEEK_NUMBER[day]] || ""}
                           onChange={(e) =>
                             handleTimeChange(day, e.target.value)
                           }
@@ -243,18 +299,7 @@ export function FormNewStudent() {
                 <Button onClick={() => setCurrentTab(0)} variant="outline">
                   Back
                 </Button>
-                <Button
-                  onClick={() =>
-                    console.log("Create student", {
-                      studentInfo,
-                      selectedTeacher,
-                      selectedDays,
-                      times,
-                    })
-                  }
-                >
-                  Create Student
-                </Button>
+                <Button onClick={OnCreateNewStudent}>Create Student</Button>
               </div>
             </>
           )}
