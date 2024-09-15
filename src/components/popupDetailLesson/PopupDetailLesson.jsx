@@ -80,22 +80,49 @@ export function PopupDetailLesson({ rol }) {
                   {formattedDate(lesson.start, lesson.end)}
                 </p>
               </div>
-              {rol !== "student" && lesson?.teacher_payment && (
-                <h2 className="text-2xl font-medium">
-                  {formatCurrency(lesson?.teacher_payment.toString())}
-                </h2>
-              )}
             </div>
           </DialogHeader>
           <div className="grid gap-3">
-            <div className="flex items-start gap-4">
-              <CircleCheckIcon className="h-8 w-8 text-primary" />
-              <div>
-                <p className="font-medium">Class Status</p>
-                {/*TODO: hacer funcion para esto */}
-                <p className="text-muted-foreground">
-                  {lesson && lesson?.lesson_status}
-                </p>
+            <div className="grid grid-cols-2">
+              <div className="flex items-start gap-4">
+                <div>
+                  <CircleCheckIcon className="h-8 w-8 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium">Class Status</p>
+                  {/*TODO: hacer funcion para esto */}
+                  <p className="text-muted-foreground">
+                    {lesson && lesson?.lesson_status}
+                  </p>
+                </div>
+              </div>
+              <div className="flex justify-center">
+                <div className="flex flex-col items-end w-[fit-content] pl-2.5">
+                  {rol !== "teacher" && lesson?.student_fee && (
+                    <h2 className="font-medium">
+                      {formatCurrency(lesson?.student_fee.toString())}
+                    </h2>
+                  )}
+                  {rol !== "student" && lesson?.teacher_payment && (
+                    <h2 className="font-medium">
+                      {rol === "admin" && "-"}{" "}
+                      {formatCurrency(lesson?.teacher_payment.toString())}
+                    </h2>
+                  )}
+
+                  {rol === "admin" && lesson?.teacher_payment && (
+                    <>
+                      <Separator />
+                      <h2 className="font-medium">
+                        {formatCurrency(
+                          (
+                            lesson?.student_fee - lesson?.teacher_payment
+                          ).toString()
+                        )}
+                      </h2>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
             <Separator />

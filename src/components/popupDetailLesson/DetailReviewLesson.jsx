@@ -80,6 +80,9 @@ export function DetailReviewLesson({ lesson, rol }) {
 
         {lesson?.issues && (
           <div className="flex items-start gap-4">
+            {rol === "student" && (
+              <FeedbackIcon className="h-8 w-8 text-primary" color="white" />
+            )}
             {/* <BookIcon size="1.5rem" className="text-primary" /> */}
             <div>
               <p className="font-medium">Problemas</p>
@@ -90,7 +93,10 @@ export function DetailReviewLesson({ lesson, rol }) {
 
         {lesson?.other_observations && (
           <div className="flex items-start gap-4">
-            <FeedbackIcon className="h-8 w-8 text-primary" color="white" />
+            {rol !== "student" && (
+              <FeedbackIcon className="h-8 w-8 text-primary" color="white" />
+            )}
+
             {/* <BookIcon size="1.5rem" className="text-primary" /> */}
             <div>
               <p className="font-medium">Others</p>
