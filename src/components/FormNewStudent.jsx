@@ -153,6 +153,14 @@ export function FormNewStudent() {
                 Student Information
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div className="grid gap-2">
+                  <Label>Price Student Per Hour</Label>
+                  <InputPriceLesson
+                    value={student_fee}
+                    setValue={setStudentFee}
+                  />
+                </div>
+                <div></div>
                 <div className="space-y-2">
                   <Label htmlFor="firstName">First Name</Label>
                   <Input
@@ -226,15 +234,7 @@ export function FormNewStudent() {
                 Class Schedule Details
               </h3>
               <div className="space-y-6">
-                <div className={`grid grid-cols-2 gap-4`}>
-                  <div className="grid gap-2">
-                    <Label>Price Student</Label>
-                    <InputPriceLesson
-                      value={student_fee}
-                      setValue={setStudentFee}
-                    />
-                  </div>
-                </div>
+                <div className={`grid grid-cols-2 gap-4`}></div>
                 <div className={`grid grid-cols-2 gap-4`}>
                   <div className="grid gap-2">
                     <Label>Teacher</Label>

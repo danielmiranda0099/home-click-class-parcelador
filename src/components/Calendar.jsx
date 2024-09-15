@@ -9,9 +9,9 @@ import { useCallback, useEffect, useState } from "react";
 import { FormattedLessons } from "@/utils/formattedLessons";
 
 import { useUiStore } from "@/store/uiStores";
-import { PopupDetailLesson } from ".";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { PopupDetailLesson } from "./popupDetailLesson";
 
 const localizer = momentLocalizer(moment);
 

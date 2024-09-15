@@ -1,7 +1,5 @@
 export * from "./CardOverView";
 export * from "./CardUpcomingLesson";
-export * from "./FormLesson";
-export * from "./PopupDetailLesson";
 export * from "./Calendar";
 export * from "./ButtonCreateNewClass";
 export * from "./FormConfirmClass";
@@ -9,3 +7,4 @@ export * from "./InputSearch";
 export * from "./CardStatusLegendLesson";
 export * from "./ButtonCreateNewStudent";
 export * from "./FormNewStudent";
+export * from "./InputPriceLesson";

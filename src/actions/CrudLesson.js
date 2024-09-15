@@ -5,10 +5,10 @@ import { supabase } from "@/utils/supabase";
 const formattedLessonForBD = (form_dada) => {
   // TODO Mirar como adtener los de mas datos del formulario
   const lesson_formated = Object.fromEntries(form_dada.entries());
-  lesson_formated.is_group = Boolean(lesson_formated.is_group);
-  lesson_formated.is_student_paid = Boolean(lesson_formated.is_student_paid);
-  if (lesson_formated.teacher_payment)
-    parseInt(lesson_formated.teacher_payment, 10);
+  if (lesson_formated.is_group)
+    lesson_formated.is_group = Boolean(lesson_formated.is_group);
+  if (lesson_formated.is_student_paid)
+    lesson_formated.is_student_paid = Boolean(lesson_formated.is_student_paid);
   console.log("Formated lesson", lesson_formated);
   return lesson_formated;
 };

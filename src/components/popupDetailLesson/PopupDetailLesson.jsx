@@ -20,7 +20,6 @@ import {
   RegisterLesson,
 } from "@/actions/CrudLesson";
 import { FormattedLessons } from "@/utils/formattedLessons";
-import { FormLesson } from ".";
 import {
   BookIcon,
   CircleCheckIcon,
@@ -29,9 +28,11 @@ import {
   RescheduleIcon,
   UserIcon,
   UsersIcon,
-} from "./icons";
+} from "@/components/icons";
 import { formatCurrency } from "@/utils/formatCurrency";
 import moment from "moment";
+import { FormLesson } from "@/components/formLesson";
+import { DetailReviewLesson } from "./DetailReviewLesson";
 
 const formattedDate = (start_date, end_date) => {
   const startDate = moment(start_date, "YYYY-MM-DD HH:mm");
@@ -120,71 +121,16 @@ export function PopupDetailLesson({ rol }) {
               </div>
             </div>
 
-            <Separator />
-            {lesson?.topic && (
+            <DetailReviewLesson lesson={lesson} rol={rol} />
+
+            {rol === "admin" && lesson?.is_rescheduled && (
               <div className="flex items-start gap-4">
-                <BookIcon className="h-8 w-8 text-primary" />
+                <RescheduleIcon className="h-8 w-8 text-primary" />
                 <div>
-                  <p className="font-medium">Topic</p>
-                  <p className="text-muted-foreground">{lesson?.topic}</p>
+                  <p className="font-medium">Reagendada</p>
                 </div>
               </div>
             )}
-            {rol === "admin" && lesson?.is_confirmed && (
-              <>
-                <Separator />
-                <div className="flex items-start gap-4">
-                  <RatingIcon className="h-8 w-8 text-primary" />
-                  <div>
-                    <p className="font-medium">Rating Class</p>
-                    <p className="text-muted-foreground">
-                      {lesson?.lesson_score}
-                    </p>
-                  </div>
-                </div>
-              </>
-            )}
-            {rol === "admin" && lesson?.is_rescheduled && (
-              <>
-                <Separator />
-                <div className="flex items-start gap-4">
-                  <RescheduleIcon className="h-8 w-8 text-primary" />
-                  <div>
-                    <p className="font-medium">Reagendada</p>
-                  </div>
-                </div>
-              </>
-            )}
-            {rol !== "student" && lesson?.teacher_observations && (
-              <>
-                <Separator />
-                <div className="flex items-start gap-4">
-                  <FeedbackIcon className="h-8 w-8 text-primary" />
-                  <div>
-                    <p className="font-medium">Teacher Observations</p>
-                    <p className="text-muted-foreground">
-                      {lesson?.teacher_observations}
-                    </p>
-                  </div>
-                </div>
-              </>
-            )}
-            {rol === "admin" &&
-              lesson?.is_confirmed &&
-              lesson?.student_observations && (
-                <>
-                  <Separator />
-                  <div className="flex items-start gap-4">
-                    <FeedbackIcon className="h-8 w-8 text-primary" />
-                    <div>
-                      <p className="font-medium">Student Observations</p>
-                      <p className="text-muted-foreground">
-                        {lesson?.student_observations}
-                      </p>
-                    </div>
-                  </div>
-                </>
-              )}
           </div>
           <DialogFooter className="flex justify-start 	items-start">
             <div className="flex gap-2">
