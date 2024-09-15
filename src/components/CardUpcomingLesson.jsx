@@ -8,14 +8,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { FormLesson } from "@/components/FormLesson";
 
 export function CardUpcomingLesson({ rol }) {
   return (
     <Card className="w-[fit-content]">
       <CardHeader className="flex-row justify-between	 items-center	">
         <CardTitle>Upcoming Classes</CardTitle>
-        {/* <FormLesson /> */}
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
