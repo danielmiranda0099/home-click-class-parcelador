@@ -203,10 +203,14 @@ export function FormLesson({ rol }) {
                         />
                       </div>
 
-                      <div className="grid gap-2">
+                      <div
+                        className={`grid gap-2 ${!selected_lesson.is_registered && " opacity-50 cursor-not-allowed"}`}
+                      >
                         <Label>Teacher Pay</Label>
 
                         <Switch
+                          className={` ${!selected_lesson.is_registered && ""}`}
+                          disabled={!selected_lesson.is_registered}
                           name="is_teacher_paid"
                           defaultChecked={
                             popupFormLessonState !== "CREATE"
