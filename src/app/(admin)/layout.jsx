@@ -106,10 +106,10 @@ export default function RootLayout({ children }) {
         </aside>
 
         {/* Main Content */}
-        <div className="flex flex-1 flex-col">
+        <div className="w-full">
           {/* Page Content */}
           <FormNewStudent />
-          <main className="flex-1 overflow-y-auto p-2">{children}</main>
+          <main className="p-2">{children}</main>
         </div>
       </div>
     </>
