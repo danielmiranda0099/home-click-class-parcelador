@@ -1,7 +1,7 @@
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 
-export function FormLessonReview({ status, lesson }) {
+export function FormLessonReview({ status, lesson, rol }) {
   return (
     <>
       {status !== "RESCHEDULE" && (
@@ -16,7 +16,7 @@ export function FormLessonReview({ status, lesson }) {
               className="h-32"
               placeholder="Enter oriented week..."
               defaultValue={status !== "CREATE" ? lesson?.week || "" : ""}
-              required
+              required={rol === "teacher"}
             />
           </div>
           <div className="w-full sm:w-1/5 px-2 mb-4 sm:mb-0">

@@ -98,10 +98,24 @@ export function FormLesson({ rol }) {
       //   "teacher",
       //   teachers.find((item) => item.value === teacher).label
       // );
+      form_data.forEach((value, key) => console.log(key, value));
+      if (rol === "admin") {
+        if (
+          !form_data.get("is_student_paid") &&
+          selected_lesson.is_student_paid
+        ) {
+          form_data.append("is_student_paid", "0");
+        }
+        if (
+          !form_data.get("is_teacher_paid") &&
+          selected_lesson.is_teacher_paid
+        ) {
+          form_data.append("is_teacher_paid", "0");
+        }
+      }
       form_data.append("teacher_payment", teacher_payment_formated);
       form_data.append("student_fee", student_fee_formated);
       await UpdateLesson(selected_lesson.id, form_data);
-      form_data.forEach((value, key) => console.log(key, value));
       const data = await GetLessons();
       const lessons = FormattedLessons(data, rol);
 
@@ -174,16 +188,34 @@ export function FormLesson({ rol }) {
                       </div>
                     </div>
 
-                    <div className="grid gap-2">
-                      <Label>Student Pay</Label>
-                      <Switch
-                        name="is_student_paid"
-                        defaultChecked={
-                          popupFormLessonState !== "CREATE"
-                            ? selected_lesson?.is_student_paid
-                            : ""
-                        }
-                      />
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="grid gap-2">
+                        <Label>Student Pay</Label>
+
+                        <Switch
+                          name="is_student_paid"
+                          defaultChecked={
+                            popupFormLessonState !== "CREATE"
+                              ? selected_lesson?.is_student_paid
+                              : false
+                          }
+                          value={!selected_lesson?.is_student_paid ? "1" : "0"}
+                        />
+                      </div>
+
+                      <div className="grid gap-2">
+                        <Label>Teacher Pay</Label>
+
+                        <Switch
+                          name="is_teacher_paid"
+                          defaultChecked={
+                            popupFormLessonState !== "CREATE"
+                              ? selected_lesson?.is_teacher_paid
+                              : false
+                          }
+                          value={!selected_lesson?.is_student_paid ? "1" : "0"}
+                        />
+                      </div>
                     </div>
                   </>
                 )}
@@ -193,6 +225,7 @@ export function FormLesson({ rol }) {
             <FormLessonReview
               status={popupFormLessonState}
               lesson={selected_lesson}
+              rol={rol}
             />
 
             {popupFormLessonState !== "EDIT" && (

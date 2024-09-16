@@ -8,8 +8,14 @@ const formattedLessonForBD = (form_dada) => {
   if (lesson_formated.is_group)
     lesson_formated.is_group = Boolean(lesson_formated.is_group);
   if (lesson_formated.is_student_paid)
-    lesson_formated.is_student_paid = Boolean(lesson_formated.is_student_paid);
-  console.log("Formated lesson", lesson_formated);
+    lesson_formated.is_student_paid = Boolean(
+      parseInt(lesson_formated.is_student_paid, 10)
+    );
+  if (lesson_formated.is_teacher_paid)
+    lesson_formated.is_teacher_paid = Boolean(
+      parseInt(lesson_formated.is_teacher_paid, 10)
+    );
+  console.log("Formated lesson***", lesson_formated);
   return lesson_formated;
 };
 
