@@ -11,7 +11,6 @@ import { FormattedLessons } from "@/utils/formattedLessons";
 import { useUiStore } from "@/store/uiStores";
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { PopupDetailLesson } from "./popupDetailLesson";
 
 const localizer = momentLocalizer(moment);
 
@@ -23,7 +22,7 @@ export function CalendarUI({ rol }) {
     (state) => state.setPopupDetailLesson
   );
 
-  //TODO esto no tiene sentido
+  //TODO esto no tiene sentido o mejor se pasa al page
   useEffect(() => {
     GetLessons()
       .then((data) => {
@@ -59,7 +58,6 @@ export function CalendarUI({ rol }) {
 
   return (
     <>
-      <PopupDetailLesson rol={rol} />
       <Calendar
         localizer={localizer}
         events={lessons}
