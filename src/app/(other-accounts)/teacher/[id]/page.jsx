@@ -3,8 +3,10 @@ import {
   CardOverView,
   Card,
   CardStatusLegendLesson,
+  Payments,
 } from "@/components";
 import { PopupDetailLesson } from "@/components/popupDetailLesson";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default async function TeacherPage() {
   return (
@@ -16,7 +18,30 @@ export default async function TeacherPage() {
       </section>
 
       <section className="px-10 py-3">
-        <CalendarUI rol="teacher" />
+        <Tabs defaultValue="calendar">
+          <TabsList className="p-4 gap-4">
+            <TabsTrigger
+              className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-lg"
+              value="calendar"
+            >
+              Calendar
+            </TabsTrigger>
+            <TabsTrigger
+              value="payments"
+              className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-lg"
+            >
+              payments
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="calendar">
+            <CalendarUI rol="teacher" />
+          </TabsContent>
+
+          <TabsContent value="payments">
+            <Payments />
+          </TabsContent>
+        </Tabs>
       </section>
     </>
   );

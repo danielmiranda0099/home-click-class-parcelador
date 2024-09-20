@@ -9,3 +9,4 @@ export * from "./ButtonCreateNewStudent";
 export * from "./FormNewStudent";
 export * from "./InputPriceLesson";
 export * from "./TableLessons";
+export * from "./Payments";
