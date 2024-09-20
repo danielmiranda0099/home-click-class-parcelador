@@ -22,7 +22,7 @@ const formattedLessonForBD = (form_dada) => {
 export async function CreateNewLesson(form_dada) {
   // const lesson_formated = formattedLessonForBD(form_dada);
   const { data, error } = await supabase
-    .from("lesson")
+    .from("lessons")
     .insert(form_dada)
     .select();
   if (error) console.error("Error adding item:", error);
@@ -32,7 +32,7 @@ export async function CreateNewLesson(form_dada) {
 }
 
 export async function GetLessons() {
-  const { data, error } = await supabase.from("lesson").select("*");
+  const { data, error } = await supabase.from("lessons").select("*");
   console.log(data);
   if (error) {
     console.log("error database", error);
@@ -45,7 +45,7 @@ export async function GetLessons() {
 export async function UpdateLesson(id, updated_lesson) {
   const formated_lesson = formattedLessonForBD(updated_lesson);
   const { data, error } = await supabase
-    .from("lesson")
+    .from("lessons")
     .update(formated_lesson)
     .eq("id", id);
   console.log(data);
@@ -58,7 +58,7 @@ export async function UpdateLesson(id, updated_lesson) {
 
 export async function CancelLesson(id) {
   const { data, error } = await supabase
-    .from("lesson")
+    .from("lessons")
     .update({ is_canceled: true })
     .eq("id", id);
   console.log(data);
@@ -71,7 +71,7 @@ export async function CancelLesson(id) {
 
 export async function RegisterLesson(id) {
   const { data, error } = await supabase
-    .from("lesson")
+    .from("lessons")
     .update({ is_registered: true })
     .eq("id", id);
   console.log(data);
@@ -85,7 +85,7 @@ export async function RegisterLesson(id) {
 export async function ConfirmLesson(data_form) {
   const { id, lesson_score, student_observations } = data_form;
   const { data, error } = await supabase
-    .from("lesson")
+    .from("lessons")
     .update({ is_confirmed: true, lesson_score, student_observations })
     .eq("id", id);
   console.log(data);
@@ -99,7 +99,7 @@ export async function ConfirmLesson(data_form) {
 export async function RescheduleLesson(data_form) {
   const { id, start_date } = data_form;
   const { data, error } = await supabase
-    .from("lesson")
+    .from("lessons")
     .update({ start_date, is_rescheduled: true })
     .eq("id", id);
   console.log(data);
@@ -112,7 +112,7 @@ export async function RescheduleLesson(data_form) {
 
 export async function PayTeacher(id) {
   const { data, error } = await supabase
-    .from("lesson")
+    .from("lessons")
     .update({ is_teacher_paid: true })
     .eq("id", id);
   console.log(data);
