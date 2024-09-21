@@ -1,61 +1,104 @@
 "use client";
-const moment = require("moment");
+
 import { useUiStore } from "@/store/uiStores";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CreateNewLesson } from "@/actions/CrudLesson";
-import { useLessonStore } from "@/store/lessonStore";
+import { CreateNewStudent, CreateNewTeacher } from "@/actions/CrudUser";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
+const DEFAULT_DATA_USER = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  city: "",
+  country: "",
+  role: "",
+};
 
 export function FormNewUser() {
-  const AddNewLesson = useLessonStore((state) => state.AddNewLesson);
-  const [studentInfo, setStudentInfo] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    city: "",
-    country: "",
-  });
+  const [userInfo, setUserInfo] = useState(DEFAULT_DATA_USER);
 
   const handleStudentInfoChange = (e) => {
-    setStudentInfo({ ...studentInfo, [e.target.id]: e.target.value });
+    setUserInfo({ ...userInfo, [e.target.id]: e.target.value });
+  };
+
+  const handleRoleChange = (value) => {
+    setUserInfo({ ...userInfo, role: value });
   };
 
   const is_open = useUiStore((state) => state.popupFormNewUser);
   const setIsOpen = useUiStore((state) => state.setPopupFormNewUser);
 
-  const OnCreateNewStudent = async () => {
-    // const lesson = {
-    //   teacher: teacher,
-    //   teacher_payment: teacher_payment_formated,
-    //   students: studentInfo.firstName + " " + studentInfo.lastName,
-    //   student_fee: student_fee_formated,
-    // };
-    // const data = all_date.map((time) => ({
-    //   ...lesson,
-    //   start_date: time,
-    // }));
-    // // console.log(data);
-    // const new_lesson = await CreateNewLesson(data);
-    // AddNewLesson(new_lesson, "admin");
+  const OnCreateNewUser = async () => {
+    if (userInfo.role.length <= 0) return;
+
+    const user_formated = {
+      first_name: userInfo.firstName,
+      last_name: userInfo.lastName,
+      email: userInfo.email,
+      phone_number: userInfo.phone,
+      city: userInfo.city,
+      country: userInfo.country,
+    };
+
+    if (userInfo.role === "student") await CreateNewStudent(user_formated);
+
+    if (userInfo.role === "teacher") await CreateNewTeacher(user_formated);
   };
 
   return (
     <Dialog open={is_open} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[900px] ">
-        <DialogHeader className="">
+      <DialogContent className="sm:max-w-[900px]">
+        <DialogHeader>
           <DialogTitle>New User</DialogTitle>
         </DialogHeader>
         <div className="p-0 px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+            <RadioGroup
+              className="flex space-x-4"
+              value={userInfo.role}
+              onValueChange={handleRoleChange}
+            >
+              <div className="flex items-center">
+                <RadioGroupItem value="student" id="r1" className="sr-only" />
+                <Label
+                  htmlFor="r1"
+                  className={`flex items-center justify-center px-3 py-2 text-sm border rounded-md cursor-pointer 
+                    ${userInfo.role === "student" && "bg-blue-400 text-white"}`}
+                >
+                  Student
+                </Label>
+              </div>
+              <div className="flex items-center">
+                <RadioGroupItem
+                  value="teacher"
+                  id="r2"
+                  className="sr-only peer"
+                />
+                <Label
+                  htmlFor="r2"
+                  className={`flex items-center justify-center px-3 py-2 text-sm border rounded-md cursor-pointer 
+                    ${userInfo.role === "teacher" && "bg-blue-400 text-white"}`}
+                >
+                  Teacher
+                </Label>
+              </div>
+            </RadioGroup>
+            <div></div>
             <div className="space-y-2">
               <Label htmlFor="firstName">First Name</Label>
               <Input
                 id="firstName"
-                value={studentInfo.firstName}
+                value={userInfo.firstName}
                 onChange={handleStudentInfoChange}
                 required
               />
@@ -64,7 +107,7 @@ export function FormNewUser() {
               <Label htmlFor="lastName">Last Name</Label>
               <Input
                 id="lastName"
-                value={studentInfo.lastName}
+                value={userInfo.lastName}
                 onChange={handleStudentInfoChange}
                 required
               />
@@ -74,7 +117,7 @@ export function FormNewUser() {
               <Input
                 id="email"
                 type="email"
-                value={studentInfo.email}
+                value={userInfo.email}
                 onChange={handleStudentInfoChange}
                 required
               />
@@ -84,7 +127,7 @@ export function FormNewUser() {
               <Input
                 id="phone"
                 type="tel"
-                value={studentInfo.phone}
+                value={userInfo.phone}
                 onChange={handleStudentInfoChange}
                 required
               />
@@ -93,7 +136,7 @@ export function FormNewUser() {
               <Label htmlFor="city">City</Label>
               <Input
                 id="city"
-                value={studentInfo.city}
+                value={userInfo.city}
                 onChange={handleStudentInfoChange}
                 required
               />
@@ -102,14 +145,14 @@ export function FormNewUser() {
               <Label htmlFor="country">Country</Label>
               <Input
                 id="country"
-                value={studentInfo.country}
+                value={userInfo.country}
                 onChange={handleStudentInfoChange}
                 required
               />
             </div>
           </div>
           <div className="flex justify-end">
-            <Button className="">Create New User</Button>
+            <Button onClick={OnCreateNewUser}>Create New User</Button>
           </div>
         </div>
       </DialogContent>
