@@ -70,204 +70,209 @@ export function PopupDetailLesson({ rol }) {
     <>
       {/* TODO: QUITAR Y COLOCAR <RORMLESSON /> EN UN AMAYOR HERARQUIA */}
       {rol !== "student" && <FormLesson rol={rol} />}
-      <Dialog open={is_open} onOpenChange={setPopupDetailLesson}>
-        <DialogContent className="sm:max-w-[700px]">
-          <DialogHeader>
-            <DialogTitle>Class Details</DialogTitle>
-            <div className={`grid grid-cols-2 gap-4`}>
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  {formattedDate(lesson.start, lesson.end)}
-                </p>
-              </div>
-            </div>
-          </DialogHeader>
-          <div className="grid gap-3">
-            <div className="grid grid-cols-2">
-              <div className="flex items-start gap-4">
+      {lesson && (
+        <Dialog open={is_open} onOpenChange={setPopupDetailLesson}>
+          <DialogContent className="sm:max-w-[700px]">
+            <DialogHeader>
+              <DialogTitle>Class Details</DialogTitle>
+              <div className={`grid grid-cols-2 gap-4`}>
                 <div>
-                  <CircleCheckIcon className="h-8 w-8 text-primary" />
-                </div>
-                <div>
-                  <p className="font-medium">Class Status</p>
-                  {/*TODO: hacer funcion para esto */}
-                  <p className="text-muted-foreground">
-                    {lesson && lesson?.lesson_status}
+                  <p className="text-sm text-muted-foreground">
+                    {formattedDate(lesson.start, lesson.end)}
                   </p>
                 </div>
               </div>
-              <div className="flex justify-center">
-                <div className="flex flex-col items-end w-[fit-content] pl-2.5">
-                  {rol !== "teacher" && lesson?.student_fee && (
-                    <h2 className="font-medium">
-                      {formatCurrency(lesson?.student_fee.toString())}
-                    </h2>
-                  )}
-                  {rol !== "student" && lesson?.teacher_payment && (
-                    <h2 className="font-medium">
-                      {rol === "admin" && "-"}{" "}
-                      {formatCurrency(lesson?.teacher_payment.toString())}
-                    </h2>
-                  )}
-
-                  {rol === "admin" && lesson?.teacher_payment && (
-                    <>
-                      <Separator />
+            </DialogHeader>
+            <div className="grid gap-3">
+              <div className="grid grid-cols-2">
+                <div className="flex items-start gap-4">
+                  <div>
+                    <CircleCheckIcon className="h-8 w-8 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium">Class Status</p>
+                    {/*TODO: hacer funcion para esto */}
+                    <p className="text-muted-foreground">
+                      {/*TODO: corregir _ */}
+                      {lesson && lesson?.lesson_status}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex justify-center">
+                  <div className="flex flex-col items-end w-[fit-content] pl-2.5">
+                    {rol !== "teacher" && lesson?.student_fee && (
                       <h2 className="font-medium">
-                        {formatCurrency(
-                          (
-                            lesson?.student_fee - lesson?.teacher_payment
-                          ).toString()
-                        )}
+                        {formatCurrency(lesson?.student_fee.toString())}
                       </h2>
-                    </>
+                    )}
+                    {rol !== "student" && lesson?.teacher_payment && (
+                      <h2 className="font-medium">
+                        {rol === "admin" && "-"}{" "}
+                        {formatCurrency(lesson?.teacher_payment.toString())}
+                      </h2>
+                    )}
+
+                    {rol === "admin" && lesson?.teacher_payment && (
+                      <>
+                        <Separator />
+                        <h2 className="font-medium">
+                          {formatCurrency(
+                            (
+                              lesson?.student_fee - lesson?.teacher_payment
+                            ).toString()
+                          )}
+                        </h2>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <Separator />
+
+              <div className="grid grid-cols-2">
+                <div className="flex items-start gap-4">
+                  <UserIcon className="h-8 w-8 text-primary" />
+                  <div>
+                    <p className="font-medium">Profesor</p>
+                    {/*TODO: hacer funcion para esto */}
+                    <p className="text-muted-foreground">
+                      {lesson && lesson?.teacher.firstName}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <UsersIcon className="h-8 w-8 text-primary" />
+                  <div>
+                    <p className="font-medium">Estudiantes</p>
+                    <p className="text-muted-foreground">
+                      {lesson?.student.firstName + lesson?.student.lastName}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <DetailReviewLesson lesson={lesson} rol={rol} />
+
+              {rol === "admin" && lesson?.isRescheduled && (
+                <div className="flex items-start gap-4">
+                  <RescheduleIcon className="h-8 w-8 text-primary" />
+                  <div>
+                    <p className="font-medium">Reagendada</p>
+                  </div>
+                </div>
+              )}
+            </div>
+            <DialogFooter className="flex justify-start 	items-start">
+              <div className="flex gap-2">
+                {/* TODO: Refact todo este mierdero */}
+                {rol === "student" && !lesson?.isConfirmed && (
+                  <Button
+                    onClick={async () => {
+                      setPopupDetailLesson(false);
+                      setPopupFormConfirmClass(true);
+                    }}
+                  >
+                    Confirm Class
+                  </Button>
+                )}
+                {rol === "teacher" &&
+                  lesson?.isConfirmed &&
+                  !lesson?.isRegistered &&
+                  !lesson?.isCanceled && (
+                    <Button
+                      onClick={async () => {
+                        if (!lesson?.teacherObservations) {
+                          toast({
+                            variant: "destructive",
+                            title: "Por Favor Rellene El Campo De Observación",
+                          });
+                          console.log("Toast");
+                          setPopupDetailLesson(false);
+                          return;
+                        }
+                        await RegisterLesson(lesson.id);
+
+                        const data = await GetLessons();
+                        const lessons = FormattedLessons(data, rol);
+
+                        SetLessons(lessons);
+
+                        setPopupDetailLesson(false);
+                      }}
+                    >
+                      Register Class
+                    </Button>
                   )}
-                </div>
               </div>
-            </div>
-            <Separator />
+              <div className="flex gap-2">
+                {rol !== "student" && (
+                  <>
+                    {!lesson?.isRegistered && (
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setPopupDetailLesson(false);
+                          setPopupFormLessonState("EDIT");
+                          setPoppupFormLesson(true);
+                        }}
+                      >
+                        Edit
+                      </Button>
+                    )}
+                    {lesson?.isRegistered && rol === "admin" && (
+                      <Button
+                        onClick={() => {
+                          setPopupDetailLesson(false);
+                          setPopupFormLessonState("EDIT");
+                          setPoppupFormLesson(true);
+                        }}
+                      >
+                        Edit
+                      </Button>
+                    )}
 
-            <div className="grid grid-cols-2">
-              <div className="flex items-start gap-4">
-                <UserIcon className="h-8 w-8 text-primary" />
-                <div>
-                  <p className="font-medium">Profesor</p>
-                  {/*TODO: hacer funcion para esto */}
-                  <p className="text-muted-foreground">
-                    {lesson && lesson?.teacher}
-                  </p>
-                </div>
-              </div>
+                    {!lesson?.isConfirmed && (
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setPopupDetailLesson(false);
+                          setPopupFormLessonState("RESCHEDULE");
+                          setPoppupFormLesson(true);
+                        }}
+                      >
+                        Reschedule
+                      </Button>
+                    )}
+                  </>
+                )}
+                {rol === "admin" &&
+                  lesson?.isRegistered &&
+                  !lesson?.isTeacherPaid && (
+                    <Button
+                      onClick={async () => {
+                        await PayTeacher(lesson?.id);
+                        const data = await GetLessons();
+                        const lessons = FormattedLessons(data, rol);
 
-              <div className="flex items-start gap-4">
-                <UsersIcon className="h-8 w-8 text-primary" />
-                <div>
-                  <p className="font-medium">Estudiantes</p>
-                  <p className="text-muted-foreground">{lesson?.students}</p>
-                </div>
-              </div>
-            </div>
-
-            <DetailReviewLesson lesson={lesson} rol={rol} />
-
-            {rol === "admin" && lesson?.is_rescheduled && (
-              <div className="flex items-start gap-4">
-                <RescheduleIcon className="h-8 w-8 text-primary" />
-                <div>
-                  <p className="font-medium">Reagendada</p>
-                </div>
-              </div>
-            )}
-          </div>
-          <DialogFooter className="flex justify-start 	items-start">
-            <div className="flex gap-2">
-              {/* TODO: Refact todo este mierdero */}
-              {rol === "student" && !lesson?.is_confirmed && (
+                        SetLessons(lessons);
+                        setPopupDetailLesson(false);
+                      }}
+                    >
+                      Hacer Pago
+                    </Button>
+                  )}
                 <Button
-                  onClick={async () => {
-                    setPopupDetailLesson(false);
-                    setPopupFormConfirmClass(true);
-                  }}
+                  variant="outline"
+                  onClick={() => setPopupDetailLesson(false)}
                 >
-                  Confirm Class
+                  Exit
                 </Button>
-              )}
-              {rol === "teacher" &&
-                lesson?.is_confirmed &&
-                !lesson?.is_registered &&
-                !lesson?.is_canceled && (
-                  <Button
-                    onClick={async () => {
-                      if (!lesson?.teacher_observations) {
-                        toast({
-                          variant: "destructive",
-                          title: "Por Favor Rellene El Campo De Observación",
-                        });
-                        console.log("Toast");
-                        setPopupDetailLesson(false);
-                        return;
-                      }
-                      await RegisterLesson(lesson.id);
-
-                      const data = await GetLessons();
-                      const lessons = FormattedLessons(data, rol);
-
-                      SetLessons(lessons);
-
-                      setPopupDetailLesson(false);
-                    }}
-                  >
-                    Register Class
-                  </Button>
-                )}
-            </div>
-            <div className="flex gap-2">
-              {rol !== "student" && (
-                <>
-                  {!lesson?.is_registered && (
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setPopupDetailLesson(false);
-                        setPopupFormLessonState("EDIT");
-                        setPoppupFormLesson(true);
-                      }}
-                    >
-                      Edit
-                    </Button>
-                  )}
-                  {lesson?.is_registered && rol === "admin" && (
-                    <Button
-                      onClick={() => {
-                        setPopupDetailLesson(false);
-                        setPopupFormLessonState("EDIT");
-                        setPoppupFormLesson(true);
-                      }}
-                    >
-                      Edit
-                    </Button>
-                  )}
-
-                  {!lesson?.is_confirmed && (
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setPopupDetailLesson(false);
-                        setPopupFormLessonState("RESCHEDULE");
-                        setPoppupFormLesson(true);
-                      }}
-                    >
-                      Reschedule
-                    </Button>
-                  )}
-                </>
-              )}
-              {rol === "admin" &&
-                lesson?.is_registered &&
-                !lesson?.is_teacher_paid && (
-                  <Button
-                    onClick={async () => {
-                      await PayTeacher(lesson?.id);
-                      const data = await GetLessons();
-                      const lessons = FormattedLessons(data, rol);
-
-                      SetLessons(lessons);
-                      setPopupDetailLesson(false);
-                    }}
-                  >
-                    Hacer Pago
-                  </Button>
-                )}
-              <Button
-                variant="outline"
-                onClick={() => setPopupDetailLesson(false)}
-              >
-                Exit
-              </Button>
-            </div>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+              </div>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 }

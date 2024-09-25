@@ -6,68 +6,60 @@ const statusLesson = (lesson, rol) => {
     return ["#ff00ff", "white", "Unknown Status"];
   }
 
-  if (lesson.is_canceled) {
+  if (lesson.isCanceled) {
     return ["#ef233c", "white", "Canceled"]; //RED
   }
 
   if (rol === "student") {
-    if (
-      lesson?.is_scheduled &&
-      lesson?.is_confirmed &&
-      !lesson?.is_student_paid
-    ) {
+    if (lesson?.isScheduled && lesson?.isConfirmed && !lesson?.isStudentPaid) {
       return ["#FFF68A", "#8B8000", "Finalizada - Pendiente De Pago"]; //YELLOW
     }
-    if (
-      lesson?.is_scheduled &&
-      lesson?.is_confirmed &&
-      lesson?.is_student_paid
-    ) {
+    if (lesson?.isScheduled && lesson?.isConfirmed && lesson?.isStudentPaid) {
       return ["#98FFB3", "#006622", "Finalizada - Pagada"]; //Green
     }
-    if (lesson?.is_scheduled && lesson?.is_student_paid) {
+    if (lesson?.isScheduled && lesson?.isStudentPaid) {
       return ["#8AE2FF", "#005F7F", "Agendada - Pagada"]; //BLUE
     }
-    if (lesson?.is_scheduled && !lesson?.is_student_paid) {
+    if (lesson?.isScheduled && !lesson?.isStudentPaid) {
       return ["#8AE2FF", "#005F7F", "Agendada - Pendiente De Pago"]; //BLUE
     }
   }
 
   if (rol === "teacher") {
     if (
-      lesson?.is_scheduled &&
-      lesson?.is_confirmed &&
-      lesson?.is_registered &&
-      lesson?.is_teacher_paid
+      lesson?.isScheduled &&
+      lesson?.isConfirmed &&
+      lesson?.isRegistered &&
+      lesson?.isTeacherPaid
     ) {
       return ["#98FFB3", "#006622", "Registrada - Pagada"]; //GREEN
     }
 
     if (
-      lesson?.is_scheduled &&
-      lesson?.is_confirmed &&
-      lesson?.is_registered &&
-      !lesson?.is_teacher_paid
+      lesson?.isScheduled &&
+      lesson?.isConfirmed &&
+      lesson?.isRegistered &&
+      !lesson?.isTeacherPaid
     ) {
       return ["#FFB38A", "#8B4000", "Registrada - Pendiente De Pago"]; //ORANGE
     }
 
-    if (lesson?.is_scheduled && lesson?.is_confirmed) {
+    if (lesson?.isScheduled && lesson?.isConfirmed) {
       return ["#C5A3FF", "#3A0070", "Clase Confirmada"]; //PURPLE
     }
 
-    if (lesson?.is_scheduled) {
+    if (lesson?.isScheduled) {
       return ["#8AE2FF", "#005F7F", "Scheduled"]; //BLUE
     }
   }
 
   if (rol === "admin") {
     if (
-      lesson?.is_scheduled &&
-      lesson?.is_confirmed &&
-      lesson?.is_registered &&
-      !lesson?.is_teacher_paid &&
-      !lesson?.is_student_paid
+      lesson?.isScheduled &&
+      lesson?.isConfirmed &&
+      lesson?.isRegistered &&
+      !lesson?.isTeacherPaid &&
+      !lesson?.isStudentPaid
     ) {
       return [
         "#FFB38A",
@@ -76,11 +68,11 @@ const statusLesson = (lesson, rol) => {
       ]; //ORANGE
     }
     if (
-      lesson?.is_scheduled &&
-      lesson?.is_confirmed &&
-      lesson?.is_registered &&
-      !lesson?.is_teacher_paid &&
-      lesson?.is_student_paid
+      lesson?.isScheduled &&
+      lesson?.isConfirmed &&
+      lesson?.isRegistered &&
+      !lesson?.isTeacherPaid &&
+      lesson?.isStudentPaid
     ) {
       return [
         "#FFB38A",
@@ -89,11 +81,11 @@ const statusLesson = (lesson, rol) => {
       ]; //ORANGE
     }
     if (
-      lesson?.is_scheduled &&
-      lesson?.is_confirmed &&
-      lesson?.is_registered &&
-      lesson?.is_teacher_paid &&
-      !lesson?.is_student_paid
+      lesson?.isScheduled &&
+      lesson?.isConfirmed &&
+      lesson?.isRegistered &&
+      lesson?.isTeacherPaid &&
+      !lesson?.isStudentPaid
     ) {
       return [
         "#FFF68A",
@@ -102,11 +94,11 @@ const statusLesson = (lesson, rol) => {
       ]; //YELLOW
     }
     if (
-      lesson?.is_scheduled &&
-      lesson?.is_confirmed &&
-      lesson?.is_registered &&
-      lesson?.is_teacher_paid &&
-      lesson?.is_student_paid
+      lesson?.isScheduled &&
+      lesson?.isConfirmed &&
+      lesson?.isRegistered &&
+      lesson?.isTeacherPaid &&
+      lesson?.isStudentPaid
     ) {
       return [
         "#98FFB3",
@@ -115,32 +107,24 @@ const statusLesson = (lesson, rol) => {
       ]; //GREEN
     }
 
-    if (
-      lesson?.is_scheduled &&
-      lesson?.is_confirmed &&
-      !lesson?.is_student_paid
-    ) {
+    if (lesson?.isScheduled && lesson?.isConfirmed && !lesson?.isStudentPaid) {
       return [
         "#C5A3FF",
         "#3A0070",
         "Clase Confirmada - Pendiente Pago Estudiante",
       ]; //PURPLE
     }
-    if (
-      lesson?.is_scheduled &&
-      lesson?.is_confirmed &&
-      lesson?.is_student_paid
-    ) {
+    if (lesson?.isScheduled && lesson?.isConfirmed && lesson?.isStudentPaid) {
       return [
         "#C5A3FF",
         "#3A0070",
         "Clase Confirmada - Pago Realizado Por Estudiante",
       ]; //PURPLE
     }
-    if (lesson?.is_scheduled && !lesson?.is_student_paid) {
+    if (lesson?.isScheduled && !lesson?.isStudentPaid) {
       return ["#8AE2FF", "#005F7F", "Agendada - Pendiente Pago Estudiante"]; //BLUE
     }
-    if (lesson?.is_scheduled && lesson?.is_student_paid) {
+    if (lesson?.isScheduled && lesson?.isStudentPaid) {
       return ["#8AE2FF", "#005F7F", "Agendada - Pago Realizado Por Estudiante"]; //BLUE
     }
   }
@@ -159,9 +143,9 @@ export function FormattedLessons(original_lesson, rol) {
     const [background, color, lesson_status] = statusLesson(lesson, rol);
     return {
       id: lesson.id,
-      title: lesson.students || "UNKNOW",
-      start: new Date(FormattedDate(lesson.start_date)),
-      end: new Date(FormattedDate(lesson.start_date, true)),
+      title: lesson.student.firstName + lesson.student.lastName || "UNKNOW",
+      start: new Date(FormattedDate(lesson.startDate)),
+      end: new Date(FormattedDate(lesson.startDate, true)),
       background,
       color,
       lesson_status,

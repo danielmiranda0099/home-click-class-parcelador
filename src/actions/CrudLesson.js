@@ -44,7 +44,7 @@ export async function GetLessons() {
 
     if (!lessons) return [];
     console.log(lessons);
-    return [];
+    return lessons;
   } catch (error) {
     console.error("Error fetching lessons:", error);
     return [];

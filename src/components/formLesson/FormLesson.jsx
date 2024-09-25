@@ -53,8 +53,8 @@ export function FormLesson({ rol }) {
     console.log("UseEffect");
     if (popupFormLessonState === "EDIT" && selected_lesson) {
       console.log(selected_lesson.students);
-      setTeacherPayment(selected_lesson.teacher_payment.toString());
-      setStudentFee(selected_lesson.student_fee.toString());
+      setTeacherPayment(selected_lesson.teacherPayment.toString());
+      setStudentFee(selected_lesson.studentFee.toString());
 
       setStudent(
         () =>
@@ -102,13 +102,13 @@ export function FormLesson({ rol }) {
       if (rol === "admin") {
         if (
           !form_data.get("is_student_paid") &&
-          selected_lesson.is_student_paid
+          selected_lesson.isStudentPaid
         ) {
           form_data.append("is_student_paid", "0");
         }
         if (
           !form_data.get("is_teacher_paid") &&
-          selected_lesson.is_teacher_paid
+          selected_lesson.isTeacherPaid
         ) {
           form_data.append("is_teacher_paid", "0");
         }
@@ -140,138 +140,140 @@ export function FormLesson({ rol }) {
   };
 
   return (
-    <Dialog open={is_open} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[700px] pt-0">
-        <DialogDescription></DialogDescription>
-        <DialogHeader className="p-0">
-          <DialogTitle>
-            {popupFormLessonState === "CREATE"
-              ? "Create New Class"
-              : popupFormLessonState === "EDIT"
-                ? "Edit Class"
-                : popupFormLessonState === "RESCHEDULE"
-                  ? "Reschedule Class"
-                  : "UNKNOWN"}
-          </DialogTitle>
-        </DialogHeader>
-        <div>
-          <form action={OnSubmit} className="grid gap-4">
-            {popupFormLessonState !== "RESCHEDULE" && (
-              <>
-                {rol === "admin" && (
-                  <>
-                    <div className={`grid grid-cols-2 gap-4`}>
-                      <div className="grid gap-2">
-                        <Label>Price Student</Label>
-                        <InputPriceLesson
-                          value={student_fee}
-                          setValue={setStudentFee}
-                        />
+    selected_lesson && (
+      <Dialog open={is_open} onOpenChange={setIsOpen}>
+        <DialogContent className="sm:max-w-[700px] pt-0">
+          <DialogDescription></DialogDescription>
+          <DialogHeader className="p-0">
+            <DialogTitle>
+              {popupFormLessonState === "CREATE"
+                ? "Create New Class"
+                : popupFormLessonState === "EDIT"
+                  ? "Edit Class"
+                  : popupFormLessonState === "RESCHEDULE"
+                    ? "Reschedule Class"
+                    : "UNKNOWN"}
+            </DialogTitle>
+          </DialogHeader>
+          <div>
+            <form action={OnSubmit} className="grid gap-4">
+              {popupFormLessonState !== "RESCHEDULE" && (
+                <>
+                  {rol === "admin" && (
+                    <>
+                      <div className={`grid grid-cols-2 gap-4`}>
+                        <div className="grid gap-2">
+                          <Label>Price Student</Label>
+                          <InputPriceLesson
+                            value={student_fee}
+                            setValue={setStudentFee}
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <div className={`grid grid-cols-2 gap-4`}>
-                      <div className="grid gap-2">
-                        <Label>Teacher</Label>
-                        <InputSearch
-                          value={teacher}
-                          setValue={setTeacher}
-                          data={teachers}
-                          placeholder="Select a teacher"
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        <Label>Price Teacher</Label>
-                        <InputPriceLesson
-                          value={teacher_payment}
-                          setValue={setTeacherPayment}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="grid gap-2">
-                        <Label>Student Pay</Label>
-
-                        <Switch
-                          name="is_student_paid"
-                          defaultChecked={
-                            popupFormLessonState !== "CREATE"
-                              ? selected_lesson?.is_student_paid
-                              : false
-                          }
-                          value={!selected_lesson?.is_student_paid ? "1" : "0"}
-                        />
+                      <div className={`grid grid-cols-2 gap-4`}>
+                        <div className="grid gap-2">
+                          <Label>Teacher</Label>
+                          <InputSearch
+                            value={teacher}
+                            setValue={setTeacher}
+                            data={teachers}
+                            placeholder="Select a teacher"
+                          />
+                        </div>
+                        <div className="grid gap-2">
+                          <Label>Price Teacher</Label>
+                          <InputPriceLesson
+                            value={teacher_payment}
+                            setValue={setTeacherPayment}
+                          />
+                        </div>
                       </div>
 
-                      <div
-                        className={`grid gap-2 ${!selected_lesson.is_registered && " opacity-50 cursor-not-allowed"}`}
-                      >
-                        <Label>Teacher Pay</Label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="grid gap-2">
+                          <Label>Student Pay</Label>
 
-                        <Switch
-                          className={` ${!selected_lesson.is_registered && ""}`}
-                          disabled={!selected_lesson.is_registered}
-                          name="is_teacher_paid"
-                          defaultChecked={
-                            popupFormLessonState !== "CREATE"
-                              ? selected_lesson?.is_teacher_paid
-                              : false
-                          }
-                          value={!selected_lesson?.is_student_paid ? "1" : "0"}
-                        />
+                          <Switch
+                            name="is_student_paid"
+                            defaultChecked={
+                              popupFormLessonState !== "CREATE"
+                                ? selected_lesson?.isStudentPaid
+                                : false
+                            }
+                            value={!selected_lesson?.isStudentPaid ? "1" : "0"}
+                          />
+                        </div>
+
+                        <div
+                          className={`grid gap-2 ${!selected_lesson.isRegistered && " opacity-50 cursor-not-allowed"}`}
+                        >
+                          <Label>Teacher Pay</Label>
+
+                          <Switch
+                            className={` ${!selected_lesson.isRegistered && ""}`}
+                            disabled={!selected_lesson.isRegistered}
+                            name="is_teacher_paid"
+                            defaultChecked={
+                              popupFormLessonState !== "CREATE"
+                                ? selected_lesson?.isTeacherPaid
+                                : false
+                            }
+                            value={!selected_lesson?.isStudentPaid ? "1" : "0"}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </>
-                )}
-              </>
-            )}
+                    </>
+                  )}
+                </>
+              )}
 
-            <FormLessonReview
-              status={popupFormLessonState}
-              lesson={selected_lesson}
-              rol={rol}
-            />
+              <FormLessonReview
+                status={popupFormLessonState}
+                lesson={selected_lesson}
+                rol={rol}
+              />
 
-            {popupFormLessonState !== "EDIT" && (
-              <div
-                className={`grid grid-cols-2 gap-4
-                }`}
-              >
-                <div className="grid gap-2">
-                  <Label htmlFor="start_date">Start Date</Label>
-                  <Input
-                    id="start_date"
-                    name="start_date"
-                    type="datetime-local"
-                    defaultValue={
-                      popupFormLessonState !== "CREATE"
-                        ? formattedDateForInput(selected_lesson?.start)
-                        : ""
-                    }
-                    required
-                  />
+              {popupFormLessonState !== "EDIT" && (
+                <div
+                  className={`grid grid-cols-2 gap-4
+                  }`}
+                >
+                  <div className="grid gap-2">
+                    <Label htmlFor="start_date">Start Date</Label>
+                    <Input
+                      id="start_date"
+                      name="start_date"
+                      type="datetime-local"
+                      defaultValue={
+                        popupFormLessonState !== "CREATE"
+                          ? formattedDateForInput(selected_lesson?.start)
+                          : ""
+                      }
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DialogClose>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
 
-              <Button type="submit">
-                {popupFormLessonState === "CREATE"
-                  ? "Create"
-                  : popupFormLessonState === "EDIT"
-                    ? "Edit"
-                    : popupFormLessonState === "RESCHEDULE"
-                      ? "Reschedule"
-                      : "UNKNOWN"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </div>
-      </DialogContent>
-    </Dialog>
+                <Button type="submit">
+                  {popupFormLessonState === "CREATE"
+                    ? "Create"
+                    : popupFormLessonState === "EDIT"
+                      ? "Edit"
+                      : popupFormLessonState === "RESCHEDULE"
+                        ? "Reschedule"
+                        : "UNKNOWN"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </div>
+        </DialogContent>
+      </Dialog>
+    )
   );
 }
