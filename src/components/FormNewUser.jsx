@@ -11,14 +11,15 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CreateNewStudent, CreateNewTeacher } from "@/actions/CrudUser";
+
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { CreateNewUser } from "@/actions/CrudUser";
 
 const DEFAULT_DATA_USER = {
   firstName: "",
   lastName: "",
   email: "",
-  phone: "",
+  phoneNumber: "",
   city: "",
   country: "",
   role: "",
@@ -39,20 +40,11 @@ export function FormNewUser() {
   const setIsOpen = useUiStore((state) => state.setPopupFormNewUser);
 
   const OnCreateNewUser = async () => {
+    //TODO: Verificar que todo este
     if (userInfo.role.length <= 0) return;
 
-    const user_formated = {
-      first_name: userInfo.firstName,
-      last_name: userInfo.lastName,
-      email: userInfo.email,
-      phone_number: userInfo.phone,
-      city: userInfo.city,
-      country: userInfo.country,
-    };
-
-    if (userInfo.role === "student") await CreateNewStudent(user_formated);
-
-    if (userInfo.role === "teacher") await CreateNewTeacher(user_formated);
+    await CreateNewUser(userInfo);
+    setIsOpen(false);
   };
 
   return (
@@ -123,11 +115,11 @@ export function FormNewUser() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label htmlFor="phoneNumber">Phone Number</Label>
               <Input
-                id="phone"
+                id="phoneNumber"
                 type="tel"
-                value={userInfo.phone}
+                value={userInfo.phoneNumber}
                 onChange={handleStudentInfoChange}
                 required
               />

@@ -1,23 +1,15 @@
 "use server";
 
-import { supabase } from "@/utils/supabase";
+import prisma from "@/lib/prisma";
 
-export async function CreateNewStudent(form_dada) {
-  const { data, error } = await supabase
-    .from("students")
-    .insert(form_dada)
-    .select();
-  if (error) console.error("Error adding new student:", error);
-
-  console.log(data);
-}
-
-export async function CreateNewTeacher(form_dada) {
-  const { data, error } = await supabase
-    .from("teachers")
-    .insert(form_dada)
-    .select();
-  if (error) console.error("Error adding new teacher:", error);
-
-  console.log(data);
+export async function CreateNewUser(form_dada) {
+  try {
+    await prisma.user.create({
+      data: {
+        ...form_dada,
+      },
+    });
+  } catch (error) {
+    console.error("Error Creating User:", error);
+  }
 }
