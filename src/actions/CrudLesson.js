@@ -1,5 +1,6 @@
 "use server";
 
+import prisma from "@/lib/prisma";
 import { supabase } from "@/utils/supabase";
 
 const formattedLessonForBD = (form_dada) => {
@@ -32,14 +33,22 @@ export async function CreateNewLesson(form_dada) {
 }
 
 export async function GetLessons() {
-  const { data, error } = await supabase.from("lessons").select("*");
-  console.log(data);
-  if (error) {
-    console.log("error database", error);
+  try {
+    // Obtener todas las lecciones
+    const lessons = await prisma.lesson.findMany({
+      include: {
+        student: true, // Incluir información del estudiante si es necesario
+        teacher: true, // Incluir información del profesor si es necesario
+      },
+    });
+
+    if (!lessons) return [];
+    console.log(lessons);
+    return [];
+  } catch (error) {
+    console.error("Error fetching lessons:", error);
     return [];
   }
-
-  return data;
 }
 
 export async function UpdateLesson(id, updated_lesson) {
