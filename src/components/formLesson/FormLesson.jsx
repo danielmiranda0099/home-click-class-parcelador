@@ -22,7 +22,7 @@ import {
 } from "@/actions/CrudLesson";
 import { useLessonStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
-import { FormattedLessons } from "@/utils/formattedLessons";
+import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { formattedDateForInput } from "@/utils/formattedDateForInput";
 
 import { students, teachers } from "@/mockData";
@@ -34,7 +34,6 @@ import { FormLessonReview } from "./FormLessonReview";
 //   EDIT
 //   RESCHEDULE
 export function FormLesson({ rol }) {
-  const AddNewLesson = useLessonStore((state) => state.AddNewLesson);
   //TODO FORMSTATE EN UN OBJETO POR FAVOR
   const popupFormLessonState = useUiStore(
     (state) => state.popupFormLessonState
@@ -91,7 +90,7 @@ export function FormLesson({ rol }) {
       form_data.forEach((value, key) => console.log(`${key}:  ${value}`));
 
       const new_lesson = await CreateNewLesson(form_data);
-      AddNewLesson(new_lesson, "admin");
+      // AddNewLesson(new_lesson, "admin");
     }
     if (popupFormLessonState === "EDIT") {
       // form_data.append(
@@ -117,7 +116,7 @@ export function FormLesson({ rol }) {
       form_data.append("student_fee", student_fee_formated);
       await UpdateLesson(selected_lesson.id, form_data);
       const data = await GetLessons();
-      const lessons = FormattedLessons(data, rol);
+      const lessons = FormattedLessonsForCalendar(data, rol);
 
       SetLessons(lessons);
       const formDataObject = Object.fromEntries(form_data.entries());
@@ -132,7 +131,7 @@ export function FormLesson({ rol }) {
       await RescheduleLesson(new_date);
 
       const data = await GetLessons();
-      const lessons = FormattedLessons(data, rol);
+      const lessons = FormattedLessonsForCalendar(data, rol);
 
       SetLessons(lessons);
     }

@@ -6,7 +6,7 @@ import { GetLessons } from "@/actions/CrudLesson";
 import { useLessonStore } from "@/store/lessonStore";
 
 import { useCallback, useEffect, useState } from "react";
-import { FormattedLessons } from "@/utils/formattedLessons";
+import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 
 import { useUiStore } from "@/store/uiStores";
 
@@ -26,7 +26,7 @@ export function CalendarUI({ rol }) {
   useEffect(() => {
     GetLessons()
       .then((data) => {
-        const lessons = FormattedLessons(data, rol);
+        const lessons = FormattedLessonsForCalendar(data, rol);
         console.log("lessons", lessons);
         SetLessons(lessons);
         console.log(lessons);

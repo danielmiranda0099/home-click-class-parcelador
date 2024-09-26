@@ -1,17 +1,8 @@
-import { FormattedLessons } from "@/utils/formattedLessons";
+import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { create } from "zustand";
-
+//TODO: AddNewLesson no tiene sentido
 export const useLessonStore = create((set) => ({
   lessons: [],
-  AddNewLesson: (new_lesson, rol) =>
-    set((state) => {
-      const lesson_formated = FormattedLessons(new_lesson, rol);
-      if (lesson_formated.length === 1) {
-        console.log("Adding new lesson:", lesson_formated);
-        return { lessons: [...state.lessons, lesson_formated[0]] };
-      }
-      return {};
-    }),
   SetLessons: (new_lessons) =>
     set(() => ({
       lessons: new_lessons,

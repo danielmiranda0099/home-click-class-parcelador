@@ -19,7 +19,7 @@ import {
   PayTeacher,
   RegisterLesson,
 } from "@/actions/CrudLesson";
-import { FormattedLessons } from "@/utils/formattedLessons";
+import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import {
   BookIcon,
   CircleCheckIcon,
@@ -194,7 +194,7 @@ export function PopupDetailLesson({ rol }) {
                         await RegisterLesson(lesson.id);
 
                         const data = await GetLessons();
-                        const lessons = FormattedLessons(data, rol);
+                        const lessons = FormattedLessonsForCalendar(data, rol);
 
                         SetLessons(lessons);
 
@@ -253,7 +253,7 @@ export function PopupDetailLesson({ rol }) {
                       onClick={async () => {
                         await PayTeacher(lesson?.id);
                         const data = await GetLessons();
-                        const lessons = FormattedLessons(data, rol);
+                        const lessons = FormattedLessonsForCalendar(data, rol);
 
                         SetLessons(lessons);
                         setPopupDetailLesson(false);

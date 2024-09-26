@@ -22,14 +22,19 @@ const formattedLessonForBD = (form_dada) => {
 
 export async function CreateNewLesson(form_dada) {
   // const lesson_formated = formattedLessonForBD(form_dada);
-  const { data, error } = await supabase
-    .from("lessons")
-    .insert(form_dada)
-    .select();
-  if (error) console.error("Error adding item:", error);
+  try {
+    const new_lessons = await prisma.lesson.createManyAndReturn({
+      data: form_dada,
+      include: {
+        student: true,
+        teacher: true,
+      },
+    });
 
-  console.log(data);
-  return data;
+    return new_lessons;
+  } catch (error) {
+    console.error("Error Crating lessons:", error);
+  }
 }
 
 export async function GetLessons() {

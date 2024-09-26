@@ -132,11 +132,8 @@ const statusLesson = (lesson, rol) => {
   return ["#ff00ff", "white", "Unknown Status"];
 };
 
-export function FormattedLessons(original_lesson, rol) {
-  if (!original_lesson) {
-    return [];
-  }
-  if (original_lesson.length <= 0) {
+export function FormattedLessonsForCalendar(original_lesson, rol) {
+  if (!original_lesson || original_lesson.length <= 0) {
     return [];
   }
   return original_lesson.map((lesson) => {

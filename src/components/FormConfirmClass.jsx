@@ -14,7 +14,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "./ui/textarea";
 import { ConfirmLesson, GetLessons } from "@/actions/CrudLesson";
 import { useLessonStore } from "@/store/lessonStore";
-import { FormattedLessons } from "@/utils/formattedLessons";
+import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { StarRating } from "./StartRating";
 import { useState } from "react";
 
@@ -34,7 +34,7 @@ export function FormConfirmClass() {
     await ConfirmLesson(confirm_lesson_data);
 
     const data = await GetLessons();
-    const lessons = FormattedLessons(data, "student");
+    const lessons = FormattedLessonsForCalendar(data, "student");
 
     SetLessons(lessons);
 

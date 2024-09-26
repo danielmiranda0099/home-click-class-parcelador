@@ -13,6 +13,7 @@ import { teachers, students } from "@/mockData";
 import { CreateNewLesson } from "@/actions/CrudLesson";
 import { useLessonStore } from "@/store/lessonStore";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 
 const DAYS_OF_WEEK = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"];
 
@@ -61,32 +62,11 @@ function getClassDatesForNextPeriod(selected_days, times, period, startDate) {
   return dates;
 }
 
-// function getClassDatesForNextYear(selected_days, times) {
-//   // const hour = "10:00"; // Hora de la clase
-//   const dates = [];
-//   let currentDate = moment();
-//   const endDate = moment().add(1, "year"); // Un año desde hoy
-
-//   while (currentDate.isSameOrBefore(endDate)) {
-//     if (selected_days.includes(currentDate.day())) {
-//       // Crear una copia de la fecha actual y agregar la hora
-//       const dateWithTime = currentDate
-//         .clone()
-//         .hour(times[currentDate.day()].split(":")[0])
-//         .minute(times[currentDate.day()].split(":")[1]);
-
-//       dates.push(dateWithTime.format());
-//     }
-//     currentDate.add(1, "days"); // Avanzar al siguiente día
-//   }
-//   // console.log(dates);
-//   return dates;
-// }
-
 export function FormNewLesson() {
   const is_open = useUiStore((state) => state.popupFormNewLesson);
   const setIsOpen = useUiStore((state) => state.setPopupFormNewLesson);
-  const AddNewLesson = useLessonStore((state) => state.AddNewLesson);
+  const lessons = useLessonStore((state) => state.lessons);
+  const setLessons = useLessonStore((state) => state.SetLessons);
   const [selectedDays, setSelectedDays] = useState([]);
   const [sameTimeEachWeek, setSameTimeEachWeek] = useState(false);
   const [times, setTimes] = useState({});
@@ -137,21 +117,28 @@ export function FormNewLesson() {
       start_date
     );
     const lesson = {
-      teacher_id: 1,
-      student_id: 1,
-      teacher_payment: teacher_payment_formated,
-      student_fee: student_fee_formated,
+      studentId: 20,
+      teacherId: 21,
+      teacherPayment: teacher_payment_formated,
+      studentFee: student_fee_formated,
     };
 
     const data = all_date.map((time) => ({
       ...lesson,
-      start_date: time,
+      startDate: time,
     }));
 
-    console.log(data);
-    const new_lesson = await CreateNewLesson(data);
-    //TODO: Teiene sentido enviar "admin2?? si el que crea clases siempre es admin
-    AddNewLesson(new_lesson, "admin");
+    const new_lessons = await CreateNewLesson(data);
+    //TODO: Teiene sentido enviar "admin2?? si el que crea clases siempre es admin ademas el rol
+    //debe de obtenerse por el user
+    const new_lessons_formated = FormattedLessonsForCalendar(
+      new_lessons,
+      "admin"
+    );
+    const all_lessons = [...lessons, ...new_lessons_formated];
+    console.log(all_lessons);
+    setLessons(all_lessons);
+    setIsOpen(false);
   };
 
   return (
