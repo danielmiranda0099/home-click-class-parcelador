@@ -7,6 +7,7 @@ import {
   DialogClose,
   DialogFooter,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -73,6 +74,7 @@ export function PopupDetailLesson({ rol }) {
       {lesson && (
         <Dialog open={is_open} onOpenChange={setPopupDetailLesson}>
           <DialogContent className="sm:max-w-[700px]">
+            <DialogDescription></DialogDescription>
             <DialogHeader>
               <DialogTitle>Class Details</DialogTitle>
               <div className={`grid grid-cols-2 gap-4`}>

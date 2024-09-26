@@ -34,7 +34,7 @@ import { FormLessonReview } from "./FormLessonReview";
 //   EDIT
 //   RESCHEDULE
 export function FormLesson({ rol }) {
-  //TODO FORMSTATE EN UN OBJETO POR FAVOR
+  //TODO: FORMSTATE EN UN OBJETO POR FAVOR
   const popupFormLessonState = useUiStore(
     (state) => state.popupFormLessonState
   );
@@ -49,8 +49,8 @@ export function FormLesson({ rol }) {
   const [student_fee, setStudentFee] = useState("");
 
   useEffect(() => {
-    console.log("UseEffect");
     if (popupFormLessonState === "EDIT" && selected_lesson) {
+      console.log("UseEffect Edit formLesson");
       console.log(selected_lesson.students);
       setTeacherPayment(selected_lesson.teacherPayment.toString());
       setStudentFee(selected_lesson.studentFee.toString());

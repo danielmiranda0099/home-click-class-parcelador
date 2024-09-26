@@ -1,4 +1,3 @@
-import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { create } from "zustand";
 //TODO: AddNewLesson no tiene sentido
 export const useLessonStore = create((set) => ({

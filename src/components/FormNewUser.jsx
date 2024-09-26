@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CreateNewUser } from "@/actions/CrudUser";
+import { useUserStore } from "@/store/userStore";
 
 const DEFAULT_DATA_USER = {
   firstName: "",
@@ -26,6 +27,7 @@ const DEFAULT_DATA_USER = {
 };
 
 export function FormNewUser() {
+  const { addNewUser } = useUserStore();
   const [userInfo, setUserInfo] = useState(DEFAULT_DATA_USER);
 
   const handleStudentInfoChange = (e) => {
@@ -43,7 +45,8 @@ export function FormNewUser() {
     //TODO: Verificar que todo este
     if (userInfo.role.length <= 0) return;
 
-    await CreateNewUser(userInfo);
+    const user = await CreateNewUser(userInfo);
+    addNewUser(user);
     setIsOpen(false);
   };
 

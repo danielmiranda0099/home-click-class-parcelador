@@ -34,7 +34,7 @@ export function InputSearch({
           className=" justify-between"
         >
           {value
-            ? data.find((item) => item.value === value)?.label
+            ? data.find((item) => item.value === value?.value)?.label
             : placeholder}
           <SearchIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -50,7 +50,11 @@ export function InputSearch({
                   key={item.value}
                   value={item.value}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
+                    setValue(
+                      currentValue === value?.value
+                        ? null
+                        : { ...item, value: currentValue }
+                    );
                     setOpen(false);
                   }}
                 >

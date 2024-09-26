@@ -2,18 +2,19 @@
 const moment = require("moment");
 import { useUiStore } from "@/store/uiStores";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { InputPriceLesson } from "./InputPriceLesson";
 import { InputSearch } from ".";
-import { teachers, students } from "@/mockData";
 import { CreateNewLesson } from "@/actions/CrudLesson";
 import { useLessonStore } from "@/store/lessonStore";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
+import { useUserStore } from "@/store/userStore";
+import { formatUserByRole } from "@/utils/formatUsersByRole";
 
 const DAYS_OF_WEEK = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"];
 
@@ -73,12 +74,24 @@ export function FormNewLesson() {
   const [selectedTeacher, setSelectedTeacher] = useState("");
   const [start_date, setStartDate] = useState(moment().format("YYYY-MM-DD"));
 
-  const [teacher, setTeacher] = useState("");
-  const [student, setStudent] = useState("");
+  const [teachers, setTeachers] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [teacher, setTeacher] = useState(null);
+  const [student, setStudent] = useState(null);
   const [teacher_payment, setTeacherPayment] = useState("");
   const [period_of_time, setPeriodOfTime] = useState("3m");
 
   const [student_fee, setStudentFee] = useState("");
+
+  const { users } = useUserStore();
+
+  useEffect(() => {
+    const students_formated = formatUserByRole(users, "student");
+    const teachers_formated = formatUserByRole(users, "teacher");
+
+    setStudents(students_formated);
+    setTeachers(teachers_formated);
+  }, [users]);
 
   const handleDaySelect = (day) => {
     setSelectedDays((prev) =>
@@ -117,8 +130,8 @@ export function FormNewLesson() {
       start_date
     );
     const lesson = {
-      studentId: 23,
-      teacherId: 24,
+      studentId: student?.id,
+      teacherId: teacher?.id,
       teacherPayment: teacher_payment_formated,
       studentFee: student_fee_formated,
     };
