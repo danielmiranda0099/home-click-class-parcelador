@@ -60,7 +60,6 @@ export function TableLessons() {
   const handleStudentPayment = (id) => {};
 
   const handleTeacherPayment = (id) => {};
-
   return (
     <div className="container mx-auto py-10">
       <Table className="border-gray-400 border-2">
@@ -75,23 +74,23 @@ export function TableLessons() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {lessons.map((item, index) => (
+          {lessons?.map((lesson, index) => (
             <TableRow
-              key={item.id}
+              key={lesson.id}
               className={`${index % 2 === 0 && "bg-gray-200"} hover:bg-cyan-50`}
             >
               <TableCell>
                 <div className="flex flex-col space-x-1">
                   {
-                    item.students
+                    lesson.student.firstName
                     //   .slice(0, 2).map((student, index) => (
                     //     <span key={index}>
                     //       {student}
-                    //       {index < 1 && item.students.length > 1 ? "," : ""}
+                    //       {index < 1 && lesson.students.length > 1 ? "," : ""}
                     //     </span>
                     //   ))
                   }
-                  {/* {item.students.length > 2 && (
+                  {/* {lesson.students.length > 2 && (
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
@@ -103,7 +102,7 @@ export function TableLessons() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                              {item.students.slice(2).map((student, index) => (
+                              {lesson.students.slice(2).map((student, index) => (
                                 <DropdownMenuItem key={index}>
                                   {student}
                                 </DropdownMenuItem>
@@ -117,30 +116,30 @@ export function TableLessons() {
                   )} */}
                 </div>
               </TableCell>
-              <TableCell>{item.teacher}</TableCell>
+              <TableCell>{lesson.teacher.firstName}</TableCell>
               <TableCell>status</TableCell>
-              <TableCell>{item.is_group ? "Grupal" : "Individual"}</TableCell>
-              <TableCell>{moment(item.start_date).format("D/M/Y")}</TableCell>
+              <TableCell>{lesson.isGroup ? "Grupal" : "Individual"}</TableCell>
+              <TableCell>{moment(lesson.startDate).format("D/M/Y")}</TableCell>
               <TableCell>
                 <div className="flex items-end gap-4">
                   <div className="flex flex-col items-center gap-1.5">
-                    <Label htmlFor={`student-paid-${item.id}`}>
+                    <Label htmlFor={`student-paid-${lesson.id}`}>
                       Student <br /> Payment
                     </Label>
-                    <Switch id={`student-paid-${item.id}`} />
+                    <Switch id={`student-paid-${lesson.id}`} />
                   </div>
                   <div className="flex flex-col items-center gap-1.5">
-                    <Label htmlFor={`teacher-paid-${item.id}`}>
+                    <Label htmlFor={`teacher-paid-${lesson.id}`}>
                       Teacher <br /> Payment
                     </Label>
-                    <Switch id={`teacher-paid-${item.id}`} />
+                    <Switch id={`teacher-paid-${lesson.id}`} />
                   </div>
 
                   <Button
                     variant="outline"
                     size="sm"
                     className=""
-                    onClick={() => handleClickEdit(item.id)}
+                    onClick={() => handleClickEdit(lesson.id)}
                   >
                     <Pencil className="h-4 w-4 mr-2" />
                     Edit
@@ -150,7 +149,7 @@ export function TableLessons() {
                     size="sm"
                     className=""
                     onClick={() => {
-                      handleClickReschedule(item.id);
+                      handleClickReschedule(lesson.id);
                     }}
                   >
                     <Calendar className="h-4 w-4 mr-2" />
