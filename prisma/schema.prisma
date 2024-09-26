@@ -32,6 +32,7 @@ model User {
   studentLessons Lesson[] @relation("StudentLessons")
 }
 
+// TODO: agregar isGroup
 model Lesson {
   id                  Int      @id @default(autoincrement())
   startDate           DateTime

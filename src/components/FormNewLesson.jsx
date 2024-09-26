@@ -117,8 +117,8 @@ export function FormNewLesson() {
       start_date
     );
     const lesson = {
-      studentId: 20,
-      teacherId: 21,
+      studentId: 23,
+      teacherId: 24,
       teacherPayment: teacher_payment_formated,
       studentFee: student_fee_formated,
     };
