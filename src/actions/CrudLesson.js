@@ -97,18 +97,23 @@ export async function RegisterLesson(id) {
 }
 
 export async function ConfirmLesson(data_form) {
-  const { id, lesson_score, student_observations } = data_form;
-  const { data, error } = await supabase
-    .from("lessons")
-    .update({ is_confirmed: true, lesson_score, student_observations })
-    .eq("id", id);
-  console.log(data);
-  if (error) {
-    console.log("error database", error);
-    return [];
+  try {
+    const { id, lessonScore, studentObservations } = data_form;
+    await prisma.lesson.update({
+      where: {
+        id,
+      },
+      data: {
+        isConfirmed: true,
+        lessonScore,
+        studentObservations,
+      },
+    });
+  } catch (error) {
+    console.log("Error Confirming Lesson", error);
   }
-  console.log("Update database", data);
 }
+
 //TODO ELIMINAR end_dates
 export async function RescheduleLesson(data_form) {
   try {

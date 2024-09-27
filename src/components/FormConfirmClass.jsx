@@ -28,11 +28,12 @@ export function FormConfirmClass() {
   const OnSubmit = async (form_data) => {
     const confirm_lesson_data = {
       id: lesson?.id,
-      lesson_score: rating,
-      student_observations: form_data.get("student_observations"),
+      lessonScore: rating,
+      studentObservations: form_data.get("student_observations"),
     };
     await ConfirmLesson(confirm_lesson_data);
 
+    //TODO: ES NECESARIO LLAMAR A DB O SERIA SOLO MODIFICAR EL ESTADO.
     const data = await GetLessons();
     const lessons = FormattedLessonsForCalendar(data, "student");
 
