@@ -4,6 +4,7 @@ import {
   CalendarUI,
   CardStatusLegendLesson,
   FormReschedule,
+  Payments,
   TableLessons,
 } from "@/components";
 import { PopupDetailLesson } from "@/components/popupDetailLesson";
@@ -32,13 +33,19 @@ export default function DashboardPage() {
             className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-lg"
             value="calendar"
           >
-            Calendar
+            Calendario
           </TabsTrigger>
           <TabsTrigger
             value="table"
             className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-lg"
           >
-            Tabla
+            Lista
+          </TabsTrigger>
+          <TabsTrigger
+            value="payments"
+            className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-lg"
+          >
+            Pagos
           </TabsTrigger>
         </TabsList>
 
@@ -48,6 +55,10 @@ export default function DashboardPage() {
 
         <TabsContent value="table">
           <TableLessons />
+        </TabsContent>
+
+        <TabsContent value="payments">
+          <Payments />
         </TabsContent>
       </Tabs>
     </>

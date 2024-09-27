@@ -36,37 +36,45 @@ export function Payments() {
   return (
     <div className="container mx-auto p-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="space-y-4">
-          <h2 className="text-2xl font-bold mb-4">Date Range</h2>
-          <div className="space-y-2">
-            <Label htmlFor="start-date">Start Date</Label>
-            <Input
-              id="start-date"
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
+        <div>
+          <div className="space-y-4 p-5 rounded-lg border bg-card text-card-foreground shadow-sm">
+            <h2 className="text-2xl font-bold mb-4">Date Range</h2>
+            <div className="space-y-2">
+              <Label htmlFor="start-date">Start Date</Label>
+              <Input
+                id="start-date"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="end-date">End Date</Label>
+              <Input
+                id="end-date"
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </div>
+            <Button onClick={handleSearch}>Search</Button>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="end-date">End Date</Label>
-            <Input
-              id="end-date"
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </div>
-          <Button onClick={handleSearch}>Search</Button>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-4 p-5 rounded-lg border bg-card text-card-foreground shadow-sm">
           <h2 className="text-2xl font-bold mb-4">Payment Data</h2>
           <div className="border rounded-md">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[40%]">Student</TableHead>
-                  <TableHead className="w-[30%]">Date</TableHead>
-                  <TableHead className="w-[30%] text-right">Price</TableHead>
+                  <TableHead className="w-[40%] text-primary font-bold">
+                    Student
+                  </TableHead>
+                  <TableHead className="w-[30%] text-primary font-bold">
+                    Date
+                  </TableHead>
+                  <TableHead className="w-[30%] text-primary text-right font-bold">
+                    Price
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
