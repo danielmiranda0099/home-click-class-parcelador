@@ -6,16 +6,20 @@ import { supabase } from "@/utils/supabase";
 const formattedLessonForBD = (form_dada) => {
   // TODO Mirar como adtener los de mas datos del formulario
   const lesson_formated = Object.fromEntries(form_dada.entries());
-  if (lesson_formated.is_group)
-    lesson_formated.is_group = Boolean(lesson_formated.is_group);
-  if (lesson_formated.is_student_paid)
-    lesson_formated.is_student_paid = Boolean(
-      parseInt(lesson_formated.is_student_paid, 10)
+  if (lesson_formated.isGroup)
+    lesson_formated.isGroup = Boolean(lesson_formated.isGroup);
+  if (lesson_formated.isStudentPaid)
+    lesson_formated.isStudentPaid = Boolean(
+      parseInt(lesson_formated.isStudentPaid, 10)
     );
-  if (lesson_formated.is_teacher_paid)
-    lesson_formated.is_teacher_paid = Boolean(
-      parseInt(lesson_formated.is_teacher_paid, 10)
+  if (lesson_formated.isTeacher_Paid)
+    lesson_formated.isTeacher_Paid = Boolean(
+      parseInt(lesson_formated.isTeacher_Paid, 10)
     );
+  if (lesson_formated.teacherPayment)
+    lesson_formated.teacherPayment = parseFloat(lesson_formated.teacherPayment);
+  if (lesson_formated.studentFee)
+    lesson_formated.studentFee = parseFloat(lesson_formated.studentFee);
   console.log("Formated lesson***", lesson_formated);
   return lesson_formated;
 };
@@ -57,17 +61,19 @@ export async function GetLessons() {
 }
 
 export async function UpdateLesson(id, updated_lesson) {
-  const formated_lesson = formattedLessonForBD(updated_lesson);
-  const { data, error } = await supabase
-    .from("lessons")
-    .update(formated_lesson)
-    .eq("id", id);
-  console.log(data);
-  if (error) {
-    console.log("error database", error);
-    return [];
+  const updated_lesson_formated = formattedLessonForBD(updated_lesson);
+  console.log("updated_lesson", updated_lesson_formated);
+  console.log(typeof updated_lesson_formated);
+  try {
+    await prisma.lesson.update({
+      where: {
+        id,
+      },
+      data: updated_lesson_formated,
+    });
+  } catch (error) {
+    console.log("Error Updating Lesson", error);
   }
-  console.log("Update database", data);
 }
 
 export async function CancelLesson(id) {

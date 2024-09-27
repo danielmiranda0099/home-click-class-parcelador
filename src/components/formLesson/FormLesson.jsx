@@ -113,15 +113,17 @@ export function FormLesson({ rol }) {
           form_data.append("is_teacher_paid", "0");
         }
       }
-      form_data.append("teacher_payment", teacher_payment_formated);
-      form_data.append("student_fee", student_fee_formated);
+      form_data.append("teacherPayment", teacher_payment_formated);
+      form_data.append("studentFee", student_fee_formated);
+      const form_data_object = Object.fromEntries(form_data.entries());
+      console.log(form_data_object);
+
       await UpdateLesson(selected_lesson.id, form_data);
+
       const data = await GetLessons();
       const lessons = FormattedLessonsForCalendar(data, rol);
 
       SetLessons(lessons);
-      const formDataObject = Object.fromEntries(form_data.entries());
-      console.log(formDataObject);
     }
     setIsOpen(false);
   };

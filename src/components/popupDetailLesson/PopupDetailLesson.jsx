@@ -184,9 +184,8 @@ export function PopupDetailLesson({ rol }) {
                         if (!lesson?.teacherObservations) {
                           toast({
                             variant: "destructive",
-                            title: "Por Favor Rellene El Campo De Observación",
+                            title: "Por favor complete las observaciones",
                           });
-                          console.log("Toast");
                           setPopupDetailLesson(false);
                           return;
                         }

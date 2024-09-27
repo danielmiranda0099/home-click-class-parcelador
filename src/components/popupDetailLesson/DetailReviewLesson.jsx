@@ -12,9 +12,9 @@ export function DetailReviewLesson({ lesson, rol }) {
       </div>
 
       <div className="grid grid-cols-2">
-        {rol === "admin" && lesson?.is_confirmed && (
+        {rol === "admin" && lesson?.isConfirmed && (
           <>
-            {lesson?.lesson_score && (
+            {lesson?.lessonScore && (
               <div className="flex items-start gap-4">
                 <FeedbackIcon className="h-8 w-8 text-primary" color="white" />
 
@@ -23,20 +23,20 @@ export function DetailReviewLesson({ lesson, rol }) {
                   <div>
                     <p className="font-medium">Rating Class</p>
                     <p className="text-muted-foreground">
-                      {lesson?.lesson_score}
+                      {lesson?.lessonScore}
                     </p>
                   </div>
                 </div>
               </div>
             )}
 
-            {lesson?.student_observations && (
+            {lesson?.studentObservations && (
               <div className="flex items-start gap-4">
                 {/* <FeedbackIcon size="1.5rem" className="text-primary" /> */}
                 <div>
                   <p className="font-medium">Student Observations</p>
                   <p className="text-muted-foreground">
-                    {lesson?.student_observations}
+                    {lesson?.studentObservations}
                   </p>
                 </div>
               </div>
@@ -65,14 +65,14 @@ export function DetailReviewLesson({ lesson, rol }) {
           </div>
         )}
 
-        {rol !== "student" && lesson?.teacher_observations && (
+        {rol !== "student" && lesson?.teacherObservations && (
           <div className="flex items-start gap-4">
             <FeedbackIcon className="h-8 w-8 text-primary" color="white" />
             {/* <FeedbackIcon size="1.5rem" className="text-primary" /> */}
             <div>
               <p className="font-medium">Teacher Observations</p>
               <p className="text-muted-foreground">
-                {lesson?.teacher_observations}
+                {lesson?.teacherObservations}
               </p>
             </div>
           </div>
@@ -91,7 +91,7 @@ export function DetailReviewLesson({ lesson, rol }) {
           </div>
         )}
 
-        {lesson?.other_observations && (
+        {lesson?.otherObservations && (
           <div className="flex items-start gap-4">
             {rol !== "student" && (
               <FeedbackIcon className="h-8 w-8 text-primary" color="white" />
@@ -101,7 +101,7 @@ export function DetailReviewLesson({ lesson, rol }) {
             <div>
               <p className="font-medium">Others</p>
               <p className="text-muted-foreground">
-                {lesson?.other_observations}
+                {lesson?.otherObservations}
               </p>
             </div>
           </div>

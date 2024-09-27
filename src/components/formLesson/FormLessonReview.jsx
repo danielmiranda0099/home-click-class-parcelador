@@ -36,12 +36,12 @@ export function FormLessonReview({ status, lesson, rol }) {
               Observation
             </Label>
             <Textarea
-              name="teacher_observations"
+              name="teacherObservations"
               id="observation"
               className="h-32"
               placeholder="Enter observation..."
               defaultValue={
-                status !== "CREATE" ? lesson?.teacher_observations || "" : ""
+                status !== "CREATE" ? lesson?.teacherObservations || "" : ""
               }
             />
           </div>
@@ -62,12 +62,12 @@ export function FormLessonReview({ status, lesson, rol }) {
               Other
             </Label>
             <Textarea
-              name="other_observations"
+              name="otherObservations"
               id="other"
               className="h-32"
               placeholder="Enter other information..."
               defaultValue={
-                status !== "CREATE" ? lesson?.other_observations || "" : ""
+                status !== "CREATE" ? lesson?.otherObservations || "" : ""
               }
             />
           </div>
