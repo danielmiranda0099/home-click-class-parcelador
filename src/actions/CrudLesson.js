@@ -62,8 +62,6 @@ export async function GetLessons() {
 
 export async function UpdateLesson(id, updated_lesson) {
   const updated_lesson_formated = formattedLessonForBD(updated_lesson);
-  console.log("updated_lesson", updated_lesson_formated);
-  console.log(typeof updated_lesson_formated);
   try {
     await prisma.lesson.update({
       where: {
@@ -81,7 +79,6 @@ export async function CancelLesson(id) {
     .from("lessons")
     .update({ is_canceled: true })
     .eq("id", id);
-  console.log(data);
   if (error) {
     console.log("error database", error);
     return [];
@@ -94,7 +91,6 @@ export async function RegisterLesson(id) {
     .from("lessons")
     .update({ is_registered: true })
     .eq("id", id);
-  console.log(data);
   if (error) {
     console.log("error database", error);
     return [];
@@ -143,7 +139,6 @@ export async function PayTeacher(id) {
     .from("lessons")
     .update({ is_teacher_paid: true })
     .eq("id", id);
-  console.log(data);
   if (error) {
     console.log("error database", error);
     return [];
