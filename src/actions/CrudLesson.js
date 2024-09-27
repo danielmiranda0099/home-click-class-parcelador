@@ -87,15 +87,18 @@ export async function CancelLesson(id) {
 }
 
 export async function RegisterLesson(id) {
-  const { data, error } = await supabase
-    .from("lessons")
-    .update({ is_registered: true })
-    .eq("id", id);
-  if (error) {
-    console.log("error database", error);
-    return [];
+  try {
+    await prisma.lesson.update({
+      where: {
+        id,
+      },
+      data: {
+        isRegistered: true,
+      },
+    });
+  } catch (error) {
+    console.error("error database", error);
   }
-  console.log("Update database", data);
 }
 
 export async function ConfirmLesson(data_form) {

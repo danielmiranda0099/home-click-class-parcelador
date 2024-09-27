@@ -190,7 +190,7 @@ export function PopupDetailLesson({ rol }) {
                           return;
                         }
                         await RegisterLesson(lesson.id);
-
+                        //TODO: esto de nuevo, con actualizar el estado estara bioen
                         const data = await GetLessons();
                         const lessons = FormattedLessonsForCalendar(data, rol);
 
