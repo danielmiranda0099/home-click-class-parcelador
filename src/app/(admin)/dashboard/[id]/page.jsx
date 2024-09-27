@@ -1,6 +1,11 @@
 "use client";
 //TODO: use client?
-import { CalendarUI, CardStatusLegendLesson, TableLessons } from "@/components";
+import {
+  CalendarUI,
+  CardStatusLegendLesson,
+  FormReschedule,
+  TableLessons,
+} from "@/components";
 import { PopupDetailLesson } from "@/components/popupDetailLesson";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUserStore } from "@/store/userStore";
@@ -16,6 +21,7 @@ export default function DashboardPage() {
   return (
     <>
       <PopupDetailLesson rol="admin" />
+      <FormReschedule rol="admin" />
       <section className="mb-4">
         <CardStatusLegendLesson rol="admin" />
       </section>

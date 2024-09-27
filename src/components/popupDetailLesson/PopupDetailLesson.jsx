@@ -50,20 +50,17 @@ const formattedDate = (start_date, end_date) => {
   return `${datePart}, de ${startTime} a ${endTime}`;
 };
 
+//TODO: Refact Component
 export function PopupDetailLesson({ rol }) {
-  const lesson = useLessonStore((state) => state.selected_lesson);
-  const setPoppupFormLesson = useUiStore((state) => state.setPopupFormLesson);
-  const is_open = useUiStore((state) => state.popupDetailLesson);
-  const setPopupDetailLesson = useUiStore(
-    (state) => state.setPopupDetailLesson
-  );
-  const setPopupFormLessonState = useUiStore(
-    (state) => state.setPopupFormLessonState
-  );
-  const SetLessons = useLessonStore((state) => state.SetLessons);
-  const setPopupFormConfirmClass = useUiStore(
-    (state) => state.setPopupFormConfirmClass
-  );
+  const { selected_lesson: lesson, SetLessons } = useLessonStore();
+  const {
+    setPopupFormLesson,
+    popupDetailLesson: is_open,
+    setPopupDetailLesson,
+    setPopupFormLessonState,
+    setPopupFormConfirmClass,
+    setPopupFormReschedule,
+  } = useUiStore();
   const { toast } = useToast();
 
   console.log("lesson en modal", lesson);
@@ -216,7 +213,7 @@ export function PopupDetailLesson({ rol }) {
                         onClick={() => {
                           setPopupDetailLesson(false);
                           setPopupFormLessonState("EDIT");
-                          setPoppupFormLesson(true);
+                          setPopupFormLesson(true);
                         }}
                       >
                         Edit
@@ -227,7 +224,7 @@ export function PopupDetailLesson({ rol }) {
                         onClick={() => {
                           setPopupDetailLesson(false);
                           setPopupFormLessonState("EDIT");
-                          setPoppupFormLesson(true);
+                          setPopupFormLesson(true);
                         }}
                       >
                         Edit
@@ -239,8 +236,7 @@ export function PopupDetailLesson({ rol }) {
                         variant="outline"
                         onClick={() => {
                           setPopupDetailLesson(false);
-                          setPopupFormLessonState("RESCHEDULE");
-                          setPoppupFormLesson(true);
+                          setPopupFormReschedule(true);
                         }}
                       >
                         Reschedule

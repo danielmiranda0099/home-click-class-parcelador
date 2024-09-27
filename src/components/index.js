@@ -10,3 +10,4 @@ export * from "./InputPriceLesson";
 export * from "./TableLessons";
 export * from "./Payments";
 export * from "./FormNewLesson";
+export * from "./FormReschedule";

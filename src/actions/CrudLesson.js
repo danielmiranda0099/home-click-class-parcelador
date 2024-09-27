@@ -111,17 +111,20 @@ export async function ConfirmLesson(data_form) {
 }
 //TODO ELIMINAR end_dates
 export async function RescheduleLesson(data_form) {
-  const { id, start_date } = data_form;
-  const { data, error } = await supabase
-    .from("lessons")
-    .update({ start_date, is_rescheduled: true })
-    .eq("id", id);
-  console.log(data);
-  if (error) {
-    console.log("error database", error);
-    return [];
+  try {
+    const { id, startDate } = data_form;
+    await prisma.lesson.update({
+      where: {
+        id,
+      },
+      data: {
+        startDate,
+        isRescheduled: true,
+      },
+    });
+  } catch (error) {
+    console.error("Error Reschedule lessons:", error);
   }
-  console.log("RESCHEDULE Lesson", data);
 }
 
 export async function PayTeacher(id) {

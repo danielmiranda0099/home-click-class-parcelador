@@ -29,6 +29,7 @@ import { students, teachers } from "@/mockData";
 import { InputPriceLesson, InputSearch } from "..";
 import { FormLessonReview } from "./FormLessonReview";
 
+//TODO: Refact this component
 // STATE:
 //   CREATE
 //   EDIT
@@ -121,19 +122,6 @@ export function FormLesson({ rol }) {
       SetLessons(lessons);
       const formDataObject = Object.fromEntries(form_data.entries());
       console.log(formDataObject);
-    }
-    if (popupFormLessonState === "RESCHEDULE") {
-      const new_date = {
-        id: selected_lesson?.id,
-        start_date: form_data.get("start_date"),
-      };
-      console.log("RESCHEDULE", new_date);
-      await RescheduleLesson(new_date);
-
-      const data = await GetLessons();
-      const lessons = FormattedLessonsForCalendar(data, rol);
-
-      SetLessons(lessons);
     }
     setIsOpen(false);
   };
