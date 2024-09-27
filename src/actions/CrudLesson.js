@@ -138,13 +138,16 @@ export async function RescheduleLesson(data_form) {
 }
 
 export async function PayTeacher(id) {
-  const { data, error } = await supabase
-    .from("lessons")
-    .update({ is_teacher_paid: true })
-    .eq("id", id);
-  if (error) {
-    console.log("error database", error);
-    return [];
+  try {
+    await prisma.lesson.update({
+      where: {
+        id,
+      },
+      data: {
+        isTeacherPaid: true,
+      },
+    });
+  } catch (error) {
+    console.log("Error Paying To Teacher", error);
   }
-  console.log("Paid Tecaher Lesson", data);
 }

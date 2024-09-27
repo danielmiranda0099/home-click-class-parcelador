@@ -249,6 +249,7 @@ export function PopupDetailLesson({ rol }) {
                     <Button
                       onClick={async () => {
                         await PayTeacher(lesson?.id);
+                        //TODO: De nuevo esto se podria mejorra solo actualizando el estado
                         const data = await GetLessons();
                         const lessons = FormattedLessonsForCalendar(data, rol);
 
