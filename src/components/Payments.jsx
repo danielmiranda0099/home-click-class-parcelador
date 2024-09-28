@@ -12,9 +12,10 @@ import {
 } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
-import { UnpaidLessons } from "@/actions/CrudLesson";
+import { PayTeacher, UnpaidLessons } from "@/actions/CrudLesson";
 import { formatPayments } from "@/utils/formatPayments";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { PaperSearchIcon } from "./icons";
 
 export function Payments() {
   const [start_date, setStartDate] = useState("");
@@ -30,6 +31,7 @@ export function Payments() {
   }, [payments]);
 
   const handleSearch = async () => {
+    if (!user) return;
     // Implement search functionality here
     console.log(
       "Searching for payments between",
@@ -43,13 +45,17 @@ export function Payments() {
       new Date(end_date).toISOString()
     );
     const unpaid_lesson_formated = formatPayments(unpaid_lessons, user);
-    console.log(unpaid_lesson_formated);
+    console.log("unpaid_lesson_formated", unpaid_lesson_formated);
     setPayments(unpaid_lesson_formated);
   };
 
   const handleConfirmPayment = () => {
+    if (!payments || !user) return;
     // Implement payment confirmation here
     console.log("Confirming payment of", total);
+    const unpaid_lesson_ids = payments?.map((lesson) => lesson.id);
+    if (user.role === "teacher") PayTeacher(unpaid_lesson_ids);
+    console.log(unpaid_lesson_ids);
   };
 
   return (
@@ -126,8 +132,9 @@ export function Payments() {
               </Button>
             </>
           ) : (
-            <div>
-              <h1>Sin Resultados.</h1>
+            <div className="flex flex-col justify-center items-center h-full">
+              <PaperSearchIcon size={42} />
+              <h1>No se han encontrado clases por pagar.</h1>
             </div>
           )}
         </div>

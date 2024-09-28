@@ -7,5 +7,6 @@ export function formatPayments(lessons, user) {
     name: user.firstName,
     date: moment(lesson.startDate).format("D/M/YYYY"),
     price: user.role === "teacher" ? lesson.teacherPayment : lesson.studentFee,
+    ...lesson,
   }));
 }

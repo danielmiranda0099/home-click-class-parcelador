@@ -137,11 +137,13 @@ export async function RescheduleLesson(data_form) {
   }
 }
 
-export async function PayTeacher(id) {
+export async function PayTeacher(ids) {
   try {
-    await prisma.lesson.update({
+    await prisma.lesson.updateMany({
       where: {
-        id,
+        id: {
+          in: ids,
+        },
       },
       data: {
         isTeacherPaid: true,
@@ -171,6 +173,7 @@ export async function UnpaidLessons(user_id, start_date, end_date) {
           gte: start_date,
           lte: end_date,
         },
+        isRegistered: true,
         isCanceled: false,
       },
       include: {
