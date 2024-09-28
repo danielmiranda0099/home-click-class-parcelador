@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,26 +11,45 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
+import { useUserStore } from "@/store/userStore";
+import { UnpaidLessons } from "@/actions/CrudLesson";
+import { formatPayments } from "@/utils/formatPayments";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 export function Payments() {
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [payments, setPayments] = useState([
-    { student: "Alice Smith", date: "2023-05-01", price: 100 },
-    { student: "Bob Johnson", date: "2023-05-02", price: 150 },
-    { student: "Charlie Brown", date: "2023-05-03", price: 200 },
-  ]);
+  const [start_date, setStartDate] = useState("");
+  const [end_date, setEndDate] = useState("");
+  const [payments, setPayments] = useState(null);
+  const [total, setTotal] = useState(0);
+  const { user_selected: user } = useUserStore();
 
-  const totalSum = payments.reduce((sum, payment) => sum + payment.price, 0);
+  useEffect(() => {
+    const total = payments?.reduce((sum, payment) => sum + payment.price, 0);
+    console.log();
+    setTotal(total);
+  }, [payments]);
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     // Implement search functionality here
-    console.log("Searching for payments between", startDate, "and", endDate);
+    console.log(
+      "Searching for payments between",
+      new Date(start_date).toISOString(),
+      "and",
+      end_date
+    );
+    const unpaid_lessons = await UnpaidLessons(
+      user?.id,
+      new Date(start_date).toISOString(),
+      new Date(end_date).toISOString()
+    );
+    const unpaid_lesson_formated = formatPayments(unpaid_lessons, user);
+    console.log(unpaid_lesson_formated);
+    setPayments(unpaid_lesson_formated);
   };
 
   const handleConfirmPayment = () => {
     // Implement payment confirmation here
-    console.log("Confirming payment of", totalSum);
+    console.log("Confirming payment of", total);
   };
 
   return (
@@ -44,7 +63,7 @@ export function Payments() {
               <Input
                 id="start-date"
                 type="date"
-                value={startDate}
+                value={start_date}
                 onChange={(e) => setStartDate(e.target.value)}
               />
             </div>
@@ -53,7 +72,7 @@ export function Payments() {
               <Input
                 id="end-date"
                 type="date"
-                value={endDate}
+                value={end_date}
                 onChange={(e) => setEndDate(e.target.value)}
               />
             </div>
@@ -61,46 +80,56 @@ export function Payments() {
           </div>
         </div>
         <div className="space-y-4 p-5 rounded-lg border bg-card text-card-foreground shadow-sm">
-          <h2 className="text-2xl font-bold mb-4">Payment Data</h2>
-          <div className="border rounded-md">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[40%] text-primary font-bold">
-                    Student
-                  </TableHead>
-                  <TableHead className="w-[30%] text-primary font-bold">
-                    Date
-                  </TableHead>
-                  <TableHead className="w-[30%] text-primary text-right font-bold">
-                    Price
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {payments.map((payment, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{payment.student}</TableCell>
-                    <TableCell>{payment.date}</TableCell>
-                    <TableCell className="text-right">
-                      ${payment.price.toFixed(2)}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <div className="px-4 py-2 border-t">
-              <div className="grid grid-cols-10">
-                <div className="col-span-7 font-bold">Total:</div>
-                <div className="col-span-3 text-right font-bold">
-                  ${totalSum.toFixed(2)}
+          <h2 className="text-2xl font-bold mb-4">
+            Payment Data {payments && `(${payments.length})`}
+          </h2>
+          {payments ? (
+            <>
+              <div className="border rounded-md">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[40%] text-primary font-bold">
+                        Nombre
+                      </TableHead>
+                      <TableHead className="w-[30%] text-primary font-bold">
+                        Fecha
+                      </TableHead>
+                      <TableHead className="w-[30%] text-primary text-right font-bold">
+                        Valor
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {payments?.map((payment, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{payment.name}</TableCell>
+                        <TableCell>{payment.date}</TableCell>
+                        <TableCell className="text-right">
+                          {formatCurrency(payment.price)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                <div className="px-4 py-2 border-t">
+                  <div className="grid grid-cols-10">
+                    <div className="col-span-7 font-bold">Total:</div>
+                    <div className="col-span-3 text-right font-bold">
+                      {formatCurrency(total?.toFixed(2))}
+                    </div>
+                  </div>
                 </div>
               </div>
+              <Button onClick={handleConfirmPayment} className="w-full">
+                Confirm Payment
+              </Button>
+            </>
+          ) : (
+            <div>
+              <h1>Sin Resultados.</h1>
             </div>
-          </div>
-          <Button onClick={handleConfirmPayment} className="w-full">
-            Confirm Payment
-          </Button>
+          )}
         </div>
       </div>
     </div>

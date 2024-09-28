@@ -13,4 +13,6 @@ export const useUserStore = create((set) => ({
   },
   addNewUser: (new_user) =>
     set((state) => ({ users: [...state.users, new_user] })),
+  user_selected: null,
+  setuserSelected: (user) => set({ user_selected: user }),
 }));

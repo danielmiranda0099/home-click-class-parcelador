@@ -34,7 +34,7 @@ export function InputSearch({
           className=" justify-between"
         >
           {value
-            ? data.find((item) => item.value === value?.value)?.label
+            ? data?.find((item) => item.value === value?.value)?.label
             : placeholder}
           <SearchIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -45,7 +45,7 @@ export function InputSearch({
           <CommandList>
             <CommandEmpty>Not found.</CommandEmpty>
             <CommandGroup>
-              {data.map((item) => (
+              {data?.map((item) => (
                 <CommandItem
                   key={item.value}
                   value={item.value}

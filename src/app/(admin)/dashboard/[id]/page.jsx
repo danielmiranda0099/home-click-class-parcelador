@@ -1,23 +1,39 @@
 "use client";
-//TODO: use client?
+//TODO: use client? quiero mantenerlo del lado del server
 import {
   CalendarUI,
   CardStatusLegendLesson,
   FormReschedule,
+  InputSearch,
   Payments,
   TableLessons,
 } from "@/components";
 import { PopupDetailLesson } from "@/components/popupDetailLesson";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUserStore } from "@/store/userStore";
-import { useEffect } from "react";
+import { formatUserByRole } from "@/utils/formatUsersByRole";
+import { useEffect, useState } from "react";
 
 export default function DashboardPage() {
-  const { setUsers } = useUserStore();
+  const [users_formated, setUsersFormated] = useState(null);
+  const {
+    users,
+    setUsers,
+    user_selected: user,
+    setuserSelected: setUser,
+  } = useUserStore();
 
   useEffect(() => {
     setUsers();
   }, []);
+
+  useEffect(() => {
+    if (users) {
+      const users_formated = formatUserByRole(users);
+      setUsersFormated(users_formated);
+      console.log("users", users);
+    }
+  }, [users]);
 
   return (
     <>
@@ -25,6 +41,12 @@ export default function DashboardPage() {
       <FormReschedule rol="admin" />
       <section className="mb-4">
         <CardStatusLegendLesson rol="admin" />
+      </section>
+
+      <section className="w-full mb-4 flex flex-col items-center">
+        <div>
+          <InputSearch data={users_formated} value={user} setValue={setUser} />
+        </div>
       </section>
 
       <Tabs defaultValue="calendar">

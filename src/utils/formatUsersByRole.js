@@ -1,10 +1,11 @@
-export function formatUserByRole(users, role) {
+//TODO: Change name function
+export function formatUserByRole(users, role = null) {
   if (!users) return;
   return users
-    .filter((user) => user.role === role)
+    .filter((user) => (role ? user.role === role : true))
     .map((user) => ({
-      id: user.id,
       value: `${user.firstName.toLowerCase()}-${user.lastName.toLowerCase()}`,
       label: `${user.firstName} ${user.lastName}`,
+      ...user,
     }));
 }

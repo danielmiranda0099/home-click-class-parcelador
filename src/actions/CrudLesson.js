@@ -122,13 +122,13 @@ export async function ConfirmLesson(data_form) {
 //TODO ELIMINAR end_dates
 export async function RescheduleLesson(data_form) {
   try {
-    const { id, startDate } = data_form;
+    const { id, start_date } = data_form;
     await prisma.lesson.update({
       where: {
         id,
       },
       data: {
-        startDate,
+        start_date,
         isRescheduled: true,
       },
     });
@@ -148,6 +148,39 @@ export async function PayTeacher(id) {
       },
     });
   } catch (error) {
-    console.log("Error Paying To Teacher", error);
+    console.error("Error Paying To Teacher", error);
+  }
+}
+
+export async function UnpaidLessons(user_id, start_date, end_date) {
+  if (!user_id) return;
+  try {
+    const unpaid_lessons = await prisma.lesson.findMany({
+      where: {
+        OR: [
+          {
+            studentId: user_id,
+            isStudentPaid: false,
+          },
+          {
+            teacherId: user_id,
+            isTeacherPaid: false,
+          },
+        ],
+        startDate: {
+          gte: start_date,
+          lte: end_date,
+        },
+        isCanceled: false,
+      },
+      include: {
+        student: true,
+        teacher: true,
+      },
+    });
+    console.log("unpaid_lessons", unpaid_lessons);
+    return unpaid_lessons;
+  } catch (error) {
+    console.log("Error Getting Unpaid Lessons", error);
   }
 }
