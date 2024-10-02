@@ -60,6 +60,7 @@ export function PopupDetailLesson({ rol }) {
     setPopupFormLessonState,
     setPopupFormConfirmClass,
     setPopupFormReschedule,
+    setPopupFormLessonReport,
   } = useUiStore();
   const { toast } = useToast();
 
@@ -175,49 +176,21 @@ export function PopupDetailLesson({ rol }) {
                     Confirm Class
                   </Button>
                 )}
-                {rol === "teacher" &&
-                  lesson?.isConfirmed &&
-                  !lesson?.isRegistered &&
-                  !lesson?.isCanceled && (
-                    <Button
-                      onClick={async () => {
-                        if (!lesson?.teacherObservations) {
-                          toast({
-                            variant: "destructive",
-                            title: "Por favor complete las observaciones",
-                          });
-                          setPopupDetailLesson(false);
-                          return;
-                        }
-                        await RegisterLesson(lesson.id);
-                        //TODO: esto de nuevo, con actualizar el estado estara bioen
-                        const data = await GetLessons();
-                        const lessons = FormattedLessonsForCalendar(data, rol);
-
-                        SetLessons(lessons);
-
-                        setPopupDetailLesson(false);
-                      }}
-                    >
-                      Register Class
-                    </Button>
-                  )}
               </div>
               <div className="flex gap-2">
+                {rol === "teacher" && !lesson?.isRegistered && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setPopupDetailLesson(false);
+                      setPopupFormLessonReport(true);
+                    }}
+                  >
+                    Editar Informe
+                  </Button>
+                )}
                 {rol !== "student" && (
                   <>
-                    {!lesson?.isRegistered && (
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          setPopupDetailLesson(false);
-                          setPopupFormLessonState("EDIT");
-                          setPopupFormLesson(true);
-                        }}
-                      >
-                        Edit
-                      </Button>
-                    )}
                     {lesson?.isRegistered && rol === "admin" && (
                       <Button
                         onClick={() => {

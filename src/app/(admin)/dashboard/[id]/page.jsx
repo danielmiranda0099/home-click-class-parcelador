@@ -3,6 +3,7 @@
 import {
   CalendarUI,
   CardStatusLegendLesson,
+  FormLessonReport,
   FormReschedule,
   InputSearch,
   Payments,
@@ -37,6 +38,7 @@ export default function DashboardPage() {
 
   return (
     <>
+      <FormLessonReport rol="admin" />
       <PopupDetailLesson rol="admin" />
       <FormReschedule rol="admin" />
       <section className="mb-4">

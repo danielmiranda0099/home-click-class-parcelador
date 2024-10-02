@@ -3,19 +3,21 @@
 import prisma from "@/lib/prisma";
 import { supabase } from "@/utils/supabase";
 
-const formattedLessonForBD = (form_dada) => {
+const formattedLessonForBD = (form_data) => {
   // TODO Mirar como adtener los de mas datos del formulario
-  const lesson_formated = Object.fromEntries(form_dada.entries());
+  const lesson_formated = Object.fromEntries(form_data.entries());
   if (lesson_formated.isGroup)
     lesson_formated.isGroup = Boolean(lesson_formated.isGroup);
   if (lesson_formated.isStudentPaid)
     lesson_formated.isStudentPaid = Boolean(
       parseInt(lesson_formated.isStudentPaid, 10)
     );
-  if (lesson_formated.isTeacher_Paid)
-    lesson_formated.isTeacher_Paid = Boolean(
-      parseInt(lesson_formated.isTeacher_Paid, 10)
+  if (lesson_formated.isTeacherPaid)
+    lesson_formated.isTeacherPaid = Boolean(
+      parseInt(lesson_formated.isTeacherPaid, 10)
     );
+  if (lesson_formated.isRegistered)
+    lesson_formated.isRegistered = Boolean(lesson_formated.isRegistered);
   if (lesson_formated.teacherPayment)
     lesson_formated.teacherPayment = parseFloat(lesson_formated.teacherPayment);
   if (lesson_formated.studentFee)
@@ -24,11 +26,11 @@ const formattedLessonForBD = (form_dada) => {
   return lesson_formated;
 };
 
-export async function CreateNewLesson(form_dada) {
-  // const lesson_formated = formattedLessonForBD(form_dada);
+export async function CreateNewLesson(form_data) {
+  // const lesson_formated = formattedLessonForBD(form_data);
   try {
     const new_lessons = await prisma.lesson.createManyAndReturn({
-      data: form_dada,
+      data: form_data,
       include: {
         student: true,
         teacher: true,
