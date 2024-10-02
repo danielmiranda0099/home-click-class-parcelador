@@ -30,8 +30,13 @@ export function Payments() {
     setTotal(total);
   }, [payments]);
 
+  useEffect(() => {
+    handleSearch();
+  }, [user]);
+
   const handleSearch = async () => {
-    if (!user) return;
+    if (!user || start_date.length <= 0 || end_date.length <= 0) return;
+
     // Implement search functionality here
     console.log(
       "Searching for payments between",
@@ -86,22 +91,25 @@ export function Payments() {
           </div>
         </div>
         <div className="space-y-4 p-5 rounded-lg border bg-card text-card-foreground shadow-sm">
-          <h2 className="text-2xl font-bold mb-4">
-            Payment Data {payments && `(${payments.length})`}
-          </h2>
-          {payments ? (
+          {payments && user ? (
             <>
+              <h2 className="text-2xl font-bold mb-4">
+                Payment Data {payments && `(${payments.length})`}
+              </h2>
               <div className="border rounded-md">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[40%] text-primary font-bold">
+                      <TableHead className="text-primary font-bold">
                         Nombre
                       </TableHead>
-                      <TableHead className="w-[30%] text-primary font-bold">
+                      <TableHead className="text-primary font-bold">
+                        Rol
+                      </TableHead>
+                      <TableHead className="text-primary font-bold">
                         Fecha
                       </TableHead>
-                      <TableHead className="w-[30%] text-primary text-right font-bold">
+                      <TableHead className="text-primary text-right font-bold">
                         Valor
                       </TableHead>
                     </TableRow>
@@ -109,7 +117,12 @@ export function Payments() {
                   <TableBody>
                     {payments?.map((payment, index) => (
                       <TableRow key={index}>
-                        <TableCell>{payment.name}</TableCell>
+                        <TableCell>
+                          {user?.firstName.split(" ")[0] +
+                            " " +
+                            user?.lastName.split(" ")[0]}
+                        </TableCell>
+                        <TableCell>{user?.role}</TableCell>
                         <TableCell>{payment.date}</TableCell>
                         <TableCell className="text-right">
                           {formatCurrency(payment.price)}
@@ -134,7 +147,9 @@ export function Payments() {
           ) : (
             <div className="flex flex-col justify-center items-center h-full">
               <PaperSearchIcon size={42} />
-              <h1>No se han encontrado clases por pagar.</h1>
+              <h1 className="text-xl font-medium">
+                No se han encontrado clases por pagar.
+              </h1>
             </div>
           )}
         </div>
