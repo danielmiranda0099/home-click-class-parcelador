@@ -3,7 +3,9 @@
 import { useUiStore } from "@/store/uiStores";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -146,9 +148,14 @@ export function FormNewUser() {
               />
             </div>
           </div>
-          <div className="flex justify-end">
-            <Button onClick={OnCreateNewUser}>Create New User</Button>
-          </div>
+          <DialogFooter>
+            <div className="space-x-4 flex justify-end">
+              <DialogClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DialogClose>
+              <Button onClick={OnCreateNewUser}>Create New User</Button>
+            </div>
+          </DialogFooter>
         </div>
       </DialogContent>
     </Dialog>

@@ -1,7 +1,14 @@
 "use client";
 const moment = require("moment");
 import { useUiStore } from "@/store/uiStores";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -287,10 +294,14 @@ export function FormNewLesson() {
               </div>
             </div>
           </div>
-          <div className="mt-6 space-x-4 flex justify-end">
-            <Button variant="outline">Cancel</Button>
-            <Button onClick={OnCreateNewLessons}>Create Class</Button>
-          </div>
+          <DialogFooter>
+            <div className="mt-6 space-x-4 flex justify-end">
+              <DialogClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DialogClose>
+              <Button onClick={OnCreateNewLessons}>Create Class</Button>
+            </div>
+          </DialogFooter>
         </div>
       </DialogContent>
     </Dialog>
