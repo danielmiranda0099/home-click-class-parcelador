@@ -3,6 +3,7 @@ import {
   CardOverView,
   CardStatusLegendLesson,
   FormLessonReport,
+  FormReschedule,
 } from "@/components";
 import { PopupDetailLesson } from "@/components/popupDetailLesson";
 
@@ -11,6 +12,7 @@ export default async function TeacherPage() {
     <>
       <PopupDetailLesson rol={"teacher"} />
       <FormLessonReport rol="teacher" />
+      <FormReschedule rol="teacher" />
       <section className="px-10 py-3 flex flex-row justify-start gap-4">
         <CardOverView />
         <CardStatusLegendLesson rol="teacher" />

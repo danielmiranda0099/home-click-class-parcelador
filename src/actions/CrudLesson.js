@@ -124,13 +124,13 @@ export async function ConfirmLesson(data_form) {
 //TODO ELIMINAR end_dates
 export async function RescheduleLesson(data_form) {
   try {
-    const { id, start_date } = data_form;
+    const { id, startDate } = data_form;
     await prisma.lesson.update({
       where: {
         id,
       },
       data: {
-        start_date,
+        startDate,
         isRescheduled: true,
       },
     });
