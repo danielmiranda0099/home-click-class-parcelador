@@ -17,7 +17,7 @@ import { useToast } from "@/components/ui/use-toast";
 import {
   CancelLesson,
   GetLessons,
-  PayTeacher,
+  PayLesson,
   RegisterLesson,
 } from "@/actions/CrudLesson";
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
@@ -221,7 +221,7 @@ export function PopupDetailLesson({ rol }) {
                   !lesson?.isTeacherPaid && (
                     <Button
                       onClick={async () => {
-                        await PayTeacher([lesson?.id]);
+                        await PayLesson([lesson?.id], { isTeacherPaid: true });
                         //TODO: De nuevo esto se podria mejorra solo actualizando el estado
                         const data = await GetLessons();
                         const lessons = FormattedLessonsForCalendar(data, rol);

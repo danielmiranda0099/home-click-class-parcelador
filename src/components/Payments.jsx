@@ -12,10 +12,11 @@ import {
 } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
-import { PayTeacher, UnpaidLessons } from "@/actions/CrudLesson";
+import { PayLesson, UnpaidLessons } from "@/actions/CrudLesson";
 import { formatPayments } from "@/utils/formatPayments";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { PaperSearchIcon } from "./icons";
+import { Checkbox } from "./ui/checkbox";
 
 export function Payments() {
   const [start_date, setStartDate] = useState("");
@@ -26,7 +27,6 @@ export function Payments() {
 
   useEffect(() => {
     const total = payments?.reduce((sum, payment) => sum + payment.price, 0);
-    console.log();
     setTotal(total);
   }, [payments]);
 
@@ -37,17 +37,23 @@ export function Payments() {
   const handleSearch = async () => {
     if (!user || start_date.length <= 0 || end_date.length <= 0) return;
 
+    const filters = {};
+
+    if (user.role === "teacher") filters.isRegistered = true;
+
     // Implement search functionality here
     console.log(
       "Searching for payments between",
       new Date(start_date).toISOString(),
       "and",
-      end_date
+      end_date,
+      filters
     );
     const unpaid_lessons = await UnpaidLessons(
       user?.id,
       new Date(start_date).toISOString(),
-      new Date(end_date).toISOString()
+      new Date(end_date).toISOString(),
+      filters
     );
     const unpaid_lesson_formated = formatPayments(unpaid_lessons, user);
     console.log("unpaid_lesson_formated", unpaid_lesson_formated);
@@ -59,13 +65,21 @@ export function Payments() {
     // Implement payment confirmation here
     console.log("Confirming payment of", total);
     const unpaid_lesson_ids = payments?.map((lesson) => lesson.id);
-    if (user.role === "teacher") PayTeacher(unpaid_lesson_ids);
+    if (user.role === "teacher")
+      PayLesson(
+        unpaid_lesson_ids,
+        { isTeacherPaid: true },
+        { isRegistered: true }
+      );
+    if (user.role === "student")
+      PayLesson(unpaid_lesson_ids, { isStudentPaid: true });
     console.log(unpaid_lesson_ids);
+    handleSearch();
   };
 
   return (
     <div className="container mx-auto p-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-[35%_65%] gap-8">
         <div>
           <div className="space-y-4 p-5 rounded-lg border bg-card text-card-foreground shadow-sm">
             <h2 className="text-2xl font-bold mb-4">Date Range</h2>
@@ -96,10 +110,13 @@ export function Payments() {
               <h2 className="text-2xl font-bold mb-4">
                 Payment Data {payments && `(${payments.length})`}
               </h2>
-              <div className="border rounded-md">
-                <Table>
+              <div className="border relative rounded-md max-h-[50vh] overflow-y-auto">
+                <Table className="max-h-[50vh] overflow-y-auto">
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="text-primary font-bold">
+                        <Checkbox />
+                      </TableHead>
                       <TableHead className="text-primary font-bold">
                         Nombre
                       </TableHead>
@@ -118,6 +135,9 @@ export function Payments() {
                     {payments?.map((payment, index) => (
                       <TableRow key={index}>
                         <TableCell>
+                          <Checkbox />
+                        </TableCell>
+                        <TableCell>
                           {user?.firstName.split(" ")[0] +
                             " " +
                             user?.lastName.split(" ")[0]}
@@ -131,7 +151,7 @@ export function Payments() {
                     ))}
                   </TableBody>
                 </Table>
-                <div className="px-4 py-2 border-t">
+                <div className="px-4 py-2 sticky bottom-0 bg-white border">
                   <div className="grid grid-cols-10">
                     <div className="col-span-7 font-bold">Total:</div>
                     <div className="col-span-3 text-right font-bold">

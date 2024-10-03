@@ -54,7 +54,7 @@ export async function GetLessons() {
     });
 
     if (!lessons) return [];
-    console.log(lessons);
+    console.log(lessons.slice(0, 3));
     return lessons;
   } catch (error) {
     console.error("Error fetching lessons:", error);
@@ -139,7 +139,7 @@ export async function RescheduleLesson(data_form) {
   }
 }
 
-export async function PayTeacher(ids) {
+export async function PayLesson(ids, data) {
   try {
     await prisma.lesson.updateMany({
       where: {
@@ -147,16 +147,19 @@ export async function PayTeacher(ids) {
           in: ids,
         },
       },
-      data: {
-        isTeacherPaid: true,
-      },
+      data: data,
     });
   } catch (error) {
     console.error("Error Paying To Teacher", error);
   }
 }
 
-export async function UnpaidLessons(user_id, start_date, end_date) {
+export async function UnpaidLessons(
+  user_id,
+  start_date,
+  end_date,
+  filters = {}
+) {
   if (!user_id) return;
   try {
     const unpaid_lessons = await prisma.lesson.findMany({
@@ -175,15 +178,14 @@ export async function UnpaidLessons(user_id, start_date, end_date) {
           gte: start_date,
           lte: end_date,
         },
-        isRegistered: true,
         isCanceled: false,
+        ...filters,
       },
       include: {
         student: true,
         teacher: true,
       },
     });
-    console.log("unpaid_lessons", unpaid_lessons);
     return unpaid_lessons;
   } catch (error) {
     console.log("Error Getting Unpaid Lessons", error);
