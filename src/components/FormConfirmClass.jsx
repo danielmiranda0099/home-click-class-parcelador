@@ -10,16 +10,12 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { Label } from "./ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "./ui/textarea";
 import { ConfirmLesson, GetLessons } from "@/actions/CrudLesson";
 import { useLessonStore } from "@/store/lessonStore";
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
-import { StarRating } from "./StartRating";
-import { useState } from "react";
 
 export function FormConfirmClass() {
-  const [rating, setRating] = useState(0);
   const lesson = useLessonStore((state) => state.selected_lesson);
   const SetLessons = useLessonStore((state) => state.SetLessons);
   const is_open = useUiStore((state) => state.popupFormConfirmClass);
