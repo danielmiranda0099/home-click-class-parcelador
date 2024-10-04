@@ -64,7 +64,9 @@ export function Payments() {
     if (!payments || !user) return;
     // Implement payment confirmation here
     console.log("Confirming payment of", total);
-    const unpaid_lesson_ids = payments?.map((lesson) => lesson.id);
+    const unpaid_lesson_ids = payments
+      ?.filter((lesson) => lesson.isPay)
+      .map((lesson) => lesson.id);
     if (user.role === "teacher")
       PayLesson(
         unpaid_lesson_ids,
@@ -75,6 +77,19 @@ export function Payments() {
       PayLesson(unpaid_lesson_ids, { isStudentPaid: true });
     console.log(unpaid_lesson_ids);
     handleSearch();
+  };
+
+  const handleCheckAll = (value) => {
+    setPayments(payments.map((lesson) => ({ ...lesson, isPay: value })));
+    console.log(payments);
+  };
+
+  const handleCheck = (value, id) => {
+    setPayments((prevPayments) =>
+      prevPayments.map((payment) =>
+        payment.id === id ? { ...payment, isPay: value } : payment
+      )
+    );
   };
 
   return (
@@ -114,8 +129,11 @@ export function Payments() {
                 <Table className="max-h-[50vh] overflow-y-auto">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="text-primary font-bold">
-                        <Checkbox />
+                      <TableHead className="text-primary font-bold flex justify-start items-center">
+                        <Checkbox
+                          onCheckedChange={handleCheckAll}
+                          defaultChecked={true}
+                        />
                       </TableHead>
                       <TableHead className="text-primary font-bold">
                         Nombre
@@ -135,7 +153,12 @@ export function Payments() {
                     {payments?.map((payment, index) => (
                       <TableRow key={index}>
                         <TableCell>
-                          <Checkbox />
+                          <Checkbox
+                            checked={payment.isPay}
+                            onCheckedChange={(value) =>
+                              handleCheck(value, payment.id)
+                            }
+                          />
                         </TableCell>
                         <TableCell>
                           {user?.firstName.split(" ")[0] +
