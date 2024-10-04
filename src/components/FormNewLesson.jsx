@@ -118,7 +118,7 @@ export function FormNewLesson() {
     }
   };
 
-  const OnCreateNewLessons = async () => {
+  const OnCreateNewLessons = async (form_data) => {
     const student_fee_string = student_fee.replace(/[^0-9]/g, "");
     const student_fee_formated = parseInt(student_fee_string, 10);
 
@@ -129,6 +129,8 @@ export function FormNewLesson() {
       period_of_time,
       start_date,
     });
+
+    // form_data.forEach((value, key) => console.log(`${key}: ${value}`));
 
     const all_date = getClassDatesForNextPeriod(
       selectedDays.map((day) => DAYS_OF_WEEK_NUMBER[day]),
@@ -142,6 +144,10 @@ export function FormNewLesson() {
       teacherPayment: teacher_payment_formated,
       studentFee: student_fee_formated,
     };
+
+    if (form_data.get("isStudentPaid")) lesson["isStudentPaid"] = true;
+
+    // console.log(lesson);
 
     const data = all_date.map((time) => ({
       ...lesson,
@@ -167,7 +173,7 @@ export function FormNewLesson() {
         <DialogHeader className="">
           <DialogTitle>New Class</DialogTitle>
         </DialogHeader>
-        <div className="p-0 px-4">
+        <form className="p-0 px-4" action={OnCreateNewLessons}>
           <div className="space-y-6">
             <div className={`grid grid-cols-2 gap-4`}>
               <div className="grid gap-2">
@@ -187,6 +193,17 @@ export function FormNewLesson() {
                 />
               </div>
             </div>
+
+            <div className="flex items-center space-x-2">
+              <Label htmlFor="isStudentPaid">Pago de clases confirmado</Label>
+              <input
+                type="checkbox"
+                id="isStudentPaid"
+                name="isStudentPaid"
+                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+            </div>
+
             <div className={`grid grid-cols-2 gap-4`}>
               <div className="grid gap-2">
                 <Label>Teacher</Label>
@@ -255,22 +272,13 @@ export function FormNewLesson() {
               />
             </div>
 
-            {/* <div className="flex items-center space-x-2">
-              <Checkbox
-                id="sameTime"
-                checked={sameTimeEachWeek}
-                onCheckedChange={(checked) => setSameTimeEachWeek(checked)}
-                className="data-[state=checked]:bg-blue-400 data-[state=checked]:border-blue-500"
-              />
-              <Label htmlFor="sameTime">Same time each week</Label>
-            </div> */}
-
             <div className="space-y-4">
               <Label>Select days and times:</Label>
               <div className="grid grid-cols-7 gap-2 ">
                 {DAYS_OF_WEEK.map((day) => (
                   <div key={day} className={"flex flex-col items-center"}>
                     <Button
+                      type="button"
                       variant={
                         selectedDays.includes(day) ? "default" : "outline"
                       }
@@ -299,10 +307,10 @@ export function FormNewLesson() {
               <DialogClose asChild>
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
-              <Button onClick={OnCreateNewLessons}>Create Class</Button>
+              <Button type="submit">Create Class</Button>
             </div>
           </DialogFooter>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );
