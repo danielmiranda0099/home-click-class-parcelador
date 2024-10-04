@@ -28,9 +28,10 @@ export function FormConfirmClass() {
   const OnSubmit = async (form_data) => {
     const confirm_lesson_data = {
       id: lesson?.id,
-      lessonScore: rating,
+      lessonScore: parseInt(form_data.get("lesson_score")),
       studentObservations: form_data.get("student_observations"),
     };
+
     await ConfirmLesson(confirm_lesson_data);
 
     //TODO: ES NECESARIO LLAMAR A DB O SERIA SOLO MODIFICAR EL ESTADO.
@@ -53,7 +54,36 @@ export function FormConfirmClass() {
         <div>
           <form action={OnSubmit} className="grid gap-4">
             <div className="grid gap-2">
-              <StarRating rating={rating} setRating={setRating} />
+              <Label htmlFor="lesson-score">
+                Select a score from 1 to 10 for the class{" "}
+                <span>
+                  (where 1 is the lowest rating and 10 is the highest)
+                </span>
+              </Label>
+
+              <div className="flex justify-center gap-3">
+                {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                  <div
+                    key={num}
+                    className="flex flex-col items-center justify-center gap-1"
+                  >
+                    <input
+                      type="radio"
+                      value={num}
+                      id={`r${num}`}
+                      name="lesson_score"
+                      required
+                      className="sr-only peer"
+                    />
+                    <Label
+                      htmlFor={`r${num}`}
+                      className="cursor-pointer p-2 rounded-lg bg-gray-200 peer-checked:bg-blue-500 peer-checked:text-white"
+                    >
+                      {num}
+                    </Label>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className={`grid gap-2`}>
