@@ -71,7 +71,7 @@ export function PopupDetailLesson({ rol }) {
       {rol !== "student" && <FormLesson rol={rol} />}
       {lesson && (
         <Dialog open={is_open} onOpenChange={setPopupDetailLesson}>
-          <DialogContent className="sm:max-w-[700px]">
+          <DialogContent className="sm:max-w-[800px]">
             <DialogDescription></DialogDescription>
             <DialogHeader>
               <DialogTitle>Class Details</DialogTitle>
@@ -131,22 +131,27 @@ export function PopupDetailLesson({ rol }) {
 
               <div className="grid grid-cols-2">
                 <div className="flex items-start gap-4">
-                  <UserIcon className="h-8 w-8 text-primary" />
+                  <UsersIcon className="h-8 w-8 text-primary" />
                   <div>
-                    <p className="font-medium">Profesor</p>
-                    {/*TODO: hacer funcion para esto */}
+                    <p className="font-medium">Estudiantes</p>
                     <p className="text-muted-foreground">
-                      {lesson && lesson?.teacher.firstName}
+                      {lesson?.student.firstName +
+                        " " +
+                        lesson?.student.lastName}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <UsersIcon className="h-8 w-8 text-primary" />
+                  <UserIcon className="h-8 w-8 text-primary" />
                   <div>
-                    <p className="font-medium">Estudiantes</p>
+                    <p className="font-medium">Profesor</p>
+                    {/*TODO: hacer funcion para esto */}
                     <p className="text-muted-foreground">
-                      {lesson?.student.firstName + lesson?.student.lastName}
+                      {lesson &&
+                        lesson?.teacher.firstName +
+                          " " +
+                          lesson?.teacher.lastName}
                     </p>
                   </div>
                 </div>

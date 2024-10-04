@@ -1,5 +1,5 @@
 import { Separator } from "@/components/ui/separator";
-import { BookIcon, FeedbackIcon, RatingIcon, RescheduleIcon } from "../icons";
+import { FeedbackIcon } from "../icons";
 
 export function DetailReviewLesson({ lesson, rol }) {
   return (
@@ -44,68 +44,60 @@ export function DetailReviewLesson({ lesson, rol }) {
           </>
         )}
       </div>
-      <div className="grid grid-cols-2">
-        {lesson?.week && (
-          <div className="flex items-start gap-4">
-            <FeedbackIcon className="h-8 w-8 text-primary" color="white" />
-            {/* <BookIcon size="1.5rem" className="text-primary" /> */}
-            <div>
-              <p className="font-medium">Week</p>
-              <p className="text-muted-foreground">{lesson?.week}</p>
-            </div>
-          </div>
-        )}
-        {lesson?.topic && (
-          <div className="flex items-start gap-4">
-            {/* <BookIcon size="1.5rem" className="text-primary" /> */}
-            <div>
-              <p className="font-medium">Topic</p>
-              <p className="text-muted-foreground">{lesson?.topic}</p>
-            </div>
-          </div>
-        )}
 
-        {rol !== "student" && lesson?.teacherObservations && (
-          <div className="flex items-start gap-4">
-            <FeedbackIcon className="h-8 w-8 text-primary" color="white" />
-            {/* <FeedbackIcon size="1.5rem" className="text-primary" /> */}
-            <div>
-              <p className="font-medium">Teacher Observations</p>
-              <p className="text-muted-foreground">
-                {lesson?.teacherObservations}
-              </p>
+      <div className="flex gap-4 w-full">
+        <div>
+          <FeedbackIcon className="h-8 w-8 text-primary" color="white" />
+        </div>
+        <div className={`grid  grid-flow-col auto-cols-fr gap-4 w-full`}>
+          {lesson?.week && (
+            <div className="flex items-start gap-4">
+              <div>
+                <p className="font-medium">Week</p>
+                <p className="text-muted-foreground">{lesson?.week}</p>
+              </div>
             </div>
-          </div>
-        )}
-
-        {lesson?.issues && (
-          <div className="flex items-start gap-4">
-            {rol === "student" && (
-              <FeedbackIcon className="h-8 w-8 text-primary" color="white" />
-            )}
-            {/* <BookIcon size="1.5rem" className="text-primary" /> */}
-            <div>
-              <p className="font-medium">Problemas</p>
-              <p className="text-muted-foreground">{lesson?.issues}</p>
+          )}
+          {lesson?.topic && (
+            <div className="flex items-start gap-4">
+              <div>
+                <p className="font-medium">Topic</p>
+                <p className="text-muted-foreground">{lesson?.topic}</p>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {lesson?.otherObservations && (
-          <div className="flex items-start gap-4">
-            {rol !== "student" && (
-              <FeedbackIcon className="h-8 w-8 text-primary" color="white" />
-            )}
-
-            {/* <BookIcon size="1.5rem" className="text-primary" /> */}
-            <div>
-              <p className="font-medium">Others</p>
-              <p className="text-muted-foreground">
-                {lesson?.otherObservations}
-              </p>
+          {rol !== "student" && lesson?.teacherObservations && (
+            <div className="flex items-start gap-4">
+              <div>
+                <p className="font-medium">Observations</p>
+                <p className="text-muted-foreground">
+                  {lesson?.teacherObservations}
+                </p>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+
+          {lesson?.issues && (
+            <div className="flex items-start gap-4">
+              <div>
+                <p className="font-medium">Problemas</p>
+                <p className="text-muted-foreground">{lesson?.issues}</p>
+              </div>
+            </div>
+          )}
+
+          {lesson?.otherObservations && (
+            <div className="flex items-start gap-4">
+              <div>
+                <p className="font-medium">Others</p>
+                <p className="text-muted-foreground">
+                  {lesson?.otherObservations}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </>
   );
