@@ -100,25 +100,25 @@ export function PopupDetailLesson({ rol }) {
                 </div>
                 <div className="flex justify-center">
                   <div className="flex flex-col items-end w-[fit-content] pl-2.5">
-                    {rol !== "teacher" && lesson?.student_fee && (
+                    {rol !== "teacher" && lesson?.studentFee && (
                       <h2 className="font-medium">
-                        {formatCurrency(lesson?.student_fee.toString())}
+                        {formatCurrency(lesson?.studentFee.toString())}
                       </h2>
                     )}
-                    {rol !== "student" && lesson?.teacher_payment && (
+                    {rol !== "student" && lesson?.teacherPayment && (
                       <h2 className="font-medium">
                         {rol === "admin" && "-"}{" "}
-                        {formatCurrency(lesson?.teacher_payment.toString())}
+                        {formatCurrency(lesson?.teacherPayment.toString())}
                       </h2>
                     )}
 
-                    {rol === "admin" && lesson?.teacher_payment && (
+                    {rol === "admin" && lesson?.teacherPayment && (
                       <>
                         <Separator />
                         <h2 className="font-medium">
                           {formatCurrency(
                             (
-                              lesson?.student_fee - lesson?.teacher_payment
+                              lesson?.studentFee - lesson?.teacherPayment
                             ).toString()
                           )}
                         </h2>
