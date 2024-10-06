@@ -52,26 +52,28 @@ export default function DashboardPage() {
       </section>
 
       <Tabs defaultValue="calendar">
-        <TabsList className="p-4 gap-4">
-          <TabsTrigger
-            className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-lg"
-            value="calendar"
-          >
-            Calendario
-          </TabsTrigger>
-          <TabsTrigger
-            value="table"
-            className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-lg"
-          >
-            Lista
-          </TabsTrigger>
-          <TabsTrigger
-            value="payments"
-            className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-lg"
-          >
-            Pagos
-          </TabsTrigger>
-        </TabsList>
+        <div className="flex justify-center items-center p-2.5 rounded-md bg-muted w-fit mx-auto">
+          <TabsList className="gap-4">
+            <TabsTrigger
+              className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-lg"
+              value="calendar"
+            >
+              Calendario
+            </TabsTrigger>
+            <TabsTrigger
+              value="table"
+              className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-lg"
+            >
+              Lista
+            </TabsTrigger>
+            <TabsTrigger
+              value="payments"
+              className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-lg"
+            >
+              Pagos
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="calendar">
           <CalendarUI rol="admin" />

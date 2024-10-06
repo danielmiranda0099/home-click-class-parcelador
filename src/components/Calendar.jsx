@@ -4,12 +4,9 @@ import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import { GetLessons } from "@/actions/CrudLesson";
 import { useLessonStore } from "@/store/lessonStore";
-
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
-
 import { useUiStore } from "@/store/uiStores";
-
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 const localizer = momentLocalizer(moment);
@@ -22,19 +19,21 @@ export function CalendarUI({ rol }) {
     (state) => state.setPopupDetailLesson
   );
 
+  // Solo hacer la llamada a la API si no hay lecciones cargadas
   //TODO esto no tiene sentido o mejor se pasa al page
   useEffect(() => {
-    GetLessons()
-      .then((data) => {
-        const lessons = FormattedLessonsForCalendar(data, rol);
-        console.log("lessons", lessons);
-        SetLessons(lessons);
-        console.log(lessons);
-      })
-      .catch((error) => {
-        console.error("Error fetching lessons:", error);
-      });
-  }, []);
+    if (!lessons || lessons.length === 0) {
+      GetLessons()
+        .then((data) => {
+          const formattedLessons = FormattedLessonsForCalendar(data, rol);
+          SetLessons(formattedLessons);
+          console.log(formattedLessons);
+        })
+        .catch((error) => {
+          console.error("Error fetching lessons:", error);
+        });
+    }
+  }, [lessons, SetLessons, rol]);
 
   const [view, setView] = useState(Views.MONTH);
 
@@ -52,15 +51,17 @@ export function CalendarUI({ rol }) {
 
   const handleSelectEvent = (event) => {
     setSelectedLesson(event);
-    console.log("Click", event);
     setPopupDetailLesson(true);
   };
+
+  // Memorizar las lecciones formateadas para evitar recalcularlas en cada render
+  const memoizedLessons = useMemo(() => lessons, [lessons]);
 
   return (
     <>
       <Calendar
         localizer={localizer}
-        events={lessons}
+        events={memoizedLessons}
         startAccessor="start"
         endAccessor="end"
         view={view}
