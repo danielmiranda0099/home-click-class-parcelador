@@ -17,16 +17,29 @@ import { formatPayments } from "@/utils/formatPayments";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { PaperSearchIcon } from "./icons";
 import { Checkbox } from "./ui/checkbox";
+import { usePaymentViewStore } from "@/store/paymentViewStore";
 
 export function Payments() {
-  const [start_date, setStartDate] = useState("");
-  const [end_date, setEndDate] = useState("");
-  const [payments, setPayments] = useState(null);
+  const {
+    start_date,
+    setStartDate,
+    end_date,
+    setEndDate,
+    payments,
+    setPayments,
+  } = usePaymentViewStore();
+  // const [start_date, setStartDate] = useState("");
+  // const [end_date, setEndDate] = useState("");
+  // const [payments, setPayments] = useState(null);
   const [total, setTotal] = useState(0);
   const { user_selected: user } = useUserStore();
 
   useEffect(() => {
-    const total = payments?.reduce((sum, payment) => sum + payment.price, 0);
+    console.log("total");
+    const total = payments?.reduce(
+      (sum, payment) => (payment.isPay ? sum + payment.price : sum + 0),
+      0
+    );
     setTotal(total);
   }, [payments]);
 
@@ -85,8 +98,8 @@ export function Payments() {
   };
 
   const handleCheck = (value, id) => {
-    setPayments((prevPayments) =>
-      prevPayments.map((payment) =>
+    setPayments(
+      payments.map((payment) =>
         payment.id === id ? { ...payment, isPay: value } : payment
       )
     );
@@ -122,9 +135,21 @@ export function Payments() {
         <div className="space-y-4 p-5 rounded-lg border bg-card text-card-foreground shadow-sm">
           {payments && user ? (
             <>
-              <h2 className="text-2xl font-bold mb-4">
-                Payment Data {payments && `(${payments.length})`}
-              </h2>
+              <div>
+                {/* <h2 className="text-xl font-bold">
+                  Clases {payments && `(${payments.length})`} Clases a pagar
+                  {"  "}
+                  {payments &&
+                    `(${payments.filter((lesson) => lesson.isPay).length})`}
+                </h2> */}
+                <h2 className="text-xl font-bold mb-4">
+                  Clases a pagar
+                  {"  "}
+                  {payments &&
+                    `${payments.filter((lesson) => lesson.isPay).length} / ${payments.length}`}
+                </h2>
+              </div>
+
               <div className="border relative rounded-md max-h-[50vh] overflow-y-auto">
                 <Table className="max-h-[50vh] overflow-y-auto">
                   <TableHeader>
