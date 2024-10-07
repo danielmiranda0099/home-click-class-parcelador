@@ -1,27 +1,32 @@
+import { COLORS } from "./colorsStatusLesson";
 import { FormattedDate } from "./formattedDate";
 
 //TODO: meter colores en variables
 const statusLesson = (lesson, rol) => {
   if (!lesson) {
-    return ["#ff00ff", "white", "Unknown Status"];
+    return [COLORS.FUCHSIA_BG, COLORS.FUCHSIA_TEXT, "Unknown Status"];
   }
 
   if (lesson.isCanceled) {
-    return ["#ef233c", "white", "Canceled"]; //RED
+    return [COLORS.RED_BG, COLORS.RED_TEXT, "Canceled"]; //RED
   }
 
   if (rol === "student") {
     if (lesson?.isScheduled && lesson?.isConfirmed && !lesson?.isStudentPaid) {
-      return ["#FFF68A", "#8B8000", "Finalizada - Pendiente De Pago"]; //YELLOW
+      return [
+        COLORS.YELLOW_BG,
+        COLORS.YELLOW_TEXT,
+        "Finalizada - Pendiente De Pago",
+      ]; //YELLOW
     }
     if (lesson?.isScheduled && lesson?.isConfirmed && lesson?.isStudentPaid) {
-      return ["#98FFB3", "#006622", "Finalizada - Pagada"]; //Green
+      return [COLORS.GREEN_BG, COLORS.GREEN_TEXT, "Finalizada - Pagada"]; //Green
     }
     if (lesson?.isScheduled && lesson?.isStudentPaid) {
-      return ["#8AE2FF", "#005F7F", "Agendada - Pagada"]; //BLUE
+      return [COLORS.BLUE_BG, COLORS.BLUE_TEXT, "Agendada - Pagada"]; //BLUE
     }
     if (lesson?.isScheduled && !lesson?.isStudentPaid) {
-      return ["#8AE2FF", "#005F7F", "Agendada - Pendiente De Pago"]; //BLUE
+      return [COLORS.BLUE_BG, COLORS.BLUE_TEXT, "Agendada - Pendiente De Pago"]; //BLUE
     }
   }
 
@@ -32,7 +37,7 @@ const statusLesson = (lesson, rol) => {
       lesson?.isRegistered &&
       lesson?.isTeacherPaid
     ) {
-      return ["#98FFB3", "#006622", "Registrada - Pagada"]; //GREEN
+      return [COLORS.GREEN_BG, COLORS.GREEN_TEXT, "Registrada - Pagada"]; //GREEN
     }
 
     if (
@@ -41,15 +46,19 @@ const statusLesson = (lesson, rol) => {
       lesson?.isRegistered &&
       !lesson?.isTeacherPaid
     ) {
-      return ["#FFB38A", "#8B4000", "Registrada - Pendiente De Pago"]; //ORANGE
+      return [
+        COLORS.ORANGE_BG,
+        COLORS.ORANGE_TEXT,
+        "Registrada - Pendiente De Pago",
+      ]; //ORANGE
     }
 
     if (lesson?.isScheduled && lesson?.isConfirmed) {
-      return ["#C5A3FF", "#3A0070", "Clase Confirmada"]; //PURPLE
+      return [COLORS.PURPLE_BG, COLORS.PURPLE_TEXT, "Clase Confirmada"]; //PURPLE
     }
 
     if (lesson?.isScheduled) {
-      return ["#8AE2FF", "#005F7F", "Scheduled"]; //BLUE
+      return [COLORS.BLUE_BG, COLORS.BLUE_TEXT, "Scheduled"]; //BLUE
     }
   }
 
@@ -62,8 +71,8 @@ const statusLesson = (lesson, rol) => {
       !lesson?.isStudentPaid
     ) {
       return [
-        "#FFB38A",
-        "#8B4000",
+        COLORS.ORANGE_BG,
+        COLORS.ORANGE_TEXT,
         "Registrada - Pendiente Pago Profesor - Pendiente Pago Estudiante",
       ]; //ORANGE
     }
@@ -75,8 +84,8 @@ const statusLesson = (lesson, rol) => {
       lesson?.isStudentPaid
     ) {
       return [
-        "#FFB38A",
-        "#8B4000",
+        COLORS.ORANGE_BG,
+        COLORS.ORANGE_TEXT,
         "Registrada - Pendiente Pago Profesor - Pago Realizado Por Estudiante",
       ]; //ORANGE
     }
@@ -88,8 +97,8 @@ const statusLesson = (lesson, rol) => {
       !lesson?.isStudentPaid
     ) {
       return [
-        "#FFF68A",
-        "#8B8000",
+        COLORS.YELLOW_BG,
+        COLORS.YELLOW_TEXT,
         "Registrada - Pago Realizado Al Profesor - Pendiente Pago Estudiante",
       ]; //YELLOW
     }
@@ -101,35 +110,43 @@ const statusLesson = (lesson, rol) => {
       lesson?.isStudentPaid
     ) {
       return [
-        "#98FFB3",
-        "#006622",
+        COLORS.GREEN_BG,
+        COLORS.GREEN_TEXT,
         "Registrada - Pago Realizado Al Profesor - Pago Realizado Por Estudiante",
       ]; //GREEN
     }
 
     if (lesson?.isScheduled && lesson?.isConfirmed && !lesson?.isStudentPaid) {
       return [
-        "#C5A3FF",
-        "#3A0070",
+        COLORS.PURPLE_BG,
+        COLORS.PURPLE_TEXT,
         "Clase Confirmada - Pendiente Pago Estudiante",
       ]; //PURPLE
     }
     if (lesson?.isScheduled && lesson?.isConfirmed && lesson?.isStudentPaid) {
       return [
-        "#C5A3FF",
-        "#3A0070",
+        COLORS.PURPLE_BG,
+        COLORS.PURPLE_TEXT,
         "Clase Confirmada - Pago Realizado Por Estudiante",
       ]; //PURPLE
     }
     if (lesson?.isScheduled && !lesson?.isStudentPaid) {
-      return ["#8AE2FF", "#005F7F", "Agendada - Pendiente Pago Estudiante"]; //BLUE
+      return [
+        COLORS.BLUE_BG,
+        COLORS.BLUE_TEXT,
+        "Agendada - Pendiente Pago Estudiante",
+      ]; //BLUE
     }
     if (lesson?.isScheduled && lesson?.isStudentPaid) {
-      return ["#8AE2FF", "#005F7F", "Agendada - Pago Realizado Por Estudiante"]; //BLUE
+      return [
+        COLORS.BLUE_BG,
+        COLORS.BLUE_TEXT,
+        "Agendada - Pago Realizado Por Estudiante",
+      ]; //BLUE
     }
   }
 
-  return ["#ff00ff", "white", "Unknown Status"];
+  return [COLORS.FUCHSIA_BG, COLORS.FUCHSIA_TEXT, "Unknown Status"];
 };
 
 export function FormattedLessonsForCalendar(original_lesson, rol) {
