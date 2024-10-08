@@ -196,7 +196,7 @@ export function PopupDetailLesson({ rol }) {
                 )}
                 {rol !== "student" && (
                   <>
-                    {lesson?.isRegistered && rol === "admin" && (
+                    {!lesson?.isRegistered && rol === "admin" && (
                       <Button
                         onClick={() => {
                           setPopupDetailLesson(false);
