@@ -17,3 +17,4 @@ export * from "./UsersIcon";
 export * from "./XIcon";
 export * from "./PlusCircleIcon";
 export * from "./PaperSearchIcon";
+export * from "./EyeOpenIcon";

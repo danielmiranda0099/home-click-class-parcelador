@@ -1,5 +1,5 @@
 "use client";
-import { MoreHorizontal, Pencil, Calendar } from "lucide-react";
+import { MoreHorizontal, Pencil, Calendar, EyeIcon } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -26,6 +26,8 @@ import {
 import { useLessonStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 import moment from "moment";
+import { EyeOpenIcon } from "./icons";
+import { statusLesson } from "@/utils/formattedLessonsForCalendar";
 
 export function TableLessons() {
   const lessons = useLessonStore((state) => state.lessons);
@@ -62,9 +64,9 @@ export function TableLessons() {
   const handleTeacherPayment = (id) => {};
   return (
     <div className="container mx-auto py-10">
-      <Table className="border-gray-400 border-2">
+      <Table className="border-gray-400 border-2 w-fit mx-auto">
         <TableHeader className="bg-slate-900">
-          <TableRow>
+          <TableRow className="hover:bg-current">
             <TableHead>Students</TableHead>
             <TableHead>Teacher</TableHead>
             <TableHead>Status</TableHead>
@@ -75,14 +77,13 @@ export function TableLessons() {
         </TableHeader>
         <TableBody>
           {lessons?.map((lesson, index) => (
-            <TableRow
-              key={lesson.id}
-              className={`${index % 2 === 0 && "bg-gray-200"} hover:bg-cyan-50`}
-            >
-              <TableCell>
+            <TableRow key={lesson.id}>
+              <TableCell className="w-48">
                 <div className="flex flex-col space-x-1">
                   {
-                    lesson.student.firstName
+                    lesson.student.firstName.split(" ")[0] +
+                      " " +
+                      lesson.student.lastName.split(" ")[0]
                     //   .slice(0, 2).map((student, index) => (
                     //     <span key={index}>
                     //       {student}
@@ -116,33 +117,41 @@ export function TableLessons() {
                   )} */}
                 </div>
               </TableCell>
-              <TableCell>{lesson.teacher.firstName}</TableCell>
-              <TableCell>status</TableCell>
-              <TableCell>{lesson.isGroup ? "Grupal" : "Individual"}</TableCell>
-              <TableCell>{moment(lesson.startDate).format("D/M/Y")}</TableCell>
+              <TableCell className="w-48">
+                {lesson.teacher.firstName.split(" ")[0]}{" "}
+                {lesson.teacher.lastName.split(" ")[0]}
+              </TableCell>
               <TableCell>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <div
+                        className="w-7 h-7 rounded-full"
+                        style={{ backgroundColor: lesson?.background }}
+                      ></div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="p-3 font-bold">
+                        {statusLesson(lesson, "admin")[2]}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </TableCell>
+              <TableCell>{lesson.isGroup ? "Grupal" : "Individual"}</TableCell>
+              <TableCell className="w-32">
+                {moment(lesson.startDate).format("D/M/Y")}
+              </TableCell>
+              <TableCell className="bg-white">
                 <div className="flex items-end gap-4">
-                  <div className="flex flex-col items-center gap-1.5">
-                    <Label htmlFor={`student-paid-${lesson.id}`}>
-                      Student <br /> Payment
-                    </Label>
-                    <Switch id={`student-paid-${lesson.id}`} />
-                  </div>
-                  <div className="flex flex-col items-center gap-1.5">
-                    <Label htmlFor={`teacher-paid-${lesson.id}`}>
-                      Teacher <br /> Payment
-                    </Label>
-                    <Switch id={`teacher-paid-${lesson.id}`} />
-                  </div>
-
                   <Button
                     variant="outline"
                     size="sm"
                     className=""
                     onClick={() => handleClickEdit(lesson.id)}
                   >
-                    <Pencil className="h-4 w-4 mr-2" />
-                    Edit
+                    <EyeIcon className="h-6 w-6 mr-2" />
+                    ver
                   </Button>
                   <Button
                     variant="outline"
