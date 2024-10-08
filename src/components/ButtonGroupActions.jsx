@@ -2,7 +2,7 @@
 
 import { useUiStore } from "@/store/uiStores";
 import { Button } from "./ui/button";
-import { PlusCircleIcon } from "./icons";
+import { PlusCircleIcon, UserIcon } from "./icons";
 
 export function ButtonGroupActions() {
   const setPopupFormNewUser = useUiStore((state) => state.setPopupFormNewUser);
@@ -19,7 +19,7 @@ export function ButtonGroupActions() {
           setPopupFormNewUser(true);
         }}
       >
-        <PlusCircleIcon />
+        <UserIcon />
         <span>New User</span>
       </Button>
 

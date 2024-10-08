@@ -19,3 +19,5 @@ export * from "./PlusCircleIcon";
 export * from "./PaperSearchIcon";
 export * from "./EyeOpenIcon";
 export * from "./SettingsIcon";
+export * from "./DashboardIcon";
+export * from "./DollarIcon";
