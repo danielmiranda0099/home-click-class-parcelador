@@ -18,3 +18,4 @@ export * from "./XIcon";
 export * from "./PlusCircleIcon";
 export * from "./PaperSearchIcon";
 export * from "./EyeOpenIcon";
+export * from "./SettingsIcon";

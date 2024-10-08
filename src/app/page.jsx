@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import Image from "next/image";
 
 const USERS = {
   "daniel@gmail.com": "admin",
@@ -39,9 +40,14 @@ export default function Home() {
       <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-md space-y-6">
           <div className="flex flex-col items-center space-y-2">
-            <MountainIcon className="h-8 w-8 text-primary" />
+            <Image
+              alt="logo home click class"
+              src="/logo.png"
+              width={150}
+              height={150}
+            />
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Home Class.
+              Home Click Class
             </h1>
             <p className="text-muted-foreground">Welcome to our platform</p>
           </div>

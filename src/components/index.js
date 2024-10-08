@@ -12,3 +12,4 @@ export * from "./Payments";
 export * from "./FormNewLesson";
 export * from "./FormReschedule";
 export * from "./FormLessonReport";
+export * from "./Header";
