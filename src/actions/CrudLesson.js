@@ -76,16 +76,19 @@ export async function UpdateLesson(id, updated_lesson) {
   }
 }
 
-export async function CancelLesson(id) {
-  const { data, error } = await supabase
-    .from("lessons")
-    .update({ is_canceled: true })
-    .eq("id", id);
-  if (error) {
-    console.log("error database", error);
-    return [];
+export async function CancelLesson(id, value) {
+  try {
+    await prisma.lesson.update({
+      where: {
+        id,
+      },
+      data: {
+        isCanceled: value,
+      },
+    });
+  } catch (error) {
+    console.error("error database", error);
   }
-  console.log("Update database", data);
 }
 
 export async function RegisterLesson(id) {
@@ -189,5 +192,19 @@ export async function UnpaidLessons(
     return unpaid_lessons;
   } catch (error) {
     console.log("Error Getting Unpaid Lessons", error);
+  }
+}
+
+export async function DeleteLesson(ids) {
+  try {
+    await prisma.lesson.deleteMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error Paying To Teacher", error);
   }
 }

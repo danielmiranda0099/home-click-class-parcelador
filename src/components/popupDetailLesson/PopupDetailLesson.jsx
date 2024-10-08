@@ -16,6 +16,7 @@ import { useLessonStore } from "@/store/lessonStore";
 import { useToast } from "@/components/ui/use-toast";
 import {
   CancelLesson,
+  DeleteLesson,
   GetLessons,
   PayLesson,
   RegisterLesson,
@@ -168,82 +169,154 @@ export function PopupDetailLesson({ rol }) {
                 </div>
               )}
             </div>
-            <DialogFooter className="flex justify-start 	items-start">
+            <DialogFooter className="sm:justify-between">
               <div className="flex gap-2">
-                {/* TODO: Refact todo este mierdero */}
-                {rol === "student" && !lesson?.isConfirmed && (
-                  <Button
-                    onClick={async () => {
-                      setPopupDetailLesson(false);
-                      setPopupFormConfirmClass(true);
-                    }}
-                  >
-                    Confirm Class
-                  </Button>
-                )}
-              </div>
-              <div className="flex gap-2">
-                {rol === "teacher" && !lesson?.isRegistered && (
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setPopupDetailLesson(false);
-                      setPopupFormLessonReport(true);
-                    }}
-                  >
-                    Editar Informe
-                  </Button>
-                )}
-                {rol !== "student" && (
-                  <>
-                    {!lesson?.isRegistered && rol === "admin" && (
-                      <Button
-                        onClick={() => {
-                          setPopupDetailLesson(false);
-                          setPopupFormLessonState("EDIT");
-                          setPopupFormLesson(true);
-                        }}
-                      >
-                        Edit
-                      </Button>
-                    )}
+                {!lesson?.isConfirmed &&
+                  !lesson?.isRegistered &&
+                  rol === "admin" && (
+                    <>
+                      {!lesson?.isCanceled && (
+                        <Button
+                          variant="outline"
+                          className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
+                          onClick={async () => {
+                            CancelLesson(lesson?.id, true);
+                            const data = await GetLessons();
+                            const lessons = FormattedLessonsForCalendar(
+                              data,
+                              rol
+                            );
 
-                    {!lesson?.isConfirmed && (
+                            SetLessons(lessons);
+                            setPopupDetailLesson(false);
+                          }}
+                        >
+                          Cancelar
+                        </Button>
+                      )}
+
+                      {lesson?.isCanceled && (
+                        <Button
+                          variant="outline"
+                          className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
+                          onClick={async () => {
+                            CancelLesson(lesson?.id, false);
+                            const data = await GetLessons();
+                            const lessons = FormattedLessonsForCalendar(
+                              data,
+                              rol
+                            );
+
+                            SetLessons(lessons);
+                            setPopupDetailLesson(false);
+                          }}
+                        >
+                          Reactivar
+                        </Button>
+                      )}
+
                       <Button
                         variant="outline"
-                        onClick={() => {
+                        className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
+                        onClick={async () => {
+                          DeleteLesson([lesson.id]);
+                          const data = await GetLessons();
+                          const lessons = FormattedLessonsForCalendar(
+                            data,
+                            rol
+                          );
+
+                          SetLessons(lessons);
                           setPopupDetailLesson(false);
-                          setPopupFormReschedule(true);
                         }}
                       >
-                        Reschedule
+                        Eliminar
                       </Button>
-                    )}
-                  </>
-                )}
-                {rol === "admin" &&
-                  lesson?.isRegistered &&
-                  !lesson?.isTeacherPaid && (
+                    </>
+                  )}
+              </div>
+              <div>
+                <div className="flex gap-2">
+                  {/* TODO: Refact todo este mierdero */}
+                  {rol === "student" && !lesson?.isConfirmed && (
                     <Button
                       onClick={async () => {
-                        await PayLesson([lesson?.id], { isTeacherPaid: true });
-                        //TODO: De nuevo esto se podria mejorra solo actualizando el estado
-                        const data = await GetLessons();
-                        const lessons = FormattedLessonsForCalendar(data, rol);
-
-                        SetLessons(lessons);
                         setPopupDetailLesson(false);
+                        setPopupFormConfirmClass(true);
                       }}
                     >
-                      Hacer Pago
+                      Confirm Class
                     </Button>
                   )}
-                <Button
-                  variant="outline"
-                  onClick={() => setPopupDetailLesson(false)}
-                >
-                  Exit
-                </Button>
+                </div>
+                <div className="flex gap-2">
+                  {rol === "teacher" && !lesson?.isRegistered && (
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setPopupDetailLesson(false);
+                        setPopupFormLessonReport(true);
+                      }}
+                    >
+                      Editar Informe
+                    </Button>
+                  )}
+                  {rol !== "student" && (
+                    <>
+                      {!lesson?.isRegistered && rol === "admin" && (
+                        <Button
+                          onClick={() => {
+                            setPopupDetailLesson(false);
+                            setPopupFormLessonState("EDIT");
+                            setPopupFormLesson(true);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      )}
+
+                      {!lesson?.isConfirmed && (
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setPopupDetailLesson(false);
+                            setPopupFormReschedule(true);
+                          }}
+                        >
+                          Reschedule
+                        </Button>
+                      )}
+                    </>
+                  )}
+                  {rol === "admin" &&
+                    lesson?.isRegistered &&
+                    !lesson?.isTeacherPaid && (
+                      <Button
+                        onClick={async () => {
+                          await PayLesson([lesson?.id], {
+                            isTeacherPaid: true,
+                          });
+                          //TODO: De nuevo esto se podria mejorra solo actualizando el estado
+                          const data = await GetLessons();
+                          const lessons = FormattedLessonsForCalendar(
+                            data,
+                            rol
+                          );
+
+                          SetLessons(lessons);
+                          setPopupDetailLesson(false);
+                        }}
+                      >
+                        Hacer Pago
+                      </Button>
+                    )}
+                  <Button
+                    variant="outline"
+                    onClick={() => setPopupDetailLesson(false)}
+                  >
+                    Exit
+                  </Button>
+                </div>
               </div>
             </DialogFooter>
           </DialogContent>
