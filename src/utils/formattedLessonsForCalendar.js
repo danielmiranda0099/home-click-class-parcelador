@@ -2,7 +2,7 @@ import { COLORS } from "./colorsStatusLesson";
 import { FormattedDate } from "./formattedDate";
 
 //TODO: meter colores en variables
-const statusLesson = (lesson, rol) => {
+export const statusLesson = (lesson, rol) => {
   if (!lesson) {
     return [COLORS.FUCHSIA_BG, COLORS.FUCHSIA_TEXT, "Unknown Status"];
   }
