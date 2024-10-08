@@ -12,13 +12,26 @@ import {
 } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
-import { PayLesson, UnpaidLessons } from "@/actions/CrudLesson";
+import { GetLessons, PayLesson, UnpaidLessons } from "@/actions/CrudLesson";
 import { formatPayments } from "@/utils/formatPayments";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { PaperSearchIcon } from "./icons";
 import { Checkbox } from "./ui/checkbox";
 import { usePaymentViewStore } from "@/store/paymentViewStore";
+import {
+  FormattedLessonsForCalendar,
+  statusLesson,
+} from "@/utils/formattedLessonsForCalendar";
+import { useLessonStore } from "@/store/lessonStore";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
+import { useUiStore } from "@/store/uiStores";
 
+//TODO: Refact component
 export function Payments() {
   const {
     start_date,
@@ -28,11 +41,10 @@ export function Payments() {
     payments,
     setPayments,
   } = usePaymentViewStore();
-  // const [start_date, setStartDate] = useState("");
-  // const [end_date, setEndDate] = useState("");
-  // const [payments, setPayments] = useState(null);
+  const { lessons, SetLessons, setSelectedLesson } = useLessonStore();
   const [total, setTotal] = useState(0);
   const { user_selected: user } = useUserStore();
+  const { setPopupDetailLesson } = useUiStore();
 
   useEffect(() => {
     console.log("total");
@@ -45,7 +57,7 @@ export function Payments() {
 
   useEffect(() => {
     handleSearch();
-  }, [user]);
+  }, [user, lessons]);
 
   const handleSearch = async () => {
     if (!user || start_date.length <= 0 || end_date.length <= 0) return;
@@ -68,12 +80,16 @@ export function Payments() {
       new Date(end_date).toISOString(),
       filters
     );
-    const unpaid_lesson_formated = formatPayments(unpaid_lessons, user);
+    const unpaid_lesson_formated_payment = formatPayments(unpaid_lessons, user);
+    const unpaid_lesson_formated = FormattedLessonsForCalendar(
+      unpaid_lesson_formated_payment,
+      "admin"
+    );
     console.log("unpaid_lesson_formated", unpaid_lesson_formated);
     setPayments(unpaid_lesson_formated);
   };
 
-  const handleConfirmPayment = () => {
+  const handleConfirmPayment = async () => {
     if (!payments || !user) return;
     // Implement payment confirmation here
     console.log("Confirming payment of", total);
@@ -88,6 +104,11 @@ export function Payments() {
       );
     if (user.role === "student")
       PayLesson(unpaid_lesson_ids, { isStudentPaid: true });
+    //TODO: ES NECESARIO LLAMAR A DB O SERIA SOLO MODIFICAR EL ESTADO.
+    const data = await GetLessons();
+    const lessons = FormattedLessonsForCalendar(data, "admin");
+
+    SetLessons(lessons);
     console.log(unpaid_lesson_ids);
     handleSearch();
   };
@@ -103,6 +124,12 @@ export function Payments() {
         payment.id === id ? { ...payment, isPay: value } : payment
       )
     );
+  };
+
+  const handleClickShow = (id) => {
+    const lesson = lessons.find((lesson) => lesson.id === id);
+    setSelectedLesson(lesson);
+    setPopupDetailLesson(true);
   };
 
   return (
@@ -160,6 +187,7 @@ export function Payments() {
                           defaultChecked={true}
                         />
                       </TableHead>
+
                       <TableHead className="text-primary font-bold">
                         Nombre
                       </TableHead>
@@ -167,8 +195,12 @@ export function Payments() {
                         Rol
                       </TableHead>
                       <TableHead className="text-primary font-bold">
+                        Status
+                      </TableHead>
+                      <TableHead className="text-primary font-bold">
                         Fecha
                       </TableHead>
+                      <TableHead className="text-primary font-bold w-fit"></TableHead>
                       <TableHead className="text-primary text-right font-bold">
                         Valor
                       </TableHead>
@@ -185,13 +217,45 @@ export function Payments() {
                             }
                           />
                         </TableCell>
+
                         <TableCell>
                           {user?.firstName.split(" ")[0] +
                             " " +
                             user?.lastName.split(" ")[0]}
                         </TableCell>
                         <TableCell>{user?.role}</TableCell>
+
+                        <TableCell>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <div
+                                  className="w-6 h-6 rounded-full"
+                                  style={{
+                                    backgroundColor: payment?.background,
+                                  }}
+                                ></div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p className="p-3 font-bold">
+                                  {statusLesson(payment, "admin")[2]}
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </TableCell>
+
                         <TableCell>{payment.date}</TableCell>
+                        <TableCell>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className=""
+                            onClick={() => handleClickShow(payment.id)}
+                          >
+                            ver
+                          </Button>
+                        </TableCell>
                         <TableCell className="text-right">
                           {formatCurrency(payment.price)}
                         </TableCell>
@@ -208,7 +272,11 @@ export function Payments() {
                   </div>
                 </div>
               </div>
-              <Button onClick={handleConfirmPayment} className="w-full">
+              <Button
+                onClick={handleConfirmPayment}
+                className="w-full disabled:pointer-events-auto disabled:cursor-not-allowed"
+                disabled={payments.filter((lesson) => lesson.isPay).length <= 0}
+              >
                 Confirm Payment
               </Button>
             </>
