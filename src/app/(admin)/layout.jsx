@@ -10,7 +10,7 @@ export default function RootLayout({ children }) {
   return (
     <>
       <Header />
-      <div className="flex h-screen">
+      <div className="flex">
         {/* Sidebar */}
 
         <SideBarMenu />
