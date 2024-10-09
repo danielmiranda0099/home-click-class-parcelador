@@ -24,8 +24,12 @@ import {
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import {
   BookIcon,
+  CalendarIcon,
+  CheckIcon,
   CircleCheckIcon,
+  DollarIcon,
   FeedbackIcon,
+  PencilIcon,
   RatingIcon,
   RescheduleIcon,
   UserIcon,
@@ -235,63 +239,47 @@ export function PopupDetailLesson({ rol }) {
                     </>
                   )}
               </div>
-              <div>
+              <div className="flex gap-2">
                 <div className="flex gap-2">
                   {/* TODO: Refact todo este mierdero */}
                   {rol === "student" && !lesson?.isConfirmed && (
                     <Button
+                      className="flex gap-2"
                       onClick={async () => {
                         setPopupDetailLesson(false);
                         setPopupFormConfirmClass(true);
                       }}
                     >
+                      <CheckIcon size={18} />
                       Confirm Class
                     </Button>
                   )}
                 </div>
                 <div className="flex gap-2">
-                  {rol === "teacher" && !lesson?.isRegistered && (
+                  {rol === "admin" && !lesson?.isStudentPaid && (
                     <Button
-                      variant="outline"
-                      onClick={() => {
+                      className="flex gap-2"
+                      onClick={async () => {
+                        await PayLesson([lesson?.id], {
+                          isStudentPaid: true,
+                        });
+                        //TODO: De nuevo esto se podria mejorra solo actualizando el estado
+                        const data = await GetLessons();
+                        const lessons = FormattedLessonsForCalendar(data, rol);
+
+                        SetLessons(lessons);
                         setPopupDetailLesson(false);
-                        setPopupFormLessonReport(true);
                       }}
                     >
-                      Editar Informe
+                      <DollarIcon size={18} />
+                      Pago Estudiante
                     </Button>
-                  )}
-                  {rol !== "student" && (
-                    <>
-                      {!lesson?.isRegistered && rol === "admin" && (
-                        <Button
-                          onClick={() => {
-                            setPopupDetailLesson(false);
-                            setPopupFormLessonState("EDIT");
-                            setPopupFormLesson(true);
-                          }}
-                        >
-                          Edit
-                        </Button>
-                      )}
-
-                      {!lesson?.isConfirmed && (
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            setPopupDetailLesson(false);
-                            setPopupFormReschedule(true);
-                          }}
-                        >
-                          Reschedule
-                        </Button>
-                      )}
-                    </>
                   )}
                   {rol === "admin" &&
                     lesson?.isRegistered &&
                     !lesson?.isTeacherPaid && (
                       <Button
+                        className="flex gap-2"
                         onClick={async () => {
                           await PayLesson([lesson?.id], {
                             isTeacherPaid: true,
@@ -307,9 +295,52 @@ export function PopupDetailLesson({ rol }) {
                           setPopupDetailLesson(false);
                         }}
                       >
-                        Hacer Pago
+                        <DollarIcon size={18} />
+                        Pago Profesor
                       </Button>
                     )}
+                  {rol === "teacher" && !lesson?.isRegistered && (
+                    <Button
+                      className="flex gap-2"
+                      onClick={() => {
+                        setPopupDetailLesson(false);
+                        setPopupFormLessonReport(true);
+                      }}
+                    >
+                      <PencilIcon size={18} />
+                      Editar Informe
+                    </Button>
+                  )}
+                  {rol !== "student" && (
+                    <>
+                      {!lesson?.isConfirmed && (
+                        <Button
+                          className="flex gap-2"
+                          onClick={() => {
+                            setPopupDetailLesson(false);
+                            setPopupFormReschedule(true);
+                          }}
+                        >
+                          <CalendarIcon size={18} />
+                          Reschedule
+                        </Button>
+                      )}
+
+                      {!lesson?.isRegistered && rol === "admin" && (
+                        <Button
+                          className="flex gap-2"
+                          onClick={() => {
+                            setPopupDetailLesson(false);
+                            setPopupFormLessonState("EDIT");
+                            setPopupFormLesson(true);
+                          }}
+                        >
+                          <PencilIcon size={18} />
+                          Edit
+                        </Button>
+                      )}
+                    </>
+                  )}
                   <Button
                     variant="outline"
                     onClick={() => setPopupDetailLesson(false)}

@@ -16,6 +16,7 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { formattedDateForInput } from "@/utils/formattedDateForInput";
+import { CheckIcon } from "./icons";
 
 export function FormReschedule({ rol }) {
   const { popupFormReschedule: is_open, setPopupFormReschedule: setIsOpen } =
@@ -76,7 +77,10 @@ export function FormReschedule({ rol }) {
                 </Button>
               </DialogClose>
 
-              <Button type="submit">Reschedule</Button>
+              <Button type="submit" className="flex gap-2">
+                <CheckIcon size={18} />
+                Guardar
+              </Button>
             </DialogFooter>
           </form>
         </div>

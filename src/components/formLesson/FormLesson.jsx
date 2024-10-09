@@ -28,6 +28,7 @@ import { formattedDateForInput } from "@/utils/formattedDateForInput";
 import { students, teachers } from "@/mockData";
 import { InputPriceLesson, InputSearch } from "..";
 import { FormLessonReview } from "./FormLessonReview";
+import { CheckIcon } from "../icons";
 
 //TODO: Refact this component
 // STATE:
@@ -249,11 +250,12 @@ export function FormLesson({ rol }) {
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
 
-                <Button type="submit">
+                <Button type="submit" className="flex gap-2">
+                  <CheckIcon size={18} />
                   {popupFormLessonState === "CREATE"
                     ? "Create"
                     : popupFormLessonState === "EDIT"
-                      ? "Edit"
+                      ? "Guardar"
                       : popupFormLessonState === "RESCHEDULE"
                         ? "Reschedule"
                         : "UNKNOWN"}

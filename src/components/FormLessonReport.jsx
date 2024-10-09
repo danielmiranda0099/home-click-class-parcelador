@@ -15,6 +15,7 @@ import {
 import { useLessonStore } from "@/store/lessonStore";
 import { GetLessons, UpdateLesson } from "@/actions/CrudLesson";
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
+import { CheckIcon } from "./icons";
 
 export function FormLessonReport({ rol }) {
   const { selected_lesson: lesson, SetLessons } = useLessonStore();
@@ -118,8 +119,9 @@ export function FormLessonReport({ rol }) {
               <Button variant="outline">Cancel</Button>
             </DialogClose>
 
-            <Button type="submit">
-              {lesson?.isConfirmed ? "Registrar Clase" : "Guardar Informe"}
+            <Button type="submit" className="flex gap-2">
+              <CheckIcon size={18} />
+              {lesson?.isConfirmed ? "Registrar Clase" : "Guardar"}
             </Button>
           </DialogFooter>
         </form>

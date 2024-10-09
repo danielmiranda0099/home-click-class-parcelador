@@ -14,6 +14,7 @@ import { Textarea } from "./ui/textarea";
 import { ConfirmLesson, GetLessons } from "@/actions/CrudLesson";
 import { useLessonStore } from "@/store/lessonStore";
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
+import { CheckIcon } from "./icons";
 
 export function FormConfirmClass() {
   const lesson = useLessonStore((state) => state.selected_lesson);
@@ -98,11 +99,14 @@ export function FormConfirmClass() {
             </span>
 
             <DialogFooter>
-              <Button type="submit">Confirm</Button>
-
               <DialogClose asChild>
                 <Button variant="outline">Exit</Button>
               </DialogClose>
+
+              <Button type="submit" className="flex gap-2">
+                <CheckIcon size={18} />
+                Guardar
+              </Button>
             </DialogFooter>
           </form>
         </div>

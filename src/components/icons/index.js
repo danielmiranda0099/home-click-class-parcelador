@@ -21,3 +21,5 @@ export * from "./EyeOpenIcon";
 export * from "./SettingsIcon";
 export * from "./DashboardIcon";
 export * from "./DollarIcon";
+export * from "./CalendarIcon";
+export * from "./PencilIcon";
