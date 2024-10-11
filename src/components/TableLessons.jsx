@@ -1,5 +1,5 @@
 "use client";
-import { MoreHorizontal, Pencil, Calendar, EyeIcon } from "lucide-react";
+
 import {
   Table,
   TableBody,
@@ -28,6 +28,7 @@ import { useUiStore } from "@/store/uiStores";
 import moment from "moment";
 import { EyeOpenIcon } from "./icons";
 import { statusLesson } from "@/utils/formattedLessonsForCalendar";
+import { EyeIcon } from "lucide-react";
 
 export function TableLessons() {
   const lessons = useLessonStore((state) => state.lessons);
@@ -51,20 +52,9 @@ export function TableLessons() {
     setPopupDetailLesson(true);
   };
 
-  const handleClickReschedule = (id) => {
-    const lesson = getLessonById(id);
-    setSelectedLesson(lesson);
-    setPopupDetailLesson(false);
-    setPopupFormLessonState("RESCHEDULE");
-    setPoppupFormLesson(true);
-  };
-
-  const handleStudentPayment = (id) => {};
-
-  const handleTeacherPayment = (id) => {};
   return (
-    <div className="container mx-auto py-10">
-      <Table className="border-gray-400 border-2 w-fit mx-auto">
+    <div className="w-full mx-auto px-12">
+      <Table className="border-gray-400 border-2 mx-auto w-full">
         <TableHeader className="bg-slate-900">
           <TableRow className="hover:bg-current">
             <TableHead>Students</TableHead>
@@ -77,8 +67,11 @@ export function TableLessons() {
         </TableHeader>
         <TableBody>
           {lessons?.map((lesson, index) => (
-            <TableRow key={lesson.id}>
-              <TableCell className="w-48">
+            <TableRow
+              key={lesson.id}
+              className={`${index % 2 === 0 && "bg-slate-100"} hover:bg-sky-100`}
+            >
+              <TableCell className="min-w-48">
                 <div className="flex flex-col space-x-1">
                   {
                     lesson.student.firstName.split(" ")[0] +
@@ -117,7 +110,7 @@ export function TableLessons() {
                   )} */}
                 </div>
               </TableCell>
-              <TableCell className="w-48">
+              <TableCell className="min-w-48">
                 {lesson.teacher.firstName.split(" ")[0]}{" "}
                 {lesson.teacher.lastName.split(" ")[0]}
               </TableCell>
@@ -126,7 +119,7 @@ export function TableLessons() {
                   <Tooltip>
                     <TooltipTrigger>
                       <div
-                        className="w-7 h-7 rounded-full"
+                        className="min-w-7 h-7 rounded-full"
                         style={{ backgroundColor: lesson?.background }}
                       ></div>
                     </TooltipTrigger>
@@ -139,30 +132,19 @@ export function TableLessons() {
                 </TooltipProvider>
               </TableCell>
               <TableCell>{lesson.isGroup ? "Grupal" : "Individual"}</TableCell>
-              <TableCell className="w-32">
+              <TableCell className="min-w-32">
                 {moment(lesson.startDate).format("D/M/Y")}
               </TableCell>
-              <TableCell className="bg-white">
+              <TableCell className="">
                 <div className="flex items-end gap-4">
                   <Button
                     variant="outline"
                     size="sm"
-                    className=""
+                    className="flex justify-center items-center gap-2"
                     onClick={() => handleClickEdit(lesson.id)}
                   >
-                    <EyeIcon className="h-6 w-6 mr-2" />
+                    <EyeIcon />
                     ver
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className=""
-                    onClick={() => {
-                      handleClickReschedule(lesson.id);
-                    }}
-                  >
-                    <Calendar className="h-4 w-4 mr-2" />
-                    Reschedule
                   </Button>
                 </div>
               </TableCell>
