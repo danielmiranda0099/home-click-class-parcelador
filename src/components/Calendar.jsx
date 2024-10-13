@@ -22,18 +22,21 @@ export function CalendarUI({ rol }) {
   const setPopupDetailLesson = useUiStore(
     (state) => state.setPopupDetailLesson
   );
+  const [counter_DB, setCounterDB] = useState(0);
 
   // Solo hacer la llamada a la API si no hay lecciones cargadas
   //TODO esto no tiene sentido o mejor se pasa al page
   useEffect(() => {
-    if (!lessons || lessons.length === 0) {
+    setCounterDB(counter_DB + 1);
+    if ((lessons || lessons.length === 0) && counter_DB <= 15) {
+      setCounterDB(16);
       GetLessons()
         .then((data) => {
           const formattedLessons = FormattedLessonsForCalendar(data, rol);
           SetLessons(formattedLessons);
           SetLessonsFiltered(formattedLessons);
 
-          console.log(formattedLessons);
+          console.log(formattedLessons, counter_DB);
         })
         .catch((error) => {
           console.error("Error fetching lessons:", error);

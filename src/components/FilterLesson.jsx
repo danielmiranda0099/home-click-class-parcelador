@@ -53,6 +53,7 @@ export function FilterLesson({ isDisabled }) {
     },
   ];
 
+  //TODO: llevar este effect a Calendar
   useEffect(() => {
     if (lessons && lessons.length >= 1) {
       // Encuentra el objeto de filtro correspondiente al filtro seleccionado
