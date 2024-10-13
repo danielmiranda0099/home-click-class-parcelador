@@ -26,20 +26,13 @@ import {
 import { useLessonStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 import moment from "moment";
-import { EyeOpenIcon } from "./icons";
 import { statusLesson } from "@/utils/formattedLessonsForCalendar";
 import { EyeIcon } from "lucide-react";
 
 export function TableLessons() {
-  const lessons = useLessonStore((state) => state.lessons);
-  const SetLessons = useLessonStore((state) => state.SetLessons);
-  const setSelectedLesson = useLessonStore((state) => state.setSelectedLesson);
+  const { lessons_filtered: lessons, setSelectedLesson } = useLessonStore();
   const setPopupDetailLesson = useUiStore(
     (state) => state.setPopupDetailLesson
-  );
-  const setPoppupFormLesson = useUiStore((state) => state.setPopupFormLesson);
-  const setPopupFormLessonState = useUiStore(
-    (state) => state.setPopupFormLessonState
   );
 
   const getLessonById = (id) => {

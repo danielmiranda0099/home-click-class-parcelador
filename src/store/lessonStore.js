@@ -7,6 +7,12 @@ export const useLessonStore = create((set) => ({
       lessons: new_lessons,
     })),
 
+  lessons_filtered: [],
+  SetLessonsFiltered: (new_lessons) =>
+    set(() => ({
+      lessons_filtered: new_lessons,
+    })),
+
   selected_lesson: null,
   setSelectedLesson: (new_selected_lesson) =>
     set(() => ({

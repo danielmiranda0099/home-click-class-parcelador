@@ -31,7 +31,7 @@ export function InputSearch({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className=" justify-between"
+          className="min-w-60 justify-between"
         >
           {value
             ? data?.find((item) => item.value === value?.value)?.label

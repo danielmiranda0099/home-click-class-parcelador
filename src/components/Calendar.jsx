@@ -12,9 +12,13 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 const localizer = momentLocalizer(moment);
 
 export function CalendarUI({ rol }) {
-  const lessons = useLessonStore((state) => state.lessons);
-  const SetLessons = useLessonStore((state) => state.SetLessons);
-  const setSelectedLesson = useLessonStore((state) => state.setSelectedLesson);
+  const {
+    lessons,
+    SetLessons,
+    setSelectedLesson,
+    lessons_filtered,
+    SetLessonsFiltered,
+  } = useLessonStore();
   const setPopupDetailLesson = useUiStore(
     (state) => state.setPopupDetailLesson
   );
@@ -27,6 +31,8 @@ export function CalendarUI({ rol }) {
         .then((data) => {
           const formattedLessons = FormattedLessonsForCalendar(data, rol);
           SetLessons(formattedLessons);
+          SetLessonsFiltered(formattedLessons);
+
           console.log(formattedLessons);
         })
         .catch((error) => {
@@ -55,7 +61,7 @@ export function CalendarUI({ rol }) {
   };
 
   // Memorizar las lecciones formateadas para evitar recalcularlas en cada render
-  const memoizedLessons = useMemo(() => lessons, [lessons]);
+  const memoizedLessons = useMemo(() => lessons_filtered, [lessons_filtered]);
 
   return (
     <>
