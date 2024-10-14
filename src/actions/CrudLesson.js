@@ -51,6 +51,9 @@ export async function GetLessons() {
         student: true, // Incluir información del estudiante si es necesario
         teacher: true, // Incluir información del profesor si es necesario
       },
+      orderBy: {
+        startDate: "asc", // Ordenar por startDate en orden ascendente (de más antigua a más nueva)
+      },
     });
 
     if (!lessons) return [];
