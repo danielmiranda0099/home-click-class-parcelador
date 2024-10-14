@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -9,14 +10,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
@@ -27,13 +20,29 @@ import { useLessonStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 import moment from "moment";
 import { statusLesson } from "@/utils/formattedLessonsForCalendar";
-import { EyeIcon } from "lucide-react";
+import { EyeIcon, ChevronLeft, ChevronRight } from "lucide-react";
 
 export function TableLessons() {
   const { lessons_filtered: lessons, setSelectedLesson } = useLessonStore();
   const setPopupDetailLesson = useUiStore(
     (state) => state.setPopupDetailLesson
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
+
+  useEffect(() => {
+    const defaultPage = findDefaultPage();
+    setCurrentPage(defaultPage);
+  }, [lessons]);
+
+  const findDefaultPage = () => {
+    const now = moment();
+    const upcomingLessonIndex = lessons.findIndex((lesson) =>
+      moment(lesson.startDate).isAfter(now)
+    );
+    if (upcomingLessonIndex === -1) return 1;
+    return Math.floor(upcomingLessonIndex / itemsPerPage) + 1;
+  };
 
   const getLessonById = (id) => {
     return lessons.find((lesson) => lesson.id === id);
@@ -45,9 +54,19 @@ export function TableLessons() {
     setPopupDetailLesson(true);
   };
 
+  const indexOfLastLesson = currentPage * itemsPerPage;
+  const indexOfFirstLesson = indexOfLastLesson - itemsPerPage;
+  const currentLessons = lessons.slice(indexOfFirstLesson, indexOfLastLesson);
+
+  const totalPages = Math.ceil(lessons.length / itemsPerPage);
+
+  const goToNextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const goToPrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+
   return (
-    <div className="w-full mx-auto px-12">
-      <Table className="border-gray-400 border-2 mx-auto w-full">
+    <div className="w-full mx-auto px-12 space-y-4">
+      <Table className="border-gray-400 border-2 mx-auto w-full max-w-[1000px]">
         <TableHeader className="bg-slate-900">
           <TableRow className="hover:bg-current">
             <TableHead>Students</TableHead>
@@ -59,49 +78,15 @@ export function TableLessons() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {lessons?.map((lesson, index) => (
+          {currentLessons.map((lesson, index) => (
             <TableRow
               key={lesson.id}
               className={`${index % 2 === 0 && "bg-slate-100"} hover:bg-sky-100`}
             >
               <TableCell className="min-w-48">
-                <div className="flex flex-col space-x-1">
-                  {
-                    lesson.student.firstName.split(" ")[0] +
-                      " " +
-                      lesson.student.lastName.split(" ")[0]
-                    //   .slice(0, 2).map((student, index) => (
-                    //     <span key={index}>
-                    //       {student}
-                    //       {index < 1 && lesson.students.length > 1 ? "," : ""}
-                    //     </span>
-                    //   ))
-                  }
-                  {/* {lesson.students.length > 2 && (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                              {lesson.students.slice(2).map((student, index) => (
-                                <DropdownMenuItem key={index}>
-                                  {student}
-                                </DropdownMenuItem>
-                              ))}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TooltipTrigger>
-                        <TooltipContent>View more students</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )} */}
-                </div>
+                {lesson.student.firstName.split(" ")[0] +
+                  " " +
+                  lesson.student.lastName.split(" ")[0]}
               </TableCell>
               <TableCell className="min-w-48">
                 {lesson.teacher.firstName.split(" ")[0]}{" "}
@@ -145,6 +130,17 @@ export function TableLessons() {
           ))}
         </TableBody>
       </Table>
+      <div className="flex justify-between items-center w-full max-w-[1000px] mx-auto">
+        <Button onClick={goToPrevPage} disabled={currentPage === 1}>
+          <ChevronLeft className="mr-2 h-4 w-4" /> Anterior
+        </Button>
+        <span>
+          Página {currentPage} de {totalPages}
+        </span>
+        <Button onClick={goToNextPage} disabled={currentPage === totalPages}>
+          Siguiente <ChevronRight className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
     </div>
   );
 }
