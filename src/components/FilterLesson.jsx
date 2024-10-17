@@ -31,7 +31,12 @@ export function FilterLesson({ isDisabled }) {
       value: "isConfirmed",
       label: "Confirmadas",
       color: COLORS.PURPLE_BG,
-      filter: { isConfirmed: true, isCanceled: false, isTeacherPaid: false },
+      filter: {
+        isConfirmed: true,
+        isCanceled: false,
+        isTeacherPaid: false,
+        isRegistered: false,
+      },
     },
     {
       value: "isStudentPaid",
