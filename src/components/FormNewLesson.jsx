@@ -22,6 +22,7 @@ import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { useUserStore } from "@/store/userStore";
 import { formatUserByRole } from "@/utils/formatUsersByRole";
+import { PlusCircleIcon } from "./icons";
 
 const DAYS_OF_WEEK = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"];
 
@@ -87,6 +88,7 @@ export function FormNewLesson() {
   const [student, setStudent] = useState(null);
   const [teacher_payment, setTeacherPayment] = useState("");
   const [period_of_time, setPeriodOfTime] = useState("3m");
+  // const [students_data, setStudentsData] = useState([]);
 
   const [student_fee, setStudentFee] = useState("");
 
@@ -130,59 +132,75 @@ export function FormNewLesson() {
       start_date,
     });
 
+    console.log(studentsData);
+
     // form_data.forEach((value, key) => console.log(`${key}: ${value}`));
 
-    const all_date = getClassDatesForNextPeriod(
-      selectedDays.map((day) => DAYS_OF_WEEK_NUMBER[day]),
-      times,
-      period_of_time,
-      start_date
-    );
-    const lesson = {
-      studentId: student?.id,
-      teacherId: teacher?.id,
-      teacherPayment: teacher_payment_formated,
-      studentFee: student_fee_formated,
-    };
+    // const all_date = getClassDatesForNextPeriod(
+    //   selectedDays.map((day) => DAYS_OF_WEEK_NUMBER[day]),
+    //   times,
+    //   period_of_time,
+    //   start_date
+    // );
+    // const lesson = {
+    //   studentId: student?.id,
+    //   teacherId: teacher?.id,
+    //   teacherPayment: teacher_payment_formated,
+    //   studentFee: student_fee_formated,
+    // };
 
-    if (form_data.get("isStudentPaid")) lesson["isStudentPaid"] = true;
+    // // console.log(lesson);
 
-    // console.log(lesson);
+    // const data = all_date.map((time) => ({
+    //   ...lesson,
+    //   startDate: time,
+    // }));
 
-    const data = all_date.map((time) => ({
-      ...lesson,
-      startDate: time,
-    }));
+    // const new_lessons = await CreateNewLesson(data);
+    // //TODO: Teiene sentido enviar "admin2?? si el que crea clases siempre es admin ademas el rol
+    // //debe de obtenerse por el user
+    // const new_lessons_formated = FormattedLessonsForCalendar(
+    //   new_lessons,
+    //   "admin"
+    // );
+    // const all_lessons = [...lessons, ...new_lessons_formated];
+    // console.log(all_lessons);
+    // setLessons(all_lessons);
+    // setIsOpen(false);
+  };
 
-    const new_lessons = await CreateNewLesson(data);
-    //TODO: Teiene sentido enviar "admin2?? si el que crea clases siempre es admin ademas el rol
-    //debe de obtenerse por el user
-    const new_lessons_formated = FormattedLessonsForCalendar(
-      new_lessons,
-      "admin"
-    );
-    const all_lessons = [...lessons, ...new_lessons_formated];
-    console.log(all_lessons);
-    setLessons(all_lessons);
-    setIsOpen(false);
+  const [studentsData, setStudentsData] = useState([
+    { student: null, fee: "" },
+  ]);
+
+  // ... (other functions remain the same)
+
+  const addNewStudent = () => {
+    setStudentsData([...studentsData, { student: null, fee: "" }]);
+  };
+
+  const updateStudentData = (index, field, value) => {
+    const newStudentsData = [...studentsData];
+    newStudentsData[index][field] = value;
+    setStudentsData(newStudentsData);
   };
 
   return (
     <Dialog open={is_open} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[900px] ">
+      <DialogContent className="sm:max-w-[900px] overflow-y-scroll max-h-[95vh]">
         <DialogHeader className="">
           <DialogTitle>New Class</DialogTitle>
         </DialogHeader>
         <form className="p-0 px-4" action={OnCreateNewLessons}>
-          <div className="space-y-6">
-            <div className={`grid grid-cols-2 gap-4`}>
+          <div className="space-y-4">
+            {/* <div className={`grid grid-cols-2 gap-4`}>
               <div className="grid gap-2">
                 <Label>Student</Label>
                 <InputSearch
                   value={student}
                   setValue={setStudent}
                   data={students}
-                  placeholder="Select a teacher"
+                  placeholder="Select a student"
                 />
               </div>
               <div className="grid gap-2">
@@ -192,16 +210,40 @@ export function FormNewLesson() {
                   setValue={setStudentFee}
                 />
               </div>
-            </div>
+            </div> */}
+            {studentsData.map((studentData, index) => (
+              <div key={index} className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label>Student</Label>
+                  <InputSearch
+                    value={studentData.student}
+                    setValue={(value) =>
+                      updateStudentData(index, "student", value)
+                    }
+                    data={students}
+                    placeholder="Select a student"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label>Price Student {index + 1} Per Hour</Label>
+                  <InputPriceLesson
+                    value={studentData.fee}
+                    setValue={(value) => updateStudentData(index, "fee", value)}
+                  />
+                </div>
+              </div>
+            ))}
 
-            <div className="flex items-center space-x-2">
-              <Label htmlFor="isStudentPaid">Pago de clases confirmado</Label>
-              <input
-                type="checkbox"
-                id="isStudentPaid"
-                name="isStudentPaid"
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
+            <div className="flex items-center">
+              <Button
+                variant="outline"
+                className="flex gap-2"
+                type="button"
+                onClick={addNewStudent}
+              >
+                Nuevo Etudiante
+                <PlusCircleIcon />
+              </Button>
             </div>
 
             <div className={`grid grid-cols-2 gap-4`}>
