@@ -32,7 +32,7 @@ export async function CreateNewLesson(form_data) {
     const new_lessons = await prisma.lesson.createManyAndReturn({
       data: form_data,
       include: {
-        student: true,
+        studentLessons: true,
         teacher: true,
       },
     });
@@ -48,7 +48,7 @@ export async function GetLessons() {
     // Obtener todas las lecciones
     const lessons = await prisma.lesson.findMany({
       include: {
-        student: true, // Incluir información del estudiante si es necesario
+        studentLessons: true, // Incluir información del estudiante si es necesario
         teacher: true, // Incluir información del profesor si es necesario
       },
       orderBy: {
@@ -188,7 +188,7 @@ export async function UnpaidLessons(
         ...filters,
       },
       include: {
-        student: true,
+        studentLessons: true,
         teacher: true,
       },
     });

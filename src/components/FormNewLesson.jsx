@@ -193,24 +193,6 @@ export function FormNewLesson() {
         </DialogHeader>
         <form className="p-0 px-4" action={OnCreateNewLessons}>
           <div className="space-y-4">
-            {/* <div className={`grid grid-cols-2 gap-4`}>
-              <div className="grid gap-2">
-                <Label>Student</Label>
-                <InputSearch
-                  value={student}
-                  setValue={setStudent}
-                  data={students}
-                  placeholder="Select a student"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label>Price Student Per Hour</Label>
-                <InputPriceLesson
-                  value={student_fee}
-                  setValue={setStudentFee}
-                />
-              </div>
-            </div> */}
             {studentsData.map((studentData, index) => (
               <div key={index} className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">

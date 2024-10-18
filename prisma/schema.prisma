@@ -6,9 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 enum Role {
@@ -18,47 +18,60 @@ enum Role {
 }
 
 model User {
-  id          Int     @id @default(autoincrement())
-  firstName   String
-  lastName    String
-  email       String  @unique
-  phoneNumber String?
-  city        String?
-  country     String?
-  role        Role
+  id           Int     @id @default(autoincrement())
+  firstName    String
+  lastName     String
+  email        String  @unique
+  phoneNumber  String?
+  city         String?
+  country      String?
+  role         Role
+  averageScore Float?
 
   // Relaciones
-  teacherLessons Lesson[] @relation("TeacherLessons")
-  studentLessons Lesson[] @relation("StudentLessons")
+  teacherLessons Lesson[]        @relation("TeacherLessons")
+  studentLessons StudentLesson[]
 }
 
-// TODO: agregar isGroup
 model Lesson {
-  id                  Int      @id @default(autoincrement())
-  startDate           DateTime
-  topic               String?
-  teacherObservations String?
-  issues              String?
-  isScheduled         Boolean  @default(true)
-  isRescheduled       Boolean  @default(false)
-  isCanceled          Boolean  @default(false)
-  cancellationReason  String?
-  isRegistered        Boolean  @default(false)
-  isStudentPaid       Boolean  @default(false)
-  isTeacherPaid       Boolean  @default(false)
-  isConfirmed         Boolean  @default(false)
-  lessonScore         Float?
-  studentObservations String?
-  teacherPayment      Float?
-  studentFee          Float?
-  profit              Float?
-  week                String?
-  otherObservations   String?
+  id                 Int      @id @default(autoincrement())
+  startDate          DateTime
+  topic              String?
+  issues             String?
+  week               String?
+  otherObservations  String?
+  isScheduled        Boolean  @default(true)
+  isRescheduled      Boolean  @default(false)
+  isCanceled         Boolean  @default(false)
+  cancellationReason String?
+  isConfirmed        Boolean  @default(false)
+  isGroup            Boolean  @default(false)
+  isRegistered       Boolean  @default(false)
+  isTeacherPaid      Boolean  @default(false)
+  teacherPayment     Float?
+  reasonsRescheduled String?
+  lessonScore        Float?
+  profit             Float?
 
   // Relaciones
-  student User @relation("StudentLessons", fields: [studentId], references: [id])
-  teacher User @relation("TeacherLessons", fields: [teacherId], references: [id])
-
-  studentId Int
+  teacher   User @relation("TeacherLessons", fields: [teacherId], references: [id])
   teacherId Int
+
+  studentLessons StudentLesson[]
+}
+
+model StudentLesson {
+  id                  Int     @id @default(autoincrement())
+  isStudentPaid       Boolean @default(false)
+  studentObservations String?
+  studentFee          Float?
+  teacherObservations String?
+
+  // Relaciones
+  student   User   @relation(fields: [studentId], references: [id])
+  lesson    Lesson @relation(fields: [lessonId], references: [id])
+  studentId Int
+  lessonId  Int
+
+  @@unique([studentId, lessonId])
 }
