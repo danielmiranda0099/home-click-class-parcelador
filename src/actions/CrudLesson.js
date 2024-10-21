@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { supabase } from "@/utils/supabase";
+import { create } from "zustand";
 
 const formattedLessonForBD = (form_data) => {
   // TODO Mirar como adtener los de mas datos del formulario
@@ -26,17 +27,27 @@ const formattedLessonForBD = (form_data) => {
   return lesson_formated;
 };
 
-export async function CreateNewLesson(form_data) {
-  // const lesson_formated = formattedLessonForBD(form_data);
+//TODO: pasar la logica de creacion de formateo de lesson al back
+export async function CreateNewLesson(lessons_data) {
   try {
-    const new_lessons = await prisma.lesson.createManyAndReturn({
-      data: form_data,
-      include: {
-        studentLessons: true,
-        teacher: true,
-      },
-    });
-
+    const new_lessons = await prisma.$transaction(
+      lessons_data.map((lesson_data) =>
+        prisma.lesson.create({
+          data: {
+            ...lesson_data,
+          },
+          include: {
+            teacher: true,
+            studentLessons: {
+              include: {
+                student: true,
+              },
+            },
+          },
+        })
+      )
+    );
+    console.log(JSON.stringify(new_lessons.slice(2), null, 2));
     return new_lessons;
   } catch (error) {
     console.error("Error Crating lessons:", error);

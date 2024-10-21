@@ -157,7 +157,7 @@ export function FormattedLessonsForCalendar(original_lesson, rol) {
     const [background, color, lesson_status] = statusLesson(lesson, rol);
     return {
       id: lesson.id,
-      title: lesson.student.firstName + lesson.student.lastName || "UNKNOW",
+      title: lesson?.student?.firstName + lesson?.student?.lastName || "UNKNOW",
       start: new Date(FormattedDate(lesson.startDate)),
       end: new Date(FormattedDate(lesson.startDate, true)),
       background,

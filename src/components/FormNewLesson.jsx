@@ -132,55 +132,63 @@ export function FormNewLesson() {
       start_date,
     });
 
-    console.log(studentsData);
+    console.log(students_data);
 
-    // form_data.forEach((value, key) => console.log(`${key}: ${value}`));
+    form_data.forEach((value, key) => console.log(`${key}: ${value}`));
 
-    // const all_date = getClassDatesForNextPeriod(
-    //   selectedDays.map((day) => DAYS_OF_WEEK_NUMBER[day]),
-    //   times,
-    //   period_of_time,
-    //   start_date
-    // );
-    // const lesson = {
-    //   studentId: student?.id,
-    //   teacherId: teacher?.id,
-    //   teacherPayment: teacher_payment_formated,
-    //   studentFee: student_fee_formated,
-    // };
+    const student_lesson_data = students_data.map((data) => ({
+      studentId: data.student.id,
+      studentFee: parseInt(data.fee, 10),
+    }));
 
-    // // console.log(lesson);
+    const all_date = getClassDatesForNextPeriod(
+      selectedDays.map((day) => DAYS_OF_WEEK_NUMBER[day]),
+      times,
+      period_of_time,
+      start_date
+    );
 
-    // const data = all_date.map((time) => ({
-    //   ...lesson,
-    //   startDate: time,
-    // }));
+    const lesson = {
+      teacherId: teacher?.id,
+      teacherPayment: teacher_payment_formated,
+    };
 
-    // const new_lessons = await CreateNewLesson(data);
-    // //TODO: Teiene sentido enviar "admin2?? si el que crea clases siempre es admin ademas el rol
-    // //debe de obtenerse por el user
-    // const new_lessons_formated = FormattedLessonsForCalendar(
-    //   new_lessons,
-    //   "admin"
-    // );
-    // const all_lessons = [...lessons, ...new_lessons_formated];
-    // console.log(all_lessons);
-    // setLessons(all_lessons);
-    // setIsOpen(false);
+    // console.log(lesson);
+
+    const data_lesson = all_date.map((time) => ({
+      ...lesson,
+      isGroup: student_lesson_data.length > 1,
+      startDate: time,
+      studentLessons: {
+        create: student_lesson_data,
+      },
+    }));
+
+    const new_lessons = await CreateNewLesson(data_lesson);
+    //TODO: Teiene sentido enviar "admin2?? si el que crea clases siempre es admin ademas el rol
+    //debe de obtenerse por el user
+    const new_lessons_formated = FormattedLessonsForCalendar(
+      new_lessons,
+      "admin"
+    );
+    const all_lessons = [...lessons, ...new_lessons_formated];
+    console.log(all_lessons);
+    setLessons(all_lessons);
+    setIsOpen(false);
   };
 
-  const [studentsData, setStudentsData] = useState([
+  const [students_data, setStudentsData] = useState([
     { student: null, fee: "" },
   ]);
 
   // ... (other functions remain the same)
 
   const addNewStudent = () => {
-    setStudentsData([...studentsData, { student: null, fee: "" }]);
+    setStudentsData([...students_data, { student: null, fee: "" }]);
   };
 
   const updateStudentData = (index, field, value) => {
-    const newStudentsData = [...studentsData];
+    const newStudentsData = [...students_data];
     newStudentsData[index][field] = value;
     setStudentsData(newStudentsData);
   };
@@ -193,7 +201,7 @@ export function FormNewLesson() {
         </DialogHeader>
         <form className="p-0 px-4" action={OnCreateNewLessons}>
           <div className="space-y-4">
-            {studentsData.map((studentData, index) => (
+            {students_data.map((studentData, index) => (
               <div key={index} className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label>Student</Label>
@@ -207,7 +215,7 @@ export function FormNewLesson() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label>Price Student {index + 1} Per Hour</Label>
+                  <Label>Price StudentPer Hour</Label>
                   <InputPriceLesson
                     value={studentData.fee}
                     setValue={(value) => updateStudentData(index, "fee", value)}

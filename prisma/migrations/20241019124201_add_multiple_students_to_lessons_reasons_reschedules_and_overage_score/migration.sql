@@ -11,6 +11,7 @@ CREATE TABLE "User" (
     "city" TEXT,
     "country" TEXT,
     "role" "Role" NOT NULL,
+    "averageScore" DOUBLE PRECISION,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -20,34 +21,50 @@ CREATE TABLE "Lesson" (
     "id" SERIAL NOT NULL,
     "startDate" TIMESTAMP(3) NOT NULL,
     "topic" TEXT,
-    "teacherObservations" TEXT,
     "issues" TEXT,
+    "week" TEXT,
+    "otherObservations" TEXT,
     "isScheduled" BOOLEAN NOT NULL DEFAULT true,
     "isRescheduled" BOOLEAN NOT NULL DEFAULT false,
     "isCanceled" BOOLEAN NOT NULL DEFAULT false,
     "cancellationReason" TEXT,
-    "isRegistered" BOOLEAN NOT NULL DEFAULT false,
-    "isStudentPaid" BOOLEAN NOT NULL DEFAULT false,
-    "isTeacherPaid" BOOLEAN NOT NULL DEFAULT false,
     "isConfirmed" BOOLEAN NOT NULL DEFAULT false,
-    "lessonScore" DOUBLE PRECISION,
-    "studentObservations" TEXT,
+    "isGroup" BOOLEAN NOT NULL DEFAULT false,
+    "isRegistered" BOOLEAN NOT NULL DEFAULT false,
+    "isTeacherPaid" BOOLEAN NOT NULL DEFAULT false,
     "teacherPayment" DOUBLE PRECISION,
-    "studentFee" DOUBLE PRECISION,
+    "reasonsRescheduled" TEXT,
+    "lessonScore" DOUBLE PRECISION,
     "profit" DOUBLE PRECISION,
-    "week" TEXT,
-    "otherObservations" TEXT,
-    "studentId" INTEGER NOT NULL,
     "teacherId" INTEGER NOT NULL,
 
     CONSTRAINT "Lesson_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "StudentLesson" (
+    "id" SERIAL NOT NULL,
+    "isStudentPaid" BOOLEAN NOT NULL DEFAULT false,
+    "studentObservations" TEXT,
+    "studentFee" DOUBLE PRECISION,
+    "teacherObservations" TEXT,
+    "studentId" INTEGER NOT NULL,
+    "lessonId" INTEGER NOT NULL,
+
+    CONSTRAINT "StudentLesson_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
--- AddForeignKey
-ALTER TABLE "Lesson" ADD CONSTRAINT "Lesson_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+-- CreateIndex
+CREATE UNIQUE INDEX "StudentLesson_studentId_lessonId_key" ON "StudentLesson"("studentId", "lessonId");
 
 -- AddForeignKey
 ALTER TABLE "Lesson" ADD CONSTRAINT "Lesson_teacherId_fkey" FOREIGN KEY ("teacherId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "StudentLesson" ADD CONSTRAINT "StudentLesson_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "StudentLesson" ADD CONSTRAINT "StudentLesson_lessonId_fkey" FOREIGN KEY ("lessonId") REFERENCES "Lesson"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
