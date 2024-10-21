@@ -59,8 +59,12 @@ export async function GetLessons() {
     // Obtener todas las lecciones
     const lessons = await prisma.lesson.findMany({
       include: {
-        studentLessons: true, // Incluir información del estudiante si es necesario
         teacher: true, // Incluir información del profesor si es necesario
+        studentLessons: {
+          include: {
+            student: true,
+          },
+        },
       },
       orderBy: {
         startDate: "asc", // Ordenar por startDate en orden ascendente (de más antigua a más nueva)
@@ -68,7 +72,7 @@ export async function GetLessons() {
     });
 
     if (!lessons) return [];
-    console.log(lessons.slice(0, 3));
+    console.log("jejejej", JSON.stringify(lessons.slice(1), null, 2));
     return lessons;
   } catch (error) {
     console.error("Error fetching lessons:", error);

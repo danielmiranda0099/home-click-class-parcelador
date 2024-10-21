@@ -1,7 +1,12 @@
 import { COLORS } from "./colorsStatusLesson";
 import { FormattedDate } from "./formattedDate";
+import {
+  formatNamesForCalendar,
+  getNamesStudentsFromLesson,
+} from "./getNamesForLesson";
 
 //TODO: meter colores en variables
+//TODO: Refact llevar esta funcion a otro archivo
 export const statusLesson = (lesson, rol) => {
   if (!lesson) {
     return [COLORS.FUCHSIA_BG, COLORS.FUCHSIA_TEXT, "Unknown Status"];
@@ -157,7 +162,10 @@ export function FormattedLessonsForCalendar(original_lesson, rol) {
     const [background, color, lesson_status] = statusLesson(lesson, rol);
     return {
       id: lesson.id,
-      title: lesson?.student?.firstName + lesson?.student?.lastName || "UNKNOW",
+      title:
+        formatNamesForCalendar(
+          getNamesStudentsFromLesson(lesson?.studentLessons)
+        ) || "UNKNOW",
       start: new Date(FormattedDate(lesson.startDate)),
       end: new Date(FormattedDate(lesson.startDate, true)),
       background,

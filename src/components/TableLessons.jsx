@@ -83,10 +83,12 @@ export function TableLessons() {
               key={lesson.id}
               className={`${index % 2 === 0 && "bg-slate-100"} hover:bg-sky-100`}
             >
-              <TableCell className="min-w-48">
-                {lesson.student.firstName.split(" ")[0] +
-                  " " +
-                  lesson.student.lastName.split(" ")[0]}
+              <TableCell className="min-w-48 flex flex-col">
+                {lesson?.studentLessons.map((lesson) => (
+                  <span key={lesson.student.email}>
+                    {lesson.student.firstName} {lesson.student.lastName}
+                  </span>
+                ))}
               </TableCell>
               <TableCell className="min-w-48">
                 {lesson.teacher.firstName.split(" ")[0]}{" "}
