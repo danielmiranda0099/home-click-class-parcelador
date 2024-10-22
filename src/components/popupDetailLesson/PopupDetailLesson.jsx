@@ -76,7 +76,7 @@ export function PopupDetailLesson({ rol }) {
       {rol !== "student" && <FormLesson rol={rol} />}
       {lesson && (
         <Dialog open={is_open} onOpenChange={setPopupDetailLesson}>
-          <DialogContent className="sm:max-w-[800px]">
+          <DialogContent className="sm:max-w-[800px] overflow-y-scroll max-h-[95vh]">
             <DialogDescription></DialogDescription>
             <DialogHeader>
               <DialogTitle>Class Details</DialogTitle>
@@ -105,11 +105,13 @@ export function PopupDetailLesson({ rol }) {
                 </div>
                 <div className="flex justify-center">
                   <div className="flex flex-col items-end w-[fit-content] pl-2.5">
-                    {rol !== "teacher" && lesson?.studentFee && (
-                      <h2 className="font-medium">
-                        {formatCurrency(lesson?.studentFee.toString())}
-                      </h2>
-                    )}
+                    {rol !== "teacher" &&
+                      lesson?.studentLessons &&
+                      lesson?.studentLessons.map((student_lesson) => (
+                        <h2 className="font-medium" key={student_lesson.id}>
+                          {formatCurrency(student_lesson.studentFee.toString())}
+                        </h2>
+                      ))}
                     {rol !== "student" && lesson?.teacherPayment && (
                       <h2 className="font-medium">
                         {rol === "admin" && "-"}{" "}
@@ -123,7 +125,10 @@ export function PopupDetailLesson({ rol }) {
                         <h2 className="font-medium">
                           {formatCurrency(
                             (
-                              lesson?.studentFee - lesson?.teacherPayment
+                              lesson?.studentLessons.reduce(
+                                (total, lesson) => lesson.studentFee + total,
+                                0
+                              ) - lesson?.teacherPayment
                             ).toString()
                           )}
                         </h2>
@@ -139,11 +144,17 @@ export function PopupDetailLesson({ rol }) {
                   <UsersIcon className="h-8 w-8 text-primary" />
                   <div>
                     <p className="font-medium">Estudiantes</p>
-                    <p className="text-muted-foreground">
-                      {lesson?.student.firstName +
-                        " " +
-                        lesson?.student.lastName}
-                    </p>
+                    {lesson &&
+                      lesson?.studentLessons.map((student_lesson) => (
+                        <p
+                          className="text-muted-foreground"
+                          key={student_lesson?.student.email}
+                        >
+                          {student_lesson?.student.firstName +
+                            " " +
+                            student_lesson?.student.lastName}
+                        </p>
+                      ))}
                   </div>
                 </div>
 
@@ -256,25 +267,30 @@ export function PopupDetailLesson({ rol }) {
                   )}
                 </div>
                 <div className="flex gap-2">
-                  {rol === "admin" && !lesson?.isStudentPaid && (
-                    <Button
-                      className="flex gap-2"
-                      onClick={async () => {
-                        await PayLesson([lesson?.id], {
-                          isStudentPaid: true,
-                        });
-                        //TODO: De nuevo esto se podria mejorra solo actualizando el estado
-                        const data = await GetLessons();
-                        const lessons = FormattedLessonsForCalendar(data, rol);
+                  {rol === "admin" &&
+                    !lesson?.isStudentPaid &&
+                    !lesson.isGroup && (
+                      <Button
+                        className="flex gap-2"
+                        onClick={async () => {
+                          await PayLesson([lesson?.id], {
+                            isStudentPaid: true,
+                          });
+                          //TODO: De nuevo esto se podria mejorra solo actualizando el estado
+                          const data = await GetLessons();
+                          const lessons = FormattedLessonsForCalendar(
+                            data,
+                            rol
+                          );
 
-                        SetLessons(lessons);
-                        setPopupDetailLesson(false);
-                      }}
-                    >
-                      <DollarIcon size={18} />
-                      Pago Estudiante
-                    </Button>
-                  )}
+                          SetLessons(lessons);
+                          setPopupDetailLesson(false);
+                        }}
+                      >
+                        <DollarIcon size={18} />
+                        Pago Estudiante
+                      </Button>
+                    )}
                   {rol === "admin" &&
                     lesson?.isRegistered &&
                     !lesson?.isTeacherPaid && (

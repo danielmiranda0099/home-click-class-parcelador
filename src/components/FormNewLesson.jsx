@@ -138,7 +138,7 @@ export function FormNewLesson() {
 
     const student_lesson_data = students_data.map((data) => ({
       studentId: data.student.id,
-      studentFee: parseInt(data.fee, 10),
+      studentFee: parseInt(data.fee.replace(/[^0-9]/g, ""), 10),
     }));
 
     const all_date = getClassDatesForNextPeriod(
