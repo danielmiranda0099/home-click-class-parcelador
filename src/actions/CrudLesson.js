@@ -187,10 +187,18 @@ export async function UnpaidLessons(
       where: {
         OR: [
           {
-            studentId: user_id,
-            isStudentPaid: false,
+            // Filtro para encontrar lecciones donde el estudiante no ha pagado
+            studentLessons: {
+              some: {
+                isStudentPaid: false,
+                student: {
+                  id: user_id,
+                },
+              },
+            },
           },
           {
+            // Filtro para encontrar lecciones donde el profesor no ha sido pagado
             teacherId: user_id,
             isTeacherPaid: false,
           },
@@ -203,8 +211,15 @@ export async function UnpaidLessons(
         ...filters,
       },
       include: {
-        studentLessons: true,
-        teacher: true,
+        teacher: true, // Incluir información del profesor
+        studentLessons: {
+          include: {
+            student: true, // Incluir información del estudiante en las lecciones
+          },
+        },
+      },
+      orderBy: {
+        startDate: "asc", // Ordenar por startDate en orden ascendente (de más antigua a más nueva)
       },
     });
     return unpaid_lessons;

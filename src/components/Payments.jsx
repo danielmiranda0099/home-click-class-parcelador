@@ -47,7 +47,7 @@ export function Payments() {
   const { setPopupDetailLesson } = useUiStore();
 
   useEffect(() => {
-    console.log("total");
+    // console.log("total", payments);
     const total = payments?.reduce(
       (sum, payment) => (payment.isPay ? sum + payment.price : sum + 0),
       0
@@ -195,6 +195,9 @@ export function Payments() {
                         Rol
                       </TableHead>
                       <TableHead className="text-primary font-bold">
+                        Type
+                      </TableHead>
+                      <TableHead className="text-primary font-bold">
                         Status
                       </TableHead>
                       <TableHead className="text-primary font-bold">
@@ -224,7 +227,9 @@ export function Payments() {
                             user?.lastName.split(" ")[0]}
                         </TableCell>
                         <TableCell>{user?.role}</TableCell>
-
+                        <TableCell>
+                          {payment.isGroup ? "Grupal" : "Individual"}
+                        </TableCell>
                         <TableCell>
                           <TooltipProvider>
                             <Tooltip>
@@ -236,6 +241,7 @@ export function Payments() {
                                   }}
                                 ></div>
                               </TooltipTrigger>
+
                               <TooltipContent>
                                 <p className="p-3 font-bold">
                                   {statusLesson(payment, "admin")[2]}
