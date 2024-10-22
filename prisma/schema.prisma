@@ -34,24 +34,25 @@ model User {
 }
 
 model Lesson {
-  id                 Int      @id @default(autoincrement())
-  startDate          DateTime
-  topic              String?
-  issues             String?
-  week               String?
-  otherObservations  String?
-  isScheduled        Boolean  @default(true)
-  isRescheduled      Boolean  @default(false)
-  isCanceled         Boolean  @default(false)
-  cancellationReason String?
-  isConfirmed        Boolean  @default(false)
-  isGroup            Boolean  @default(false)
-  isRegistered       Boolean  @default(false)
-  isTeacherPaid      Boolean  @default(false)
-  teacherPayment     Float?
-  reasonsRescheduled String?
-  lessonScore        Float?
-  profit             Float?
+  id                  Int      @id @default(autoincrement())
+  startDate           DateTime
+  topic               String?
+  issues              String?
+  week                String?
+  teacherObservations String?
+  otherObservations   String?
+  isPaid              Boolean  @default(false)
+  isScheduled         Boolean  @default(true)
+  isRescheduled       Boolean  @default(false)
+  isCanceled          Boolean  @default(false)
+  cancellationReason  String?
+  isConfirmed         Boolean  @default(false)
+  isGroup             Boolean  @default(false)
+  isRegistered        Boolean  @default(false)
+  isTeacherPaid       Boolean  @default(false)
+  teacherPayment      Float?
+  reasonsRescheduled  String?
+  profit              Float?
 
   // Relaciones
   teacher   User @relation("TeacherLessons", fields: [teacherId], references: [id])
@@ -63,14 +64,14 @@ model Lesson {
 model StudentLesson {
   id                  Int     @id @default(autoincrement())
   isStudentPaid       Boolean @default(false)
-  studentObservations String?
   studentFee          Float?
-  teacherObservations String?
+  lessonScore         Float?
+  studentObservations String?
 
   // Relaciones
   student   User   @relation(fields: [studentId], references: [id])
-  lesson    Lesson @relation(fields: [lessonId], references: [id])
   studentId Int
+  lesson    Lesson @relation(fields: [lessonId], references: [id])
   lessonId  Int
 
   @@unique([studentId, lessonId])
