@@ -68,7 +68,9 @@ export function FilterLesson({ isDisabled }) {
       const filtered = lessons.filter((lesson) => {
         // Verifica si el usuario coincide con el estudiante o profesor de la lección
         const matchesUser = user
-          ? lesson.student?.id === user.id || lesson.teacher?.id === user.id
+          ? lesson.studentLessons.some(
+              (student_lesson) => student_lesson.student?.id === user.id
+            ) || lesson.teacher?.id === user.id
           : true;
 
         if (selectedFilterObj.value === "all") {
