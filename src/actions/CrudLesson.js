@@ -160,18 +160,38 @@ export async function RescheduleLesson(data_form) {
   }
 }
 
-export async function PayLesson(ids, data) {
+export async function PayTeacherLesson(lessonIds) {
   try {
     await prisma.lesson.updateMany({
       where: {
         id: {
-          in: ids,
+          in: lessonIds,
         },
       },
-      data: data,
+      data: {
+        isTeacherPaid: true,
+      },
+    });
+    console.log("Teacher payment confirmed");
+  } catch (error) {
+    console.error("Error confirming teacher payment:", error);
+  }
+}
+
+export async function PayStudentLesson(studentLessonIds) {
+  try {
+    await prisma.studentLesson.updateMany({
+      where: {
+        id: {
+          in: studentLessonIds,
+        },
+      },
+      data: {
+        isStudentPaid: true,
+      },
     });
   } catch (error) {
-    console.error("Error Paying To Teacher", error);
+    console.error("Error confirming student payment:", error);
   }
 }
 
@@ -238,6 +258,6 @@ export async function DeleteLesson(ids) {
       },
     });
   } catch (error) {
-    console.error("Error Paying To Teacher", error);
+    console.error("Error Unpaying Lesson", error);
   }
 }

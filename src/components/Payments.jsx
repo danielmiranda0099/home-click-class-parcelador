@@ -12,7 +12,12 @@ import {
 } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
-import { GetLessons, PayLesson, UnpaidLessons } from "@/actions/CrudLesson";
+import {
+  GetLessons,
+  PayStudentLesson,
+  PayTeacherLesson,
+  UnpaidLessons,
+} from "@/actions/CrudLesson";
 import { formatPayments } from "@/utils/formatPayments";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { PaperSearchIcon } from "./icons";
@@ -47,7 +52,7 @@ export function Payments() {
   const { setPopupDetailLesson } = useUiStore();
 
   useEffect(() => {
-    // console.log("total", payments);
+    console.log("total", payments);
     const total = payments?.reduce(
       (sum, payment) => (payment.isPay ? sum + payment.price : sum + 0),
       0
@@ -91,25 +96,39 @@ export function Payments() {
 
   const handleConfirmPayment = async () => {
     if (!payments || !user) return;
-    // Implement payment confirmation here
+
     console.log("Confirming payment of", total);
-    const unpaid_lesson_ids = payments
-      ?.filter((lesson) => lesson.isPay)
-      .map((lesson) => lesson.id);
-    if (user.role === "teacher")
-      PayLesson(
-        unpaid_lesson_ids,
-        { isTeacherPaid: true },
-        { isRegistered: true }
-      );
-    if (user.role === "student")
-      PayLesson(unpaid_lesson_ids, { isStudentPaid: true });
-    //TODO: ES NECESARIO LLAMAR A DB O SERIA SOLO MODIFICAR EL ESTADO.
+
+    if (user.role === "teacher") {
+      // Filtrar lecciones seleccionadas para pago
+      const unpaid_lesson_ids = payments
+        ?.filter((lesson) => lesson.isPay && !lesson.isTeacherPaid)
+        .map((lesson) => lesson.id);
+
+      if (unpaid_lesson_ids && unpaid_lesson_ids.length > 0) {
+        await PayTeacherLesson(unpaid_lesson_ids);
+      }
+    }
+
+    if (user.role === "student") {
+      // Filtrar lecciones seleccionadas para pago y obtener IDs de StudentLesson
+      const unpaid_student_lesson_ids = payments
+        ?.filter((lesson) => lesson.isPay && lesson.studentLessons)
+        .flatMap((lesson) =>
+          lesson.studentLessons
+            .filter((studentLesson) => !studentLesson.isStudentPaid)
+            .map((studentLesson) => studentLesson.id)
+        );
+
+      if (unpaid_student_lesson_ids && unpaid_student_lesson_ids.length > 0) {
+        await PayStudentLesson(unpaid_student_lesson_ids);
+      }
+    }
+
     const data = await GetLessons();
     const lessons = FormattedLessonsForCalendar(data, "admin");
-
     SetLessons(lessons);
-    console.log(unpaid_lesson_ids);
+
     handleSearch();
   };
 

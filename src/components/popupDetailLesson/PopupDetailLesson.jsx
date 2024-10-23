@@ -18,7 +18,6 @@ import {
   CancelLesson,
   DeleteLesson,
   GetLessons,
-  PayLesson,
   RegisterLesson,
 } from "@/actions/CrudLesson";
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
@@ -273,9 +272,9 @@ export function PopupDetailLesson({ rol }) {
                       <Button
                         className="flex gap-2"
                         onClick={async () => {
-                          await PayLesson([lesson?.id], {
-                            isStudentPaid: true,
-                          });
+                          // await PayLesson([lesson?.id], {
+                          //   isStudentPaid: true,
+                          // });
                           //TODO: De nuevo esto se podria mejorra solo actualizando el estado
                           const data = await GetLessons();
                           const lessons = FormattedLessonsForCalendar(
@@ -297,9 +296,9 @@ export function PopupDetailLesson({ rol }) {
                       <Button
                         className="flex gap-2"
                         onClick={async () => {
-                          await PayLesson([lesson?.id], {
-                            isTeacherPaid: true,
-                          });
+                          // await PayLesson([lesson?.id], {
+                          //   isTeacherPaid: true,
+                          // });
                           //TODO: De nuevo esto se podria mejorra solo actualizando el estado
                           const data = await GetLessons();
                           const lessons = FormattedLessonsForCalendar(
