@@ -17,20 +17,34 @@ export const statusLesson = (lesson, rol) => {
   }
 
   if (rol === "student") {
-    if (lesson?.isScheduled && lesson?.isConfirmed && !lesson?.isStudentPaid) {
+    if (
+      lesson?.isScheduled &&
+      lesson?.isConfirmed &&
+      !lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+    ) {
       return [
         COLORS.YELLOW_BG,
         COLORS.YELLOW_TEXT,
         "Finalizada - Pendiente De Pago",
       ]; //YELLOW
     }
-    if (lesson?.isScheduled && lesson?.isConfirmed && lesson?.isStudentPaid) {
+    if (
+      lesson?.isScheduled &&
+      lesson?.isConfirmed &&
+      lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+    ) {
       return [COLORS.GREEN_BG, COLORS.GREEN_TEXT, "Finalizada - Pagada"]; //Green
     }
-    if (lesson?.isScheduled && lesson?.isStudentPaid) {
+    if (
+      lesson?.isScheduled &&
+      lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+    ) {
       return [COLORS.BLUE_BG, COLORS.BLUE_TEXT, "Agendada - Pagada"]; //BLUE
     }
-    if (lesson?.isScheduled && !lesson?.isStudentPaid) {
+    if (
+      lesson?.isScheduled &&
+      !lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+    ) {
       return [COLORS.BLUE_BG, COLORS.BLUE_TEXT, "Agendada - Pendiente De Pago"]; //BLUE
     }
   }
@@ -73,7 +87,7 @@ export const statusLesson = (lesson, rol) => {
       lesson?.isConfirmed &&
       lesson?.isRegistered &&
       !lesson?.isTeacherPaid &&
-      !lesson?.isStudentPaid
+      !lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
     ) {
       return [
         COLORS.ORANGE_BG,
@@ -86,7 +100,7 @@ export const statusLesson = (lesson, rol) => {
       lesson?.isConfirmed &&
       lesson?.isRegistered &&
       !lesson?.isTeacherPaid &&
-      lesson?.isStudentPaid
+      lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
     ) {
       return [
         COLORS.ORANGE_BG,
@@ -99,7 +113,7 @@ export const statusLesson = (lesson, rol) => {
       lesson?.isConfirmed &&
       lesson?.isRegistered &&
       lesson?.isTeacherPaid &&
-      !lesson?.isStudentPaid
+      !lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
     ) {
       return [
         COLORS.YELLOW_BG,
@@ -112,7 +126,7 @@ export const statusLesson = (lesson, rol) => {
       lesson?.isConfirmed &&
       lesson?.isRegistered &&
       lesson?.isTeacherPaid &&
-      lesson?.isStudentPaid
+      lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
     ) {
       return [
         COLORS.GREEN_BG,
@@ -121,28 +135,42 @@ export const statusLesson = (lesson, rol) => {
       ]; //GREEN
     }
 
-    if (lesson?.isScheduled && lesson?.isConfirmed && !lesson?.isStudentPaid) {
+    if (
+      lesson?.isScheduled &&
+      lesson?.isConfirmed &&
+      !lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+    ) {
       return [
         COLORS.PURPLE_BG,
         COLORS.PURPLE_TEXT,
         "Clase Confirmada - Pendiente Pago Estudiante",
       ]; //PURPLE
     }
-    if (lesson?.isScheduled && lesson?.isConfirmed && lesson?.isStudentPaid) {
+    if (
+      lesson?.isScheduled &&
+      lesson?.isConfirmed &&
+      lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+    ) {
       return [
         COLORS.PURPLE_BG,
         COLORS.PURPLE_TEXT,
         "Clase Confirmada - Pago Realizado Por Estudiante",
       ]; //PURPLE
     }
-    if (lesson?.isScheduled && !lesson?.isStudentPaid) {
+    if (
+      lesson?.isScheduled &&
+      !lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+    ) {
       return [
         COLORS.BLUE_BG,
         COLORS.BLUE_TEXT,
         "Agendada - Pendiente Pago Estudiante",
       ]; //BLUE
     }
-    if (lesson?.isScheduled && lesson?.isStudentPaid) {
+    if (
+      lesson?.isScheduled &&
+      lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+    ) {
       return [
         COLORS.BLUE_BG,
         COLORS.BLUE_TEXT,
