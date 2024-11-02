@@ -51,7 +51,7 @@ export function FormConfirmClass() {
         <div>
           <form action={OnSubmit} className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="lesson-score">
+              <Label htmlFor="lesson-score" className="font-normal">
                 Select a score from 1 to 10 for the class{" "}
                 <span>
                   (where 1 is the lowest rating and 10 is the highest)
@@ -93,7 +93,7 @@ export function FormConfirmClass() {
               />
             </div>
 
-            <span>
+            <span className="text-xs">
               *Tu opinión cuenta,puedes evaluar libremente. La evaluación que
               realices será completamente anónima y privada.
             </span>
