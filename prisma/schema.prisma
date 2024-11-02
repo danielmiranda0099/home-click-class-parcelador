@@ -25,7 +25,8 @@ model User {
   phoneNumber  String?
   city         String?
   country      String?
-  role         Role
+  password     String
+  role         Role[]
   averageScore Float?
 
   // Relaciones
