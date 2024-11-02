@@ -23,3 +23,4 @@ export * from "./DashboardIcon";
 export * from "./DollarIcon";
 export * from "./CalendarIcon";
 export * from "./PencilIcon";
+export * from "./RepeatIcon";

@@ -14,9 +14,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CreateNewUser } from "@/actions/CrudUser";
 import { useUserStore } from "@/store/userStore";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { RepeatIcon } from "./icons";
+import { generatePassword } from "@/utils/generatePassword";
+import { useToast } from "@/components/ui/use-toast";
+import { ToastAction } from "./ui/toast";
 
 const DEFAULT_DATA_USER = {
   firstName: "",
@@ -26,11 +36,13 @@ const DEFAULT_DATA_USER = {
   city: "",
   country: "",
   role: "",
+  password: generatePassword(),
 };
 
 export function FormNewUser() {
   const { addNewUser } = useUserStore();
   const [userInfo, setUserInfo] = useState(DEFAULT_DATA_USER);
+  const { toast } = useToast();
 
   const handleStudentInfoChange = (e) => {
     setUserInfo({ ...userInfo, [e.target.id]: e.target.value });
@@ -40,15 +52,48 @@ export function FormNewUser() {
     setUserInfo({ ...userInfo, role: value });
   };
 
+  const handleGeneratePassword = () => {
+    setUserInfo({ ...userInfo, password: generatePassword() });
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard
+      .writeText(`Correo: ${userInfo.email} Password: ${userInfo.password}`)
+      .then(() => {
+        toast({
+          title: "Credenciales Copiadas",
+          variant: "success",
+          duration: 12000,
+          description: (
+            <p className="font-medium">
+              Correo: {userInfo.email} Password: {userInfo.password}
+            </p>
+          ),
+          action: (
+            <ToastAction
+              altText="Goto schedule to undo"
+              className="bg-green-500 text-white border-green-500 hover:text-white hover:bg-green-500"
+            >
+              Cerrar
+            </ToastAction>
+          ),
+        });
+      })
+      .catch((err) => {
+        console.error("Failed to copy text: ", err);
+      });
+  };
+
   const is_open = useUiStore((state) => state.popupFormNewUser);
   const setIsOpen = useUiStore((state) => state.setPopupFormNewUser);
 
   const OnCreateNewUser = async () => {
     //TODO: Verificar que todo este
-    if (userInfo.role.length <= 0) return;
+    // if (userInfo.role.length <= 0) return;
 
-    const user = await CreateNewUser(userInfo);
-    addNewUser(user);
+    // const user = await CreateNewUser(userInfo);
+    // addNewUser(user);
+    setUserInfo(DEFAULT_DATA_USER);
     setIsOpen(false);
   };
 
@@ -58,39 +103,8 @@ export function FormNewUser() {
         <DialogHeader>
           <DialogTitle>New User</DialogTitle>
         </DialogHeader>
-        <div className="p-0 px-4">
+        <form className="p-0 px-4" action={OnCreateNewUser}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            <RadioGroup
-              className="flex space-x-4"
-              value={userInfo.role}
-              onValueChange={handleRoleChange}
-            >
-              <div className="flex items-center">
-                <RadioGroupItem value="student" id="r1" className="sr-only" />
-                <Label
-                  htmlFor="r1"
-                  className={`flex items-center justify-center px-3 py-2 text-sm border rounded-md cursor-pointer 
-                    ${userInfo.role === "student" && "bg-blue-400 text-white"}`}
-                >
-                  Student
-                </Label>
-              </div>
-              <div className="flex items-center">
-                <RadioGroupItem
-                  value="teacher"
-                  id="r2"
-                  className="sr-only peer"
-                />
-                <Label
-                  htmlFor="r2"
-                  className={`flex items-center justify-center px-3 py-2 text-sm border rounded-md cursor-pointer 
-                    ${userInfo.role === "teacher" && "bg-blue-400 text-white"}`}
-                >
-                  Teacher
-                </Label>
-              </div>
-            </RadioGroup>
-            <div></div>
             <div className="space-y-2">
               <Label htmlFor="firstName">First Name</Label>
               <Input
@@ -147,16 +161,60 @@ export function FormNewUser() {
                 required
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="rol">Rol</Label>
+              <Select onValueChange={handleRoleChange} required>
+                <SelectTrigger className="" id="rol">
+                  <SelectValue defaultValue="student" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="student">Student</SelectItem>
+                  <SelectItem value="teacher">Teacher</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <div className="flex gap-1">
+                <Input
+                  id="password"
+                  value={userInfo.password}
+                  onChange={handleStudentInfoChange}
+                  required
+                />
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => handleGeneratePassword()}
+                >
+                  <RepeatIcon />
+                </Button>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => copyToClipboard()}
+                >
+                  Copy
+                </Button>
+              </div>
+            </div>
           </div>
           <DialogFooter>
             <div className="space-x-4 flex justify-end">
               <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => setUserInfo(DEFAULT_DATA_USER)}
+                >
+                  Cancel
+                </Button>
               </DialogClose>
-              <Button onClick={OnCreateNewUser}>Create New User</Button>
+              <Button type="submit">Create New User</Button>
             </div>
           </DialogFooter>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );
