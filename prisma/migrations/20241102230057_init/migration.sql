@@ -10,7 +10,8 @@ CREATE TABLE "User" (
     "phoneNumber" TEXT,
     "city" TEXT,
     "country" TEXT,
-    "role" "Role" NOT NULL,
+    "password" TEXT NOT NULL,
+    "role" "Role"[],
     "averageScore" DOUBLE PRECISION,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -23,7 +24,9 @@ CREATE TABLE "Lesson" (
     "topic" TEXT,
     "issues" TEXT,
     "week" TEXT,
+    "teacherObservations" TEXT,
     "otherObservations" TEXT,
+    "isPaid" BOOLEAN NOT NULL DEFAULT false,
     "isScheduled" BOOLEAN NOT NULL DEFAULT true,
     "isRescheduled" BOOLEAN NOT NULL DEFAULT false,
     "isCanceled" BOOLEAN NOT NULL DEFAULT false,
@@ -34,7 +37,6 @@ CREATE TABLE "Lesson" (
     "isTeacherPaid" BOOLEAN NOT NULL DEFAULT false,
     "teacherPayment" DOUBLE PRECISION,
     "reasonsRescheduled" TEXT,
-    "lessonScore" DOUBLE PRECISION,
     "profit" DOUBLE PRECISION,
     "teacherId" INTEGER NOT NULL,
 
@@ -45,9 +47,9 @@ CREATE TABLE "Lesson" (
 CREATE TABLE "StudentLesson" (
     "id" SERIAL NOT NULL,
     "isStudentPaid" BOOLEAN NOT NULL DEFAULT false,
-    "studentObservations" TEXT,
     "studentFee" DOUBLE PRECISION,
-    "teacherObservations" TEXT,
+    "lessonScore" DOUBLE PRECISION,
+    "studentObservations" TEXT,
     "studentId" INTEGER NOT NULL,
     "lessonId" INTEGER NOT NULL,
 
