@@ -1,5 +1,4 @@
 "use client";
-
 import { useFormState, useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -35,22 +34,19 @@ export function FormLogin() {
           id="email"
           name="email"
           type="email"
-          placeholder="m@ejemplo.com"
+          placeholder="correo@gmail.com"
           required
         />
       </div>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label htmlFor="password">Contraseña</Label>
-          <Link
-            href="#"
-            className="text-sm text-muted-foreground hover:underline"
-          >
-            ¿Olvidaste tu contraseña?
-          </Link>
         </div>
-        <Input id="password" type="password" name="password" required />
+        <Input id="password" type="password" name="password" />
       </div>
+      <Link href="#" className="text-sm text-muted-foreground hover:underline">
+        ¿Olvidaste tu contraseña?
+      </Link>
       {state?.error && <p className="text-sm text-red-500">{state.error}</p>}
       <SubmitButton />
     </form>

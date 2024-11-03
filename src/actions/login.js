@@ -1,6 +1,8 @@
 "use server";
 
 import { signIn } from "@/auth";
+import prisma from "@/lib/prisma";
+import bcrypt from "bcryptjs";
 
 export async function login(prevState, formData) {
   try {
@@ -13,6 +15,27 @@ export async function login(prevState, formData) {
       };
     }
 
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(email)) {
+      return {
+        error: "El correo no es valido",
+      };
+    }
+
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    const isValidPassword = user
+      ? await bcrypt.compare(password, user.password)
+      : null;
+
+    if (!user || !isValidPassword) {
+      return { error: "Datos Invalidos" };
+    }
+
     const result = await signIn("credentials", {
       email,
       password,
@@ -23,7 +46,10 @@ export async function login(prevState, formData) {
       return { error: result.error };
     }
 
-    return { success: true };
+    return {
+      data: user,
+      success: true,
+    };
   } catch (error) {
     console.error("Error en el inicio de sesión", error);
     return { error: "Ocurrió un error inesperado" };
