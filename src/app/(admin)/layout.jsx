@@ -1,4 +1,5 @@
-import { FormNewLesson, FormNewUser, Header } from "@/components";
+import { FormNewLesson, Header } from "@/components";
+import { FormRegisterUser } from "@/components/auth";
 import { SideBarMenu } from "@/components/SideBarMenu";
 
 export const metadata = {
@@ -17,7 +18,7 @@ export default function RootLayout({ children }) {
         {/* Main Content */}
         <div className="w-full">
           {/* Page Content */}
-          <FormNewUser />
+          <FormRegisterUser />
           <FormNewLesson />
           <main className="p-2">{children}</main>
         </div>
