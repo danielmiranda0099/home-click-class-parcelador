@@ -33,7 +33,9 @@ export async function login(prevState, formData) {
       : null;
 
     if (!user || !isValidPassword) {
-      return { error: "Datos Invalidos" };
+      return {
+        error: "Datos invalidos, por favor verifique el email o contraseña.",
+      };
     }
 
     const result = await signIn("credentials", {
