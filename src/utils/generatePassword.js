@@ -34,5 +34,3 @@ export function generatePassword(length = 12) {
 
   return password;
 }
-
-console.log(generatePassword()); // Generates a password with 12 characters by default
