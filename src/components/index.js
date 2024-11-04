@@ -5,7 +5,6 @@ export * from "./FormConfirmClass";
 export * from "./InputSearch";
 export * from "./CardStatusLegendLesson";
 export * from "./ButtonGroupActions";
-export * from "./FormNewUser";
 export * from "./InputPriceLesson";
 export * from "./TableLessons";
 export * from "./Payments";
