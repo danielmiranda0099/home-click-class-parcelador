@@ -1,5 +1,6 @@
 import { Card, CardContent } from "./ui/card";
 
+//TODO: Que esto no dependa del rol, tener ya estaticamente.
 export function CardStatusLegendLesson({ rol }) {
   return (
     <Card className="w-[fit-content]">
