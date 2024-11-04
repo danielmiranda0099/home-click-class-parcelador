@@ -27,7 +27,6 @@ import {
 import { RepeatIcon } from "@/components/icons";
 import { generatePassword } from "@/utils/generatePassword";
 import { useToast } from "@/components/ui/use-toast";
-import { ToastAction } from "@/components/ui/toast";
 
 const DEFAULT_DATA_USER = {
   firstName: "",
