@@ -2,24 +2,22 @@ import {
   CalendarUI,
   CardOverView,
   CardStatusLegendLesson,
-  FormLessonReport,
-  FormReschedule,
+  FormConfirmClass,
 } from "@/components";
 import { PopupDetailLesson } from "@/components/popupDetailLesson";
 
-export default async function TeacherPage() {
+export default function ClassesPage() {
   return (
     <>
-      <PopupDetailLesson rol={"teacher"} />
-      <FormLessonReport rol="teacher" />
-      <FormReschedule rol="teacher" />
+      <FormConfirmClass />
+      <PopupDetailLesson />
       <section className="px-10 py-3 flex flex-row justify-start gap-4">
         <CardOverView />
-        <CardStatusLegendLesson rol="teacher" />
+        <CardStatusLegendLesson />
       </section>
 
       <section className="px-10 py-3">
-        <CalendarUI rol="teacher" />
+        <CalendarUI />
       </section>
     </>
   );
