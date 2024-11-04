@@ -6,10 +6,9 @@ export default {
         if (!credentials.email || !credentials.password) {
           throw new Error("Error en auth.config");
         }
-        console.log(credentials);
+        console.log("credentials", credentials);
         return {
-          id: "1",
-          email: "daniel@gmail.com auth.config",
+          credentials,
         };
       },
     }),
