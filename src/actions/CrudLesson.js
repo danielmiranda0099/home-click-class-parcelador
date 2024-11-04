@@ -70,7 +70,7 @@ export async function GetLessons() {
     });
 
     if (!lessons) return [];
-    console.log("jejejej", JSON.stringify(lessons.slice(1), null, 2));
+    console.log("Lessons", JSON.stringify(lessons.slice(1), null, 2));
     return lessons;
   } catch (error) {
     console.error("Error fetching lessons:", error);
