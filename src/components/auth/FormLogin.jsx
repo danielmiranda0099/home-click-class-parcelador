@@ -6,6 +6,7 @@ import { login } from "@/actions/login";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { useEffect } from "react";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -22,9 +23,18 @@ export function FormLogin() {
   const router = useRouter();
   const [state, formAction] = useFormState(login, null);
 
-  if (state?.success) {
-    // router.push("/dashboard");
-  }
+  useEffect(() => {
+    if (state?.success && state.data.role.includes("admin")) {
+      router.push("/dashboard");
+    }
+    if (
+      state?.success &&
+      (state.data.role.includes("student") ||
+        state.data.role.includes("teacher"))
+    ) {
+      router.push("/classes");
+    }
+  }, [state]);
 
   return (
     <form className="space-y-4" action={formAction}>
