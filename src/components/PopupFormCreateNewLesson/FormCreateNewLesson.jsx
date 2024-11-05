@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import moment from "moment";
 
 import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -11,7 +10,7 @@ import { useLessonStore } from "@/store/lessonStore";
 
 import { getClassDatesForNextPeriod } from "@/utils/getClassDatesForNextPeriod";
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
-import { DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
+import { DATA_LESSON_DEFAULT, DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
 
 import { CreateNewLesson } from "@/actions/CrudLesson";
 import { PeriodOfTime } from "./PeriodOfTime";
@@ -22,17 +21,7 @@ import { FormFieldTeacher } from "./FormFieldTeacher";
 export function FormCreateNewLesson() {
   const { lessons, SetLessons } = useLessonStore();
 
-  const [data_lesson, setDataLesson] = useState({
-    students: [{ student: null, fee: "" }],
-    teacher: {
-      teacher: null,
-      payment: "",
-    },
-    periodOfTime: "",
-    startDate: moment().format("YYYY-MM-DD"),
-    selectedDays: [],
-    times: {},
-  });
+  const [data_lesson, setDataLesson] = useState(DATA_LESSON_DEFAULT);
 
   const OnCreateNewLessons = async (form_data) => {
     const teacher_payment_string = data_lesson.teacher.payment.replace(
