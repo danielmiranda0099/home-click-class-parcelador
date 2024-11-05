@@ -5,12 +5,18 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Button } from "./ui/button";
-import { SettingsIcon } from "./icons";
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { SettingsIcon } from "@/components/icons";
 import Image from "next/image";
+import { auth } from "@/auth";
+import { ButtonSignOut } from "@/components";
 
-export function Header() {
+export async function Header() {
+  const {
+    user: { name },
+  } = await auth();
+
   return (
     <header className="flex h-16 w-full items-center justify-between border-b bg-background px-4 md:px-6">
       <Link href="#" className="flex items-center gap-2" prefetch={false}>
@@ -24,7 +30,7 @@ export function Header() {
       </Link>
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
-          <span className="font-medium">Nombre user</span>
+          <span className="font-medium capitalize">{name}</span>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full">
@@ -45,14 +51,7 @@ export function Header() {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <Link
-                  href="#"
-                  className="flex items-center gap-2"
-                  prefetch={false}
-                >
-                  <div className="h-4 w-4" />
-                  <span>Cerrar sesión</span>
-                </Link>
+                <ButtonSignOut />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

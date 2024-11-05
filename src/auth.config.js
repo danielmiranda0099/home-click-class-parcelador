@@ -32,6 +32,7 @@ export default {
           id: user.id,
           email: user.email,
           role: user.role,
+          name: `${user.firstName.split(" ")[0]} ${user.lastName.split(" ")[0]}`,
         };
       },
     }),
