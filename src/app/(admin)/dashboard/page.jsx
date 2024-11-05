@@ -13,7 +13,7 @@ import {
 import { PopupDetailLesson } from "@/components/popupDetailLesson";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUserStore } from "@/store/userStore";
-import { formatUserByRole } from "@/utils/formatUsersByRole";
+import { formatUsersForInputSearch } from "@/utils/formatUsersForInputSearch";
 import { useEffect, useState } from "react";
 
 export default function DashboardPage() {
@@ -32,7 +32,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (users) {
-      const users_formated = formatUserByRole(users);
+      const users_formated = formatUsersForInputSearch(users);
       setUsersFormated(users_formated);
       console.log("users", users);
     }

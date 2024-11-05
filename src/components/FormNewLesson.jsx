@@ -13,7 +13,6 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { InputPriceLesson } from "./InputPriceLesson";
 import { InputSearch } from ".";
 import { CreateNewLesson } from "@/actions/CrudLesson";
@@ -21,55 +20,10 @@ import { useLessonStore } from "@/store/lessonStore";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { useUserStore } from "@/store/userStore";
-import { formatUserByRole } from "@/utils/formatUsersByRole";
+import { formatUsersForInputSearch } from "@/utils/formatUsersForInputSearch";
 import { PlusCircleIcon } from "./icons";
-
-const DAYS_OF_WEEK = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"];
-
-const DAYS_OF_WEEK_NUMBER = {
-  Do: 0,
-  Lu: 1,
-  Ma: 2,
-  Mi: 3,
-  Ju: 4,
-  Vi: 5,
-  Sa: 6,
-};
-function getClassDatesForNextPeriod(selected_days, times, period, startDate) {
-  const dates = [];
-  let currentDate = moment(startDate); // Iniciar desde la fecha proporcionada
-  let endDate;
-
-  // Configurar el tiempo final según el parámetro 'period'
-  switch (period) {
-    case "3M": // 3 meses
-      endDate = moment(startDate).add(3, "months");
-      break;
-    case "6M": // 6 meses
-      endDate = moment(startDate).add(6, "months");
-      break;
-    case "1Y": // 1 año
-      endDate = moment(startDate).add(1, "year");
-      break;
-    default:
-      console.error("Período no válido");
-      return [];
-  }
-
-  while (currentDate.isSameOrBefore(endDate)) {
-    if (selected_days.includes(currentDate.day())) {
-      const dateWithTime = currentDate
-        .clone()
-        .hour(times[currentDate.day()].split(":")[0])
-        .minute(times[currentDate.day()].split(":")[1]);
-
-      dates.push(dateWithTime.format());
-    }
-    currentDate.add(1, "days"); // Avanzar al siguiente día
-  }
-
-  return dates;
-}
+import { DAYS_OF_WEEK, DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
+import { getClassDatesForNextPeriod } from "@/utils/getClassDatesForNextPeriod";
 
 export function FormNewLesson() {
   const is_open = useUiStore((state) => state.popupFormNewLesson);
@@ -88,15 +42,14 @@ export function FormNewLesson() {
   const [student, setStudent] = useState(null);
   const [teacher_payment, setTeacherPayment] = useState("");
   const [period_of_time, setPeriodOfTime] = useState("3m");
-  // const [students_data, setStudentsData] = useState([]);
 
   const [student_fee, setStudentFee] = useState("");
 
   const { users } = useUserStore();
 
   useEffect(() => {
-    const students_formated = formatUserByRole(users, "student");
-    const teachers_formated = formatUserByRole(users, "teacher");
+    const students_formated = formatUsersForInputSearch(users, "student");
+    const teachers_formated = formatUsersForInputSearch(users, "teacher");
 
     setStudents(students_formated);
     setTeachers(teachers_formated);
@@ -153,8 +106,6 @@ export function FormNewLesson() {
       teacherPayment: teacher_payment_formated,
     };
 
-    // console.log(lesson);
-
     const data_lesson = all_date.map((time) => ({
       ...lesson,
       isGroup: student_lesson_data.length > 1,
@@ -180,8 +131,6 @@ export function FormNewLesson() {
   const [students_data, setStudentsData] = useState([
     { student: null, fee: "" },
   ]);
-
-  // ... (other functions remain the same)
 
   const addNewStudent = () => {
     setStudentsData([...students_data, { student: null, fee: "" }]);
@@ -210,7 +159,7 @@ export function FormNewLesson() {
                     setValue={(value) =>
                       updateStudentData(index, "student", value)
                     }
-                    data={students}
+                    data={formatUsersForInputSearch(users, "student")}
                     placeholder="Select a student"
                   />
                 </div>
