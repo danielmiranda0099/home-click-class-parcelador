@@ -31,6 +31,7 @@ export function FormCreateNewLesson() {
   const lessons = useLessonStore((state) => state.lessons);
   const setLessons = useLessonStore((state) => state.SetLessons);
   const [selectedDays, setSelectedDays] = useState([]);
+  //TODO: Delete sameTimeEachWeek
   const [sameTimeEachWeek, setSameTimeEachWeek] = useState(false);
   const [times, setTimes] = useState({});
   const [selectedTeacher, setSelectedTeacher] = useState("");
