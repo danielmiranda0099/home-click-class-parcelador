@@ -1,0 +1,71 @@
+"use client";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { PlusCircleIcon } from "@/components/icons";
+import { InputSearch } from "@/components/InputSearch";
+import { InputPriceLesson } from "@/components/InputPriceLesson";
+import { useUserStore } from "@/store/userStore";
+import { formatUsersForInputSearch } from "@/utils/formatUsersForInputSearch";
+
+export function FormFieldStudents({ data_lesson, setDataLesson }) {
+  const [students_for_input_search, setStudentsForInputSearh] = useState([]);
+  const { users } = useUserStore();
+
+  //TODO: eliminar useeffect o que se actulice los inputs cuando se crea un user sin necesitar del useeffects o pasarlo a un CUSTOM HOOK
+  useEffect(() => {
+    const students_formated = formatUsersForInputSearch(users, "student");
+
+    setStudentsForInputSearh(students_formated);
+  }, [users]);
+
+  const updateStudentData = (index, field, value) => {
+    const newStudentsData = [...data_lesson.students];
+    newStudentsData[index][field] = value;
+    setDataLesson({ ...data_lesson, students: newStudentsData });
+  };
+
+  const addNewStudent = () => {
+    setDataLesson({
+      ...data_lesson,
+      students: [...data_lesson.students, { student: null, fee: "" }],
+    });
+  };
+
+  return (
+    <>
+      {data_lesson.students.map((studentData, index) => (
+        <div key={index} className="grid grid-cols-2 gap-4">
+          <div className="grid gap-2">
+            <Label>Student</Label>
+            <InputSearch
+              value={studentData.student}
+              setValue={(value) => updateStudentData(index, "student", value)}
+              data={students_for_input_search}
+              placeholder="Select a student"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label>Price StudentPer Hour</Label>
+            <InputPriceLesson
+              value={studentData.fee}
+              setValue={(value) => updateStudentData(index, "fee", value)}
+            />
+          </div>
+        </div>
+      ))}
+
+      <div className="flex items-center">
+        <Button
+          variant="outline"
+          className="flex gap-2"
+          type="button"
+          onClick={addNewStudent}
+        >
+          Nuevo Etudiante
+          <PlusCircleIcon />
+        </Button>
+      </div>
+    </>
+  );
+}

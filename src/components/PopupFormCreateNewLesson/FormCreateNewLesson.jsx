@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { InputPriceLesson } from "@/components/InputPriceLesson";
 import { InputSearch } from "@/components/InputSearch";
-import { PlusCircleIcon } from "@/components/icons";
 
 import { useLessonStore } from "@/store/lessonStore";
 import { useUserStore } from "@/store/userStore";
@@ -21,12 +20,12 @@ import { DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
 import { CreateNewLesson } from "@/actions/CrudLesson";
 import { PeriodOfTime } from "./PeriodOfTime";
 import { SelectedDaysAndTime } from "./SelectedDaysAndTime";
+import { FormFieldStudents } from "./FormFieldStudents";
 
 export function FormCreateNewLesson() {
   const { lessons, SetLessons } = useLessonStore();
   const { users } = useUserStore();
   const [teachers_for_input_search, setTeachersForInputSearh] = useState([]);
-  const [students_for_input_search, setStudentsForInputSearh] = useState([]);
 
   const [data_lesson, setDataLesson] = useState({
     students: [{ student: null, fee: "" }],
@@ -42,25 +41,9 @@ export function FormCreateNewLesson() {
 
   //TODO: eliminar useeffect o que se actulice los inputs cuando se crea un user sin necesitar del useeffects o pasarlo a un CUSTOM HOOK
   useEffect(() => {
-    const students_formated = formatUsersForInputSearch(users, "student");
     const teachers_formated = formatUsersForInputSearch(users, "teacher");
-
-    setStudentsForInputSearh(students_formated);
     setTeachersForInputSearh(teachers_formated);
   }, [users]);
-
-  const addNewStudent = () => {
-    setDataLesson({
-      ...data_lesson,
-      students: [...data_lesson.students, { student: null, fee: "" }],
-    });
-  };
-
-  const updateStudentData = (index, field, value) => {
-    const newStudentsData = [...data_lesson.students];
-    newStudentsData[index][field] = value;
-    setDataLesson({ ...data_lesson, students: newStudentsData });
-  };
 
   const OnCreateNewLessons = async (form_data) => {
     const teacher_payment_string = data_lesson.teacher.payment.replace(
@@ -112,39 +95,10 @@ export function FormCreateNewLesson() {
   return (
     <form className="p-0 px-4" action={OnCreateNewLessons}>
       <div className="space-y-4">
-        {data_lesson.students.map((studentData, index) => (
-          <div key={index} className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label>Student</Label>
-              <InputSearch
-                value={studentData.student}
-                setValue={(value) => updateStudentData(index, "student", value)}
-                data={students_for_input_search}
-                placeholder="Select a student"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label>Price StudentPer Hour</Label>
-              <InputPriceLesson
-                value={studentData.fee}
-                setValue={(value) => updateStudentData(index, "fee", value)}
-              />
-            </div>
-          </div>
-        ))}
-
-        <div className="flex items-center">
-          <Button
-            variant="outline"
-            className="flex gap-2"
-            type="button"
-            onClick={addNewStudent}
-          >
-            Nuevo Etudiante
-            <PlusCircleIcon />
-          </Button>
-        </div>
-
+        <FormFieldStudents
+          data_lesson={data_lesson}
+          setDataLesson={setDataLesson}
+        />
         <div className={`grid grid-cols-2 gap-4`}>
           <div className="grid gap-2">
             <Label>Teacher</Label>
