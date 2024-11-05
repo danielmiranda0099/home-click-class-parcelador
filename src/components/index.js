@@ -8,7 +8,6 @@ export * from "./ButtonGroupActions";
 export * from "./InputPriceLesson";
 export * from "./TableLessons";
 export * from "./Payments";
-export * from "./FormNewLesson";
 export * from "./FormReschedule";
 export * from "./FormLessonReport";
 export * from "./Header";

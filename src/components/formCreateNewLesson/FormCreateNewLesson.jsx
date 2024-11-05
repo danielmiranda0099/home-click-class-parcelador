@@ -8,26 +8,26 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
+} from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { InputPriceLesson } from "./InputPriceLesson";
-import { InputSearch } from ".";
+import { InputPriceLesson } from "@/components/InputPriceLesson";
+import { InputSearch } from "@/components/InputSearch";
 import { CreateNewLesson } from "@/actions/CrudLesson";
 import { useLessonStore } from "@/store/lessonStore";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { useUserStore } from "@/store/userStore";
 import { formatUsersForInputSearch } from "@/utils/formatUsersForInputSearch";
-import { PlusCircleIcon } from "./icons";
+import { PlusCircleIcon } from "@/components/icons";
 import { DAYS_OF_WEEK, DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
 import { getClassDatesForNextPeriod } from "@/utils/getClassDatesForNextPeriod";
 
-export function FormNewLesson() {
-  const is_open = useUiStore((state) => state.popupFormNewLesson);
-  const setIsOpen = useUiStore((state) => state.setPopupFormNewLesson);
+export function FormCreateNewLesson() {
+  const is_open = useUiStore((state) => state.popupFormCreateNewLesson);
+  const setIsOpen = useUiStore((state) => state.setPopupFormCreateNewLesson);
   const lessons = useLessonStore((state) => state.lessons);
   const setLessons = useLessonStore((state) => state.SetLessons);
   const [selectedDays, setSelectedDays] = useState([]);

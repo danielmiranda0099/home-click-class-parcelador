@@ -7,8 +7,8 @@ import { PlusCircleIcon, UserIcon } from "./icons";
 export function ButtonGroupActions() {
   const setPopupFormNewUser = useUiStore((state) => state.setPopupFormNewUser);
 
-  const setPopupFormNewLesson = useUiStore(
-    (state) => state.setPopupFormNewLesson
+  const setPopupFormCreateNewLesson = useUiStore(
+    (state) => state.setPopupFormCreateNewLesson
   );
 
   return (
@@ -26,7 +26,7 @@ export function ButtonGroupActions() {
       <Button
         className="w-full justify-start space-x-2"
         onClick={() => {
-          setPopupFormNewLesson(true);
+          setPopupFormCreateNewLesson(true);
         }}
       >
         <PlusCircleIcon />

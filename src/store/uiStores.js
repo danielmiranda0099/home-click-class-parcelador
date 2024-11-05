@@ -34,10 +34,10 @@ export const useUiStore = create((set) => ({
       popupFormNewUser: is_open,
     })),
 
-  popupFormNewLesson: false,
-  setPopupFormNewLesson: (is_open) =>
+  popupFormCreateNewLesson: false,
+  setPopupFormCreateNewLesson: (is_open) =>
     set(() => ({
-      popupFormNewLesson: is_open,
+      popupFormCreateNewLesson: is_open,
     })),
 
   popupFormReschedule: false,
