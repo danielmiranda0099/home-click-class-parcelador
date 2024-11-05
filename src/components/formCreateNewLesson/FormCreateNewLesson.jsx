@@ -31,8 +31,6 @@ export function FormCreateNewLesson() {
   const lessons = useLessonStore((state) => state.lessons);
   const setLessons = useLessonStore((state) => state.SetLessons);
   const [selectedDays, setSelectedDays] = useState([]);
-  //TODO: Delete sameTimeEachWeek
-  const [sameTimeEachWeek, setSameTimeEachWeek] = useState(false);
   const [times, setTimes] = useState({});
   const [selectedTeacher, setSelectedTeacher] = useState("");
   const [start_date, setStartDate] = useState(moment().format("YYYY-MM-DD"));
@@ -63,15 +61,7 @@ export function FormCreateNewLesson() {
   };
 
   const handleTimeChange = (day, time) => {
-    if (sameTimeEachWeek) {
-      const newTimes = selectedDays.reduce(
-        (acc, d) => ({ ...acc, [d]: time }),
-        {}
-      );
-      setTimes(newTimes);
-    } else {
-      setTimes((prev) => ({ ...prev, [DAYS_OF_WEEK_NUMBER[day]]: time }));
-    }
+    setTimes((prev) => ({ ...prev, [DAYS_OF_WEEK_NUMBER[day]]: time }));
   };
 
   const OnCreateNewLessons = async (form_data) => {
@@ -274,10 +264,7 @@ export function FormCreateNewLesson() {
                       className={`w-full mt-2 border-gray-500 ${selectedDays.includes(day) && "border-blue-500"}`}
                       value={times[DAYS_OF_WEEK_NUMBER[day]] || ""}
                       onChange={(e) => handleTimeChange(day, e.target.value)}
-                      disabled={
-                        !selectedDays.includes(day) ||
-                        (sameTimeEachWeek && day !== selectedDays[0])
-                      }
+                      disabled={!selectedDays.includes(day)}
                     />
                   </div>
                 ))}
