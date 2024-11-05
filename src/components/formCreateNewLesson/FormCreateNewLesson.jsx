@@ -26,78 +26,93 @@ import { DAYS_OF_WEEK, DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
 import { getClassDatesForNextPeriod } from "@/utils/getClassDatesForNextPeriod";
 
 export function FormCreateNewLesson() {
-  const is_open = useUiStore((state) => state.popupFormCreateNewLesson);
-  const setIsOpen = useUiStore((state) => state.setPopupFormCreateNewLesson);
-  const lessons = useLessonStore((state) => state.lessons);
-  const setLessons = useLessonStore((state) => state.SetLessons);
-  const [selectedDays, setSelectedDays] = useState([]);
-  const [times, setTimes] = useState({});
-  const [selectedTeacher, setSelectedTeacher] = useState("");
-  const [start_date, setStartDate] = useState(moment().format("YYYY-MM-DD"));
-
-  const [teachers, setTeachers] = useState([]);
-  const [students, setStudents] = useState([]);
-  const [teacher, setTeacher] = useState(null);
-  const [student, setStudent] = useState(null);
-  const [teacher_payment, setTeacherPayment] = useState("");
-  const [period_of_time, setPeriodOfTime] = useState("3m");
-
-  const [student_fee, setStudentFee] = useState("");
-
+  const {
+    popupFormCreateNewLesson: is_open,
+    setPopupFormCreateNewLesson: setIsOpen,
+  } = useUiStore();
+  const { lessons, SetLessons } = useLessonStore();
   const { users } = useUserStore();
+  const [teachers_for_input_search, setTeachersForInputSearh] = useState([]);
+  const [students_for_input_search, setStudentsForInputSearh] = useState([]);
 
+  const [data_lesson, setDataLesson] = useState({
+    students: [{ student: null, fee: "" }],
+    teacher: {
+      teacher: null,
+      payment: "",
+    },
+    periodOfTime: "",
+    startDate: moment().format("YYYY-MM-DD"),
+    selectedDays: [],
+    times: {},
+  });
+
+  //TODO: eliminar useeffect o que se actulice los inputs cuando se crea un user sin necesitar del useeffects o pasarlo a un CUSTOM HOOK
   useEffect(() => {
     const students_formated = formatUsersForInputSearch(users, "student");
     const teachers_formated = formatUsersForInputSearch(users, "teacher");
 
-    setStudents(students_formated);
-    setTeachers(teachers_formated);
+    setStudentsForInputSearh(students_formated);
+    setTeachersForInputSearh(teachers_formated);
   }, [users]);
 
   const handleDaySelect = (day) => {
-    setSelectedDays((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
-    );
+    setDataLesson({
+      ...data_lesson,
+      selectedDays: data_lesson.selectedDays.includes(day)
+        ? data_lesson.selectedDays.filter((d) => d !== day)
+        : [...data_lesson.selectedDays, day],
+    });
   };
 
   const handleTimeChange = (day, time) => {
-    setTimes((prev) => ({ ...prev, [DAYS_OF_WEEK_NUMBER[day]]: time }));
+    setDataLesson({
+      ...data_lesson,
+      times: { ...data_lesson.times, [DAYS_OF_WEEK_NUMBER[day]]: time },
+    });
+    // setTimes((prev) => ({ ...prev, [DAYS_OF_WEEK_NUMBER[day]]: time }));
+  };
+
+  const addNewStudent = () => {
+    setDataLesson({
+      ...data_lesson,
+      students: [...data_lesson.students, { student: null, fee: "" }],
+    });
+  };
+
+  const updateStudentData = (index, field, value) => {
+    const newStudentsData = [...data_lesson.students];
+    newStudentsData[index][field] = value;
+    setDataLesson({ ...data_lesson, students: newStudentsData });
   };
 
   const OnCreateNewLessons = async (form_data) => {
-    const student_fee_string = student_fee.replace(/[^0-9]/g, "");
-    const student_fee_formated = parseInt(student_fee_string, 10);
-
-    const teacher_payment_string = teacher_payment.replace(/[^0-9]/g, "");
+    const teacher_payment_string = data_lesson.teacher.payment.replace(
+      /[^0-9]/g,
+      ""
+    );
     const teacher_payment_formated = parseInt(teacher_payment_string, 10);
-
-    console.log({
-      period_of_time,
-      start_date,
-    });
-
-    console.log(students_data);
 
     form_data.forEach((value, key) => console.log(`${key}: ${value}`));
 
-    const student_lesson_data = students_data.map((data) => ({
+    const student_lesson_data = data_lesson.students.map((data) => ({
       studentId: data.student.id,
       studentFee: parseInt(data.fee.replace(/[^0-9]/g, ""), 10),
     }));
 
     const all_date = getClassDatesForNextPeriod(
-      selectedDays.map((day) => DAYS_OF_WEEK_NUMBER[day]),
-      times,
-      period_of_time,
-      start_date
+      data_lesson.selectedDays.map((day) => DAYS_OF_WEEK_NUMBER[day]),
+      data_lesson.times,
+      data_lesson.periodOfTime,
+      data_lesson.startDate
     );
 
     const lesson = {
-      teacherId: teacher?.id,
+      teacherId: data_lesson.teacher.teacher?.id,
       teacherPayment: teacher_payment_formated,
     };
 
-    const data_lesson = all_date.map((time) => ({
+    const data = all_date.map((time) => ({
       ...lesson,
       isGroup: student_lesson_data.length > 1,
       startDate: time,
@@ -105,32 +120,18 @@ export function FormCreateNewLesson() {
         create: student_lesson_data,
       },
     }));
-
-    const new_lessons = await CreateNewLesson(data_lesson);
+    console.log(data);
+    // const new_lessons = await CreateNewLesson(data_lesson);
     //TODO: Teiene sentido enviar "admin2?? si el que crea clases siempre es admin ademas el rol
     //debe de obtenerse por el user
-    const new_lessons_formated = FormattedLessonsForCalendar(
-      new_lessons,
-      "admin"
-    );
-    const all_lessons = [...lessons, ...new_lessons_formated];
-    console.log(all_lessons);
-    setLessons(all_lessons);
-    setIsOpen(false);
-  };
-
-  const [students_data, setStudentsData] = useState([
-    { student: null, fee: "" },
-  ]);
-
-  const addNewStudent = () => {
-    setStudentsData([...students_data, { student: null, fee: "" }]);
-  };
-
-  const updateStudentData = (index, field, value) => {
-    const newStudentsData = [...students_data];
-    newStudentsData[index][field] = value;
-    setStudentsData(newStudentsData);
+    // const new_lessons_formated = FormattedLessonsForCalendar(
+    //   new_lessons,
+    //   "admin"
+    // );
+    // const all_lessons = [...lessons, ...new_lessons_formated];
+    // console.log(all_lessons);
+    // setLessons(all_lessons);
+    // setIsOpen(false);
   };
 
   return (
@@ -141,7 +142,7 @@ export function FormCreateNewLesson() {
         </DialogHeader>
         <form className="p-0 px-4" action={OnCreateNewLessons}>
           <div className="space-y-4">
-            {students_data.map((studentData, index) => (
+            {data_lesson.students.map((studentData, index) => (
               <div key={index} className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label>Student</Label>
@@ -150,7 +151,7 @@ export function FormCreateNewLesson() {
                     setValue={(value) =>
                       updateStudentData(index, "student", value)
                     }
-                    data={formatUsersForInputSearch(users, "student")}
+                    data={students_for_input_search}
                     placeholder="Select a student"
                   />
                 </div>
@@ -180,25 +181,38 @@ export function FormCreateNewLesson() {
               <div className="grid gap-2">
                 <Label>Teacher</Label>
                 <InputSearch
-                  value={teacher}
-                  setValue={setTeacher}
-                  data={teachers}
+                  value={data_lesson.teacher.teacher}
+                  setValue={(value) =>
+                    setDataLesson({
+                      ...data_lesson,
+                      teacher: { ...data_lesson.teacher, teacher: value },
+                    })
+                  }
+                  data={teachers_for_input_search}
                   placeholder="Select a teacher"
                 />
               </div>
               <div className="grid gap-2">
                 <Label>Price Teacher</Label>
                 <InputPriceLesson
-                  value={teacher_payment}
-                  setValue={setTeacherPayment}
+                  value={data_lesson.teacher.payment}
+                  setValue={(value) =>
+                    setDataLesson({
+                      ...data_lesson,
+                      teacher: { ...data_lesson.teacher, payment: value },
+                    })
+                  }
                 />
               </div>
             </div>
 
+            {/*TODO: Refact in other component*/}
             <RadioGroup
               className="flex space-x-4 items-center"
-              value={period_of_time}
-              onValueChange={(value) => setPeriodOfTime(value)}
+              value={data_lesson.periodOfTime}
+              onValueChange={(value) =>
+                setDataLesson({ ...data_lesson, periodOfTime: value })
+              }
             >
               <Label>Periodo de tiempo:</Label>
               <div className="flex items-center">
@@ -206,7 +220,7 @@ export function FormCreateNewLesson() {
                 <Label
                   htmlFor="r1"
                   className={`flex items-center justify-center px-3 py-2 text-sm border rounded-md cursor-pointer 
-                   ${period_of_time === "3M" && "bg-blue-400 text-white"}`}
+                   ${data_lesson.periodOfTime === "3M" && "bg-blue-400 text-white"}`}
                 >
                   3 Meses
                 </Label>
@@ -216,7 +230,7 @@ export function FormCreateNewLesson() {
                 <Label
                   htmlFor="r2"
                   className={`flex items-center justify-center px-3 py-2 text-sm border rounded-md cursor-pointer 
-                   ${period_of_time === "6M" && "bg-blue-400 text-white"}`}
+                   ${data_lesson.periodOfTime === "6M" && "bg-blue-400 text-white"}`}
                 >
                   6 Meses
                 </Label>
@@ -226,7 +240,7 @@ export function FormCreateNewLesson() {
                 <Label
                   htmlFor="r3"
                   className={`flex items-center justify-center px-3 py-2 text-sm border rounded-md cursor-pointer 
-                   ${period_of_time === "1Y" && "bg-blue-400 text-white"}`}
+                   ${data_lesson.periodOfTime === "1Y" && "bg-blue-400 text-white"}`}
                 >
                   1 Año
                 </Label>
@@ -238,8 +252,13 @@ export function FormCreateNewLesson() {
               <Input
                 type="date"
                 id="start_date"
-                value={start_date}
-                onChange={(event) => setStartDate(event.target.value)}
+                value={data_lesson.startDate}
+                onChange={(event) =>
+                  setDataLesson({
+                    ...data_lesson,
+                    startDate: event.target.value,
+                  })
+                }
                 className="w-[fit-content]"
               />
             </div>
@@ -252,19 +271,21 @@ export function FormCreateNewLesson() {
                     <Button
                       type="button"
                       variant={
-                        selectedDays.includes(day) ? "default" : "outline"
+                        data_lesson.selectedDays.includes(day)
+                          ? "default"
+                          : "outline"
                       }
-                      className={`w-10 h-10 hover:bg-blue-600 hover:text-white ${selectedDays.includes(day) && "bg-blue-400"}`}
+                      className={`w-10 h-10 hover:bg-blue-600 hover:text-white ${data_lesson.selectedDays.includes(day) && "bg-blue-400"}`}
                       onClick={() => handleDaySelect(day)}
                     >
                       {day}
                     </Button>
                     <Input
                       type="time"
-                      className={`w-full mt-2 border-gray-500 ${selectedDays.includes(day) && "border-blue-500"}`}
-                      value={times[DAYS_OF_WEEK_NUMBER[day]] || ""}
+                      className={`w-full mt-2 border-gray-500 ${data_lesson.selectedDays.includes(day) && "border-blue-500"}`}
+                      value={data_lesson.times[DAYS_OF_WEEK_NUMBER[day]] || ""}
                       onChange={(e) => handleTimeChange(day, e.target.value)}
-                      disabled={!selectedDays.includes(day)}
+                      disabled={!data_lesson.selectedDays.includes(day)}
                     />
                   </div>
                 ))}
