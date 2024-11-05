@@ -16,10 +16,11 @@ import { useUserStore } from "@/store/userStore";
 import { getClassDatesForNextPeriod } from "@/utils/getClassDatesForNextPeriod";
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { formatUsersForInputSearch } from "@/utils/formatUsersForInputSearch";
-import { DAYS_OF_WEEK, DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
+import { DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
 
 import { CreateNewLesson } from "@/actions/CrudLesson";
 import { PeriodOfTime } from "./PeriodOfTime";
+import { SelectedDaysAndTime } from "./SelectedDaysAndTime";
 
 export function FormCreateNewLesson() {
   const { lessons, SetLessons } = useLessonStore();
@@ -47,23 +48,6 @@ export function FormCreateNewLesson() {
     setStudentsForInputSearh(students_formated);
     setTeachersForInputSearh(teachers_formated);
   }, [users]);
-
-  const handleDaySelect = (day) => {
-    setDataLesson({
-      ...data_lesson,
-      selectedDays: data_lesson.selectedDays.includes(day)
-        ? data_lesson.selectedDays.filter((d) => d !== day)
-        : [...data_lesson.selectedDays, day],
-    });
-  };
-
-  const handleTimeChange = (day, time) => {
-    setDataLesson({
-      ...data_lesson,
-      times: { ...data_lesson.times, [DAYS_OF_WEEK_NUMBER[day]]: time },
-    });
-    // setTimes((prev) => ({ ...prev, [DAYS_OF_WEEK_NUMBER[day]]: time }));
-  };
 
   const addNewStudent = () => {
     setDataLesson({
@@ -208,34 +192,10 @@ export function FormCreateNewLesson() {
           />
         </div>
 
-        <div className="space-y-4">
-          <Label>Select days and times:</Label>
-          <div className="grid grid-cols-7 gap-2 ">
-            {DAYS_OF_WEEK.map((day) => (
-              <div key={day} className={"flex flex-col items-center"}>
-                <Button
-                  type="button"
-                  variant={
-                    data_lesson.selectedDays.includes(day)
-                      ? "default"
-                      : "outline"
-                  }
-                  className={`w-10 h-10 hover:bg-blue-600 hover:text-white ${data_lesson.selectedDays.includes(day) && "bg-blue-400"}`}
-                  onClick={() => handleDaySelect(day)}
-                >
-                  {day}
-                </Button>
-                <Input
-                  type="time"
-                  className={`w-full mt-2 border-gray-500 ${data_lesson.selectedDays.includes(day) && "border-blue-500"}`}
-                  value={data_lesson.times[DAYS_OF_WEEK_NUMBER[day]] || ""}
-                  onChange={(e) => handleTimeChange(day, e.target.value)}
-                  disabled={!data_lesson.selectedDays.includes(day)}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
+        <SelectedDaysAndTime
+          data_lesson={data_lesson}
+          setDataLesson={setDataLesson}
+        />
       </div>
       <DialogFooter>
         <div className="mt-6 space-x-4 flex justify-end">
