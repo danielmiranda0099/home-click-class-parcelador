@@ -25,7 +25,7 @@ import { PlusCircleIcon } from "@/components/icons";
 import { DAYS_OF_WEEK, DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
 import { getClassDatesForNextPeriod } from "@/utils/getClassDatesForNextPeriod";
 
-export function FormCreateNewLesson() {
+export function PopupFormCreateNewLesson() {
   const {
     popupFormCreateNewLesson: is_open,
     setPopupFormCreateNewLesson: setIsOpen,
