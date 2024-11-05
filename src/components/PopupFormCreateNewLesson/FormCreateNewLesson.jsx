@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 
 import { DialogClose, DialogFooter } from "@/components/ui/dialog";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -20,6 +19,7 @@ import { formatUsersForInputSearch } from "@/utils/formatUsersForInputSearch";
 import { DAYS_OF_WEEK, DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
 
 import { CreateNewLesson } from "@/actions/CrudLesson";
+import { PeriodOfTime } from "./PeriodOfTime";
 
 export function FormCreateNewLesson() {
   const { lessons, SetLessons } = useLessonStore();
@@ -190,46 +190,7 @@ export function FormCreateNewLesson() {
           </div>
         </div>
 
-        {/*TODO: Refact in other component*/}
-        <RadioGroup
-          className="flex space-x-4 items-center"
-          value={data_lesson.periodOfTime}
-          onValueChange={(value) =>
-            setDataLesson({ ...data_lesson, periodOfTime: value })
-          }
-        >
-          <Label>Periodo de tiempo:</Label>
-          <div className="flex items-center">
-            <RadioGroupItem value="3M" id="r1" className="sr-only" />
-            <Label
-              htmlFor="r1"
-              className={`flex items-center justify-center px-3 py-2 text-sm border rounded-md cursor-pointer 
-             ${data_lesson.periodOfTime === "3M" && "bg-blue-400 text-white"}`}
-            >
-              3 Meses
-            </Label>
-          </div>
-          <div className="flex items-center">
-            <RadioGroupItem value="6M" id="r2" className="sr-only peer" />
-            <Label
-              htmlFor="r2"
-              className={`flex items-center justify-center px-3 py-2 text-sm border rounded-md cursor-pointer 
-             ${data_lesson.periodOfTime === "6M" && "bg-blue-400 text-white"}`}
-            >
-              6 Meses
-            </Label>
-          </div>
-          <div className="flex items-center">
-            <RadioGroupItem value="1Y" id="r3" className="sr-only peer" />
-            <Label
-              htmlFor="r3"
-              className={`flex items-center justify-center px-3 py-2 text-sm border rounded-md cursor-pointer 
-             ${data_lesson.periodOfTime === "1Y" && "bg-blue-400 text-white"}`}
-            >
-              1 Año
-            </Label>
-          </div>
-        </RadioGroup>
+        <PeriodOfTime data_lesson={data_lesson} setDataLesson={setDataLesson} />
 
         <div className="flex space-x-4 items-center">
           <Label htmlFor="start_date">Fecha de inicio:</Label>
