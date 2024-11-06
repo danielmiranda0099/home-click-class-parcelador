@@ -1,11 +1,6 @@
 import moment from "moment";
 
-export function getClassDatesForNextPeriod(
-  selected_days,
-  times,
-  period,
-  startDate
-) {
+export function scheduleLessons(selected_days, times, period, startDate) {
   const dates = [];
   let currentDate = moment(startDate); // Iniciar desde la fecha proporcionada
   let endDate;

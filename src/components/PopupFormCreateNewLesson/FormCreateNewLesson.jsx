@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 
 import { useLessonStore } from "@/store/lessonStore";
 
-import { getClassDatesForNextPeriod } from "@/utils/getClassDatesForNextPeriod";
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { DATA_LESSON_DEFAULT, DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
 
