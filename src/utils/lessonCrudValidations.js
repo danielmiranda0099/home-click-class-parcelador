@@ -1,8 +1,11 @@
+"use server";
+import "server-only";
+import prisma from "@/lib/prisma";
 import { DAYS_OF_WEEK } from "@/utils/constans";
 import { isValidDate } from "@/utils/dateValidator";
 import { validateScheduleTimes } from "@/utils/validateScheduleTimes";
 
-export function validateStudents(students) {
+export async function validateStudents(students) {
   const hasInvalidStudent = students.some(
     (student) => !student.student || !student.fee
   );
@@ -16,7 +19,7 @@ export function validateStudents(students) {
 
   return { isValid: true };
 }
-export function validateTeacher(teacher) {
+export async function validateTeacher(teacher) {
   if (!teacher.teacher || !teacher.payment) {
     return {
       isValid: false,
@@ -26,7 +29,7 @@ export function validateTeacher(teacher) {
   return { isValid: true };
 }
 
-export function validatePeriodOfTime(periodOfTime) {
+export async function validatePeriodOfTime(periodOfTime) {
   if (!periodOfTime) {
     return {
       isValid: false,
@@ -36,7 +39,7 @@ export function validatePeriodOfTime(periodOfTime) {
   return { isValid: true };
 }
 
-export function validateStartDate(startDate) {
+export async function validateStartDate(startDate) {
   if (!startDate || !isValidDate(startDate)) {
     return {
       isValid: false,
@@ -46,7 +49,7 @@ export function validateStartDate(startDate) {
   return { isValid: true };
 }
 
-export function validateSelectedDays(selectedDays) {
+export async function validateSelectedDays(selectedDays) {
   if (
     selectedDays.length <= 0 ||
     !selectedDays.every((day) => DAYS_OF_WEEK.includes(day))
@@ -59,7 +62,7 @@ export function validateSelectedDays(selectedDays) {
   return { isValid: true };
 }
 
-export function validateSchedule(times, selectedDays) {
+export async function validateSchedule(times, selectedDays) {
   if (
     !validateScheduleTimes(times) ||
     !(selectedDays.length === Object.keys(times).length)
@@ -70,4 +73,52 @@ export function validateSchedule(times, selectedDays) {
     };
   }
   return { isValid: true };
+}
+
+export async function formatAndValidateStudents(students) {
+  try {
+    const formattedStudents = await Promise.all(
+      students.map(async (data) => {
+        // Validar existencia de usuario
+        const user = await prisma.user.findFirst({
+          where: {
+            id: data.student.id,
+          },
+          select: {
+            id: true,
+          },
+        });
+        if (!user)
+          throw new Error("El estudiante no está activo o registrado.");
+
+        // Parsear y validar el monto
+        const fee = parseInt(data.fee.replace(/[^0-9]/g, ""), 10);
+        if (isNaN(fee) || fee <= 0) {
+          throw new Error("Monto del estudiante inválido");
+        }
+
+        return {
+          studentId: data.student.id,
+          studentFee: fee,
+        };
+      })
+    );
+
+    // Validar que no se repita estudiantes
+    const uniqueStudentIds = new Set(
+      formattedStudents.map((item) => item.studentId)
+    );
+    if (uniqueStudentIds.size !== formattedStudents.length) {
+      throw new Error("No se permite agregar un mismo estudiante dos veces.");
+    }
+    return {
+      isValid: true,
+      data: formattedStudents,
+    };
+  } catch (error) {
+    return {
+      isValid: false,
+      error: error.message,
+    };
+  }
 }

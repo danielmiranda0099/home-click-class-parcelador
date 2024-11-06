@@ -1,8 +1,8 @@
 "use server";
-
 import prisma from "@/lib/prisma";
-
+import { ResquestResponse } from "@/utils/requestResponse";
 import {
+  formatAndValidateStudents,
   validatePeriodOfTime,
   validateSchedule,
   validateSelectedDays,
@@ -41,52 +41,47 @@ export async function CreateNewLesson(prev_state, lessons_data) {
     console.log(lessons_data);
 
     const validations = [
-      validateStudents(students),
-      validateTeacher(teacher),
-      validatePeriodOfTime(periodOfTime),
-      validateStartDate(startDate),
-      validateSelectedDays(selectedDays),
-      validateSchedule(times, selectedDays),
+      await validateStudents(students),
+      await validateTeacher(teacher),
+      await validatePeriodOfTime(periodOfTime),
+      await validateStartDate(startDate),
+      await validateSelectedDays(selectedDays),
+      await validateSchedule(times, selectedDays),
     ];
 
     // Verificar si hay errores
     const validationError = validations.find((v) => !v.isValid);
     if (validationError) {
-      return {
-        data: [],
-        error: true,
-        succes: false,
-        message: validationError.error,
-      };
+      return ResquestResponse.error(validationError.error);
     }
 
-    const new_lessons = await prisma.$transaction(
-      lessons_data.map((lesson_data) =>
-        prisma.lesson.create({
-          data: {
-            ...lesson_data,
-          },
-          include: {
-            teacher: true,
-            studentLessons: {
-              include: {
-                student: true,
-              },
-            },
-          },
-        })
-      )
-    );
-    console.log(JSON.stringify(new_lessons.slice(2), null, 2));
-    return new_lessons;
+    const students_formated = await formatAndValidateStudents(students);
+    if (!students_formated.isValid) {
+      return ResquestResponse.error(students_formated.error);
+    }
+    console.log("students_formated:::::::", students_formated);
+    // const new_lessons = await prisma.$transaction(
+    //   lessons_data.map((lesson_data) =>
+    //     prisma.lesson.create({
+    //       data: {
+    //         ...lesson_data,
+    //       },
+    //       include: {
+    //         teacher: true,
+    //         studentLessons: {
+    //           include: {
+    //             student: true,
+    //           },
+    //         },
+    //       },
+    //     })
+    //   )
+    // );
+    // console.log(JSON.stringify(new_lessons.slice(2), null, 2));
+    return ResquestResponse.success({});
   } catch (error) {
     console.error("Error Crating and Scheduling lessons:", error);
-    return {
-      data: [],
-      error: true,
-      succes: false,
-      message: "Error inesperado, contacte con soporte.",
-    };
+    return ResquestResponse.error();
   }
 }
 
