@@ -2,6 +2,15 @@
 
 import prisma from "@/lib/prisma";
 
+import {
+  validatePeriodOfTime,
+  validateSchedule,
+  validateSelectedDays,
+  validateStartDate,
+  validateStudents,
+  validateTeacher,
+} from "@/utils/lessonCrudValidations";
+
 const formattedLessonForBD = (form_data) => {
   // TODO Mirar como adtener los de mas datos del formulario
   const lesson_formated = Object.fromEntries(form_data.entries());
@@ -25,9 +34,32 @@ const formattedLessonForBD = (form_data) => {
   return lesson_formated;
 };
 
-//TODO: pasar la logica de creacion de formateo de lesson al back
-export async function CreateNewLesson(lessons_data) {
+export async function CreateNewLesson(prev_state, lessons_data) {
   try {
+    const { students, teacher, periodOfTime, startDate, selectedDays, times } =
+      lessons_data;
+    console.log(lessons_data);
+
+    const validations = [
+      validateStudents(students),
+      validateTeacher(teacher),
+      validatePeriodOfTime(periodOfTime),
+      validateStartDate(startDate),
+      validateSelectedDays(selectedDays),
+      validateSchedule(times, selectedDays),
+    ];
+
+    // Verificar si hay errores
+    const validationError = validations.find((v) => !v.isValid);
+    if (validationError) {
+      return {
+        data: [],
+        error: true,
+        succes: false,
+        message: validationError.error,
+      };
+    }
+
     const new_lessons = await prisma.$transaction(
       lessons_data.map((lesson_data) =>
         prisma.lesson.create({
@@ -48,7 +80,13 @@ export async function CreateNewLesson(lessons_data) {
     console.log(JSON.stringify(new_lessons.slice(2), null, 2));
     return new_lessons;
   } catch (error) {
-    console.error("Error Crating lessons:", error);
+    console.error("Error Crating and Scheduling lessons:", error);
+    return {
+      data: [],
+      error: true,
+      succes: false,
+      message: "Error inesperado, contacte con soporte.",
+    };
   }
 }
 

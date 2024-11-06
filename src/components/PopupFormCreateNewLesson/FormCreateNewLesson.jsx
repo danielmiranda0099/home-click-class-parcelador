@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useFormState, useFormStatus } from "react-dom";
 
 import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -17,48 +18,62 @@ import { PeriodOfTime } from "./PeriodOfTime";
 import { SelectedDaysAndTime } from "./SelectedDaysAndTime";
 import { FormFieldStudents } from "./FormFieldStudents";
 import { FormFieldTeacher } from "./FormFieldTeacher";
+import { XIcon } from "@/components/icons";
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" disabled={pending}>
+      {pending ? "scheduling classes.." : "schedule classes"}
+    </Button>
+  );
+}
 
 export function FormCreateNewLesson() {
   const { lessons, SetLessons } = useLessonStore();
-
   const [data_lesson, setDataLesson] = useState(DATA_LESSON_DEFAULT);
+  const [state_form, dispath] = useFormState(CreateNewLesson, {
+    data: [],
+    succes: null,
+    error: false,
+    message: null,
+  });
 
-  const OnCreateNewLessons = async (form_data) => {
-    const teacher_payment_string = data_lesson.teacher.payment.replace(
-      /[^0-9]/g,
-      ""
-    );
-    const teacher_payment_formated = parseInt(teacher_payment_string, 10);
+  const OnCreateNewLessons = async () => {
+    // const teacher_payment_string = data_lesson.teacher.payment.replace(
+    //   /[^0-9]/g,
+    //   ""
+    // );
+    // const teacher_payment_formated = parseInt(teacher_payment_string, 10);
 
-    form_data.forEach((value, key) => console.log(`${key}: ${value}`));
+    // const student_lesson_data = data_lesson.students.map((data) => ({
+    //   studentId: data.student.id,
+    //   studentFee: parseInt(data.fee.replace(/[^0-9]/g, ""), 10),
+    // }));
 
-    const student_lesson_data = data_lesson.students.map((data) => ({
-      studentId: data.student.id,
-      studentFee: parseInt(data.fee.replace(/[^0-9]/g, ""), 10),
-    }));
+    // const all_date = getClassDatesForNextPeriod(
+    //   data_lesson.selectedDays.map((day) => DAYS_OF_WEEK_NUMBER[day]),
+    //   data_lesson.times,
+    //   data_lesson.periodOfTime,
+    //   data_lesson.startDate
+    // );
 
-    const all_date = getClassDatesForNextPeriod(
-      data_lesson.selectedDays.map((day) => DAYS_OF_WEEK_NUMBER[day]),
-      data_lesson.times,
-      data_lesson.periodOfTime,
-      data_lesson.startDate
-    );
+    // const lesson = {
+    //   teacherId: data_lesson.teacher.teacher?.id,
+    //   teacherPayment: teacher_payment_formated,
+    // };
 
-    const lesson = {
-      teacherId: data_lesson.teacher.teacher?.id,
-      teacherPayment: teacher_payment_formated,
-    };
-
-    const data = all_date.map((time) => ({
-      ...lesson,
-      isGroup: student_lesson_data.length > 1,
-      startDate: time,
-      studentLessons: {
-        create: student_lesson_data,
-      },
-    }));
-    console.log(data);
-    // const new_lessons = await CreateNewLesson(data_lesson);
+    // const data = all_date.map((time) => ({
+    //   ...lesson,
+    //   isGroup: student_lesson_data.length > 1,
+    //   startDate: time,
+    //   studentLessons: {
+    //     create: student_lesson_data,
+    //   },
+    // }));
+    // console.log(data);
+    dispath(data_lesson);
     //TODO: Teiene sentido enviar "admin2?? si el que crea clases siempre es admin ademas el rol
     //debe de obtenerse por el user
     // const new_lessons_formated = FormattedLessonsForCalendar(
@@ -106,12 +121,19 @@ export function FormCreateNewLesson() {
           setDataLesson={setDataLesson}
         />
       </div>
+      {/* TODO: converit el error en componente y hacer que desaparesca a los 6s o cuando se le al boton de accion*/}
+      {state_form.error && (
+        <div className="mt-3 bg-red-500 p-3 rounded-sm flex">
+          <XIcon color="white" />
+          <p className="text-white font-semibold ml-1">{state_form.message}</p>
+        </div>
+      )}
       <DialogFooter>
         <div className="mt-6 space-x-4 flex justify-end">
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <Button type="submit">Create Class</Button>
+          <SubmitButton />
         </div>
       </DialogFooter>
     </form>
