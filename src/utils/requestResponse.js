@@ -3,7 +3,7 @@ export const ResquestResponse = {
     return {
       data,
       error: false,
-      succes: true,
+      success: true,
       message: null,
     };
   },
@@ -11,7 +11,7 @@ export const ResquestResponse = {
     return {
       data: [],
       error: true,
-      succes: false,
+      success: false,
       message,
     };
   },
