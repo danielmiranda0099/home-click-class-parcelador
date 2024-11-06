@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
 import { DialogClose, DialogFooter } from "@/components/ui/dialog";
@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 import { useLessonStore } from "@/store/lessonStore";
+import { useUiStore } from "@/store/uiStores";
 
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { DATA_LESSON_DEFAULT, DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
@@ -31,6 +32,7 @@ function SubmitButton() {
 
 export function FormCreateNewLesson() {
   const { lessons, SetLessons } = useLessonStore();
+  const { setPopupFormCreateNewLesson: setIsOpen } = useUiStore();
   const [data_lesson, setDataLesson] = useState(DATA_LESSON_DEFAULT);
   const [state_form, dispath] = useFormState(CreateNewLesson, {
     data: [],
@@ -39,39 +41,16 @@ export function FormCreateNewLesson() {
     message: null,
   });
 
+  useEffect(() => {
+    console.log("oli useeffect");
+    console.log(state_form);
+    if (state_form?.success) {
+      console.log("entre al if XD");
+      setIsOpen(false);
+    }
+  }, [state_form]);
+
   const OnCreateNewLessons = async () => {
-    // const teacher_payment_string = data_lesson.teacher.payment.replace(
-    //   /[^0-9]/g,
-    //   ""
-    // );
-    // const teacher_payment_formated = parseInt(teacher_payment_string, 10);
-
-    // const student_lesson_data = data_lesson.students.map((data) => ({
-    //   studentId: data.student.id,
-    //   studentFee: parseInt(data.fee.replace(/[^0-9]/g, ""), 10),
-    // }));
-
-    // const all_date = getClassDatesForNextPeriod(
-    //   data_lesson.selectedDays.map((day) => DAYS_OF_WEEK_NUMBER[day]),
-    //   data_lesson.times,
-    //   data_lesson.periodOfTime,
-    //   data_lesson.startDate
-    // );
-
-    // const lesson = {
-    //   teacherId: data_lesson.teacher.teacher?.id,
-    //   teacherPayment: teacher_payment_formated,
-    // };
-
-    // const data = all_date.map((time) => ({
-    //   ...lesson,
-    //   isGroup: student_lesson_data.length > 1,
-    //   startDate: time,
-    //   studentLessons: {
-    //     create: student_lesson_data,
-    //   },
-    // }));
-    // console.log(data);
     dispath(data_lesson);
     //TODO: Teiene sentido enviar "admin2?? si el que crea clases siempre es admin ademas el rol
     //debe de obtenerse por el user
@@ -82,7 +61,6 @@ export function FormCreateNewLesson() {
     // const all_lessons = [...lessons, ...new_lessons_formated];
     // console.log(all_lessons);
     // setLessons(all_lessons);
-    // setIsOpen(false);
   };
   return (
     <form className="p-0 px-4" action={OnCreateNewLessons}>

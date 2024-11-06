@@ -9,7 +9,9 @@ import {
   validateStartDate,
   validateStudents,
   validateTeacher,
+  formatAndValidateteacher,
 } from "@/utils/lessonCrudValidations";
+import { scheduleLessons } from "@/utils/scheduleLessons";
 
 const formattedLessonForBD = (form_data) => {
   // TODO Mirar como adtener los de mas datos del formulario
@@ -38,7 +40,6 @@ export async function CreateNewLesson(prev_state, lessons_data) {
   try {
     const { students, teacher, periodOfTime, startDate, selectedDays, times } =
       lessons_data;
-    console.log(lessons_data);
 
     const validations = [
       await validateStudents(students),
@@ -55,30 +56,59 @@ export async function CreateNewLesson(prev_state, lessons_data) {
       return ResquestResponse.error(validationError.error);
     }
 
+    // verificaciones de users y formating
     const students_formated = await formatAndValidateStudents(students);
     if (!students_formated.isValid) {
       return ResquestResponse.error(students_formated.error);
     }
-    console.log("students_formated:::::::", students_formated);
-    // const new_lessons = await prisma.$transaction(
-    //   lessons_data.map((lesson_data) =>
-    //     prisma.lesson.create({
-    //       data: {
-    //         ...lesson_data,
-    //       },
-    //       include: {
-    //         teacher: true,
-    //         studentLessons: {
-    //           include: {
-    //             student: true,
-    //           },
-    //         },
-    //       },
-    //     })
-    //   )
-    // );
-    // console.log(JSON.stringify(new_lessons.slice(2), null, 2));
-    return ResquestResponse.success({});
+    const { data: data_students } = students_formated;
+
+    const teacher_formated = await formatAndValidateteacher(teacher);
+    if (!students_formated.isValid) {
+      return ResquestResponse.error(students_formated.error);
+    }
+    const { data: data_teacher } = teacher_formated;
+
+    const all_date = scheduleLessons(
+      selectedDays,
+      times,
+      periodOfTime,
+      startDate
+    );
+
+    const lesson = {
+      teacherId: data_teacher.teacherId,
+      teacherPayment: data_teacher.teacherPayment,
+    };
+
+    const data = all_date.map((date) => ({
+      ...lesson,
+      isGroup: data_students.length > 1,
+      startDate: date,
+      studentLessons: {
+        create: data_students,
+      },
+    }));
+
+    const new_lessons = await prisma.$transaction(
+      data.map((lesson_data) =>
+        prisma.lesson.create({
+          data: {
+            ...lesson_data,
+          },
+          include: {
+            teacher: true,
+            studentLessons: {
+              include: {
+                student: true,
+              },
+            },
+          },
+        })
+      )
+    );
+    console.log(JSON.stringify(new_lessons.slice(2), null, 2));
+    return ResquestResponse.success(new_lessons);
   } catch (error) {
     console.error("Error Crating and Scheduling lessons:", error);
     return ResquestResponse.error();

@@ -1,10 +1,13 @@
 import moment from "moment";
+import { DAYS_OF_WEEK_NUMBER } from "./constans";
 
 export function scheduleLessons(selected_days, times, period, startDate) {
   const dates = [];
   let currentDate = moment(startDate); // Iniciar desde la fecha proporcionada
   let endDate;
-
+  const selected_days_of_week_number = selected_days.map(
+    (day) => DAYS_OF_WEEK_NUMBER[day]
+  );
   // Configurar el tiempo final según el parámetro 'period'
   switch (period) {
     case "3M": // 3 meses
@@ -22,7 +25,7 @@ export function scheduleLessons(selected_days, times, period, startDate) {
   }
 
   while (currentDate.isSameOrBefore(endDate)) {
-    if (selected_days.includes(currentDate.day())) {
+    if (selected_days_of_week_number.includes(currentDate.day())) {
       const dateWithTime = currentDate
         .clone()
         .hour(times[currentDate.day()].split(":")[0])

@@ -74,7 +74,7 @@ export async function validateSchedule(times, selectedDays) {
   }
   return { isValid: true };
 }
-
+//TODO: Agregar verificacion si el student esta activo o no
 export async function formatAndValidateStudents(students) {
   try {
     const formattedStudents = await Promise.all(
@@ -114,6 +114,32 @@ export async function formatAndValidateStudents(students) {
     return {
       isValid: true,
       data: formattedStudents,
+    };
+  } catch (error) {
+    return {
+      isValid: false,
+      error: error.message,
+    };
+  }
+}
+
+//TODO: Agregar verificacion si el teacher esta activo o no
+export async function formatAndValidateteacher(teacher) {
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        id: teacher.teacher.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (!user) throw new Error("El profesor no está activo o registrado.");
+
+    const payment = parseInt(teacher.payment.replace(/[^0-9]/g, ""), 10);
+    return {
+      isValid: true,
+      data: { teacherId: teacher.teacher.id, teacherPayment: payment },
     };
   } catch (error) {
     return {
