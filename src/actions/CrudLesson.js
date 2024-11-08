@@ -115,7 +115,7 @@ export async function CreateNewLesson(prev_state, lessons_data) {
   }
 }
 
-export async function GetLessons() {
+export async function getLessons() {
   try {
     // Obtener todas las lecciones
     const lessons = await prisma.lesson.findMany({

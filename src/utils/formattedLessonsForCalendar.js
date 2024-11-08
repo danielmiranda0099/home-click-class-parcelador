@@ -5,7 +5,6 @@ import {
   getNamesStudentsFromLesson,
 } from "./getNamesForLesson";
 
-//TODO: meter colores en variables
 //TODO: Refact llevar esta funcion a otro archivo
 export const statusLesson = (lesson, rol) => {
   if (!lesson) {
@@ -182,7 +181,7 @@ export const statusLesson = (lesson, rol) => {
   return [COLORS.FUCHSIA_BG, COLORS.FUCHSIA_TEXT, "Unknown Status"];
 };
 
-export function FormattedLessonsForCalendar(original_lesson, rol) {
+export function formattedLessonsForCalendar(original_lesson, rol) {
   if (!original_lesson || original_lesson.length <= 0) {
     return [];
   }
