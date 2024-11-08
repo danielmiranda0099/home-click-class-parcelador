@@ -45,9 +45,8 @@ export default function DashboardPage() {
       <FormLessonReport rol="admin" />
       <PopupDetailLesson rol="admin" />
       <FormReschedule rol="admin" />
-      <section className="mb-4">
-        <CardStatusLegendLesson rol="admin" />
-      </section>
+
+      <CardStatusLegendLesson rol="admin" />
 
       <Tabs defaultValue="calendar">
         <div className="flex justify-center items-center p-2.5 rounded-md bg-muted w-fit mx-auto">

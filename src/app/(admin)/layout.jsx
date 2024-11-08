@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
           {/* Page Content */}
           <FormRegisterUser />
           <PopupFormCreateNewLesson />
-          <main className="p-2">{children}</main>
+          <main className="p-2 relative">{children}</main>
         </div>
       </div>
     </>

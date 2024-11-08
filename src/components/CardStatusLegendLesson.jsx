@@ -1,9 +1,31 @@
-import { Card, CardContent } from "./ui/card";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Card, CardContent } from "@/components/ui/card";
+import { HelpIcon } from "@/components/icons";
 
 //TODO: Que esto no dependa del rol, tener ya estaticamente.
 export function CardStatusLegendLesson({ rol }) {
+  if (rol === "admin") {
+    return (
+      <Popover>
+        <PopoverTrigger className="absolute shadow-slate-600 p-0 shadow-md rounded-full hover:bg-gray-200">
+          <HelpIcon size={"3rem"} />
+        </PopoverTrigger>
+        <PopoverContent className="w-[fit-content] p-0 border-0">
+          <ContentCardStatusLegendLesson rol={rol} />
+        </PopoverContent>
+      </Popover>
+    );
+  }
+  return <ContentCardStatusLegendLesson rol={rol} />;
+}
+
+function ContentCardStatusLegendLesson({ rol }) {
   return (
-    <Card className="w-[fit-content]">
+    <Card className="max-w-xl">
       <CardContent className="p-4">
         <div className="flex flex-row gap-2 justify-start items-center">
           <div className="bg-blue-300 w-5 h-5 rounded-full"></div>
