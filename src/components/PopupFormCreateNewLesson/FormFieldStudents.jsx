@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { PlusCircleIcon } from "@/components/icons";
+import { PlusCircleIcon, XIcon } from "@/components/icons";
 import { InputSearch } from "@/components/InputSearch";
 import { InputPriceLesson } from "@/components/InputPriceLesson";
 import { useUserStore } from "@/store/userStore";
@@ -32,10 +32,20 @@ export function FormFieldStudents({ data_lesson, setDataLesson }) {
     });
   };
 
+  const handlerRemoveStudent = (index_student) => {
+    const student_filtered = data_lesson.students.filter(
+      (student, index) => index !== index_student
+    );
+    setDataLesson({
+      ...data_lesson,
+      students: student_filtered,
+    });
+  };
+
   return (
     <>
       {data_lesson.students.map((studentData, index) => (
-        <div key={index} className="grid grid-cols-2 gap-4">
+        <div key={index} className="grid grid-cols-2 gap-4 relative">
           <div className="grid gap-2">
             <Label>Student</Label>
             <InputSearch
@@ -52,6 +62,15 @@ export function FormFieldStudents({ data_lesson, setDataLesson }) {
               setValue={(value) => updateStudentData(index, "fee", value)}
             />
           </div>
+
+          {index > 0 && (
+            <div
+              className="bg-white rounded-full shadow-xl border border-gray-300 p-2 absolute right-0 cursor-pointer hover:bg-gray-200"
+              onClick={() => handlerRemoveStudent(index)}
+            >
+              <XIcon />
+            </div>
+          )}
         </div>
       ))}
 
