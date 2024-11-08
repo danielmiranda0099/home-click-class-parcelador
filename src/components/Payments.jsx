@@ -13,7 +13,6 @@ import {
 import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
 import {
-  getLessons,
   PayStudentLesson,
   PayTeacherLesson,
   UnpaidLessons,
@@ -125,9 +124,7 @@ export function Payments() {
       }
     }
 
-    const data = await getLessons();
-    const lessons = formattedLessonsForCalendar(data, "admin");
-    setLessons(lessons);
+    setLessons("admin");
 
     handleSearch();
   };

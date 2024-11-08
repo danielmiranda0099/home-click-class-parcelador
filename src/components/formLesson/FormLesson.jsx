@@ -11,18 +11,11 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import {
-  CreateNewLesson,
-  getLessons,
-  RescheduleLesson,
-  UpdateLesson,
-} from "@/actions/CrudLesson";
+import { CreateNewLesson, UpdateLesson } from "@/actions/CrudLesson";
 import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
-import { formattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { formattedDateForInput } from "@/utils/formattedDateForInput";
 
 import { students, teachers } from "@/mockData";
@@ -120,10 +113,7 @@ export function FormLesson({ rol }) {
 
       await UpdateLesson(selected_lesson.id, form_data);
 
-      const data = await getLessons();
-      const lessons = formattedLessonsForCalendar(data, rol);
-
-      setLessons(lessons);
+      setLessons(rol);
     }
     setIsOpen(false);
   };

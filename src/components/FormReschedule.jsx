@@ -10,8 +10,7 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { useLessonsStore } from "@/store/lessonStore";
-import { getLessons, RescheduleLesson } from "@/actions/CrudLesson";
-import { formattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
+import { RescheduleLesson } from "@/actions/CrudLesson";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
@@ -33,10 +32,7 @@ export function FormReschedule({ rol }) {
     console.log("RESCHEDULE", new_date);
     await RescheduleLesson(new_date);
 
-    const data = await getLessons();
-    const lessons = formattedLessonsForCalendar(data, rol);
-
-    setLessons(lessons);
+    setLessons(rol);
 
     setIsOpen(false);
   };

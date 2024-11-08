@@ -7,13 +7,14 @@ export const useLessonsStore = create((set) => ({
   isLoading: false,
   error: null,
 
-  setLessons: async (rol = "admin") => {
+  setLessons: async (rol, is_set_lessons_filtered = false) => {
     try {
       set({ isLoading: true, error: null });
       const data = await getLessons();
-      const formattedLessons = formattedLessonsForCalendar(data, rol);
-      set({ lessons: formattedLessons, isLoading: false });
-      return formattedLessons;
+      const formatted_lessons = formattedLessonsForCalendar(data, rol);
+      set({ lessons: formatted_lessons, isLoading: false });
+      if (is_set_lessons_filtered) set({ lessons_filtered: formatted_lessons });
+      return formatted_lessons;
     } catch (error) {
       set({ error: error.message, isLoading: false });
       throw error;
@@ -38,10 +39,10 @@ export const useLessonsStore = create((set) => ({
       await CreateNewLeccons(lessonForm);
 
       const data = await getLessons();
-      const formattedLessons = formattedLessonsForCalendar(data, "admin");
-      set({ lessons: formattedLessons, isLoading: false });
+      const formatted_lessons = formattedLessonsForCalendar(data, "admin");
+      set({ lessons: formatted_lessons, isLoading: false });
 
-      return formattedLessons;
+      return formatted_lessons;
     } catch (error) {
       set({ error: error.message, isLoading: false });
       throw error;
@@ -54,10 +55,10 @@ export const useLessonsStore = create((set) => ({
       await PayLesson([lessonId], paymentData);
 
       const data = await getLessons();
-      const formattedLessons = formattedLessonsForCalendar(data, "admin");
-      set({ lessons: formattedLessons, isLoading: false });
+      const formatted_lessons = formattedLessonsForCalendar(data, "admin");
+      set({ lessons: formatted_lessons, isLoading: false });
 
-      return formattedLessons;
+      return formatted_lessons;
     } catch (error) {
       set({ error: error.message, isLoading: false });
       throw error;

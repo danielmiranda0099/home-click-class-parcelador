@@ -2,23 +2,16 @@
 
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
-import { getLessons } from "@/actions/CrudLesson";
 import { useLessonsStore } from "@/store/lessonStore";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { formattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { useUiStore } from "@/store/uiStores";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 const localizer = momentLocalizer(moment);
 
 export function CalendarUI({ rol }) {
-  const {
-    lessons,
-    setLessons,
-    setSelectedLesson,
-    lessons_filtered,
-    setLessonsFiltered,
-  } = useLessonsStore();
+  const { lessons, setLessons, setSelectedLesson, lessons_filtered } =
+    useLessonsStore();
   const setPopupDetailLesson = useUiStore(
     (state) => state.setPopupDetailLesson
   );
@@ -30,17 +23,7 @@ export function CalendarUI({ rol }) {
     setCounterDB(counter_DB + 1);
     if ((lessons || lessons.length === 0) && counter_DB <= 15) {
       setCounterDB(16);
-      getLessons()
-        .then((data) => {
-          const formattedLessons = formattedLessonsForCalendar(data, rol);
-          setLessons(formattedLessons);
-          setLessonsFiltered(formattedLessons);
-
-          console.log(formattedLessons, counter_DB);
-        })
-        .catch((error) => {
-          console.error("Error fetching lessons:", error);
-        });
+      setLessons(rol, true);
     }
   }, [lessons, setLessons, rol]);
 

@@ -1,10 +1,8 @@
 "use client";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
-  DialogClose,
   DialogFooter,
   DialogTitle,
   DialogDescription,
@@ -13,23 +11,13 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useUiStore } from "@/store/uiStores";
 import { useLessonsStore } from "@/store/lessonStore";
-import { useToast } from "@/components/ui/use-toast";
+import { CancelLesson, DeleteLesson } from "@/actions/CrudLesson";
 import {
-  CancelLesson,
-  DeleteLesson,
-  getLessons,
-  RegisterLesson,
-} from "@/actions/CrudLesson";
-import { formattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
-import {
-  BookIcon,
   CalendarIcon,
   CheckIcon,
   CircleCheckIcon,
   DollarIcon,
-  FeedbackIcon,
   PencilIcon,
-  RatingIcon,
   RescheduleIcon,
   UserIcon,
   UsersIcon,
@@ -66,7 +54,6 @@ export function PopupDetailLesson({ rol }) {
     setPopupFormReschedule,
     setPopupFormLessonReport,
   } = useUiStore();
-  const { toast } = useToast();
 
   console.log("lesson en modal", lesson);
   return (
@@ -195,13 +182,7 @@ export function PopupDetailLesson({ rol }) {
                           className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
                           onClick={async () => {
                             CancelLesson(lesson?.id, true);
-                            const data = await getLessons();
-                            const lessons = formattedLessonsForCalendar(
-                              data,
-                              rol
-                            );
-
-                            setLessons(lessons);
+                            setLessons(rol);
                             setPopupDetailLesson(false);
                           }}
                         >
@@ -215,13 +196,7 @@ export function PopupDetailLesson({ rol }) {
                           className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
                           onClick={async () => {
                             CancelLesson(lesson?.id, false);
-                            const data = await getLessons();
-                            const lessons = formattedLessonsForCalendar(
-                              data,
-                              rol
-                            );
-
-                            setLessons(lessons);
+                            setLessons(rol);
                             setPopupDetailLesson(false);
                           }}
                         >
@@ -234,13 +209,7 @@ export function PopupDetailLesson({ rol }) {
                         className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
                         onClick={async () => {
                           DeleteLesson([lesson.id]);
-                          const data = await getLessons();
-                          const lessons = formattedLessonsForCalendar(
-                            data,
-                            rol
-                          );
-
-                          setLessons(lessons);
+                          setLessons(rol);
                           setPopupDetailLesson(false);
                         }}
                       >
@@ -276,13 +245,7 @@ export function PopupDetailLesson({ rol }) {
                           //   isStudentPaid: true,
                           // });
                           //TODO: De nuevo esto se podria mejorra solo actualizando el estado
-                          const data = await getLessons();
-                          const lessons = formattedLessonsForCalendar(
-                            data,
-                            rol
-                          );
-
-                          setLessons(lessons);
+                          setLessons(rol);
                           setPopupDetailLesson(false);
                         }}
                       >
@@ -300,13 +263,7 @@ export function PopupDetailLesson({ rol }) {
                           //   isTeacherPaid: true,
                           // });
                           //TODO: De nuevo esto se podria mejorra solo actualizando el estado
-                          const data = await getLessons();
-                          const lessons = formattedLessonsForCalendar(
-                            data,
-                            rol
-                          );
-
-                          setLessons(lessons);
+                          setLessons(rol);
                           setPopupDetailLesson(false);
                         }}
                       >
