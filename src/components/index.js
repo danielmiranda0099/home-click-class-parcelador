@@ -13,3 +13,4 @@ export * from "./FormLessonReport";
 export * from "./Header";
 export * from "./FilterLesson";
 export * from "./ButtonSignOut";
+export * from "./ErrorAlert";
