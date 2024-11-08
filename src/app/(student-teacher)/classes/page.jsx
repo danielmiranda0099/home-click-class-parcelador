@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import {
   CalendarUI,
   CardOverView,
@@ -6,18 +7,23 @@ import {
 } from "@/components";
 import { PopupDetailLesson } from "@/components/popupDetailLesson";
 
-export default function ClassesPage() {
+export default async function ClassesPage() {
+  const session = await auth();
+  const {
+    user: { role },
+  } = session;
+  console.log("session", session);
   return (
     <>
-      <FormConfirmClass />
-      <PopupDetailLesson />
+      {role[0] === "student" && <FormConfirmClass />}
+      <PopupDetailLesson rol={role[0]} />
       <section className="px-10 py-3 flex flex-row justify-start gap-4">
         <CardOverView />
-        <CardStatusLegendLesson />
+        <CardStatusLegendLesson rol={role[0]} />
       </section>
 
       <section className="px-10 py-3">
-        <CalendarUI />
+        <CalendarUI rol={role[0]} />
       </section>
     </>
   );
