@@ -12,15 +12,16 @@ import {
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { ConfirmLesson, GetLessons } from "@/actions/CrudLesson";
-import { useLessonStore } from "@/store/lessonStore";
+import { useLessonsStore } from "@/store/lessonStore";
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { CheckIcon } from "./icons";
 
 export function FormConfirmClass() {
-  const lesson = useLessonStore((state) => state.selected_lesson);
-  const SetLessons = useLessonStore((state) => state.SetLessons);
-  const is_open = useUiStore((state) => state.popupFormConfirmClass);
-  const setIsOpen = useUiStore((state) => state.setPopupFormConfirmClass);
+  const { lesson, setLessons } = useLessonsStore();
+  const {
+    popupFormConfirmClass: is_open,
+    setPopupFormConfirmClass: setIsOpen,
+  } = useUiStore((state) => state.popupFormConfirmClass);
 
   const OnSubmit = async (form_data) => {
     const confirm_lesson_data = {
@@ -35,7 +36,7 @@ export function FormConfirmClass() {
     const data = await GetLessons();
     const lessons = FormattedLessonsForCalendar(data, "student");
 
-    SetLessons(lessons);
+    setLessons(lessons);
 
     console.log(confirm_lesson_data);
 

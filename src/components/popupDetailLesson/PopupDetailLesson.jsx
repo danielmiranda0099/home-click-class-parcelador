@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useUiStore } from "@/store/uiStores";
-import { useLessonStore } from "@/store/lessonStore";
+import { useLessonsStore } from "@/store/lessonStore";
 import { useToast } from "@/components/ui/use-toast";
 import {
   CancelLesson,
@@ -56,7 +56,7 @@ const formattedDate = (start_date, end_date) => {
 
 //TODO: Refact Component
 export function PopupDetailLesson({ rol }) {
-  const { selected_lesson: lesson, SetLessons } = useLessonStore();
+  const { selected_lesson: lesson, setLessons } = useLessonsStore();
   const {
     setPopupFormLesson,
     popupDetailLesson: is_open,
@@ -201,7 +201,7 @@ export function PopupDetailLesson({ rol }) {
                               rol
                             );
 
-                            SetLessons(lessons);
+                            setLessons(lessons);
                             setPopupDetailLesson(false);
                           }}
                         >
@@ -221,7 +221,7 @@ export function PopupDetailLesson({ rol }) {
                               rol
                             );
 
-                            SetLessons(lessons);
+                            setLessons(lessons);
                             setPopupDetailLesson(false);
                           }}
                         >
@@ -240,7 +240,7 @@ export function PopupDetailLesson({ rol }) {
                             rol
                           );
 
-                          SetLessons(lessons);
+                          setLessons(lessons);
                           setPopupDetailLesson(false);
                         }}
                       >
@@ -282,7 +282,7 @@ export function PopupDetailLesson({ rol }) {
                             rol
                           );
 
-                          SetLessons(lessons);
+                          setLessons(lessons);
                           setPopupDetailLesson(false);
                         }}
                       >
@@ -306,7 +306,7 @@ export function PopupDetailLesson({ rol }) {
                             rol
                           );
 
-                          SetLessons(lessons);
+                          setLessons(lessons);
                           setPopupDetailLesson(false);
                         }}
                       >

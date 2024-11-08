@@ -16,14 +16,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useLessonStore } from "@/store/lessonStore";
+import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 import moment from "moment";
 import { statusLesson } from "@/utils/formattedLessonsForCalendar";
 import { EyeIcon, ChevronLeft, ChevronRight } from "lucide-react";
 
 export function TableLessons() {
-  const { lessons_filtered: lessons, setSelectedLesson } = useLessonStore();
+  const { lessons_filtered: lessons, setSelectedLesson } = useLessonsStore();
   const setPopupDetailLesson = useUiStore(
     (state) => state.setPopupDetailLesson
   );

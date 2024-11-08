@@ -20,7 +20,7 @@ import {
   RescheduleLesson,
   UpdateLesson,
 } from "@/actions/CrudLesson";
-import { useLessonStore } from "@/store/lessonStore";
+import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { formattedDateForInput } from "@/utils/formattedDateForInput";
@@ -37,13 +37,12 @@ import { CheckIcon } from "../icons";
 //   RESCHEDULE
 export function FormLesson({ rol }) {
   //TODO: FORMSTATE EN UN OBJETO POR FAVOR
-  const popupFormLessonState = useUiStore(
-    (state) => state.popupFormLessonState
-  );
-  const is_open = useUiStore((state) => state.popupFormLesson);
-  const setIsOpen = useUiStore((state) => state.setPopupFormLesson);
-  const selected_lesson = useLessonStore((state) => state.selected_lesson);
-  const SetLessons = useLessonStore((state) => state.SetLessons);
+  const {
+    popupFormLessonState,
+    popupFormLesson: is_open,
+    setPopupFormLesson: setIsOpen,
+  } = useUiStore();
+  const { selected_lesson, setLessons } = useLessonsStore();
 
   const [teacher, setTeacher] = useState("");
   const [teacher_payment, setTeacherPayment] = useState("");
@@ -124,7 +123,7 @@ export function FormLesson({ rol }) {
       const data = await GetLessons();
       const lessons = FormattedLessonsForCalendar(data, rol);
 
-      SetLessons(lessons);
+      setLessons(lessons);
     }
     setIsOpen(false);
   };

@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
-import { useLessonStore } from "@/store/lessonStore";
+import { useLessonsStore } from "@/store/lessonStore";
 import { GetLessons, RescheduleLesson } from "@/actions/CrudLesson";
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { Label } from "./ui/label";
@@ -22,7 +22,7 @@ export function FormReschedule({ rol }) {
   const { popupFormReschedule: is_open, setPopupFormReschedule: setIsOpen } =
     useUiStore();
 
-  const { SetLessons, selected_lesson } = useLessonStore();
+  const { setLessons, selected_lesson } = useLessonsStore();
 
   const OnSubmit = async (form_data) => {
     console.log("Reschedule");
@@ -36,7 +36,7 @@ export function FormReschedule({ rol }) {
     const data = await GetLessons();
     const lessons = FormattedLessonsForCalendar(data, rol);
 
-    SetLessons(lessons);
+    setLessons(lessons);
 
     setIsOpen(false);
   };

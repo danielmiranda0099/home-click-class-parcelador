@@ -10,11 +10,11 @@ import {
 } from "@/components/ui/select";
 import { Filter } from "lucide-react";
 import { COLORS } from "@/utils/colorsStatusLesson";
-import { useLessonStore } from "@/store/lessonStore";
+import { useLessonsStore } from "@/store/lessonStore";
 import { useUserStore } from "@/store/userStore";
 
 export function FilterLesson({ isDisabled }) {
-  const { lessons, SetLessonsFiltered } = useLessonStore();
+  const { lessons, setLessonsFiltered } = useLessonsStore();
   const { user_selected: user } = useUserStore();
   const [selectedFilter, setSelectedFilter] = useState("all");
 
@@ -88,7 +88,7 @@ export function FilterLesson({ isDisabled }) {
       });
 
       // Actualiza el estado con las lecciones filtradas
-      SetLessonsFiltered(filtered);
+      setLessonsFiltered(filtered);
     }
   }, [selectedFilter, lessons, user]); // Ejecuta el efecto cuando cambian 'selectedFilter', 'lessons' o 'user'
 

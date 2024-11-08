@@ -7,13 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
-import { useLessonStore } from "@/store/lessonStore";
+import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { DATA_LESSON_DEFAULT, DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
 
-import { CreateNewLesson } from "@/actions/CrudLesson";
+import { CreateNewLesson, GetLessons } from "@/actions/CrudLesson";
 import { PeriodOfTime } from "./PeriodOfTime";
 import { SelectedDaysAndTime } from "./SelectedDaysAndTime";
 import { FormFieldStudents } from "./FormFieldStudents";
@@ -31,7 +31,7 @@ function SubmitButton() {
 }
 
 export function FormCreateNewLesson() {
-  const { lessons, SetLessons } = useLessonStore();
+  const { lessons, setLessons } = useLessonsStore();
   const { setPopupFormCreateNewLesson: setIsOpen } = useUiStore();
   const [data_lesson, setDataLesson] = useState(DATA_LESSON_DEFAULT);
   const [state_form, dispath] = useFormState(CreateNewLesson, {
@@ -42,25 +42,23 @@ export function FormCreateNewLesson() {
   });
 
   useEffect(() => {
-    console.log("oli useeffect");
     console.log(state_form);
     if (state_form?.success) {
-      console.log("entre al if XD");
-      setIsOpen(false);
+      handlerGetLesson();
     }
   }, [state_form]);
 
-  const OnCreateNewLessons = async () => {
-    dispath(data_lesson);
+  const handlerGetLesson = async () => {
     //TODO: Teiene sentido enviar "admin2?? si el que crea clases siempre es admin ademas el rol
     //debe de obtenerse por el user
-    // const new_lessons_formated = FormattedLessonsForCalendar(
-    //   new_lessons,
-    //   "admin"
-    // );
-    // const all_lessons = [...lessons, ...new_lessons_formated];
-    // console.log(all_lessons);
-    // setLessons(all_lessons);
+    const lessons = await GetLessons();
+    const lessons_formated = FormattedLessonsForCalendar(lessons, "admin");
+    setLessons(lessons_formated);
+    setIsOpen(false);
+  };
+
+  const OnCreateNewLessons = async () => {
+    dispath(data_lesson);
   };
   return (
     <form className="p-0 px-4" action={OnCreateNewLessons}>

@@ -27,7 +27,7 @@ import {
   FormattedLessonsForCalendar,
   statusLesson,
 } from "@/utils/formattedLessonsForCalendar";
-import { useLessonStore } from "@/store/lessonStore";
+import { useLessonsStore } from "@/store/lessonStore";
 import {
   Tooltip,
   TooltipContent,
@@ -46,7 +46,7 @@ export function Payments() {
     payments,
     setPayments,
   } = usePaymentViewStore();
-  const { lessons, SetLessons, setSelectedLesson } = useLessonStore();
+  const { lessons, setLessons, setSelectedLesson } = useLessonsStore();
   const [total, setTotal] = useState(0);
   const { user_selected: user } = useUserStore();
   const { setPopupDetailLesson } = useUiStore();
@@ -127,7 +127,7 @@ export function Payments() {
 
     const data = await GetLessons();
     const lessons = FormattedLessonsForCalendar(data, "admin");
-    SetLessons(lessons);
+    setLessons(lessons);
 
     handleSearch();
   };

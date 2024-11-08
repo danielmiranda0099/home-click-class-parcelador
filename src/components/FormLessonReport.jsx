@@ -12,13 +12,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useLessonStore } from "@/store/lessonStore";
+import { useLessonsStore } from "@/store/lessonStore";
 import { GetLessons, UpdateLesson } from "@/actions/CrudLesson";
 import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { CheckIcon } from "./icons";
 
 export function FormLessonReport({ rol }) {
-  const { selected_lesson: lesson, SetLessons } = useLessonStore();
+  const { selected_lesson: lesson, setLessons } = useLessonsStore();
   const {
     popupFormLessonReport: is_open,
     setPopupFormLessonReport: setIsOpen,
@@ -35,7 +35,7 @@ export function FormLessonReport({ rol }) {
     const data = await GetLessons();
     const lessons = FormattedLessonsForCalendar(data, rol);
 
-    SetLessons(lessons);
+    setLessons(lessons);
 
     setIsOpen(false);
   };
