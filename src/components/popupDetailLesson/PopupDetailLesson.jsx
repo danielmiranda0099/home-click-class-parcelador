@@ -17,10 +17,10 @@ import { useToast } from "@/components/ui/use-toast";
 import {
   CancelLesson,
   DeleteLesson,
-  GetLessons,
+  getLessons,
   RegisterLesson,
 } from "@/actions/CrudLesson";
-import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
+import { formattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import {
   BookIcon,
   CalendarIcon,
@@ -195,8 +195,8 @@ export function PopupDetailLesson({ rol }) {
                           className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
                           onClick={async () => {
                             CancelLesson(lesson?.id, true);
-                            const data = await GetLessons();
-                            const lessons = FormattedLessonsForCalendar(
+                            const data = await getLessons();
+                            const lessons = formattedLessonsForCalendar(
                               data,
                               rol
                             );
@@ -215,8 +215,8 @@ export function PopupDetailLesson({ rol }) {
                           className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
                           onClick={async () => {
                             CancelLesson(lesson?.id, false);
-                            const data = await GetLessons();
-                            const lessons = FormattedLessonsForCalendar(
+                            const data = await getLessons();
+                            const lessons = formattedLessonsForCalendar(
                               data,
                               rol
                             );
@@ -234,8 +234,8 @@ export function PopupDetailLesson({ rol }) {
                         className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
                         onClick={async () => {
                           DeleteLesson([lesson.id]);
-                          const data = await GetLessons();
-                          const lessons = FormattedLessonsForCalendar(
+                          const data = await getLessons();
+                          const lessons = formattedLessonsForCalendar(
                             data,
                             rol
                           );
@@ -276,8 +276,8 @@ export function PopupDetailLesson({ rol }) {
                           //   isStudentPaid: true,
                           // });
                           //TODO: De nuevo esto se podria mejorra solo actualizando el estado
-                          const data = await GetLessons();
-                          const lessons = FormattedLessonsForCalendar(
+                          const data = await getLessons();
+                          const lessons = formattedLessonsForCalendar(
                             data,
                             rol
                           );
@@ -300,8 +300,8 @@ export function PopupDetailLesson({ rol }) {
                           //   isTeacherPaid: true,
                           // });
                           //TODO: De nuevo esto se podria mejorra solo actualizando el estado
-                          const data = await GetLessons();
-                          const lessons = FormattedLessonsForCalendar(
+                          const data = await getLessons();
+                          const lessons = formattedLessonsForCalendar(
                             data,
                             rol
                           );

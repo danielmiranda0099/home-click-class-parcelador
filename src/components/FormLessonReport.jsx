@@ -13,8 +13,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useLessonsStore } from "@/store/lessonStore";
-import { GetLessons, UpdateLesson } from "@/actions/CrudLesson";
-import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
+import { getLessons, UpdateLesson } from "@/actions/CrudLesson";
+import { formattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { CheckIcon } from "./icons";
 
 export function FormLessonReport({ rol }) {
@@ -32,8 +32,8 @@ export function FormLessonReport({ rol }) {
 
     await UpdateLesson(lesson?.id, form_data);
 
-    const data = await GetLessons();
-    const lessons = FormattedLessonsForCalendar(data, rol);
+    const data = await getLessons();
+    const lessons = formattedLessonsForCalendar(data, rol);
 
     setLessons(lessons);
 

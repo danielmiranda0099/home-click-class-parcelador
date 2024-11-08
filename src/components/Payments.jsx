@@ -13,7 +13,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
 import {
-  GetLessons,
+  getLessons,
   PayStudentLesson,
   PayTeacherLesson,
   UnpaidLessons,
@@ -24,7 +24,7 @@ import { PaperSearchIcon } from "./icons";
 import { Checkbox } from "./ui/checkbox";
 import { usePaymentViewStore } from "@/store/paymentViewStore";
 import {
-  FormattedLessonsForCalendar,
+  formattedLessonsForCalendar,
   statusLesson,
 } from "@/utils/formattedLessonsForCalendar";
 import { useLessonsStore } from "@/store/lessonStore";
@@ -86,7 +86,7 @@ export function Payments() {
       filters
     );
     const unpaid_lesson_formated_payment = formatPayments(unpaid_lessons, user);
-    const unpaid_lesson_formated = FormattedLessonsForCalendar(
+    const unpaid_lesson_formated = formattedLessonsForCalendar(
       unpaid_lesson_formated_payment,
       "admin"
     );
@@ -125,8 +125,8 @@ export function Payments() {
       }
     }
 
-    const data = await GetLessons();
-    const lessons = FormattedLessonsForCalendar(data, "admin");
+    const data = await getLessons();
+    const lessons = formattedLessonsForCalendar(data, "admin");
     setLessons(lessons);
 
     handleSearch();

@@ -11,9 +11,9 @@ import {
 } from "./ui/dialog";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
-import { ConfirmLesson, GetLessons } from "@/actions/CrudLesson";
+import { ConfirmLesson, getLessons } from "@/actions/CrudLesson";
 import { useLessonsStore } from "@/store/lessonStore";
-import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
+import { formattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { CheckIcon } from "./icons";
 
 export function FormConfirmClass() {
@@ -33,8 +33,8 @@ export function FormConfirmClass() {
     await ConfirmLesson(confirm_lesson_data);
 
     //TODO: ES NECESARIO LLAMAR A DB O SERIA SOLO MODIFICAR EL ESTADO.
-    const data = await GetLessons();
-    const lessons = FormattedLessonsForCalendar(data, "student");
+    const data = await getLessons();
+    const lessons = formattedLessonsForCalendar(data, "student");
 
     setLessons(lessons);
 

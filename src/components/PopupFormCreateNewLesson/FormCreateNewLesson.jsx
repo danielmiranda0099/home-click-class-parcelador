@@ -10,10 +10,10 @@ import { Button } from "@/components/ui/button";
 import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 
-import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
+import { formattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { DATA_LESSON_DEFAULT, DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
 
-import { CreateNewLesson, GetLessons } from "@/actions/CrudLesson";
+import { CreateNewLesson, getLessons } from "@/actions/CrudLesson";
 import { PeriodOfTime } from "./PeriodOfTime";
 import { SelectedDaysAndTime } from "./SelectedDaysAndTime";
 import { FormFieldStudents } from "./FormFieldStudents";
@@ -51,8 +51,8 @@ export function FormCreateNewLesson() {
   const handlerGetLesson = async () => {
     //TODO: Teiene sentido enviar "admin2?? si el que crea clases siempre es admin ademas el rol
     //debe de obtenerse por el user
-    const lessons = await GetLessons();
-    const lessons_formated = FormattedLessonsForCalendar(lessons, "admin");
+    const lessons = await getLessons();
+    const lessons_formated = formattedLessonsForCalendar(lessons, "admin");
     setLessons(lessons_formated);
     setIsOpen(false);
   };

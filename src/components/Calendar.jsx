@@ -2,10 +2,10 @@
 
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
-import { GetLessons } from "@/actions/CrudLesson";
+import { getLessons } from "@/actions/CrudLesson";
 import { useLessonsStore } from "@/store/lessonStore";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FormattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
+import { formattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 import { useUiStore } from "@/store/uiStores";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
@@ -30,9 +30,9 @@ export function CalendarUI({ rol }) {
     setCounterDB(counter_DB + 1);
     if ((lessons || lessons.length === 0) && counter_DB <= 15) {
       setCounterDB(16);
-      GetLessons()
+      getLessons()
         .then((data) => {
-          const formattedLessons = FormattedLessonsForCalendar(data, rol);
+          const formattedLessons = formattedLessonsForCalendar(data, rol);
           setLessons(formattedLessons);
           setLessonsFiltered(formattedLessons);
 
