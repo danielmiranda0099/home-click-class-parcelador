@@ -1,30 +1,32 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { XIcon } from "@/components/icons";
 
 export function ErrorAlert({ message, duration = 7000 }) {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
 
   useEffect(() => {
-    // Iniciamos el temporizador para comenzar el fade out
-    const fadeTimeout = setTimeout(() => {
-      setIsLeaving(true);
-    }, duration - 500); // Comenzamos la animación 500ms antes
+    if (message) {
+      setIsVisible(true);
+      setIsLeaving(false);
 
-    // Iniciamos el temporizador para remover el componente
-    const removeTimeout = setTimeout(() => {
-      setIsVisible(false);
-    }, duration);
+      const fadeTimeout = setTimeout(() => {
+        setIsLeaving(true);
+      }, duration - 500);
 
-    // Limpiamos los temporizadores si el componente se desmonta
-    return () => {
-      clearTimeout(fadeTimeout);
-      clearTimeout(removeTimeout);
-    };
-  }, [duration]);
+      const removeTimeout = setTimeout(() => {
+        setIsVisible(false);
+      }, duration);
 
-  if (!isVisible) return null;
+      return () => {
+        clearTimeout(fadeTimeout);
+        clearTimeout(removeTimeout);
+      };
+    }
+  }, [duration, message]);
+
+  if (!isVisible || !message) return null;
 
   return (
     <div
