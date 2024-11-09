@@ -6,9 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 enum Role {
@@ -27,7 +27,7 @@ model User {
   country      String?
   password     String
   role         Role[]
-  averageScore Float?
+  averageScore Float   @default(10)
 
   // Relaciones
   teacherLessons Lesson[]        @relation("TeacherLessons")
