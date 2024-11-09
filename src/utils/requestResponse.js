@@ -1,4 +1,4 @@
-export const ResquestResponse = {
+export const RequestResponse = {
   success(data = []) {
     return {
       data,
