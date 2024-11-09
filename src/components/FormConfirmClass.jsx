@@ -1,4 +1,7 @@
 "use client";
+import { useEffect, useState } from "react";
+import { useFormState, useFormStatus } from "react-dom";
+import { useSession } from "next-auth/react";
 import { useUiStore } from "@/store/uiStores";
 import { Button } from "./ui/button";
 import {
@@ -11,29 +14,74 @@ import {
 } from "./ui/dialog";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
-import { ConfirmLesson } from "@/actions/CrudLesson";
+import { confirmLesson } from "@/actions/CrudLesson";
 import { useLessonsStore } from "@/store/lessonStore";
-import { CheckIcon } from "./icons";
+import { CheckIcon, CircleCheckIcon } from "@/components/icons";
+import { ErrorAlert } from "@/components";
+import { useToast } from "./ui/use-toast";
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" className="flex gap-2" disabled={pending}>
+      <CheckIcon size={18} />
+      {pending ? "Guardando..." : "Guardar"}
+    </Button>
+  );
+}
 
 export function FormConfirmClass() {
-  const { lesson, setLessons } = useLessonsStore();
+  const [form_state, formActionDispath] = useFormState(confirmLesson, {
+    data: [],
+    succes: null,
+    error: false,
+    message: null,
+  });
+  const { selected_lesson: lesson, setLessons } = useLessonsStore();
   const {
     popupFormConfirmClass: is_open,
     setPopupFormConfirmClass: setIsOpen,
-  } = useUiStore((state) => state.popupFormConfirmClass);
+  } = useUiStore();
+  const { data: session } = useSession();
+  const [error_message, setErrorMessage] = useState("");
+  const { toast } = useToast();
 
-  const OnSubmit = async (form_data) => {
+  useEffect(() => {
+    if (form_state?.success) {
+      setLessons("student", true);
+      //TODO: Create componnete toast custom
+      toast({
+        title: (
+          <div className="flex gap-1 items-center">
+            <CircleCheckIcon size={"1.8rem"} />
+            <p className="font-semibold text-base">Clase confirmada.</p>
+          </div>
+        ),
+        variant: "success",
+        duration: 5000,
+      });
+      setIsOpen(false);
+    }
+    if (form_state.error) {
+      setErrorMessage(form_state.message);
+    } else {
+      setErrorMessage("");
+    }
+  }, [form_state, setLessons, setIsOpen]);
+
+  const onSubmit = async (form_data) => {
     const confirm_lesson_data = {
       id: lesson?.id,
+      studentId: session.user.id,
+      teacherId: lesson.teacher.id,
+      currentAverageScore: lesson.teacher.averageScore,
       lessonScore: parseInt(form_data.get("lesson_score")),
       studentObservations: form_data.get("student_observations"),
     };
 
-    await ConfirmLesson(confirm_lesson_data);
-
-    setLessons("student");
-
-    setIsOpen(false);
+    formActionDispath(confirm_lesson_data);
+    setErrorMessage("");
   };
 
   return (
@@ -43,7 +91,7 @@ export function FormConfirmClass() {
           <DialogTitle>Confirm Class</DialogTitle>
         </DialogHeader>
         <div>
-          <form action={OnSubmit} className="grid gap-4">
+          <form action={onSubmit} className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="lesson-score" className="font-normal">
                 Select a score from 1 to 10 for the class{" "}
@@ -83,7 +131,6 @@ export function FormConfirmClass() {
                 id="observations"
                 name="student_observations"
                 placeholder="Enter class Opinion"
-                required
               />
             </div>
 
@@ -92,15 +139,14 @@ export function FormConfirmClass() {
               realices será completamente anónima y privada.
             </span>
 
+            <ErrorAlert message={error_message} />
+
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline">Exit</Button>
               </DialogClose>
 
-              <Button type="submit" className="flex gap-2">
-                <CheckIcon size={18} />
-                Guardar
-              </Button>
+              <SubmitButton />
             </DialogFooter>
           </form>
         </div>
