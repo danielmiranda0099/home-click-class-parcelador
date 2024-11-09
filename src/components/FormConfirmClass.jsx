@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { useSession } from "next-auth/react";
 import { useUiStore } from "@/store/uiStores";
 import { Button } from "./ui/button";
 import {
@@ -43,7 +42,6 @@ export function FormConfirmClass() {
     popupFormConfirmClass: is_open,
     setPopupFormConfirmClass: setIsOpen,
   } = useUiStore();
-  const { data: session } = useSession();
   const [error_message, setErrorMessage] = useState("");
   const { toast } = useToast();
 
@@ -73,7 +71,6 @@ export function FormConfirmClass() {
   const onSubmit = async (form_data) => {
     const confirm_lesson_data = {
       id: lesson?.id,
-      studentId: session.user.id,
       teacherId: lesson.teacher.id,
       currentAverageScore: lesson.teacher.averageScore,
       lessonScore: parseInt(form_data.get("lesson_score")),

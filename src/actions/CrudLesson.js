@@ -12,6 +12,7 @@ import {
   formatAndValidateteacher,
 } from "@/utils/lessonCrudValidations";
 import { scheduleLessons } from "@/utils/scheduleLessons";
+import { auth } from "@/auth";
 
 const formattedLessonForBD = (form_data) => {
   // TODO Mirar como adtener los de mas datos del formulario
@@ -189,26 +190,24 @@ export async function confirmLesson(prev_state, data_form) {
   try {
     let {
       id,
-      studentId,
       teacherId,
       lessonScore,
       currentAverageScore,
       studentObservations,
     } = data_form;
-    console.log(data_form);
-    console.log("typeof", typeof lessonScore);
-    if (
-      !id ||
-      !lessonScore ||
-      !studentId ||
-      !teacherId ||
-      !currentAverageScore
-    ) {
+
+    if (!id || !lessonScore || !teacherId || !currentAverageScore) {
       return RequestResponse.error();
     }
 
+    const { user } = await auth();
+
+    if (!user) {
+      return RequestResponse.error();
+    }
+
+    const studentId = parseInt(user.id, 10);
     id = parseInt(id, 10);
-    studentId = parseInt(studentId, 10);
     teacherId = parseInt(teacherId, 10);
 
     await prisma.lesson.update({
