@@ -1,6 +1,6 @@
 "use server";
 import prisma from "@/lib/prisma";
-import { ResquestResponse } from "@/utils/requestResponse";
+import { RequestResponse } from "@/utils/requestResponse";
 import {
   formatAndValidateStudents,
   validatePeriodOfTime,
@@ -53,19 +53,19 @@ export async function CreateNewLesson(prev_state, lessons_data) {
     // Verificar si hay errores
     const validationError = validations.find((v) => !v.isValid);
     if (validationError) {
-      return ResquestResponse.error(validationError.error);
+      return RequestResponse.error(validationError.error);
     }
 
     // verificaciones de users y formating
     const students_formated = await formatAndValidateStudents(students);
     if (!students_formated.isValid) {
-      return ResquestResponse.error(students_formated.error);
+      return RequestResponse.error(students_formated.error);
     }
     const { data: data_students } = students_formated;
 
     const teacher_formated = await formatAndValidateteacher(teacher);
     if (!students_formated.isValid) {
-      return ResquestResponse.error(students_formated.error);
+      return RequestResponse.error(students_formated.error);
     }
     const { data: data_teacher } = teacher_formated;
 
@@ -108,10 +108,10 @@ export async function CreateNewLesson(prev_state, lessons_data) {
       )
     );
     console.log(JSON.stringify(new_lessons.slice(2), null, 2));
-    return ResquestResponse.success(new_lessons);
+    return RequestResponse.success(new_lessons);
   } catch (error) {
     console.error("Error Crating and Scheduling lessons:", error);
-    return ResquestResponse.error();
+    return RequestResponse.error();
   }
 }
 
@@ -133,7 +133,7 @@ export async function getLessons() {
     });
 
     if (!lessons) return [];
-    console.log("Lessons", JSON.stringify(lessons.slice(1), null, 2));
+    // console.log("Lessons", JSON.stringify(lessons.slice(1), null, 2));
     return lessons;
   } catch (error) {
     console.error("Error fetching lessons:", error);
@@ -185,21 +185,65 @@ export async function RegisterLesson(id) {
   }
 }
 
-export async function ConfirmLesson(data_form) {
+export async function confirmLesson(prev_state, data_form) {
   try {
-    const { id, lessonScore, studentObservations } = data_form;
+    let {
+      id,
+      studentId,
+      teacherId,
+      lessonScore,
+      currentAverageScore,
+      studentObservations,
+    } = data_form;
+    console.log(data_form);
+    console.log("typeof", typeof lessonScore);
+    if (
+      !id ||
+      !lessonScore ||
+      !studentId ||
+      !teacherId ||
+      !currentAverageScore
+    ) {
+      return RequestResponse.error();
+    }
+
+    id = parseInt(id, 10);
+    studentId = parseInt(studentId, 10);
+    teacherId = parseInt(teacherId, 10);
+
     await prisma.lesson.update({
-      where: {
-        id,
-      },
+      where: { id },
       data: {
         isConfirmed: true,
-        lessonScore,
-        studentObservations,
+        studentLessons: {
+          update: {
+            where: {
+              studentId_lessonId: {
+                lessonId: id,
+                studentId: studentId,
+              },
+            },
+            data: {
+              lessonScore,
+              ...(studentObservations !== undefined &&
+                studentObservations && {
+                  studentObservations: studentObservations,
+                }),
+            },
+          },
+        },
+        teacher: {
+          update: {
+            averageScore: (currentAverageScore + lessonScore) / 2,
+          },
+        },
       },
     });
+
+    return RequestResponse.success();
   } catch (error) {
-    console.log("Error Confirming Lesson", error);
+    console.error("Error Confirming Lesson", error);
+    return RequestResponse.error();
   }
 }
 
