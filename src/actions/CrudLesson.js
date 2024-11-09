@@ -142,7 +142,7 @@ export async function getLessons() {
   }
 }
 
-export async function UpdateLesson(id, updated_lesson) {
+export async function updateLesson(id, updated_lesson) {
   const updated_lesson_formated = formattedLessonForBD(updated_lesson);
   try {
     await prisma.lesson.update({

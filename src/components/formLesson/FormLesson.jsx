@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { CreateNewLesson, UpdateLesson } from "@/actions/CrudLesson";
+import { CreateNewLesson, updateLesson } from "@/actions/CrudLesson";
 import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 import { formattedDateForInput } from "@/utils/formattedDateForInput";
@@ -111,7 +111,7 @@ export function FormLesson({ rol }) {
       const form_data_object = Object.fromEntries(form_data.entries());
       console.log(form_data_object);
 
-      await UpdateLesson(selected_lesson.id, form_data);
+      await updateLesson(selected_lesson.id, form_data);
 
       setLessons(rol);
     }
