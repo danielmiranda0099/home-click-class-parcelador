@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { useUiStore } from "@/store/uiStores";
 import {
@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { CreateNewUser } from "@/actions/CrudUser";
+import { createNewUser } from "@/actions/CrudUser";
 import { useUserStore } from "@/store/userStore";
 import {
   Select,
@@ -24,9 +24,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RepeatIcon } from "@/components/icons";
+import { CircleCheckIcon, RepeatIcon } from "@/components/icons";
 import { generatePassword } from "@/utils/generatePassword";
 import { useToast } from "@/components/ui/use-toast";
+import { ErrorAlert } from "@/components/";
 
 const DEFAULT_DATA_USER = {
   firstName: "",
@@ -51,20 +52,44 @@ function SubmitButton({ is_copied_credentials }) {
 
 export function FormRegisterUser() {
   const [userInfo, setUserInfo] = useState(DEFAULT_DATA_USER);
-  const [state, dispath] = useFormState(CreateNewUser, {
+  const [form_state, dispath] = useFormState(createNewUser, {
     data: [],
+    success: null,
     error: false,
     message: null,
   });
-
   const [is_copied_credentials, setIsCopiedCredentials] = useState(false);
-
-  const { addNewUser } = useUserStore();
-
-  const is_open = useUiStore((state) => state.popupFormNewUser);
-  const setIsOpen = useUiStore((state) => state.setPopupFormNewUser);
-
+  const [error_message, setErrorMessage] = useState("");
+  const { setUsers } = useUserStore();
+  const { popupFormNewUser: is_open, setPopupFormNewUser: setIsOpen } =
+    useUiStore();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (form_state.success) {
+      setUsers();
+      setUserInfo(DEFAULT_DATA_USER);
+      //TODO: Create componnete toast custom
+      toast({
+        title: (
+          <div className="flex gap-1 items-center">
+            <CircleCheckIcon size={"1.8rem"} />
+            <p className="font-semibold text-base">
+              Usuario creado exitosamente
+            </p>
+          </div>
+        ),
+        variant: "success",
+        duration: 5000,
+      });
+      setIsOpen(false);
+    }
+    if (form_state.error) {
+      setErrorMessage(form_state.message);
+    } else {
+      setErrorMessage("");
+    }
+  }, [form_state, setIsOpen]);
 
   const handleStudentInfoChange = (e) => {
     setUserInfo({ ...userInfo, [e.target.id]: e.target.value });
@@ -85,7 +110,7 @@ export function FormRegisterUser() {
         toast({
           title: "Credenciales Copiadas",
           variant: "success",
-          duration: 8000,
+          duration: 5000,
           description: (
             <>
               <p className="font-medium">
@@ -107,10 +132,8 @@ export function FormRegisterUser() {
   };
 
   const OnCreateNewUser = async () => {
-    // addNewUser(user);
-    // setUserInfo(DEFAULT_DATA_USER);
-    // setIsOpen(false);
     dispath(userInfo);
+    setErrorMessage("");
   };
 
   return (
@@ -120,7 +143,7 @@ export function FormRegisterUser() {
           <DialogTitle>New User</DialogTitle>
         </DialogHeader>
         <form className="p-0 px-4" action={OnCreateNewUser}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div className="space-y-2">
               <Label htmlFor="firstName">First Name</Label>
               <Input
@@ -219,11 +242,9 @@ export function FormRegisterUser() {
                 </Button>
               </div>
             </div>
-            {state.error && (
-              <div>
-                <p className="text-red-500">{state.message}</p>
-              </div>
-            )}
+          </div>
+          <div className="mb-6">
+            <ErrorAlert message={error_message} />
           </div>
           <DialogFooter>
             <div className="space-x-4 flex justify-end">
