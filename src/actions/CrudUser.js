@@ -1,9 +1,10 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { RequestResponse } from "@/utils/requestResponse";
 import bcrypt from "bcryptjs";
 
-export async function CreateNewUser(prev_state, form_dada) {
+export async function createNewUser(prev_state, form_dada) {
   try {
     const {
       firstName,
@@ -26,18 +27,12 @@ export async function CreateNewUser(prev_state, form_dada) {
       !role ||
       !password
     ) {
-      return {
-        data: [],
-        error: true,
-        message: "Porfavor introdusca todos los datos",
-      };
+      return RequestResponse.error("Porfavor introdusca todos los datos");
     }
     if (phoneNumber.length < 9 || !/^[0-9]+$/.test(phoneNumber)) {
-      return {
-        data: [],
-        error: true,
-        message: "Porfavor introdusca un numero telefono valido",
-      };
+      return RequestResponse.error(
+        "Porfavor introdusca un numero de telefono valido"
+      );
     }
     const normalized_data = Object.fromEntries(
       Object.entries(form_dada).map(([key, value]) =>
@@ -52,11 +47,7 @@ export async function CreateNewUser(prev_state, form_dada) {
       },
     });
     if (exist_user) {
-      return {
-        data: [],
-        error: true,
-        message: "El usuario ya esta registrado.",
-      };
+      return RequestResponse.error("El usuario ya esta registrado.");
     }
 
     normalized_data.password = await bcrypt.hash(normalized_data.password, 10);
@@ -67,19 +58,10 @@ export async function CreateNewUser(prev_state, form_dada) {
         ...normalized_data,
       },
     });
-    console.log(normalized_data);
-    return {
-      data: user,
-      error: false,
-      message: null,
-    };
+    return RequestResponse.success(user);
   } catch (error) {
     console.error("Error Creating User:", error);
-    return {
-      data: [],
-      error: true,
-      message: "Error inesperado, contacte con soporte.",
-    };
+    return RequestResponse.error();
   }
 }
 
