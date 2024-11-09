@@ -4,6 +4,7 @@ import {
   CardOverView,
   CardStatusLegendLesson,
   FormConfirmClass,
+  FormLessonReport,
 } from "@/components";
 import { PopupDetailLesson } from "@/components/popupDetailLesson";
 
@@ -16,6 +17,7 @@ export default async function ClassesPage() {
   return (
     <>
       {role[0] === "student" && <FormConfirmClass />}
+      {role[0] === "teacher" && <FormLessonReport rol="teacher" />}
       <PopupDetailLesson rol={role[0]} />
       <section className="px-10 py-3 flex flex-row justify-start gap-4">
         <CardOverView />
