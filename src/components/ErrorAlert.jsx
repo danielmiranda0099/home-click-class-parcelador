@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { XIcon } from "@/components/icons";
 
-export function ErrorAlert({ message, duration = 7000 }) {
+export function ErrorAlert({ message, duration = 7000, className = "" }) {
   const [isVisible, setIsVisible] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
 
@@ -30,8 +30,9 @@ export function ErrorAlert({ message, duration = 7000 }) {
 
   return (
     <div
-      className={`
-        mt-3 
+      className={
+        `
+        my-3 
         bg-red-500 
         p-3 
         rounded-sm 
@@ -41,7 +42,10 @@ export function ErrorAlert({ message, duration = 7000 }) {
         duration-500
         ${isLeaving ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}
         animate-fadeIn
-      `}
+      ` +
+        " " +
+        className
+      }
     >
       <XIcon color="white" />
       <p className="text-white font-semibold ml-1">{message}</p>
