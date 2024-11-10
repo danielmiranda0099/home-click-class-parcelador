@@ -1,4 +1,6 @@
 "use client";
+import { useEffect, useState } from "react";
+import { useFormState, useFormStatus } from "react-dom";
 import { useUiStore } from "@/store/uiStores";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,8 +15,21 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useLessonsStore } from "@/store/lessonStore";
-import { UpdateLesson } from "@/actions/CrudLesson";
-import { CheckIcon } from "./icons";
+import { registerAndSaveLessonReport } from "@/actions/CrudLesson";
+import { CheckIcon, CircleCheckIcon } from "@/components/icons";
+import { ErrorAlert } from "@/components";
+import { useToast } from "@/components/ui/use-toast";
+
+function SubmitButton({ message }) {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" className="flex gap-2" disabled={pending}>
+      <CheckIcon size={18} />
+      {message}
+    </Button>
+  );
+}
 
 export function FormLessonReport({ rol }) {
   const { selected_lesson: lesson, setLessons } = useLessonsStore();
@@ -22,18 +37,51 @@ export function FormLessonReport({ rol }) {
     popupFormLessonReport: is_open,
     setPopupFormLessonReport: setIsOpen,
   } = useUiStore();
+  const [form_state, formActionDispath] = useFormState(
+    registerAndSaveLessonReport,
+    {
+      data: [],
+      succes: null,
+      error: false,
+      message: null,
+    }
+  );
+  const [error_message, setErrorMessage] = useState("");
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (form_state?.success) {
+      setLessons(rol, true);
+      //TODO: Create componnete toast custom
+      toast({
+        title: (
+          <div className="flex gap-1 items-center">
+            <CircleCheckIcon size={"1.8rem"} />
+            <p className="font-semibold text-base">
+              {lesson.isConfirmed
+                ? "Informe guardado y clase registrada."
+                : "Informe Guardado"}
+            </p>
+          </div>
+        ),
+        variant: "success",
+        duration: 5000,
+      });
+      setIsOpen(false);
+    }
+    if (form_state.error) {
+      setErrorMessage(form_state.message);
+    } else {
+      setErrorMessage("");
+    }
+  }, [form_state, setLessons, setIsOpen]);
 
   const onSubmit = async (form_data) => {
-    if (!lesson) return;
-    if (lesson?.isConfirmed) {
-      form_data.append("isRegistered", true);
-    }
-
-    await UpdateLesson(lesson?.id, form_data);
-
-    setLessons(rol);
-
-    setIsOpen(false);
+    const form_report_data = Object.fromEntries(form_data.entries());
+    form_report_data.lessonId = lesson.id;
+    form_report_data.isConfirmed = lesson.isConfirmed;
+    formActionDispath(form_report_data);
+    setErrorMessage("");
   };
 
   return (
@@ -109,16 +157,19 @@ export function FormLessonReport({ rol }) {
               />
             </div>
           </div>
-
+          <ErrorAlert message={error_message} />
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
 
-            <Button type="submit" className="flex gap-2">
-              <CheckIcon size={18} />
-              {lesson?.isConfirmed ? "Registrar Clase" : "Guardar"}
-            </Button>
+            <SubmitButton
+              message={
+                lesson?.isConfirmed
+                  ? "Guardar Informe y Registrar Clase"
+                  : "Guardar Informe"
+              }
+            />
           </DialogFooter>
         </form>
       </DialogContent>
