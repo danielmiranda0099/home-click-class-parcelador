@@ -171,18 +171,54 @@ export async function CancelLesson(id, value) {
   }
 }
 
-export async function RegisterLesson(id) {
+export async function registerAndSaveLessonReport(prev, form_data) {
   try {
+    let {
+      isConfirmed,
+      issues,
+      lessonId,
+      otherObservations,
+      teacherObservations,
+      topic,
+      week,
+    } = form_data;
+
+    if (!lessonId) return RequestResponse.error();
+
+    if (!week || !topic || !teacherObservations)
+      return RequestResponse.error(
+        "Por favor rellene los campos obligatorios."
+      );
+
+    const where_clause = {
+      id: lessonId,
+      isCanceled: false,
+    };
+    if (isConfirmed) {
+      where_clause.isConfirmed = true;
+    }
     await prisma.lesson.update({
-      where: {
-        id,
-      },
+      where: where_clause,
       data: {
-        isRegistered: true,
+        week,
+        topic,
+        teacherObservations,
+        ...(isConfirmed && {
+          isRegistered: true,
+        }),
+        ...(issues && {
+          issues,
+        }),
+        ...(otherObservations && {
+          otherObservations,
+        }),
       },
     });
+
+    return RequestResponse.success();
   } catch (error) {
     console.error("error database", error);
+    return RequestResponse.error();
   }
 }
 
