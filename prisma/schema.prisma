@@ -21,6 +21,8 @@ model User {
   id           Int     @id @default(autoincrement())
   firstName    String
   lastName     String
+  fullName     String?
+  shortName    String?
   email        String  @unique
   phoneNumber  String?
   city         String?
@@ -68,6 +70,7 @@ model StudentLesson {
   studentFee          Float?
   lessonScore         Float?
   studentObservations String?
+  isConfirmed         Boolean @default(false)
 
   // Relaciones
   student   User   @relation(fields: [studentId], references: [id])
