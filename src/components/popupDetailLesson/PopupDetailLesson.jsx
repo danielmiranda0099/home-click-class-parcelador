@@ -170,6 +170,7 @@ export function PopupDetailLesson({ rol }) {
                 </div>
               )}
             </div>
+            {/* TODO: Refact DialogFotter */}
             <DialogFooter className="sm:justify-between">
               <div className="flex gap-2">
                 {!lesson?.isConfirmed &&
