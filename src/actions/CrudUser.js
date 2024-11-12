@@ -1,8 +1,9 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { RequestResponse } from "@/utils/requestResponse";
+import { auth } from "@/auth";
 import bcrypt from "bcryptjs";
+import { RequestResponse } from "@/utils/requestResponse";
 
 export async function createNewUser(prev_state, form_dada) {
   try {
@@ -84,5 +85,15 @@ export async function GetUsersByStudentsAndTeachers() {
     return users;
   } catch (error) {
     console.error("Error Get User By Student And Teacher:", error);
+  }
+}
+
+export async function getUserSession() {
+  try {
+    const session = await auth();
+    return RequestResponse.success(session);
+  } catch (error) {
+    console.error("Error GetUserSession:", error);
+    return RequestResponse.error();
   }
 }
