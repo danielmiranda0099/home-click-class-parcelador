@@ -118,8 +118,28 @@ export async function CreateNewLesson(prev_state, lessons_data) {
 
 export async function getLessons() {
   try {
-    // Obtener todas las lecciones
+    const { user } = await auth();
+
+    if (!user) {
+      return RequestResponse.error();
+    }
+
+    const where_clause = {};
+    if (!user.role.includes("admin")) {
+      if (user.role.includes("student")) {
+        where_clause.studentLessons = {
+          some: {
+            studentId: parseInt(user.id, 10),
+          },
+        };
+      }
+      if (user.role.includes("teacher")) {
+        where_clause.teacherId = parseInt(user.id, 10);
+      }
+    }
+
     const lessons = await prisma.lesson.findMany({
+      where: where_clause,
       include: {
         teacher: true, // Incluir información del profesor si es necesario
         studentLessons: {
