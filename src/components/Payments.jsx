@@ -63,6 +63,7 @@ export function Payments() {
     handleSearch();
   }, [user, lessons]);
 
+  //TODO: Pasar logica al store
   const handleSearch = async () => {
     if (!user || start_date.length <= 0 || end_date.length <= 0) return;
 
