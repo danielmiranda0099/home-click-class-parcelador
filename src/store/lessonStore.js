@@ -11,7 +11,7 @@ export const useLessonsStore = create((set) => ({
     try {
       set({ isLoading: true, error: null });
       const data = await getLessons();
-      const formatted_lessons = formattedLessonsForCalendar(data, rol);
+      const formatted_lessons = await formattedLessonsForCalendar(data, rol);
       set({ lessons: formatted_lessons, isLoading: false });
       if (is_set_lessons_filtered) set({ lessons_filtered: formatted_lessons });
       return formatted_lessons;
@@ -39,7 +39,10 @@ export const useLessonsStore = create((set) => ({
       await CreateNewLeccons(lessonForm);
 
       const data = await getLessons();
-      const formatted_lessons = formattedLessonsForCalendar(data, "admin");
+      const formatted_lessons = await formattedLessonsForCalendar(
+        data,
+        "admin"
+      );
       set({ lessons: formatted_lessons, isLoading: false });
 
       return formatted_lessons;
@@ -55,7 +58,10 @@ export const useLessonsStore = create((set) => ({
       await PayLesson([lessonId], paymentData);
 
       const data = await getLessons();
-      const formatted_lessons = formattedLessonsForCalendar(data, "admin");
+      const formatted_lessons = await formattedLessonsForCalendar(
+        data,
+        "admin"
+      );
       set({ lessons: formatted_lessons, isLoading: false });
 
       return formatted_lessons;

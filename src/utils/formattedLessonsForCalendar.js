@@ -1,3 +1,5 @@
+"use server";
+import { auth } from "@/auth";
 import { COLORS } from "./colorsStatusLesson";
 import { FormattedDate } from "./formattedDate";
 import {
@@ -6,7 +8,8 @@ import {
 } from "./getNamesForLesson";
 
 //TODO: Refact llevar esta funcion a otro archivo
-export const statusLesson = (lesson, rol) => {
+export async function statusLesson(lesson, rol) {
+  const session = await auth();
   if (!lesson) {
     return [COLORS.FUCHSIA_BG, COLORS.FUCHSIA_TEXT, "Unknown Status"];
   }
@@ -18,7 +21,10 @@ export const statusLesson = (lesson, rol) => {
   if (rol === "student") {
     if (
       lesson?.isScheduled &&
-      lesson?.isConfirmed &&
+      lesson?.studentLessons.find(
+        (student_lesson) =>
+          student_lesson.studentId === parseInt(session?.user?.id, 10)
+      ).isConfirmed &&
       !lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
     ) {
       return [
@@ -29,7 +35,10 @@ export const statusLesson = (lesson, rol) => {
     }
     if (
       lesson?.isScheduled &&
-      lesson?.isConfirmed &&
+      lesson?.studentLessons.find(
+        (student_lesson) =>
+          student_lesson.studentId === parseInt(session?.user?.id, 10)
+      ).isConfirmed &&
       lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
     ) {
       return [COLORS.GREEN_BG, COLORS.GREEN_TEXT, "Finalizada - Pagada"]; //Green
@@ -179,26 +188,31 @@ export const statusLesson = (lesson, rol) => {
   }
 
   return [COLORS.FUCHSIA_BG, COLORS.FUCHSIA_TEXT, "Unknown Status"];
-};
+}
 
-export function formattedLessonsForCalendar(original_lesson, rol) {
+export async function formattedLessonsForCalendar(original_lesson, rol) {
   if (!original_lesson || original_lesson.length <= 0) {
     return [];
   }
-  return original_lesson.map((lesson) => {
-    const [background, color, lesson_status] = statusLesson(lesson, rol);
-    return {
-      id: lesson.id,
-      title:
-        formatNamesForCalendar(
-          getNamesStudentsFromLesson(lesson?.studentLessons)
-        ) || "UNKNOW",
-      start: new Date(FormattedDate(lesson.startDate)),
-      end: new Date(FormattedDate(lesson.startDate, true)),
-      background,
-      color,
-      lesson_status,
-      ...lesson,
-    };
-  });
+  return await Promise.all(
+    original_lesson.map(async (lesson) => {
+      const [background, color, lesson_status] = await statusLesson(
+        lesson,
+        rol
+      );
+      return {
+        id: lesson.id,
+        title:
+          formatNamesForCalendar(
+            getNamesStudentsFromLesson(lesson?.studentLessons)
+          ) || "UNKNOW",
+        start: new Date(FormattedDate(lesson.startDate)),
+        end: new Date(FormattedDate(lesson.startDate, true)),
+        background,
+        color,
+        lesson_status,
+        ...lesson,
+      };
+    })
+  );
 }
