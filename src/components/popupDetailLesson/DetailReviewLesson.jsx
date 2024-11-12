@@ -15,8 +15,8 @@ export function DetailReviewLesson({ lesson, rol }) {
         {rol === "admin" &&
           lesson?.isConfirmed &&
           lesson.studentLessons.map((lesson_student) => (
-            <div className="grid grid-cols-3">
-              {lesson.isGroup && (
+            <div className="grid grid-cols-3" key={lesson_student.id}>
+              {lesson.isGroup && lesson_student?.lessonScore && (
                 <div className="flex items-center gap-4 w-full">
                   <FeedbackIcon
                     className="h-8 w-8 text-primary"

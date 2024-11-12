@@ -26,6 +26,7 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import moment from "moment";
 import { FormLesson } from "@/components/formLesson";
 import { DetailReviewLesson } from "./DetailReviewLesson";
+import { useUserSession } from "@/hooks";
 
 const formattedDate = (start_date, end_date) => {
   const startDate = moment(start_date, "YYYY-MM-DD HH:mm");
@@ -54,6 +55,8 @@ export function PopupDetailLesson({ rol }) {
     setPopupFormReschedule,
     setPopupFormLessonReport,
   } = useUiStore();
+
+  const user_session = useUserSession();
 
   console.log("lesson en modal", lesson);
   return (
@@ -222,18 +225,23 @@ export function PopupDetailLesson({ rol }) {
               <div className="flex gap-2">
                 <div className="flex gap-2">
                   {/* TODO: Refact todo este mierdero */}
-                  {rol === "student" && !lesson?.isConfirmed && (
-                    <Button
-                      className="flex gap-2"
-                      onClick={async () => {
-                        setPopupDetailLesson(false);
-                        setPopupFormConfirmClass(true);
-                      }}
-                    >
-                      <CheckIcon size={18} />
-                      Confirm Class
-                    </Button>
-                  )}
+                  {rol === "student" &&
+                    !lesson?.studentLessons.find(
+                      (student_lesson) =>
+                        student_lesson.studentId ===
+                        parseInt(user_session.user.id, 10)
+                    ).isConfirmed && (
+                      <Button
+                        className="flex gap-2"
+                        onClick={async () => {
+                          setPopupDetailLesson(false);
+                          setPopupFormConfirmClass(true);
+                        }}
+                      >
+                        <CheckIcon size={18} />
+                        Confirm Class
+                      </Button>
+                    )}
                 </div>
                 <div className="flex gap-2">
                   {rol === "admin" &&
