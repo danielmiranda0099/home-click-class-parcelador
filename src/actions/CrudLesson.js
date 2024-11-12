@@ -280,6 +280,7 @@ export async function confirmLesson(prev_state, data_form) {
             },
             data: {
               lessonScore,
+              isConfirmed: true,
               ...(studentObservations !== undefined &&
                 studentObservations && {
                   studentObservations: studentObservations,
