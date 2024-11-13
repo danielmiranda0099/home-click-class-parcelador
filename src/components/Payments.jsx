@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
 import {
   payStudentLesson,
-  PayTeacherLesson,
+  payTeacherLesson,
   UnpaidLessons,
 } from "@/actions/CrudLesson";
 import { formatPayments } from "@/utils/formatPayments";
@@ -106,7 +106,7 @@ export function Payments() {
         .map((lesson) => lesson.id);
 
       if (unpaid_lesson_ids && unpaid_lesson_ids.length > 0) {
-        await PayTeacherLesson(unpaid_lesson_ids);
+        await payTeacherLesson(unpaid_lesson_ids);
       }
     }
 
