@@ -15,9 +15,9 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { confirmLesson } from "@/actions/CrudLesson";
 import { useLessonsStore } from "@/store/lessonStore";
-import { CheckIcon, CircleCheckIcon } from "@/components/icons";
+import { CheckIcon } from "@/components/icons";
 import { ErrorAlert } from "@/components";
-import { useToast } from "./ui/use-toast";
+import { useCustomToast } from "@/hooks";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -43,22 +43,12 @@ export function FormConfirmClass() {
     setPopupFormConfirmClass: setIsOpen,
   } = useUiStore();
   const [error_message, setErrorMessage] = useState("");
-  const { toast } = useToast();
+  const { toastSuccess } = useCustomToast();
 
   useEffect(() => {
     if (form_state?.success) {
       setLessons("student", true);
-      //TODO: Create componnete toast custom
-      toast({
-        title: (
-          <div className="flex gap-1 items-center">
-            <CircleCheckIcon size={"1.8rem"} />
-            <p className="font-semibold text-base">Clase confirmada.</p>
-          </div>
-        ),
-        variant: "success",
-        duration: 5000,
-      });
+      toastSuccess({ title: "Clase Confirmada" });
       setIsOpen(false);
     }
     if (form_state.error) {

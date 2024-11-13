@@ -24,10 +24,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CircleCheckIcon, RepeatIcon } from "@/components/icons";
+import { RepeatIcon } from "@/components/icons";
 import { generatePassword } from "@/utils/generatePassword";
-import { useToast } from "@/components/ui/use-toast";
 import { ErrorAlert } from "@/components/";
+import { useCustomToast } from "@/hooks";
 
 const DEFAULT_DATA_USER = {
   firstName: "",
@@ -63,25 +63,13 @@ export function FormRegisterUser() {
   const { setUsers } = useUserStore();
   const { popupFormNewUser: is_open, setPopupFormNewUser: setIsOpen } =
     useUiStore();
-  const { toast } = useToast();
+  const { toastSuccess } = useCustomToast();
 
   useEffect(() => {
     if (form_state.success) {
       setUsers();
       setUserInfo(DEFAULT_DATA_USER);
-      //TODO: Create componnete toast custom
-      toast({
-        title: (
-          <div className="flex gap-1 items-center">
-            <CircleCheckIcon size={"1.8rem"} />
-            <p className="font-semibold text-base">
-              Usuario creado exitosamente
-            </p>
-          </div>
-        ),
-        variant: "success",
-        duration: 5000,
-      });
+      toastSuccess({ title: "Usuario creado exitosamente" });
       setIsOpen(false);
     }
     if (form_state.error) {
@@ -107,27 +95,10 @@ export function FormRegisterUser() {
     navigator.clipboard
       .writeText(`Correo: ${userInfo.email} Password: ${userInfo.password}`)
       .then(() => {
-        toast({
-          title: "Credenciales Copiadas",
-          variant: "success",
-          duration: 5000,
-          description: (
-            <>
-              <p className="font-medium">
-                <span className="font-semibold">Correo:</span> {userInfo.email}
-              </p>
-              <p className="font-medium">
-                <span className="font-semibold">Password:</span>
-                {userInfo.password}
-              </p>
-            </>
-          ),
+        toastSuccess({
+          title: "Credenciales copiadas",
         });
-      })
-      .catch((err) => {
-        console.error("Failed to copy text: ", err);
       });
-
     setIsCopiedCredentials(true);
   };
 
