@@ -321,21 +321,41 @@ export async function RescheduleLesson(data_form) {
   }
 }
 
-export async function PayTeacherLesson(lessonIds) {
+export async function payTeacherLesson(lesson_ids) {
   try {
+    if (!lesson_ids || lesson_ids.length < 1) {
+      return RequestResponse.error();
+    }
+
+    const lessons_ids_in_db = await prisma.lesson.findMany({
+      where: {
+        id: {
+          in: lesson_ids,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (lesson_ids.length !== lessons_ids_in_db.length) {
+      return RequestResponse.error();
+    }
+
     await prisma.lesson.updateMany({
       where: {
         id: {
-          in: lessonIds,
+          in: lesson_ids,
         },
       },
       data: {
         isTeacherPaid: true,
       },
     });
-    console.log("Teacher payment confirmed");
+    return RequestResponse.success();
   } catch (error) {
     console.error("Error confirming teacher payment:", error);
+    return RequestResponse.error();
   }
 }
 

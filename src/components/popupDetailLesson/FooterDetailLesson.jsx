@@ -6,6 +6,7 @@ import {
   CancelLesson,
   DeleteLesson,
   payStudentLesson,
+  payTeacherLesson,
 } from "@/actions/CrudLesson";
 import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
@@ -27,6 +28,7 @@ import {
 export function FooterDetailLesson({ rol }) {
   const [status_button, setStatusButton] = useState({
     paidStudent: false,
+    paidTeacher: false,
   });
   const { selected_lesson: lesson, setLessons } = useLessonsStore();
   const user_session = useUserSession();
@@ -191,9 +193,25 @@ export function FooterDetailLesson({ rol }) {
             !lesson?.isTeacherPaid && (
               <Button
                 className="flex gap-2"
-                onClick={() => {
-                  setLessons(rol);
-                  setPopupDetailLesson(false);
+                onClick={async () => {
+                  setStatusButton({
+                    ...status_button,
+                    paidTeacher: true,
+                  });
+                  const data = await payTeacherLesson([lesson?.id]);
+                  setStatusButton({
+                    ...status_button,
+                    paidTeacher: false,
+                  });
+                  if (data.success) {
+                    toastSuccess({ title: "Pago Confirmado." });
+                    setLessons(rol);
+                    setPopupDetailLesson(false);
+                  } else {
+                    toastError({
+                      title: "Al parecer hubo un error.",
+                    });
+                  }
                 }}
               >
                 <DollarIcon size={18} />
