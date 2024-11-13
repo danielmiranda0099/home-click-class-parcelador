@@ -71,7 +71,6 @@ export function FooterDetailLesson({ rol }) {
       </div>
       <div className="flex gap-2">
         <div className="flex gap-2">
-          {/* TODO: Refact todo este mierdero */}
           {rol === "student" &&
             !lesson?.studentLessons.find(
               (student_lesson) =>
@@ -93,11 +92,7 @@ export function FooterDetailLesson({ rol }) {
           {rol === "admin" && !lesson?.isStudentPaid && !lesson.isGroup && (
             <Button
               className="flex gap-2"
-              onClick={async () => {
-                // await PayLesson([lesson?.id], {
-                //   isStudentPaid: true,
-                // });
-                //TODO: De nuevo esto se podria mejorra solo actualizando el estado
+              onClick={() => {
                 setLessons(rol);
                 setPopupDetailLesson(false);
               }}
@@ -111,11 +106,7 @@ export function FooterDetailLesson({ rol }) {
             !lesson?.isTeacherPaid && (
               <Button
                 className="flex gap-2"
-                onClick={async () => {
-                  // await PayLesson([lesson?.id], {
-                  //   isTeacherPaid: true,
-                  // });
-                  //TODO: De nuevo esto se podria mejorra solo actualizando el estado
+                onClick={() => {
                   setLessons(rol);
                   setPopupDetailLesson(false);
                 }}
