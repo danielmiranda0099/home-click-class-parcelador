@@ -339,20 +339,41 @@ export async function PayTeacherLesson(lessonIds) {
   }
 }
 
-export async function PayStudentLesson(studentLessonIds) {
+export async function payStudentLesson(student_lesson_ids) {
   try {
+    if (!student_lesson_ids || student_lesson_ids.length < 1) {
+      return RequestResponse.error();
+    }
+
+    const student_lessons = await prisma.studentLesson.findMany({
+      where: {
+        id: {
+          in: student_lesson_ids,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (student_lesson_ids.length !== student_lessons.length) {
+      return RequestResponse.error();
+    }
+
     await prisma.studentLesson.updateMany({
       where: {
         id: {
-          in: studentLessonIds,
+          in: student_lesson_ids,
         },
       },
       data: {
         isStudentPaid: true,
       },
     });
+    return RequestResponse.success();
   } catch (error) {
     console.error("Error confirming student payment:", error);
+    return RequestResponse.error();
   }
 }
 

@@ -1,10 +1,15 @@
 "use client";
+import { useState } from "react";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CancelLesson, DeleteLesson } from "@/actions/CrudLesson";
+import {
+  CancelLesson,
+  DeleteLesson,
+  payStudentLesson,
+} from "@/actions/CrudLesson";
 import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
-import { useUserSession } from "@/hooks";
+import { useCustomToast, useUserSession } from "@/hooks";
 import {
   CalendarIcon,
   CheckIcon,
@@ -12,6 +17,9 @@ import {
   PencilIcon,
 } from "@/components/icons";
 export function FooterDetailLesson({ rol }) {
+  const [status_button, setStatusButton] = useState({
+    paidStudent: false,
+  });
   const { selected_lesson: lesson, setLessons } = useLessonsStore();
   const user_session = useUserSession();
   const {
@@ -22,6 +30,7 @@ export function FooterDetailLesson({ rol }) {
     setPopupFormReschedule,
     setPopupFormLessonReport,
   } = useUiStore();
+  const { toastSuccess, toastError } = useCustomToast();
   return (
     <DialogFooter className="sm:justify-between">
       <div className="flex gap-2">
@@ -88,19 +97,33 @@ export function FooterDetailLesson({ rol }) {
               </Button>
             )}
         </div>
+        {/*  */}
         <div className="flex gap-2">
-          {rol === "admin" && !lesson?.isStudentPaid && !lesson.isGroup && (
-            <Button
-              className="flex gap-2"
-              onClick={() => {
-                setLessons(rol);
-                setPopupDetailLesson(false);
-              }}
-            >
-              <DollarIcon size={18} />
-              Pago Estudiante
-            </Button>
-          )}
+          {rol === "admin" &&
+            !lesson?.studentLessons[0].isStudentPaid &&
+            !lesson.isGroup && (
+              <Button
+                className="flex gap-2"
+                disabled={status_button.paidStudent}
+                onClick={async () => {
+                  setStatusButton({ ...status_button, paidStudent: true });
+                  const data = await payStudentLesson([
+                    lesson?.studentLessons[0].id,
+                  ]);
+                  setStatusButton({ ...status_button, paidStudent: false });
+                  if (data.success) {
+                    toastSuccess({ title: "Pago Confirmado." });
+                    setLessons(rol);
+                    setPopupDetailLesson(false);
+                  } else {
+                    toastError({ title: "Al parecer hubo un error." });
+                  }
+                }}
+              >
+                <DollarIcon size={18} />
+                Pago Estudiante
+              </Button>
+            )}
           {rol === "admin" &&
             lesson?.isRegistered &&
             !lesson?.isTeacherPaid && (
