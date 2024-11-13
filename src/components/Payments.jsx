@@ -13,7 +13,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
 import {
-  PayStudentLesson,
+  payStudentLesson,
   PayTeacherLesson,
   UnpaidLessons,
 } from "@/actions/CrudLesson";
@@ -121,7 +121,7 @@ export function Payments() {
         );
 
       if (unpaid_student_lesson_ids && unpaid_student_lesson_ids.length > 0) {
-        await PayStudentLesson(unpaid_student_lesson_ids);
+        await payStudentLesson(unpaid_student_lesson_ids);
       }
     }
 
