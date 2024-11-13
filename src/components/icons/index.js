@@ -25,3 +25,4 @@ export * from "./CalendarIcon";
 export * from "./PencilIcon";
 export * from "./RepeatIcon";
 export * from "./HelpIcon";
+export * from "./ChevronDown";

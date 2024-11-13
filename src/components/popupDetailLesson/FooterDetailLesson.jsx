@@ -13,9 +13,17 @@ import { useCustomToast, useUserSession } from "@/hooks";
 import {
   CalendarIcon,
   CheckIcon,
+  ChevronDown,
   DollarIcon,
   PencilIcon,
 } from "@/components/icons";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 export function FooterDetailLesson({ rol }) {
   const [status_button, setStatusButton] = useState({
     paidStudent: false,
@@ -31,6 +39,7 @@ export function FooterDetailLesson({ rol }) {
     setPopupFormLessonReport,
   } = useUiStore();
   const { toastSuccess, toastError } = useCustomToast();
+
   return (
     <DialogFooter className="sm:justify-between">
       <div className="flex gap-2">
@@ -83,8 +92,8 @@ export function FooterDetailLesson({ rol }) {
           {rol === "student" &&
             !lesson?.studentLessons.find(
               (student_lesson) =>
-                student_lesson.studentId === parseInt(user_session.user.id, 10)
-            ).isConfirmed && (
+                student_lesson.studentId === parseInt(user_session?.user.id, 10)
+            )?.isConfirmed && (
               <Button
                 className="flex gap-2"
                 onClick={async () => {
@@ -97,7 +106,7 @@ export function FooterDetailLesson({ rol }) {
               </Button>
             )}
         </div>
-        {/*  */}
+
         <div className="flex gap-2">
           {rol === "admin" &&
             !lesson?.studentLessons[0].isStudentPaid &&
@@ -123,6 +132,59 @@ export function FooterDetailLesson({ rol }) {
                 <DollarIcon size={18} />
                 Pago Estudiante
               </Button>
+            )}
+          {rol === "admin" &&
+            lesson.isGroup &&
+            lesson?.studentLessons?.some(
+              (student_lesson) => student_lesson.isStudentPaid === false
+            ) && (
+              <div className="flex flex-col items-center gap-4">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      className="flex gap-2"
+                      disabled={status_button.paidStudent}
+                    >
+                      <ChevronDown size={18} />
+                      Pago Estudiante
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {lesson?.studentLessons.map(
+                      (student_lesson) =>
+                        !student_lesson.isStudentPaid && (
+                          <DropdownMenuItem
+                            key={student_lesson.id}
+                            onClick={async () => {
+                              setStatusButton({
+                                ...status_button,
+                                paidStudent: true,
+                              });
+                              const data = await payStudentLesson([
+                                student_lesson.id,
+                              ]);
+                              setStatusButton({
+                                ...status_button,
+                                paidStudent: false,
+                              });
+                              if (data.success) {
+                                toastSuccess({ title: "Pago Confirmado." });
+                                setLessons(rol);
+                                setPopupDetailLesson(false);
+                              } else {
+                                toastError({
+                                  title: "Al parecer hubo un error.",
+                                });
+                              }
+                            }}
+                          >
+                            {student_lesson.student.shortName}
+                          </DropdownMenuItem>
+                        )
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             )}
           {rol === "admin" &&
             lesson?.isRegistered &&
