@@ -25,7 +25,10 @@ export async function statusLesson(lesson, rol) {
         (student_lesson) =>
           student_lesson.studentId === parseInt(session?.user?.id, 10)
       ).isConfirmed &&
-      !lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+      !lesson?.studentLessons.find(
+        (student_lesson) =>
+          student_lesson.studentId === parseInt(session?.user?.id, 10)
+      ).isStudentPaid
     ) {
       return [
         COLORS.YELLOW_BG,
@@ -39,7 +42,10 @@ export async function statusLesson(lesson, rol) {
         (student_lesson) =>
           student_lesson.studentId === parseInt(session?.user?.id, 10)
       ).isConfirmed &&
-      lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+      lesson?.studentLessons.find(
+        (student_lesson) =>
+          student_lesson.studentId === parseInt(session?.user?.id, 10)
+      ).isStudentPaid
     ) {
       return [COLORS.GREEN_BG, COLORS.GREEN_TEXT, "Finalizada - Pagada"]; //Green
     }
