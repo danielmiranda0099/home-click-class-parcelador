@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { XIcon } from "@/components/icons";
 
-export function ErrorAlert({ message, duration = 7000, className = "" }) {
+export function ErrorAlert({ message, duration = 5000, className = "" }) {
   const [isVisible, setIsVisible] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
 
