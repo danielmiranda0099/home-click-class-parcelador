@@ -12,28 +12,21 @@ import {
 } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
-import {
-  payStudentLesson,
-  payTeacherLesson,
-  UnpaidLessons,
-} from "@/actions/CrudLesson";
-import { formatPayments } from "@/utils/formatPayments";
+import { processPaymentByRole, unpaidLessons } from "@/actions/CrudLesson";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { PaperSearchIcon } from "./icons";
-import { Checkbox } from "./ui/checkbox";
+import { PaperSearchIcon } from "@/components/icons";
+import { Checkbox } from "@/components/ui/checkbox";
 import { usePaymentViewStore } from "@/store/paymentViewStore";
-import {
-  formattedLessonsForCalendar,
-  statusLesson,
-} from "@/utils/formattedLessonsForCalendar";
 import { useLessonsStore } from "@/store/lessonStore";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "./ui/tooltip";
+} from "@/components/ui/tooltip";
 import { useUiStore } from "@/store/uiStores";
+import { ErrorAlert } from "@/components";
+import { useCustomToast } from "@/hooks";
 
 //TODO: Refact component
 export function Payments() {
@@ -43,15 +36,24 @@ export function Payments() {
     end_date,
     setEndDate,
     payments,
+    fetchPayments,
     setPayments,
   } = usePaymentViewStore();
   const { lessons, setLessons, setSelectedLesson } = useLessonsStore();
   const [total, setTotal] = useState(0);
   const { user_selected: user } = useUserStore();
   const { setPopupDetailLesson } = useUiStore();
+  const { toastSuccess } = useCustomToast();
+  const [state_form_search, setStateFormSearch] = useState({
+    pending: false,
+    message: "",
+  });
+  const [state_form_payment, setStateFormPayment] = useState({
+    pending: false,
+    message: "",
+  });
 
   useEffect(() => {
-    console.log("total", payments);
     const total = payments?.reduce(
       (sum, payment) => (payment.isPay ? sum + payment.price : sum + 0),
       0
@@ -60,79 +62,47 @@ export function Payments() {
   }, [payments]);
 
   useEffect(() => {
-    handleSearch();
+    if (start_date && end_date && user) {
+      handleSearch();
+    }
   }, [user, lessons]);
 
-  //TODO: Pasar logica al store
-  const handleSearch = async () => {
-    if (!user || start_date.length <= 0 || end_date.length <= 0) return;
+  const handleSearch = () => {
+    setStateFormSearch((prev) => ({ ...prev, pending: true }));
 
-    const filters = {};
-
-    if (user.role === "teacher") filters.isRegistered = true;
-
-    // Implement search functionality here
-    console.log(
-      "Searching for payments between",
-      new Date(start_date).toISOString(),
-      "and",
-      end_date,
-      filters
-    );
-    const unpaid_lessons = await UnpaidLessons(
-      user?.id,
-      new Date(start_date).toISOString(),
-      new Date(end_date).toISOString(),
-      filters
-    );
-    const unpaid_lesson_formated_payment = formatPayments(unpaid_lessons, user);
-    const unpaid_lesson_formated = formattedLessonsForCalendar(
-      unpaid_lesson_formated_payment,
-      "admin"
-    );
-    console.log("unpaid_lesson_formated", unpaid_lesson_formated);
-    setPayments(unpaid_lesson_formated);
+    unpaidLessons(user?.id, start_date, end_date).then((response) => {
+      setStateFormSearch((prev) => ({ ...prev, pending: false }));
+      if (response.success) {
+        setStateFormSearch((prev) => ({ ...prev, message: "" }));
+        fetchPayments(response.data, user);
+      }
+      if (response.error) {
+        setStateFormSearch((prev) => ({ ...prev, message: response.message }));
+      }
+    });
+    setStateFormSearch((prev) => ({ ...prev, message: "" }));
   };
 
   const handleConfirmPayment = async () => {
-    if (!payments || !user) return;
+    setStateFormPayment((prev) => ({ ...prev, pending: true }));
 
-    console.log("Confirming payment of", total);
-
-    if (user.role === "teacher") {
-      // Filtrar lecciones seleccionadas para pago
-      const unpaid_lesson_ids = payments
-        ?.filter((lesson) => lesson.isPay && !lesson.isTeacherPaid)
-        .map((lesson) => lesson.id);
-
-      if (unpaid_lesson_ids && unpaid_lesson_ids.length > 0) {
-        await payTeacherLesson(unpaid_lesson_ids);
+    processPaymentByRole(payments, user).then((response) => {
+      setStateFormPayment((prev) => ({ ...prev, pending: false }));
+      if (response.success) {
+        setStateFormPayment((prev) => ({ ...prev, message: "" }));
+        setLessons("admin");
+        toastSuccess({ title: "Pago Confirmado" });
+        handleSearch();
       }
-    }
-
-    if (user.role === "student") {
-      // Filtrar lecciones seleccionadas para pago y obtener IDs de StudentLesson
-      const unpaid_student_lesson_ids = payments
-        ?.filter((lesson) => lesson.isPay && lesson.studentLessons)
-        .flatMap((lesson) =>
-          lesson.studentLessons
-            .filter((studentLesson) => !studentLesson.isStudentPaid)
-            .map((studentLesson) => studentLesson.id)
-        );
-
-      if (unpaid_student_lesson_ids && unpaid_student_lesson_ids.length > 0) {
-        await payStudentLesson(unpaid_student_lesson_ids);
+      if (response.error) {
+        setStateFormPayment((prev) => ({ ...prev, message: response.message }));
       }
-    }
-
-    setLessons("admin");
-
-    handleSearch();
+    });
+    setStateFormPayment((prev) => ({ ...prev, message: "" }));
   };
 
   const handleCheckAll = (value) => {
     setPayments(payments.map((lesson) => ({ ...lesson, isPay: value })));
-    console.log(payments);
   };
 
   const handleCheck = (value, id) => {
@@ -173,19 +143,17 @@ export function Payments() {
                 onChange={(e) => setEndDate(e.target.value)}
               />
             </div>
-            <Button onClick={handleSearch}>Search</Button>
+            <Button onClick={handleSearch} disabled={state_form_search.pending}>
+              Search
+            </Button>
+
+            <ErrorAlert message={state_form_search.message} />
           </div>
         </div>
         <div className="space-y-4 p-5 rounded-lg border bg-card text-card-foreground shadow-sm">
           {payments && user ? (
             <>
               <div>
-                {/* <h2 className="text-xl font-bold">
-                  Clases {payments && `(${payments.length})`} Clases a pagar
-                  {"  "}
-                  {payments &&
-                    `(${payments.filter((lesson) => lesson.isPay).length})`}
-                </h2> */}
                 <h2 className="text-xl font-bold mb-4">
                   Clases a pagar
                   {"  "}
@@ -261,7 +229,7 @@ export function Payments() {
 
                               <TooltipContent>
                                 <p className="p-3 font-bold">
-                                  {statusLesson(payment, "admin")[2]}
+                                  {payment.lesson_status}
                                 </p>
                               </TooltipContent>
                             </Tooltip>
@@ -298,10 +266,15 @@ export function Payments() {
               <Button
                 onClick={handleConfirmPayment}
                 className="w-full disabled:pointer-events-auto disabled:cursor-not-allowed"
-                disabled={payments.filter((lesson) => lesson.isPay).length <= 0}
+                disabled={
+                  payments.filter((lesson) => lesson.isPay).length <= 0 ||
+                  state_form_payment.pending
+                }
               >
                 Confirm Payment
               </Button>
+
+              <ErrorAlert message={state_form_payment.message} />
             </>
           ) : (
             <div className="flex flex-col justify-center items-center h-full">
