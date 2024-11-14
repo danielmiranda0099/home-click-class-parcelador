@@ -8,7 +8,8 @@ export const usePaymentViewStore = create((set) => ({
   end_date: "",
   setEndDate: (end_date) => set({ end_date }),
   payments: null,
-  setPayments: async (lesson_unpayments, user) => {
+  setPayments: (new_payments) => set({ payments: new_payments }),
+  fetchPayments: async (lesson_unpayments, user) => {
     const unpaid_lesson_formated = formatPayments(lesson_unpayments, user);
     const unpaid_lesson_formated_for_calendar =
       await formattedLessonsForCalendar(unpaid_lesson_formated, "admin");
