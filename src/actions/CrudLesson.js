@@ -397,14 +397,138 @@ export async function payStudentLesson(student_lesson_ids) {
   }
 }
 
-export async function UnpaidLessons(
-  user_id,
-  start_date,
-  end_date,
-  filters = {}
-) {
-  if (!user_id) return;
+export async function processPaymentByRole(payments, user) {
   try {
+    if (!payments || !user) {
+      return RequestResponse.error();
+    }
+
+    const user_exist = prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!user_exist) {
+      return RequestResponse.error();
+    }
+
+    if (user.role.includes("teacher")) {
+      // Filtrar lecciones seleccionadas para pago
+      const unpaid_lesson_ids = payments
+        ?.filter((lesson) => lesson.isPay && !lesson.isTeacherPaid)
+        .map((lesson) => lesson.id);
+
+      const lesson_exist = await prisma.lesson.findMany({
+        where: {
+          id: {
+            in: unpaid_lesson_ids,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (
+        unpaid_lesson_ids.lenth < 1 ||
+        unpaid_lesson_ids.length !== lesson_exist.length
+      ) {
+        return RequestResponse.error();
+      }
+
+      await payTeacherLesson(unpaid_lesson_ids);
+    }
+
+    if (user.role.includes("student")) {
+      // Filtrar lecciones seleccionadas para pago y obtener IDs de StudentLesson
+      const unpaid_lesson_ids = payments
+        ?.filter((lesson) => lesson.isPay && lesson.studentLessons)
+        .flatMap((lesson) =>
+          lesson.studentLessons
+            .filter(
+              (studentLesson) =>
+                !studentLesson.isStudentPaid &&
+                studentLesson.studentId === user.id
+            )
+            .map((studentLesson) => studentLesson.id)
+        );
+
+      const lesson_exist = await prisma.studentLesson.findMany({
+        where: {
+          id: {
+            in: unpaid_lesson_ids,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (
+        unpaid_lesson_ids.lenth < 1 ||
+        unpaid_lesson_ids.length !== lesson_exist.length
+      ) {
+        return RequestResponse.error();
+      }
+
+      await payStudentLesson(unpaid_lesson_ids);
+    }
+
+    return RequestResponse.success();
+  } catch (error) {
+    console.error("Error in processPaymentByRole()", error);
+    return RequestResponse.error();
+  }
+}
+
+export async function unpaidLessons(
+  user_id,
+  start_date_string,
+  end_date_string
+) {
+  try {
+    if (start_date_string.length <= 0) {
+      return RequestResponse.error("Por favor ingrese la fecha de inicio.");
+    }
+    if (end_date_string.length <= 0) {
+      return RequestResponse.error("Por favor ingrese la fecha final.");
+    }
+
+    const start_date = new Date(start_date_string).toISOString();
+    const end_date = new Date(end_date_string).toISOString();
+
+    if (start_date > end_date) {
+      return RequestResponse.error(
+        "La fecha de busqueda de inicio debe ser menor a la fecha final."
+      );
+    }
+
+    if (!user_id) {
+      return RequestResponse.error("Por favor seleccione un usuario.");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: user_id,
+      },
+      select: {
+        id: true,
+        role: true,
+      },
+    });
+
+    if (!user) {
+      return RequestResponse.error();
+    }
+
+    const filters = {};
+
+    if (user.role.includes("teacher")) filters.isRegistered = true;
+
     const unpaid_lessons = await prisma.lesson.findMany({
       where: {
         OR: [
@@ -444,9 +568,10 @@ export async function UnpaidLessons(
         startDate: "asc", // Ordenar por startDate en orden ascendente (de más antigua a más nueva)
       },
     });
-    return unpaid_lessons;
+    return RequestResponse.success(unpaid_lessons);
   } catch (error) {
     console.log("Error Getting Unpaid Lessons", error);
+    return RequestResponse.error();
   }
 }
 
