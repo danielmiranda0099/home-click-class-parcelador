@@ -19,7 +19,6 @@ import {
 import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 import moment from "moment";
-import { statusLesson } from "@/utils/formattedLessonsForCalendar";
 import { EyeIcon, ChevronLeft, ChevronRight } from "lucide-react";
 
 export function TableLessons() {
@@ -104,9 +103,7 @@ export function TableLessons() {
                       ></div>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p className="p-3 font-bold">
-                        {statusLesson(lesson, "admin")[2]}
-                      </p>
+                      <p className="p-3 font-bold">{lesson.lesson_status}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
