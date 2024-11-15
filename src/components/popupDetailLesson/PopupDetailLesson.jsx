@@ -23,6 +23,7 @@ import { FormLesson } from "@/components/formLesson";
 import { DetailReviewLesson } from "./DetailReviewLesson";
 import { FooterDetailLesson } from "./FooterDetailLesson";
 import { ReasonsRescheduled } from "./ReasonsRescheduled";
+import { Badge } from "../ui/badge";
 
 const formattedDate = (start_date, end_date) => {
   const startDate = moment(start_date, "YYYY-MM-DD HH:mm");
@@ -121,14 +122,22 @@ export function PopupDetailLesson({ rol }) {
                     <p className="font-medium">Estudiantes</p>
                     {lesson &&
                       lesson?.studentLessons.map((student_lesson) => (
-                        <p
-                          className="text-muted-foreground"
-                          key={student_lesson?.student.email}
+                        <div
+                          className="flex gap-2 pb-1"
+                          key={student_lesson.id}
                         >
-                          {student_lesson?.student.firstName +
-                            " " +
-                            student_lesson?.student.lastName}
-                        </p>
+                          <p
+                            className="text-muted-foreground"
+                            key={student_lesson?.student.email}
+                          >
+                            {student_lesson?.student.shortName}
+                          </p>
+                          {student_lesson.isStudentPaid ? (
+                            <Badge variant="outlineSucess">Pagado</Badge>
+                          ) : (
+                            <Badge variant="outlineError">Pendiente</Badge>
+                          )}
+                        </div>
                       ))}
                   </div>
                 </div>
@@ -138,12 +147,16 @@ export function PopupDetailLesson({ rol }) {
                   <div>
                     <p className="font-medium">Profesor</p>
                     {/*TODO: hacer funcion para esto */}
-                    <p className="text-muted-foreground">
-                      {lesson &&
-                        lesson?.teacher.firstName +
-                          " " +
-                          lesson?.teacher.lastName}
-                    </p>
+                    <div className="flex gap-2">
+                      <p className="text-muted-foreground">
+                        {lesson && lesson?.teacher.shortName}
+                      </p>
+                      {lesson && lesson.isTeacherPaid ? (
+                        <Badge variant="outlineSucess">Pagado</Badge>
+                      ) : (
+                        <Badge variant="outlineError">Pendiente</Badge>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
