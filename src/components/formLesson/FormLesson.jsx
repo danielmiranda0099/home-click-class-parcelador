@@ -47,7 +47,7 @@ export function FormLesson({ rol }) {
       console.log("UseEffect Edit formLesson");
       console.log(selected_lesson.students);
       setTeacherPayment(selected_lesson.teacherPayment.toString());
-      setStudentFee(selected_lesson.studentFee.toString());
+      // setStudentFee(selected_lesson.studentFee.toString());
 
       setStudent(
         () =>
