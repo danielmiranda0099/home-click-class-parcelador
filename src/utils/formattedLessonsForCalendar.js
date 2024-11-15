@@ -106,7 +106,9 @@ export async function statusLesson(lesson, rol) {
       return [
         COLORS.ORANGE_BG,
         COLORS.ORANGE_TEXT,
-        "Registrada - Pendiente Pago Profesor - Pendiente Pago Estudiante",
+        lesson?.isGroup
+          ? "Registrada"
+          : "Registrada - Pendiente Pago Profesor - Pendiente Pago Estudiante",
       ]; //ORANGE
     }
     if (
@@ -119,7 +121,9 @@ export async function statusLesson(lesson, rol) {
       return [
         COLORS.ORANGE_BG,
         COLORS.ORANGE_TEXT,
-        "Registrada - Pendiente Pago Profesor - Pago Realizado Por Estudiante",
+        lesson?.isGroup
+          ? "Registrada"
+          : "Registrada - Pendiente Pago Profesor - Pago Realizado Por Estudiante",
       ]; //ORANGE
     }
     if (
@@ -132,7 +136,9 @@ export async function statusLesson(lesson, rol) {
       return [
         COLORS.YELLOW_BG,
         COLORS.YELLOW_TEXT,
-        "Registrada - Pago Realizado Al Profesor - Pendiente Pago Estudiante",
+        lesson?.isGroup
+          ? "Registrada"
+          : "Registrada - Pago Realizado Al Profesor - Pendiente Pago Estudiante",
       ]; //YELLOW
     }
     if (
@@ -145,7 +151,9 @@ export async function statusLesson(lesson, rol) {
       return [
         COLORS.GREEN_BG,
         COLORS.GREEN_TEXT,
-        "Registrada - Pago Realizado Al Profesor - Pago Realizado Por Estudiante",
+        lesson?.isGroup
+          ? "Registrada"
+          : "Registrada - Pago Realizado Al Profesor - Pago Realizado Por Estudiante",
       ]; //GREEN
     }
 
@@ -157,7 +165,9 @@ export async function statusLesson(lesson, rol) {
       return [
         COLORS.PURPLE_BG,
         COLORS.PURPLE_TEXT,
-        "Clase Confirmada - Pendiente Pago Estudiante",
+        lesson?.isGroup
+          ? "Clase Confirmada"
+          : "Clase Confirmada - Pendiente Pago Estudiante",
       ]; //PURPLE
     }
     if (
@@ -168,7 +178,9 @@ export async function statusLesson(lesson, rol) {
       return [
         COLORS.PURPLE_BG,
         COLORS.PURPLE_TEXT,
-        "Clase Confirmada - Pago Realizado Por Estudiante",
+        lesson?.isGroup
+          ? "Clase Confirmada"
+          : "Clase Confirmada - Pago Realizado Por Estudiante",
       ]; //PURPLE
     }
     if (
@@ -178,7 +190,7 @@ export async function statusLesson(lesson, rol) {
       return [
         COLORS.BLUE_BG,
         COLORS.BLUE_TEXT,
-        "Agendada - Pendiente Pago Estudiante",
+        lesson?.isGroup ? "Agendada" : "Agendada - Pendiente Pago Estudiante",
       ]; //BLUE
     }
     if (
@@ -188,7 +200,9 @@ export async function statusLesson(lesson, rol) {
       return [
         COLORS.BLUE_BG,
         COLORS.BLUE_TEXT,
-        "Agendada - Pago Realizado Por Estudiante",
+        lesson?.isGroup
+          ? "Agendada"
+          : "Agendada - Pago Realizado Por Estudiante",
       ]; //BLUE
     }
   }
