@@ -13,6 +13,7 @@ import {
 } from "@/utils/lessonCrudValidations";
 import { scheduleLessons } from "@/utils/scheduleLessons";
 import { auth } from "@/auth";
+import moment from "moment";
 
 const formattedLessonForBD = (form_data) => {
   // TODO Mirar como adtener los de mas datos del formulario
@@ -303,10 +304,35 @@ export async function confirmLesson(prev_state, data_form) {
   }
 }
 
-//TODO ELIMINAR end_dates
-export async function RescheduleLesson(data_form) {
+export async function rescheduleLesson(data_form) {
   try {
-    const { id, startDate } = data_form;
+    const { id, startDate, reasonsRescheduled } = data_form;
+    if (!id || !startDate) {
+      return RequestResponse.error();
+    }
+
+    const lesson_exits = await prisma.lesson.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        reasonsRescheduled: true,
+      },
+    });
+
+    if (!lesson_exits) {
+      return RequestResponse.error();
+    }
+
+    const reasons_current = lesson_exits.reasonsRescheduled || "";
+    const reschedule_reason = reasonsRescheduled
+      ? `${reasonsRescheduled} $&`
+      : "";
+    const date_formatted = moment().format("D-M-Y");
+
+    const reasons_rescheduled_formated = `${reasons_current} ${date_formatted} $% ${reschedule_reason}`;
+
     await prisma.lesson.update({
       where: {
         id,
@@ -314,10 +340,14 @@ export async function RescheduleLesson(data_form) {
       data: {
         startDate,
         isRescheduled: true,
+        reasonsRescheduled: reasons_rescheduled_formated,
       },
     });
+
+    return RequestResponse.success();
   } catch (error) {
     console.error("Error Reschedule lessons:", error);
+    return RequestResponse.error();
   }
 }
 
