@@ -17,7 +17,8 @@ import { PeriodOfTime } from "./PeriodOfTime";
 import { SelectedDaysAndTime } from "./SelectedDaysAndTime";
 import { FormFieldStudents } from "./FormFieldStudents";
 import { FormFieldTeacher } from "./FormFieldTeacher";
-import { XIcon } from "@/components/icons";
+import { ErrorAlert } from "@/components";
+import { useCustomToast } from "@/hooks";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -33,26 +34,31 @@ export function FormCreateNewLesson() {
   const { setLessons } = useLessonsStore();
   const { setPopupFormCreateNewLesson: setIsOpen } = useUiStore();
   const [data_lesson, setDataLesson] = useState(DATA_LESSON_DEFAULT);
-  const [state_form, dispath] = useFormState(CreateNewLesson, {
+  const [form_state, dispath] = useFormState(CreateNewLesson, {
     data: [],
     succes: null,
     error: false,
     message: null,
   });
+  const [error_message, setErrorMessage] = useState("");
+  const { toastSuccess } = useCustomToast();
 
   useEffect(() => {
-    console.log(state_form);
-    if (state_form?.success) {
-      handlerGetLesson();
+    console.log(form_state);
+    if (form_state?.success) {
+      toastSuccess({ title: "Clases creadas." });
+      setLessons("admin");
+      setIsOpen(false);
     }
-  }, [state_form]);
-
-  const handlerGetLesson = async () => {
-    setLessons("admin");
-    setIsOpen(false);
-  };
+    if (form_state?.error) {
+      setErrorMessage(form_state.message);
+    } else {
+      setErrorMessage("");
+    }
+  }, [form_state]);
 
   const OnCreateNewLessons = async () => {
+    setErrorMessage("");
     dispath(data_lesson);
   };
   return (
@@ -91,13 +97,9 @@ export function FormCreateNewLesson() {
           setDataLesson={setDataLesson}
         />
       </div>
-      {/* TODO: converit el error en componente y hacer que desaparesca a los 6s o cuando se le al boton de accion*/}
-      {state_form.error && (
-        <div className="mt-3 bg-red-500 p-3 rounded-sm flex">
-          <XIcon color="white" />
-          <p className="text-white font-semibold ml-1">{state_form.message}</p>
-        </div>
-      )}
+
+      <ErrorAlert message={error_message} />
+
       <DialogFooter>
         <div className="mt-6 space-x-4 flex justify-end">
           <DialogClose asChild>
