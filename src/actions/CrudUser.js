@@ -51,8 +51,14 @@ export async function createNewUser(prev_state, form_dada) {
       return RequestResponse.error("El usuario ya esta registrado.");
     }
 
+    const short_name = firstName.split(" ")[0] + " " + lastName.split(" ")[0];
+    const full_name = firstName + " " + lastName;
+
     normalized_data.password = await bcrypt.hash(normalized_data.password, 10);
     normalized_data.role = [normalized_data.role];
+
+    normalized_data.shortName = short_name;
+    normalized_data.fullName = full_name;
 
     const user = await prisma.user.create({
       data: {
