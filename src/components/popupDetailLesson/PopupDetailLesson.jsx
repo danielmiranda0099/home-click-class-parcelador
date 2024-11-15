@@ -22,6 +22,7 @@ import moment from "moment";
 import { FormLesson } from "@/components/formLesson";
 import { DetailReviewLesson } from "./DetailReviewLesson";
 import { FooterDetailLesson } from "./FooterDetailLesson";
+import { ReasonsRescheduled } from "./ReasonsRescheduled";
 
 const formattedDate = (start_date, end_date) => {
   const startDate = moment(start_date, "YYYY-MM-DD HH:mm");
@@ -150,12 +151,16 @@ export function PopupDetailLesson({ rol }) {
               <DetailReviewLesson lesson={lesson} rol={rol} />
 
               {rol === "admin" && lesson?.isRescheduled && (
-                <div className="flex items-start gap-4">
-                  <RescheduleIcon className="h-8 w-8 text-primary" />
-                  <div>
-                    <p className="font-medium">Reagendada</p>
+                <>
+                  <Separator />
+                  <div className="flex items-start gap-4">
+                    <RescheduleIcon className="h-8 w-8 text-primary" />
+                    <div>
+                      <p className="font-medium">Reagendada</p>
+                      <ReasonsRescheduled reason={lesson.reasonsRescheduled} />
+                    </div>
                   </div>
-                </div>
+                </>
               )}
             </div>
 
