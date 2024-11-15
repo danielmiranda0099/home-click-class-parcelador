@@ -327,11 +327,11 @@ export async function rescheduleLesson(data_form) {
 
     const reasons_current = lesson_exits.reasonsRescheduled || "";
     const reschedule_reason = reasonsRescheduled
-      ? `${reasonsRescheduled} $&`
+      ? `$& ${reasonsRescheduled}`
       : "";
     const date_formatted = moment().format("D-M-Y");
 
-    const reasons_rescheduled_formated = `${reasons_current} ${date_formatted} $% ${reschedule_reason}`;
+    const reasons_rescheduled_formated = `${reasons_current} $% ${date_formatted} ${reschedule_reason}`;
 
     await prisma.lesson.update({
       where: {
