@@ -25,7 +25,7 @@ export function FormLogin() {
 
   useEffect(() => {
     if (state?.success && state.data.role.includes("admin")) {
-      router.push("/dashboard");
+      router.push("/admin/dashboard");
     }
     if (
       state?.success &&

@@ -14,7 +14,7 @@ export default async function Home() {
       redirect("/classes");
     }
     if (session.user.role.includes("admin")) {
-      redirect("/dashboard");
+      redirect("/admin/dashboard");
     }
   }
 
