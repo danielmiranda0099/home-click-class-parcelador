@@ -14,7 +14,6 @@ export default async function ClassesPage() {
   const {
     user: { role },
   } = session;
-  console.log("session", session);
   return (
     <>
       {role[0] === "student" && <FormConfirmClass />}
@@ -23,6 +22,7 @@ export default async function ClassesPage() {
       {role[0] === "teacher" && <FormReschedule rol="teacher" />}
 
       <PopupDetailLesson rol={role[0]} />
+
       <section className="px-10 py-3 flex flex-row justify-start gap-4">
         <CardOverView />
         <CardStatusLegendLesson rol={role[0]} />
