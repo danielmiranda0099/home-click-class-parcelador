@@ -26,3 +26,4 @@ export * from "./PencilIcon";
 export * from "./RepeatIcon";
 export * from "./HelpIcon";
 export * from "./ChevronDown";
+export * from "./BookOpenCheckIcon";
