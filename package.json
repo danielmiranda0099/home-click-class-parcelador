@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "prisma generate",
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "prisma generate && next build && npm run seed-create-user",
     "start": "next start",
     "lint": "next lint",
     "seed": "node src/seed/seed.js",
