@@ -777,3 +777,57 @@ export async function overViewLessonStudent(id) {
     return RequestResponse.error();
   }
 }
+
+export async function dataDashboard() {
+  try {
+    // Lessons stats
+    const scheduledLessons = await prisma.lesson.count({
+      where: {
+        isScheduled: true,
+        isConfirmed: false,
+      },
+    });
+
+    const unpaidTeacherLessons = await prisma.lesson.count({
+      where: {
+        isRegistered: true,
+        isTeacherPaid: false,
+      },
+    });
+
+    const unpaidStudentLessons = await prisma.studentLesson.count({
+      where: {
+        isConfirmed: true,
+        isStudentPaid: false,
+      },
+    });
+
+    // User stats
+    const teacherCount = await prisma.user.count({
+      where: {
+        role: {
+          has: "teacher",
+        },
+      },
+    });
+
+    const studentCount = await prisma.user.count({
+      where: {
+        role: {
+          has: "student",
+        },
+      },
+    });
+
+    return RequestResponse.success({
+      scheduledLessons,
+      unpaidTeacherLessons,
+      unpaidStudentLessons,
+      teacherCount,
+      studentCount,
+    });
+  } catch (error) {
+    console.error("Error in dataDashboard()", error);
+    return RequestResponse.error();
+  }
+}
