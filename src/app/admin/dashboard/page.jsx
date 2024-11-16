@@ -11,12 +11,11 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import {
-  Calendar,
-  DollarSign,
-  Users,
-  UserCheck,
-  GraduationCap,
-} from "lucide-react";
+  CalendarIcon,
+  DollarIcon,
+  GraduationIcon,
+  UsersIcon,
+} from "@/components/icons";
 
 export default function DashboardPage() {
   // Datos de ejemplo para la gráfica
@@ -34,68 +33,68 @@ export default function DashboardPage() {
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
         <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-gray-600">
               Clases Agendadas
             </CardTitle>
-            <Calendar className="h-4 w-4 text-blue-500" />
+            <CalendarIcon size={"2rem"} color="#3b82f6" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">35</div>
+            <div className="text-4xl font-bold text-blue-400">35</div>
             <p className="text-xs text-gray-500 mt-1">
               Total de clases programadas
             </p>
           </CardContent>
         </Card>
         <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-gray-600">
               Pendientes (Profesores)
             </CardTitle>
-            <DollarSign className="h-4 w-4 text-red-500" />
+            <DollarIcon size={"2rem"} className="text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">8</div>
+            <div className="text-4xl font-bold text-red-400">8</div>
             <p className="text-xs text-gray-500 mt-1">
               Clases por pagar a profesores
             </p>
           </CardContent>
         </Card>
         <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-gray-600">
               Pendientes (Estudiantes)
             </CardTitle>
-            <DollarSign className="h-4 w-4 text-yellow-500" />
+            <DollarIcon size={"2rem"} className="text-yellow-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">12</div>
+            <div className="text-4xl font-bold text-yellow-500">12</div>
             <p className="text-xs text-gray-500 mt-1">
               Clases por cobrar a estudiantes
             </p>
           </CardContent>
         </Card>
         <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-gray-600">
               Profesores
             </CardTitle>
-            <UserCheck className="h-4 w-4 text-green-500" />
+            <UsersIcon size={"2rem"} className="text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">15</div>
+            <div className="text-4xl font-bold text-green-400">15</div>
             <p className="text-xs text-gray-500 mt-1">Profesores activos</p>
           </CardContent>
         </Card>
         <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-gray-600">
               Estudiantes
             </CardTitle>
-            <GraduationCap className="h-4 w-4 text-purple-500" />
+            <GraduationIcon size={"2rem"} className="text-purple-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-600">78</div>
+            <div className="text-4xl font-bold text-purple-400">78</div>
             <p className="text-xs text-gray-500 mt-1">
               Estudiantes registrados
             </p>
@@ -106,7 +105,7 @@ export default function DashboardPage() {
       <Card className="col-span-full bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
         <CardHeader>
           <CardTitle className="text-xl font-semibold text-gray-700 flex items-center">
-            <Users className="h-5 w-5 mr-2 text-blue-500" />
+            <UsersIcon className="h-5 w-5 mr-2 text-blue-500" />
             Clases en los Próximos 7 Días
           </CardTitle>
         </CardHeader>
