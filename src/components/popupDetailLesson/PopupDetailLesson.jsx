@@ -41,11 +41,12 @@ const formattedDate = (start_date, end_date) => {
 };
 
 //TODO: Refact Component
-export function PopupDetailLesson({ rol }) {
+export function PopupDetailLesson({ user, rol }) {
   const { selected_lesson: lesson } = useLessonsStore();
   const { popupDetailLesson: is_open, setPopupDetailLesson } = useUiStore();
 
   console.log("lesson en modal", lesson);
+  console.log("userrrr", user);
   return (
     <>
       {/* TODO: QUITAR Y COLOCAR <RORMLESSON /> EN UN AMAYOR HERARQUIA */}
@@ -81,13 +82,18 @@ export function PopupDetailLesson({ rol }) {
                 </div>
                 <div className="flex justify-center">
                   <div className="flex flex-col items-end w-[fit-content] pl-2.5">
-                    {rol !== "teacher" &&
-                      lesson?.studentLessons &&
-                      lesson?.studentLessons.map((student_lesson) => (
-                        <h2 className="font-medium" key={student_lesson.id}>
-                          {formatCurrency(student_lesson.studentFee.toString())}
-                        </h2>
-                      ))}
+                    {lesson?.studentLessons &&
+                      lesson?.studentLessons.map(
+                        (student_lesson) =>
+                          (rol === "admin" ||
+                            student_lesson.studentId == user.id) && (
+                            <h2 className="font-medium" key={student_lesson.id}>
+                              {formatCurrency(
+                                student_lesson.studentFee.toString()
+                              )}
+                            </h2>
+                          )
+                      )}
                     {rol !== "student" && lesson?.teacherPayment && (
                       <h2 className="font-medium">
                         {rol === "admin" && "-"}{" "}
@@ -132,11 +138,13 @@ export function PopupDetailLesson({ rol }) {
                           >
                             {student_lesson?.student.shortName}
                           </p>
-                          {student_lesson.isStudentPaid ? (
-                            <Badge variant="outlineSucess">Pagado</Badge>
-                          ) : (
-                            <Badge variant="outlineError">Pendiente</Badge>
-                          )}
+                          {(student_lesson.studentId == user.id ||
+                            rol === "admin") &&
+                            (student_lesson.isStudentPaid ? (
+                              <Badge variant="outlineSucess">Pagado</Badge>
+                            ) : (
+                              <Badge variant="outlineError">Pendiente</Badge>
+                            ))}
                         </div>
                       ))}
                   </div>
@@ -151,11 +159,13 @@ export function PopupDetailLesson({ rol }) {
                       <p className="text-muted-foreground">
                         {lesson && lesson?.teacher.shortName}
                       </p>
-                      {lesson && lesson.isTeacherPaid ? (
-                        <Badge variant="outlineSucess">Pagado</Badge>
-                      ) : (
-                        <Badge variant="outlineError">Pendiente</Badge>
-                      )}
+                      {lesson &&
+                        rol !== "student" &&
+                        (lesson.isTeacherPaid ? (
+                          <Badge variant="outlineSucess">Pagado</Badge>
+                        ) : (
+                          <Badge variant="outlineError">Pendiente</Badge>
+                        ))}
                     </div>
                   </div>
                 </div>

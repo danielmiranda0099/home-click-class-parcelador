@@ -12,6 +12,7 @@ import {
 } from "@/components";
 import { PopupDetailLesson } from "@/components/popupDetailLesson";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useUserSession } from "@/hooks";
 import { useUserStore } from "@/store/userStore";
 import { formatUsersForInputSearch } from "@/utils/formatUsersForInputSearch";
 import { useEffect, useState } from "react";
@@ -22,9 +23,10 @@ export default function DashboardPage() {
   const {
     users,
     setUsers,
-    user_selected: user,
+    user_selected,
     setuserSelected: setUser,
   } = useUserStore();
+  const user_session = useUserSession();
 
   useEffect(() => {
     setUsers();
@@ -38,12 +40,12 @@ export default function DashboardPage() {
     }
   }, [users]);
 
-  useEffect(() => {}, [user]);
+  useEffect(() => {}, [user_selected]);
 
   return (
     <>
       <FormLessonReport rol="admin" />
-      <PopupDetailLesson rol="admin" />
+      <PopupDetailLesson rol="admin" user={user_session?.user} />
       <FormReschedule rol="admin" />
 
       <CardStatusLegendLesson rol="admin" />
@@ -76,7 +78,11 @@ export default function DashboardPage() {
         </div>
 
         <section className="w-fit my-4 flex items-center gap-2 mx-auto">
-          <InputSearch data={users_formated} value={user} setValue={setUser} />
+          <InputSearch
+            data={users_formated}
+            value={user_selected}
+            setValue={setUser}
+          />
 
           <FilterLesson isDisabled={state_tab === "payments"} />
         </section>

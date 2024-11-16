@@ -13,6 +13,7 @@ export default async function ClassesPage() {
   const session = await auth();
   const {
     user: { role },
+    user,
   } = session;
   return (
     <>
@@ -21,7 +22,7 @@ export default async function ClassesPage() {
       {role[0] === "teacher" && <FormLessonReport rol="teacher" />}
       {role[0] === "teacher" && <FormReschedule rol="teacher" />}
 
-      <PopupDetailLesson rol={role[0]} />
+      <PopupDetailLesson rol={role[0]} user={user} />
 
       <section className="px-10 py-3 flex flex-row justify-start gap-4">
         <CardOverView />
