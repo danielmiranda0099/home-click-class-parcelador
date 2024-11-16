@@ -1,33 +1,27 @@
-"use client";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 import {
   CalendarIcon,
   DollarIcon,
   GraduationIcon,
   UsersIcon,
 } from "@/components/icons";
+import { CardWeeklyChart } from "@/components";
+import { dataDashboard } from "@/actions/CrudLesson";
 
-export default function DashboardPage() {
-  // Datos de ejemplo para la gráfica
-  const nextSevenDaysData = [
-    { day: "Lun", classes: 5 },
-    { day: "Mar", classes: 7 },
-    { day: "Mié", classes: 4 },
-    { day: "Jue", classes: 6 },
-    { day: "Vie", classes: 8 },
-    { day: "Sáb", classes: 3 },
-    { day: "Dom", classes: 2 },
-  ];
+export default async function DashboardPage() {
+  let data = {
+    scheduledLessons: 0,
+    unpaidTeacherLessons: 0,
+    unpaidStudentLessons: 0,
+    teacherCount: 0,
+    studentCount: 0,
+  };
+
+  const response = await dataDashboard();
+
+  if (response.success) {
+    data = response.data;
+  }
 
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
@@ -40,7 +34,9 @@ export default function DashboardPage() {
             <CalendarIcon size={"2rem"} color="#3b82f6" />
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold text-blue-400">35</div>
+            <div className="text-4xl font-bold text-blue-400">
+              {data.scheduledLessons}
+            </div>
             <p className="text-xs text-gray-500 mt-1">
               Total de clases programadas
             </p>
@@ -54,7 +50,9 @@ export default function DashboardPage() {
             <DollarIcon size={"2rem"} className="text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold text-red-400">8</div>
+            <div className="text-4xl font-bold text-red-400">
+              {data.unpaidTeacherLessons}
+            </div>
             <p className="text-xs text-gray-500 mt-1">
               Clases por pagar a profesores
             </p>
@@ -68,7 +66,9 @@ export default function DashboardPage() {
             <DollarIcon size={"2rem"} className="text-yellow-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold text-yellow-500">12</div>
+            <div className="text-4xl font-bold text-yellow-500">
+              {data.unpaidStudentLessons}
+            </div>
             <p className="text-xs text-gray-500 mt-1">
               Clases por cobrar a estudiantes
             </p>
@@ -82,7 +82,9 @@ export default function DashboardPage() {
             <UsersIcon size={"2rem"} className="text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold text-green-400">15</div>
+            <div className="text-4xl font-bold text-green-400">
+              {data.teacherCount}
+            </div>
             <p className="text-xs text-gray-500 mt-1">Profesores activos</p>
           </CardContent>
         </Card>
@@ -94,7 +96,9 @@ export default function DashboardPage() {
             <GraduationIcon size={"2rem"} className="text-purple-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold text-purple-400">78</div>
+            <div className="text-4xl font-bold text-purple-400">
+              {data.studentCount}
+            </div>
             <p className="text-xs text-gray-500 mt-1">
               Estudiantes registrados
             </p>
@@ -102,32 +106,7 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <Card className="col-span-full bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold text-gray-700 flex items-center">
-            <UsersIcon className="h-5 w-5 mr-2 text-blue-500" />
-            Clases en los Próximos 7 Días
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="w-full h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={nextSevenDaysData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-              <XAxis dataKey="day" stroke="#6b7280" />
-              <YAxis stroke="#6b7280" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "white",
-                  borderRadius: "8px",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                }}
-                labelStyle={{ fontWeight: "bold", color: "#4b5563" }}
-              />
-              <Bar dataKey="classes" fill="#60a5fa" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
+      <CardWeeklyChart />
     </div>
   );
 }
