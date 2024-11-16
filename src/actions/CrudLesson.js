@@ -618,3 +618,162 @@ export async function DeleteLesson(ids) {
     console.error("Error Unpaying Lesson", error);
   }
 }
+
+export async function overViewLessonTeacher(id) {
+  try {
+    if (!id) return RequestResponse.error();
+
+    const id_formated = parseInt(id, 10);
+
+    const teacher = await prisma.user.findFirst({
+      where: {
+        id: id_formated,
+        role: {
+          has: "teacher",
+        },
+      },
+      select: {
+        averageScore: true,
+      },
+    });
+    let data = {
+      averageScore: 0,
+      completed: 0,
+      scheduled: 0,
+      debt: 0,
+    };
+    if (!teacher) return RequestResponse.error();
+
+    data.averageScore = Math.min(Math.ceil(teacher.averageScore + 0.5), 10);
+
+    const teacherLessonsData = await prisma.user.findUnique({
+      where: { id: id_formated },
+      select: {
+        teacherLessons: {
+          select: {
+            id: true,
+            isScheduled: true,
+            isConfirmed: true,
+            isRegistered: true,
+            isTeacherPaid: true,
+            teacherPayment: true,
+          },
+        },
+      },
+    });
+
+    if (teacherLessonsData) {
+      const completedLessons = teacherLessonsData.teacherLessons.filter(
+        (lesson) =>
+          lesson.isScheduled &&
+          lesson.isConfirmed &&
+          lesson.isRegistered &&
+          lesson.isTeacherPaid
+      ).length;
+
+      const scheduledLessons = teacherLessonsData.teacherLessons.filter(
+        (lesson) =>
+          lesson.isScheduled && !lesson.isConfirmed && !lesson.isRegistered
+      ).length;
+
+      const unpaidLessons = teacherLessonsData.teacherLessons.filter(
+        (lesson) => lesson.isRegistered && !lesson.isTeacherPaid
+      );
+
+      const totalDebt = unpaidLessons.reduce(
+        (sum, lesson) => sum + (lesson.teacherPayment || 0),
+        0
+      );
+
+      data.completed = completedLessons;
+      data.debt = totalDebt;
+      data.scheduled = scheduledLessons;
+    }
+
+    return RequestResponse.success(data);
+  } catch (error) {
+    console.error("Error in overViewLessonTeacher()", error);
+    return RequestResponse.error();
+  }
+}
+
+export async function overViewLessonStudent(id) {
+  try {
+    if (!id) return RequestResponse.error();
+
+    const id_formated = parseInt(id, 10);
+
+    const student = await prisma.user.findFirst({
+      where: {
+        id: id_formated,
+        role: {
+          has: "student",
+        },
+      },
+      select: {
+        averageScore: true,
+      },
+    });
+    if (!student) return RequestResponse.error();
+
+    const student_lessons_data = await prisma.user.findUnique({
+      where: { id: id_formated },
+      select: {
+        studentLessons: {
+          select: {
+            isStudentPaid: true,
+            isConfirmed: true,
+            studentFee: true,
+            lesson: {
+              select: {
+                isRegistered: true,
+                isScheduled: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    let data = {
+      completed: 0,
+      scheduled: 0,
+      debt: 0,
+    };
+
+    if (student_lessons_data) {
+      const completedLessons = student_lessons_data.studentLessons.filter(
+        (sl) =>
+          sl.lesson.isScheduled &&
+          sl.isConfirmed &&
+          sl.lesson.isRegistered &&
+          sl.isStudentPaid
+      ).length;
+
+      const scheduledLessons = student_lessons_data.studentLessons.filter(
+        (sl) =>
+          sl.lesson.isScheduled && !sl.isConfirmed && !sl.lesson.isRegistered
+      ).length;
+
+      const unpaidLessons = student_lessons_data.studentLessons.filter(
+        (sl) => sl.lesson.isRegistered && !sl.isStudentPaid
+      );
+
+      const totalDebt = unpaidLessons.reduce(
+        (sum, sl) => sum + (sl.studentFee || 0),
+        0
+      );
+
+      data.completed = completedLessons;
+      data.scheduled = scheduledLessons;
+      data.debt = totalDebt;
+    }
+
+    console.log(student_lessons_data);
+
+    return RequestResponse.success(data);
+  } catch (error) {
+    console.error("Error in overViewLessonTeacher()", error);
+    return RequestResponse.error();
+  }
+}
