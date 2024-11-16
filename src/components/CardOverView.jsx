@@ -1,29 +1,63 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { BookOpenIcon, ClockIcon, DollarSignIcon } from "@/components/icons";
+import {
+  BookOpenIcon,
+  CalendarIcon,
+  DollarSignIcon,
+  RatingIcon,
+} from "@/components/icons";
+import { auth } from "@/auth";
+import {
+  overViewLessonStudent,
+  overViewLessonTeacher,
+} from "@/actions/CrudLesson";
+import { formatCurrency } from "@/utils/formatCurrency";
 
-export function CardOverView() {
+export async function CardOverView() {
+  const session = await auth();
+
+  let data = {
+    averageScore: 0,
+    completed: 0,
+    scheduled: 0,
+    debt: 0,
+  };
+  if (session?.user.role.includes("teacher")) {
+    const response = await overViewLessonTeacher(session.user.id);
+    if (response.success) {
+      data = response.data;
+    }
+  }
+  if (session?.user.role.includes("student")) {
+    const response = await overViewLessonStudent(session.user.id);
+    if (response.success) {
+      data = response.data;
+    }
+  }
+
   return (
     <Card className="w-[fit-content]">
       <CardHeader>
         <CardTitle>Resumen De Clases</CardTitle>
       </CardHeader>
       <CardContent className="grid gap-10 grid-flow-col auto-cols-max">
-        <div className="flex items-center justify-center gap-3">
-          <div className="flex items-center justify-start gap-2">
-            <DollarSignIcon size="28" className="text-muted-foreground" />
-            <div className="flex flex-col items-start justify-center">
-              <span className="text-xl font-medium text-muted-foreground block">
-                Deuda:
-              </span>
+        {session?.user.role.includes("teacher") && (
+          <div className="flex items-center justify-center gap-3">
+            <div className="flex items-center justify-start gap-2">
+              <RatingIcon size="1.5rem" className="text-muted-foreground" />
+              <div className="flex flex-col items-start justify-center">
+                <span className="text-xl font-medium text-muted-foreground block">
+                  Puntage:
+                </span>
+              </div>
             </div>
-          </div>
 
-          <h2 className="text-lg font-bold">$2,500</h2>
-        </div>
+            <h2 className="text-lg font-bold">{data.averageScore}</h2>
+          </div>
+        )}
 
         <div className="flex items-center justify-center gap-3">
           <div className="flex items-center justify-start gap-2">
-            <BookOpenIcon size="28" className="text-muted-foreground" />
+            <BookOpenIcon size="1.5rem" className="text-muted-foreground" />
             <div className="flex flex-col items-start justify-center">
               <span className="text-xl font-medium text-muted-foreground block">
                 Completadas:
@@ -31,20 +65,35 @@ export function CardOverView() {
             </div>
           </div>
 
-          <h2 className="text-lg font-bold">42</h2>
+          <h2 className="text-lg font-bold">{data.completed}</h2>
         </div>
 
         <div className="flex items-center justify-center gap-3">
           <div className="flex items-center justify-start gap-2">
-            <ClockIcon size="28" className="text-muted-foreground" />
+            <CalendarIcon size="1.5rem" className="text-muted-foreground" />
             <div className="flex flex-col items-start justify-center">
               <span className="text-xl font-medium text-muted-foreground block">
-                Total Hours:
+                Agendadas:
               </span>
             </div>
           </div>
 
-          <h2 className="text-lg font-bold">120h</h2>
+          <h2 className="text-lg font-bold">{data.scheduled}</h2>
+        </div>
+
+        <div className="flex items-center justify-center gap-3">
+          <div className="flex items-center justify-start gap-2">
+            <DollarSignIcon size="1.5rem" className="text-muted-foreground" />
+            <div className="flex flex-col items-start justify-center">
+              <span className="text-xl font-medium text-muted-foreground block">
+                Deuda:
+              </span>
+            </div>
+          </div>
+
+          <h2 className="text-lg font-bold">
+            {formatCurrency(data.debt.toString())}
+          </h2>
         </div>
       </CardContent>
     </Card>
