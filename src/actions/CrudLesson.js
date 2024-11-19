@@ -665,10 +665,7 @@ export async function overViewLessonTeacher(id) {
     if (teacherLessonsData) {
       const completedLessons = teacherLessonsData.teacherLessons.filter(
         (lesson) =>
-          lesson.isScheduled &&
-          lesson.isConfirmed &&
-          lesson.isRegistered &&
-          lesson.isTeacherPaid
+          lesson.isScheduled && lesson.isConfirmed && lesson.isRegistered
       ).length;
 
       const scheduledLessons = teacherLessonsData.teacherLessons.filter(
