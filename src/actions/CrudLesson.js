@@ -743,11 +743,7 @@ export async function overViewLessonStudent(id) {
 
     if (student_lessons_data) {
       const completedLessons = student_lessons_data.studentLessons.filter(
-        (sl) =>
-          sl.lesson.isScheduled &&
-          sl.isConfirmed &&
-          sl.lesson.isRegistered &&
-          sl.isStudentPaid
+        (sl) => sl.lesson.isScheduled && sl.isConfirmed
       ).length;
 
       const scheduledLessons = student_lessons_data.studentLessons.filter(
@@ -756,7 +752,7 @@ export async function overViewLessonStudent(id) {
       ).length;
 
       const unpaidLessons = student_lessons_data.studentLessons.filter(
-        (sl) => sl.lesson.isRegistered && !sl.isStudentPaid
+        (sl) => sl.isConfirmed && !sl.isStudentPaid
       );
 
       const totalDebt = unpaidLessons.reduce(
