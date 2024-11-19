@@ -86,12 +86,13 @@ export async function CardOverView() {
             <DollarSignIcon size="1.5rem" className="text-muted-foreground" />
             <div className="flex flex-col items-start justify-center">
               <span className="text-xl font-medium text-muted-foreground block">
-                Deuda:
+                {session?.user.role.includes("teacher") && "Cobro:"}
+                {session?.user.role.includes("student") && "Deuda:"}
               </span>
             </div>
           </div>
 
-          <h2 className="text-lg font-bold">
+          <h2 className="text-lg font-bold text-red-600">
             {formatCurrency(data.debt.toString())}
           </h2>
         </div>
