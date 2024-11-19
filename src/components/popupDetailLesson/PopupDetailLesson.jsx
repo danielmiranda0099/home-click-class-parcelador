@@ -164,7 +164,7 @@ export function PopupDetailLesson({ user, rol }) {
                         (lesson.isTeacherPaid ? (
                           <Badge variant="outlineSucess">Pagado</Badge>
                         ) : (
-                          <Badge variant="outlineError">Debe</Badge>
+                          <Badge variant="outlineError">Por pagar</Badge>
                         ))}
                     </div>
                   </div>
