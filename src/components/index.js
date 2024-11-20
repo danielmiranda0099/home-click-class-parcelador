@@ -15,3 +15,4 @@ export * from "./FilterLesson";
 export * from "./ButtonSignOut";
 export * from "./ErrorAlert";
 export * from "./CardWeeklyChart";
+export * from "./PopupImagePay";
