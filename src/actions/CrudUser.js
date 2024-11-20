@@ -72,15 +72,27 @@ export async function createNewUser(prev_state, form_dada) {
   }
 }
 
+//TODO: Refact
 export async function GetAllUsers() {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        fullName: true,
+        shortName: true,
+        email: true,
+        role: true,
+        averageScore: true,
+      },
+    });
     return users;
   } catch (error) {
     console.error("Error Get All Users:", error);
   }
 }
-
+//TODO: Use in InputSearh in filter Calendar
 export async function GetUsersByStudentsAndTeachers() {
   try {
     const users = await prisma.user.findMany({
