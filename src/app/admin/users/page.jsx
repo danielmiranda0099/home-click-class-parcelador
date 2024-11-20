@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -10,54 +10,35 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-const usuarios = [
-  {
-    id: 1,
-    nombre: "Juan Pérez",
-    correo: "juan@example.com",
-    role: "student",
-    activo: true,
-  },
-  {
-    id: 2,
-    nombre: "María García",
-    correo: "maria@example.com",
-    role: "teacher",
-    activo: true,
-  },
-  {
-    id: 3,
-    nombre: "Carlos Rodríguez",
-    correo: "carlos@example.com",
-    role: "admin",
-    activo: false,
-  },
-  {
-    id: 4,
-    nombre: "Ana Martínez",
-    correo: "ana@example.com",
-    role: "student",
-    activo: true,
-  },
-  {
-    id: 5,
-    nombre: "Pedro Sánchez",
-    correo: "pedro@example.com",
-    role: "teacher",
-    activo: false,
-  },
-];
+import { useUserStore } from "@/store/userStore";
+import Link from "next/link";
 
 export default function UsersPage() {
-  const [busqueda, setBusqueda] = useState("");
+  const { users, setUsers } = useUserStore();
+  const [search_user, setSearchUser] = useState("");
+  const [filter_users, setFilterUsers] = useState(users);
 
-  const usuariosFiltrados = usuarios.filter(
-    (usuario) =>
-      usuario.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-      usuario.correo.toLowerCase().includes(busqueda.toLowerCase()) ||
-      usuario.role.toLowerCase().includes(busqueda.toLowerCase())
-  );
+  //TODO: Pasar a custonHook que tenga el useEffect()
+  useEffect(() => {
+    if (users.length < 1 || !users) {
+      setUsers();
+    }
+  }, []);
+
+  useEffect(() => {
+    setFilterUsers(users);
+    console.log(users);
+  }, [users]);
+
+  useEffect(() => {
+    const filter_users = users?.filter(
+      (user) =>
+        user.fullName.toLowerCase().includes(search_user.toLowerCase()) ||
+        user.email.toLowerCase().includes(search_user.toLowerCase()) ||
+        user.role.some((role) => role.includes(search_user.toLowerCase()))
+    );
+    setFilterUsers(filter_users);
+  }, [search_user]);
 
   return (
     <div className="container mx-auto p-4 max-w-[1200px]">
@@ -65,8 +46,8 @@ export default function UsersPage() {
       <Input
         type="text"
         placeholder="Buscar usuarios..."
-        value={busqueda}
-        onChange={(e) => setBusqueda(e.target.value)}
+        value={search_user}
+        onChange={(e) => setSearchUser(e.target.value)}
         className="mb-4"
       />
       <Table className="border-gray-400 border-2 mx-auto w-full">
@@ -75,19 +56,33 @@ export default function UsersPage() {
             <TableHead>Nombre</TableHead>
             <TableHead>Correo</TableHead>
             <TableHead>Rol</TableHead>
-            <TableHead>Activo</TableHead>
+            {/* <TableHead>Activo</TableHead> */}
           </TableRow>
         </TableHeader>
         <TableBody>
-          {usuariosFiltrados.map((usuario, index) => (
+          {filter_users?.map((user, index) => (
             <TableRow
-              key={usuario.id}
+              key={user.id}
               className={`${index % 2 === 0 && "bg-slate-100"} hover:bg-sky-100`}
             >
-              <TableCell>{usuario.nombre}</TableCell>
-              <TableCell>{usuario.correo}</TableCell>
-              <TableCell>{usuario.role}</TableCell>
-              <TableCell>{usuario.activo ? "Sí" : "No"}</TableCell>
+              <TableCell>
+                <Link
+                  href={`/admin/users/${user.id}`}
+                  className="hover:underline"
+                >
+                  {user.fullName}
+                </Link>
+              </TableCell>
+              <TableCell>
+                <Link
+                  href={`/admin/users/${user.id}`}
+                  className="hover:underline"
+                >
+                  {user.email}
+                </Link>
+              </TableCell>
+              <TableCell>{user.role}</TableCell>
+              {/* <TableCell>{user.activo ? "Sí" : "No"}</TableCell> */}
             </TableRow>
           ))}
         </TableBody>
