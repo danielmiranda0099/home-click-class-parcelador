@@ -25,7 +25,7 @@ export default async function ClassesPage() {
       <PopupDetailLesson rol={role[0]} user={user} />
 
       <section className="px-10 py-3 flex flex-row justify-start gap-4">
-        <CardOverView />
+        <CardOverView role={role[0]} id={user.id} />
         <CardStatusLegendLesson rol={role[0]} />
       </section>
 

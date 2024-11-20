@@ -12,23 +12,21 @@ import {
 } from "@/actions/CrudLesson";
 import { formatCurrency } from "@/utils/formatCurrency";
 
-export async function CardOverView() {
-  const session = await auth();
-
+export async function CardOverView({ role, id }) {
   let data = {
     averageScore: 0,
     completed: 0,
     scheduled: 0,
     debt: 0,
   };
-  if (session?.user.role.includes("teacher")) {
-    const response = await overViewLessonTeacher(session.user.id);
+  if (role === "teacher") {
+    const response = await overViewLessonTeacher(id);
     if (response.success) {
       data = response.data;
     }
   }
-  if (session?.user.role.includes("student")) {
-    const response = await overViewLessonStudent(session.user.id);
+  if (role === "student") {
+    const response = await overViewLessonStudent(id);
     if (response.success) {
       data = response.data;
     }
@@ -40,7 +38,7 @@ export async function CardOverView() {
         <CardTitle>Resumen De Clases</CardTitle>
       </CardHeader>
       <CardContent className="grid gap-10 grid-flow-col auto-cols-max">
-        {session?.user.role.includes("teacher") && (
+        {role === "teacher" && (
           <div className="flex items-center justify-center gap-3">
             <div className="flex items-center justify-start gap-2">
               <RatingIcon size="1.5rem" className="text-muted-foreground" />
@@ -86,8 +84,8 @@ export async function CardOverView() {
             <DollarSignIcon size="1.5rem" className="text-muted-foreground" />
             <div className="flex flex-col items-start justify-center">
               <span className="text-xl font-medium text-muted-foreground block">
-                {session?.user.role.includes("teacher") && "Cobro:"}
-                {session?.user.role.includes("student") && "Deuda:"}
+                {role === "teacher" && "Cobro:"}
+                {role === "student" && "Deuda:"}
               </span>
             </div>
           </div>
