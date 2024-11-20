@@ -115,3 +115,37 @@ export async function getUserSession() {
     return RequestResponse.error();
   }
 }
+
+export async function getUserById(id_user) {
+  try {
+    let id = parseInt(id_user, 10);
+    if (isNaN(id)) {
+      return RequestResponse.error();
+    }
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        fullName: true,
+        shortName: true,
+        email: true,
+        role: true,
+        averageScore: true,
+        phoneNumber: true,
+        city: true,
+        country: true,
+      },
+    });
+    if (!user) {
+      return RequestResponse.error();
+    }
+    return RequestResponse.success(user);
+  } catch (error) {
+    console.error("Error in getUserById", error);
+    return RequestResponse.error();
+  }
+}
