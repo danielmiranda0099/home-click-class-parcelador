@@ -5,7 +5,6 @@ import {
   DollarSignIcon,
   RatingIcon,
 } from "@/components/icons";
-import { auth } from "@/auth";
 import {
   overViewLessonStudent,
   overViewLessonTeacher,
