@@ -21,6 +21,8 @@ async function main() {
       data: {
         firstName: "daniel",
         lastName: "miranda",
+        shortName: "daniel miranda",
+        fullName: "daniel miranda castillo",
         email: adminEmail,
         phoneNumber: "123456789",
         city: "santa marta",
