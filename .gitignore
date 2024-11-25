@@ -38,4 +38,6 @@ next-env.d.ts
 
 PREFI-GIT.md
 
+ecosystem.config.example.cjs
+
 /postgres
