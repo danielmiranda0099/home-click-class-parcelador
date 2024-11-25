@@ -47,7 +47,7 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
-            cd /home-click-class-parcelador/
+            cd home-click-class-parcelador/
             git pull origin main
             npm ci
             npm run build
