@@ -3,8 +3,6 @@ name: Deploy homeclickclass CI
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -14,22 +12,31 @@ jobs:
   deploy:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Install Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22.x
 
-      - run: |
-          touch .env
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh                                      # Crea el directorio si no existe
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa  # Escribe la clave SSH
+          chmod 600 ~/.ssh/id_rsa                              # Establece permisos correctos
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts  # Añade la huella del host
+
+      - name: Create .env file
+        run: |
+          touch .env                                           # Crea un archivo .env temporal
           echo "DB_USER=${{ secrets.DB_USER }}" >> .env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
           echo "AUTH_SECRET=${{ secrets.AUTH_SECRET }}" >> .env
           echo "AUTH_URL=${{ secrets.AUTH_URL }}" >> .env
           echo "AUTH_TRUST_HOST=${{ secrets.AUTH_TRUST_HOST }}" >> .env
-          cat .env
+          cat .env                                             # Opcional, muestra el contenido
 
       - name: Install dependencies
         run: npm ci
@@ -37,18 +44,11 @@ jobs:
       - name: Build application
         run: npm run build
 
-      - name: Setup SSH Key
-        run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
-
       - name: Deploy to EC2
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
-            cd home-click-class-parcelador/
+            cd /home-click-class-parcelador/
             git pull origin main
-            export PATH=$PATH:/usr/bin:/usr/local/bin
             npm ci
             npm run build
             pm2 restart ecosystem.config.cjs
