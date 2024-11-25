@@ -21,8 +21,15 @@ jobs:
         with:
           node-version: 22.x
 
-      - name: Create file .env
-        run: echo "DB_USER=${{ secrets.DB_USER }}" >> .env && echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env && echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env && echo "AUTH_SECRET=${{ secrets.AUTH_SECRET }}" >> .env && echo "AUTH_URL=${{ secrets.AUTH_URL }}" >> .env && echo "AUTH_TRUST_HOST=${{ secrets.AUTH_TRUST_HOST }}" >> $GITHUB_ENV
+      - run: |
+          touch .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+          echo "AUTH_SECRET=${{ secrets.AUTH_SECRET }}" >> .env
+          echo "AUTH_URL=${{ secrets.AUTH_URL }}" >> .env
+          echo "AUTH_TRUST_HOST=${{ secrets.AUTH_TRUST_HOST }}" >> .env
+          cat .env
 
       - name: Install dependencies
         run: npm ci
