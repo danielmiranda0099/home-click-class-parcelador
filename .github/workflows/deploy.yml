@@ -22,21 +22,21 @@ jobs:
 
       - name: Setup SSH Key
         run: |
-          mkdir -p ~/.ssh                                      # Crea el directorio si no existe
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa  # Escribe la clave SSH
-          chmod 600 ~/.ssh/id_rsa                              # Establece permisos correctos
-          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts  # Añade la huella del host
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
       - name: Create .env file
         run: |
-          touch .env                                           # Crea un archivo .env temporal
+          touch .env
           echo "DB_USER=${{ secrets.DB_USER }}" >> .env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
           echo "AUTH_SECRET=${{ secrets.AUTH_SECRET }}" >> .env
           echo "AUTH_URL=${{ secrets.AUTH_URL }}" >> .env
           echo "AUTH_TRUST_HOST=${{ secrets.AUTH_TRUST_HOST }}" >> .env
-          cat .env                                             # Opcional, muestra el contenido
+          cat .env
 
       - name: Install dependencies
         run: npm ci
@@ -47,6 +47,15 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
+            # Cargar nvm para asegurarse de que npm y pm2 estén disponibles
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+            
+            # Asegurarse de que los binarios estén en el PATH
+            export PATH=$PATH:/home/ubuntu/.nvm/versions/node/v22.11.0/bin
+
+            # Comandos de despliegue
             cd home-click-class-parcelador/
             git pull origin main
             npm ci
