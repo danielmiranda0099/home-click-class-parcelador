@@ -75,9 +75,8 @@ export default function CierreDeCaja() {
                       <SelectValue placeholder="Seleccionar categoría" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="ventas">Clase</SelectItem>
-                      <SelectItem value="compras">Compras</SelectItem>
-                      <SelectItem value="gastos">Pago</SelectItem>
+                      <SelectItem value="ventas">Ingreso</SelectItem>
+                      <SelectItem value="compras">Egreso</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -127,9 +126,8 @@ export default function CierreDeCaja() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectContent>
-                        <SelectItem value="ventas">Clase</SelectItem>
-                        <SelectItem value="compras">Compras</SelectItem>
-                        <SelectItem value="gastos">Pago</SelectItem>
+                        <SelectItem value="ventas">Ingreso</SelectItem>
+                        <SelectItem value="compras">Egreso</SelectItem>
                       </SelectContent>
                     </SelectContent>
                   </Select>
@@ -201,8 +199,8 @@ export default function CierreDeCaja() {
                   <TableRow className="hover:bg-current">
                     <TableHead className="">Fecha</TableHead>
                     <TableHead className="">Monto</TableHead>
-                    <TableHead className="">Tipo</TableHead>
-                    <TableHead className="">Descripción</TableHead>
+
+                    <TableHead className="">Concepto</TableHead>
                     <TableHead className=""></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -214,7 +212,7 @@ export default function CierreDeCaja() {
                     <TableCell className="text-green-600 py-0">
                       $35.000
                     </TableCell>
-                    <TableCell className="py-0">Clase</TableCell>
+
                     <TableCell className="py-0">Pago estudiante.</TableCell>
                     <TableCell className="py-0">
                       <Button
@@ -240,7 +238,7 @@ export default function CierreDeCaja() {
                     <TableCell className="text-green-600 py-0">
                       $35.000
                     </TableCell>
-                    <TableCell className="py-0">Clase</TableCell>
+
                     <TableCell className="py-0">Pago estudiante.</TableCell>
                     <TableCell className="py-0">
                       <Button
@@ -264,7 +262,7 @@ export default function CierreDeCaja() {
                       {moment().format("DD-MM-YY")}
                     </TableCell>
                     <TableCell className="text-red-600 py-0">$15.000</TableCell>
-                    <TableCell className="py-0">Compra</TableCell>
+
                     <TableCell className="py-0">Hojas de block.</TableCell>
                     <TableCell className="py-0">
                       <Button
@@ -288,7 +286,7 @@ export default function CierreDeCaja() {
                       {moment().format("DD-MM-YY")}
                     </TableCell>
                     <TableCell className="text-red-600 py-0">$15.000</TableCell>
-                    <TableCell className="py-0">Clase</TableCell>
+
                     <TableCell className="py-0">Pago Profesor.</TableCell>
                     <TableCell className="py-0">
                       <Button
@@ -314,7 +312,7 @@ export default function CierreDeCaja() {
                     <TableCell className="text-green-600 py-0">
                       $35.000
                     </TableCell>
-                    <TableCell className="py-0">Clase</TableCell>
+
                     <TableCell className="py-0">Pago estudiante.</TableCell>
                     <TableCell className="py-0">
                       <Button
@@ -338,7 +336,7 @@ export default function CierreDeCaja() {
                       {moment().format("DD-MM-YY")}
                     </TableCell>
                     <TableCell className="text-red-600 py-0">$15.000</TableCell>
-                    <TableCell className="py-0">Clase</TableCell>
+
                     <TableCell className="py-0">Pago profesor.</TableCell>
                     <TableCell className="py-0">
                       <Button
@@ -371,15 +369,15 @@ export default function CierreDeCaja() {
                 <TableHeader className="bg-slate-900">
                   <TableRow className="hover:bg-current">
                     <TableHead className="">Monto</TableHead>
-                    <TableHead className="">Tipo</TableHead>
-                    <TableHead className="">Descripción</TableHead>
+
+                    <TableHead className="">Concepto</TableHead>
                     <TableHead className=""></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody className="border-gray-100 border-2">
                   <TableRow>
                     <TableCell className="text-red-600 py-0">$50,00</TableCell>
-                    <TableCell className="py-0">Clase</TableCell>
+
                     <TableCell className="py-0">
                       Pendiente pago profesor
                     </TableCell>
@@ -402,7 +400,7 @@ export default function CierreDeCaja() {
                   </TableRow>
                   <TableRow>
                     <TableCell className="text-red-600 py-0">$70,00</TableCell>
-                    <TableCell className="py-0">Servicio</TableCell>
+
                     <TableCell className="py-0">
                       Pagar factura del hosting
                     </TableCell>
@@ -427,7 +425,7 @@ export default function CierreDeCaja() {
                     <TableCell className="py-0 text-green-600">
                       $60,000
                     </TableCell>
-                    <TableCell className="py-0">Clase</TableCell>
+
                     <TableCell className="py-0">
                       Pendiente pago student
                     </TableCell>
