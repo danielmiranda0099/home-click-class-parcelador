@@ -1,5 +1,5 @@
 "use client";
-
+import { useFormState, useFormStatus } from "react-dom";
 import { Edit, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,8 +31,96 @@ import {
 } from "@/components/ui/table";
 import Link from "next/link";
 import moment from "moment";
+import {
+  createNewTransaction,
+  getMonhtlyTransactions,
+  getWeeklyTransactions,
+} from "@/actions/accounting";
+import { useEffect, useState } from "react";
+import { getMonth } from "date-fns";
+import { formatCurrency } from "@/utils/formatCurrency";
+import { SearchIcon } from "@/components/icons";
+import { ErrorAlert, InputPriceLesson } from "@/components";
+import { parseCurrencyToNumber } from "@/utils/parseCurrencyToNumber";
+import { useCustomToast } from "@/hooks";
 
-export default function CierreDeCaja() {
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" disabled={pending}>
+      Crear
+    </Button>
+  );
+}
+
+export default function AccountingPage() {
+  const [monhtly_transactions, setMonhtlyTransactions] = useState(null);
+  const [current_page, setCurrentPage] = useState(0);
+  const [form_state, dispath] = useFormState(createNewTransaction, {
+    data: [],
+    success: null,
+    error: false,
+    message: null,
+  });
+  const [error_message, setErrorMessage] = useState("");
+  const [amount_transaction, setAmountTransaction] = useState();
+  const [is_open_form_new_transaction, setIsOpenFormNewTransaction] =
+    useState(false);
+
+  const { toastSuccess } = useCustomToast();
+
+  const handleGetMonhtlyTransactions = async () => {
+    const response_monhtly_transactions = await getMonhtlyTransactions(
+      getMonth(new Date()) + 1
+    );
+    if (response_monhtly_transactions.success) {
+      setMonhtlyTransactions(response_monhtly_transactions.data);
+    } else {
+      setMonhtlyTransactions(null);
+    }
+  };
+
+  const goToPage = (pageIndex) => {
+    if (
+      pageIndex >= 0 &&
+      pageIndex < monhtly_transactions.all_transactions.length
+    ) {
+      setCurrentPage(pageIndex);
+    }
+  };
+
+  const onCreateNewTransaction = (form_data) => {
+    form_data.forEach((value, key) => {
+      console.log(key, value);
+    });
+    const data = {
+      date: form_data.get("date"),
+      amount: parseCurrencyToNumber(form_data.get("amount")),
+      type: form_data.get("type"),
+      concept: form_data.get("concept"),
+    };
+    dispath(data);
+    setErrorMessage("");
+  };
+
+  useEffect(() => {
+    handleGetMonhtlyTransactions();
+  }, []);
+
+  useEffect(() => {
+    if (form_state.success) {
+      handleGetMonhtlyTransactions();
+      toastSuccess({ title: "Movimiento creado exitosamente." });
+      setIsOpenFormNewTransaction(false);
+    }
+    if (form_state.error) {
+      setErrorMessage(form_state.message);
+    } else {
+      setErrorMessage("");
+    }
+  }, [form_state]);
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <main className="w-full flex-grow">
@@ -43,7 +131,10 @@ export default function CierreDeCaja() {
           >
             Ver todos los movimientos
           </Link>
-          <Dialog>
+          <Dialog
+            open={is_open_form_new_transaction}
+            onOpenChange={setIsOpenFormNewTransaction}
+          >
             <DialogTrigger asChild>
               <Button size="sm">
                 <Plus className="mr-2 h-4 w-4" />
@@ -57,35 +148,49 @@ export default function CierreDeCaja() {
                   Ingrese los detalles del nuevo movimiento aquí.
                 </DialogDescription>
               </DialogHeader>
-              <form className="space-y-4">
+              <form className="space-y-4" action={onCreateNewTransaction}>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="fecha">Fecha</Label>
-                    <Input id="fecha" type="date" />
+                    <Input
+                      id="fecha"
+                      type="date"
+                      name="date"
+                      defaultValue={new Date().toISOString().split("T")[0]}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="monto">Monto</Label>
-                    <Input id="monto" type="number" placeholder="0.00" />
+                    {/* TODO: Refact Name component <InputPriceLesson /> */}
+                    <InputPriceLesson
+                      name="amount"
+                      value={amount_transaction}
+                      setValue={setAmountTransaction}
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="categoria">Tipo</Label>
-                  <Select>
+                  <Select name="type">
                     <SelectTrigger>
                       <SelectValue placeholder="Seleccionar categoría" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="ventas">Ingreso</SelectItem>
-                      <SelectItem value="compras">Egreso</SelectItem>
+                      <SelectItem value="income">Ingreso</SelectItem>
+                      <SelectItem value="expense">Egreso</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="descripcion">Descripción (opcional)</Label>
+                  <Label htmlFor="descripcion">Concepto</Label>
                   <Input
                     id="descripcion"
                     placeholder="Ingrese una descripción"
+                    name="concept"
                   />
+                </div>
+                <div className="mb-6">
+                  <ErrorAlert message={error_message} />
                 </div>
                 <div className="flex justify-between">
                   <DialogClose asChild>
@@ -93,7 +198,7 @@ export default function CierreDeCaja() {
                       Cancelar
                     </Button>
                   </DialogClose>
-                  <Button type="button">Guardar</Button>
+                  <SubmitButton />
                 </div>
               </form>
             </DialogContent>
@@ -156,31 +261,42 @@ export default function CierreDeCaja() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Ingresos Actuales
+                Ingresos Mes Actuales
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-400">$105,000</div>
+              <div className="text-2xl font-bold text-green-400">
+                {monhtly_transactions &&
+                  formatCurrency(monhtly_transactions.total_income)}
+              </div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Egresos Actuales
+                Egresos Mes Actuales
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-400">$45,000</div>
+              <div className="text-2xl font-bold text-red-400">
+                {monhtly_transactions &&
+                  formatCurrency(monhtly_transactions.total_expense)}
+              </div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Balance Actual
+                Balance Mes Actual
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-400">$60,000</div>
+              <div
+                className={`text-2xl font-bold ${monhtly_transactions?.balance >= 0 ? "text-blue-400" : "text-red-400"}`}
+              >
+                {monhtly_transactions &&
+                  formatCurrency(monhtly_transactions.balance)}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -191,172 +307,88 @@ export default function CierreDeCaja() {
         >
           <Card className="md:w-[60%] w-full">
             <CardHeader className="flex justify-between items-center">
-              <CardTitle>Movimientos Actuales</CardTitle>
+              <CardTitle>Movimientos Del Mes Actual</CardTitle>
             </CardHeader>
-            <CardContent className="p-2 pb-6">
-              <Table>
-                <TableHeader className="bg-slate-900">
-                  <TableRow className="hover:bg-current">
-                    <TableHead className="">Fecha</TableHead>
-                    <TableHead className="">Monto</TableHead>
+            <CardContent className="flex flex-col justify-between min-h-[25rem] p-2 pb-6 gap-3">
+              {monhtly_transactions &&
+              monhtly_transactions.all_transactions.length > 0 ? (
+                <Table>
+                  <TableHeader className="bg-slate-900">
+                    <TableRow className="hover:bg-current">
+                      <TableHead className="">Fecha</TableHead>
+                      <TableHead className="">Monto</TableHead>
 
-                    <TableHead className="">Concepto</TableHead>
-                    <TableHead className=""></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody className="border-gray-100 border-2 p-3">
-                  <TableRow>
-                    <TableCell className="py-0 text-sm min-w-24">
-                      {moment().format("DD-MM-YY")}
-                    </TableCell>
-                    <TableCell className="text-green-600 py-0">
-                      $35.000
-                    </TableCell>
+                      <TableHead className="">Concepto</TableHead>
+                      <TableHead className=""></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody className="border-gray-100 border-2 p-3">
+                    {monhtly_transactions?.all_transactions[
+                      current_page
+                    ]?.transactions.map((transaction) => (
+                      <TableRow key={transaction.id}>
+                        <TableCell className="py-0 text-sm min-w-24">
+                          {moment(transaction.date).utc().format("D-M-Y")}
+                        </TableCell>
+                        <TableCell
+                          className={`py-0 ${transaction.type === "income" ? "text-green-600" : "text-red-600"}`}
+                        >
+                          {transaction.type === "expense" && "-"}
+                          {formatCurrency(transaction.amount)}
+                        </TableCell>
 
-                    <TableCell className="py-0">Pago estudiante.</TableCell>
-                    <TableCell className="py-0">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        aria-label="Editar movimiento"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        aria-label="Eliminar movimiento"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="py-0 text-sm min-w-24">
-                      {moment().format("DD-MM-YY")}
-                    </TableCell>
-                    <TableCell className="text-green-600 py-0">
-                      $35.000
-                    </TableCell>
+                        <TableCell className="py-0">
+                          {transaction.concept}
+                        </TableCell>
+                        <TableCell className="py-0">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            aria-label="Editar movimiento"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            aria-label="Eliminar movimiento"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="flex flex-col gap-3 flex-1 justify-center items-center h-full">
+                  <SearchIcon size={"3rem"} />
+                  <p className="text-xl font-bold">
+                    No se han encontrado movimientos.
+                  </p>
+                </div>
+              )}
 
-                    <TableCell className="py-0">Pago estudiante.</TableCell>
-                    <TableCell className="py-0">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        aria-label="Editar movimiento"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        aria-label="Eliminar movimiento"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="py-0 text-sm min-w-24">
-                      {moment().format("DD-MM-YY")}
-                    </TableCell>
-                    <TableCell className="text-red-600 py-0">$15.000</TableCell>
-
-                    <TableCell className="py-0">Hojas de block.</TableCell>
-                    <TableCell className="py-0">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        aria-label="Editar movimiento"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        aria-label="Eliminar movimiento"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="py-0 text-sm min-w-24">
-                      {moment().format("DD-MM-YY")}
-                    </TableCell>
-                    <TableCell className="text-red-600 py-0">$15.000</TableCell>
-
-                    <TableCell className="py-0">Pago Profesor.</TableCell>
-                    <TableCell className="py-0">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        aria-label="Editar movimiento"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        aria-label="Eliminar movimiento"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="py-0 text-sm min-w-24">
-                      {moment().format("DD-MM-YY")}
-                    </TableCell>
-                    <TableCell className="text-green-600 py-0">
-                      $35.000
-                    </TableCell>
-
-                    <TableCell className="py-0">Pago estudiante.</TableCell>
-                    <TableCell className="py-0">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        aria-label="Editar movimiento"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        aria-label="Eliminar movimiento"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="py-0 text-sm min-w-24">
-                      {moment().format("DD-MM-YY")}
-                    </TableCell>
-                    <TableCell className="text-red-600 py-0">$15.000</TableCell>
-
-                    <TableCell className="py-0">Pago profesor.</TableCell>
-                    <TableCell className="py-0">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        aria-label="Editar movimiento"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        aria-label="Eliminar movimiento"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+              {monhtly_transactions &&
+                monhtly_transactions.all_transactions.length > 0 && (
+                  <div className="flex gap-2 items-center justify-center">
+                    <Button
+                      onClick={() => goToPage(current_page + 1)}
+                      disabled={
+                        current_page ===
+                        monhtly_transactions.all_transactions.length - 1
+                      }
+                    >
+                      Semana Anterior
+                    </Button>
+                    <Button
+                      onClick={() => goToPage(current_page - 1)}
+                      disabled={current_page === 0}
+                    >
+                      Semana Siguiente
+                    </Button>
+                  </div>
+                )}
             </CardContent>
           </Card>
 
