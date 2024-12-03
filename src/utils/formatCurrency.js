@@ -1,23 +1,29 @@
 export function formatCurrency(value) {
-  if (!value) return "";
-  // Asegurarse de que el valor es una cadena
-  const stringValue =
-    typeof value === "number" ? value.toFixed(2) : value.toString();
+  if (value === 0) return "$0";
 
-  // Remover todo lo que no sean dígitos (opcional: incluir el punto decimal si es necesario)
-  const numericValue = stringValue.replace(/[^0-9.]/g, "");
+  if (value === null || value === undefined || value === "") return "";
 
-  // Separar parte entera y decimal
-  const [integerPart, decimalPart] = numericValue.split(".");
+  const numericValue =
+    typeof value === "number"
+      ? value
+      : parseFloat(value.toString().replace(/[^0-9.-]/g, ""));
 
-  // Insertar comas en la parte entera
+  if (isNaN(numericValue)) return "";
+
+  const isNegative = numericValue < 0;
+  const absoluteValue = Math.abs(numericValue);
+
+  const [integerPart, decimalPart] = absoluteValue.toFixed(2).split(".");
+
   const formattedIntegerPart = integerPart.replace(
     /\B(?=(\d{3})+(?!\d))/g,
     ","
   );
 
-  // Devolver el valor formateado con la parte decimal si existe
-  return decimalPart
-    ? `$${formattedIntegerPart}.${decimalPart}`
-    : `$${formattedIntegerPart}`;
+  const result =
+    decimalPart === "00"
+      ? formattedIntegerPart // Si es un número cerrado
+      : `${formattedIntegerPart}.${decimalPart}`; // Si tiene decimales
+
+  return isNegative ? `-$${result}` : `$${result}`;
 }
