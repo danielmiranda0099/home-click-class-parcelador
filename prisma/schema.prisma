@@ -34,6 +34,9 @@ model User {
   // Relaciones
   teacherLessons Lesson[]        @relation("TeacherLessons")
   studentLessons StudentLesson[]
+
+  transactions Transaction[]
+  debts        Debt[]
 }
 
 model Lesson {
@@ -62,6 +65,9 @@ model Lesson {
   teacherId Int
 
   studentLessons StudentLesson[]
+
+  transactions Transaction[]
+  debts        Debt[]
 }
 
 model StudentLesson {
@@ -79,4 +85,43 @@ model StudentLesson {
   lessonId  Int
 
   @@unique([studentId, lessonId])
+}
+
+model Transaction {
+  id        Int             @id @default(autoincrement())
+  date      DateTime
+  amount    Float
+  type      TransactionType
+  concept   String
+  lessonId  Int?
+  lesson    Lesson?         @relation(fields: [lessonId], references: [id])
+  userId    Int?
+  user      User?           @relation(fields: [userId], references: [id])
+  year      Int
+  month     Int
+  week      Int
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+}
+
+enum TransactionType {
+  income
+  expense
+}
+
+model Debt {
+  id        Int             @id @default(autoincrement())
+  date      DateTime
+  amount    Float
+  type      TransactionType
+  concept   String
+  lessonId  Int?
+  lesson    Lesson?         @relation(fields: [lessonId], references: [id])
+  userId    Int?
+  user      User?           @relation(fields: [userId], references: [id])
+  year      Int
+  month     Int
+  week      Int
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 }
