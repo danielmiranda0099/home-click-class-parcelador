@@ -43,6 +43,7 @@ import { SearchIcon } from "@/components/icons";
 import { ErrorAlert, InputPriceLesson } from "@/components";
 import { parseCurrencyToNumber } from "@/utils/parseCurrencyToNumber";
 import { useCustomToast } from "@/hooks";
+import { CardsMontlyReport } from "@/components/accounting";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -257,49 +258,7 @@ export default function AccountingPage() {
           </Dialog>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Ingresos Mes Actuales
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-400">
-                {monhtly_transactions &&
-                  formatCurrency(monhtly_transactions.total_income)}
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Egresos Mes Actuales
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-red-400">
-                {monhtly_transactions &&
-                  formatCurrency(monhtly_transactions.total_expense)}
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Balance Mes Actual
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div
-                className={`text-2xl font-bold ${monhtly_transactions?.balance >= 0 ? "text-blue-400" : "text-red-400"}`}
-              >
-                {monhtly_transactions &&
-                  formatCurrency(monhtly_transactions.balance)}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <CardsMontlyReport monhtly_transactions={monhtly_transactions} />
 
         <div
           className="flex flex-col md:flex-row gap-3 mb-8 items-start
