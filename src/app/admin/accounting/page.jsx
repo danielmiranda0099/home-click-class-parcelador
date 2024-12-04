@@ -1,5 +1,5 @@
 "use client";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
 import { Edit, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,26 +34,17 @@ import moment from "moment";
 import {
   createNewTransaction,
   getMonhtlyTransactions,
-  getWeeklyTransactions,
 } from "@/actions/accounting";
 import { useEffect, useState } from "react";
 import { getMonth } from "date-fns";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { SearchIcon } from "@/components/icons";
-import { ErrorAlert, InputPriceLesson } from "@/components";
 import { parseCurrencyToNumber } from "@/utils/parseCurrencyToNumber";
 import { useCustomToast } from "@/hooks";
-import { CardsMontlyReport } from "@/components/accounting";
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button type="submit" disabled={pending}>
-      Crear
-    </Button>
-  );
-}
+import {
+  CardsMontlyReport,
+  PopupFormCreateNewTransaction,
+} from "@/components/accounting";
 
 export default function AccountingPage() {
   const [monhtly_transactions, setMonhtlyTransactions] = useState(null);
@@ -65,7 +56,7 @@ export default function AccountingPage() {
     message: null,
   });
   const [error_message, setErrorMessage] = useState("");
-  const [amount_transaction, setAmountTransaction] = useState();
+
   const [is_open_form_new_transaction, setIsOpenFormNewTransaction] =
     useState(false);
 
@@ -132,79 +123,13 @@ export default function AccountingPage() {
           >
             Ver todos los movimientos
           </Link>
-          <Dialog
-            open={is_open_form_new_transaction}
-            onOpenChange={setIsOpenFormNewTransaction}
-          >
-            <DialogTrigger asChild>
-              <Button size="sm">
-                <Plus className="mr-2 h-4 w-4" />
-                Movimiento
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Agregar Movimiento</DialogTitle>
-                <DialogDescription>
-                  Ingrese los detalles del nuevo movimiento aquí.
-                </DialogDescription>
-              </DialogHeader>
-              <form className="space-y-4" action={onCreateNewTransaction}>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="fecha">Fecha</Label>
-                    <Input
-                      id="fecha"
-                      type="date"
-                      name="date"
-                      defaultValue={new Date().toISOString().split("T")[0]}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="monto">Monto</Label>
-                    {/* TODO: Refact Name component <InputPriceLesson /> */}
-                    <InputPriceLesson
-                      name="amount"
-                      value={amount_transaction}
-                      setValue={setAmountTransaction}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="categoria">Tipo</Label>
-                  <Select name="type">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Seleccionar categoría" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="income">Ingreso</SelectItem>
-                      <SelectItem value="expense">Egreso</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="descripcion">Concepto</Label>
-                  <Input
-                    id="descripcion"
-                    placeholder="Ingrese una descripción"
-                    name="concept"
-                  />
-                </div>
-                <div className="mb-6">
-                  <ErrorAlert message={error_message} />
-                </div>
-                <div className="flex justify-between">
-                  <DialogClose asChild>
-                    <Button type="button" variant="outline">
-                      Cancelar
-                    </Button>
-                  </DialogClose>
-                  <SubmitButton />
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
 
+          <PopupFormCreateNewTransaction
+            is_open={is_open_form_new_transaction}
+            setIsOpen={setIsOpenFormNewTransaction}
+            onCreateNewTransaction={onCreateNewTransaction}
+            error_message={error_message}
+          />
           <Dialog>
             <DialogTrigger asChild>
               <Button size="sm">
