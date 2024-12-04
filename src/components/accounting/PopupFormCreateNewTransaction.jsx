@@ -63,7 +63,14 @@ export function PopupFormCreateNewTransaction({
                 id="fecha"
                 type="date"
                 name="date"
-                defaultValue={new Date().toISOString().split("T")[0]}
+                defaultValue={
+                  new Date(
+                    new Date().getTime() -
+                      new Date().getTimezoneOffset() * 60000
+                  )
+                    .toISOString()
+                    .split("T")[0]
+                }
               />
             </div>
             <div className="space-y-2">
