@@ -28,3 +28,4 @@ export * from "./HelpIcon";
 export * from "./ChevronDown";
 export * from "./BookOpenCheckIcon";
 export * from "./GraduationIcon";
+export * from "./PlusIcon";
