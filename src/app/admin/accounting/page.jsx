@@ -4,24 +4,6 @@ import { Edit, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Table,
   TableBody,
   TableCell,
@@ -40,6 +22,7 @@ import { parseCurrencyToNumber } from "@/utils/parseCurrencyToNumber";
 import { useCustomToast } from "@/hooks";
 import {
   CardsMontlyReport,
+  PopupFormCreateNewDebt,
   PopupFormCreateNewTransaction,
   TableTransactions,
 } from "@/components/accounting";
@@ -53,10 +36,17 @@ export default function AccountingPage() {
     error: false,
     message: null,
   });
-  const [error_message, setErrorMessage] = useState("");
+  const [
+    error_message_form_new_transaction,
+    setErrorMessageFormNewTransaction,
+  ] = useState("");
+  const [error_message_form_new_Debt, setErrorMessageFormNewDebt] =
+    useState("");
 
   const [is_open_form_new_transaction, setIsOpenFormNewTransaction] =
     useState(false);
+
+  const [is_open_form_new_debt, setIsOpenFormNewDebt] = useState(false);
 
   const { toastSuccess } = useCustomToast();
 
@@ -82,7 +72,11 @@ export default function AccountingPage() {
       concept: form_data.get("concept"),
     };
     dispath(data);
-    setErrorMessage("");
+    setErrorMessageFormNewTransaction("");
+  };
+
+  const onCreateNewDebt = (form_data) => {
+    form_data.forEach((data) => console.log(data));
   };
 
   useEffect(() => {
@@ -96,9 +90,9 @@ export default function AccountingPage() {
       setIsOpenFormNewTransaction(false);
     }
     if (form_state.error) {
-      setErrorMessage(form_state.message);
+      setErrorMessageFormNewTransaction(form_state.message);
     } else {
-      setErrorMessage("");
+      setErrorMessageFormNewTransaction("");
     }
   }, [form_state]);
 
@@ -117,59 +111,14 @@ export default function AccountingPage() {
             is_open={is_open_form_new_transaction}
             setIsOpen={setIsOpenFormNewTransaction}
             onCreateNewTransaction={onCreateNewTransaction}
-            error_message={error_message}
+            error_message={error_message_form_new_transaction}
           />
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button size="sm">
-                <Plus className="mr-2 h-4 w-4" />
-                Cartera
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Registrar Movimiento de Cartera</DialogTitle>
-                <DialogDescription>
-                  Ingrese los detalles del movimiento de cartera aquí.
-                </DialogDescription>
-              </DialogHeader>
-              <form className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="monto">Monto</Label>
-                  <Input id="monto" type="number" placeholder="0.00" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="tipo">Tipo</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Seleccionar tipo" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectContent>
-                        <SelectItem value="ventas">Ingreso</SelectItem>
-                        <SelectItem value="compras">Egreso</SelectItem>
-                      </SelectContent>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="descripcion">Descripción (opcional)</Label>
-                  <Input
-                    id="descripcion"
-                    placeholder="Ingrese una descripción"
-                  />
-                </div>
-                <div className="flex justify-between">
-                  <DialogClose asChild>
-                    <Button type="button" variant="outline">
-                      Cancelar
-                    </Button>
-                  </DialogClose>
-                  <Button type="button">Guardar</Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
+          <PopupFormCreateNewDebt
+            is_open={is_open_form_new_debt}
+            setIsOpen={setIsOpenFormNewDebt}
+            error_message={error_message_form_new_Debt}
+            onCreateNewDebt={onCreateNewDebt}
+          />
         </div>
 
         <CardsMontlyReport monhtly_transactions={monhtly_transactions} />
