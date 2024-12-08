@@ -14,21 +14,16 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { PlusIcon } from "@/components/icons";
+import { CheckIcon, PlusIcon } from "@/components/icons";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" disabled={pending}>
-      Crear
+    <Button type="submit" disabled={pending} className="flex gap-1 justify-center items-center">
+      <CheckIcon size={"1.2rem"} />
+      Guardar
     </Button>
   );
 }
@@ -83,17 +78,17 @@ export function PopupFormCreateNewTransaction({
               />
             </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="categoria">Tipo</Label>
-            <Select name="type">
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar categoría" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="income">Ingreso</SelectItem>
-                <SelectItem value="expense">Egreso</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="space-y-5">
+            <RadioGroup name="type" required className="flex gap-3">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="income" id="option-one" className="data-[state=checked]:text-green-500" />
+                <Label htmlFor="option-one">Ingreso</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="expense" id="option-two" className="data-[state=checked]:text-red-500"/>
+                <Label htmlFor="option-two">Egreso</Label>
+              </div>
+            </RadioGroup>
           </div>
           <div className="space-y-2">
             <Label htmlFor="descripcion">Concepto</Label>
@@ -101,12 +96,13 @@ export function PopupFormCreateNewTransaction({
               id="descripcion"
               placeholder="Ingrese una descripción"
               name="concept"
+              required
             />
           </div>
           <div className="mb-6">
             <ErrorAlert message={error_message} />
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-end gap-3">
             <DialogClose asChild>
               <Button type="button" variant="outline">
                 Cancelar
