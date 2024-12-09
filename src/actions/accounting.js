@@ -149,13 +149,82 @@ export async function getWeeklyTransactions() {
   }
 }
 
+export async function createNewDebts(prev, form_dada) {
+  try {
+    const { amount, type, concept, userId, lessonId } = form_dada;
+
+    if (!amount || !type) {
+      return RequestResponse.error(
+        "Por favor rellene los campos obligatorios."
+      );
+    }
+
+    if (amount <= 0) {
+      return RequestResponse.error(
+        "Por favor ingrese un valor valido en el monto."
+      );
+    }
+
+    if (userId) {
+      const exist_user = await prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+      });
+      if (!exist_user) {
+        return RequestResponse.error();
+      }
+    }
+
+    if (lessonId) {
+      const exist_lesson = await prisma.lesson.findUnique({
+        where: {
+          id: lessonId,
+        },
+      });
+      if (!exist_lesson) {
+        return RequestResponse.error();
+      }
+    }
+
+    const current_date = new Date();
+    const year = getYear(current_date);
+    const month = getMonth(current_date) + 1;
+    const week = getWeek(new Date(current_date));
+
+    const new_debts = await prisma.debt.create({
+      data: {
+        date: new Date().toISOString(),
+        amount,
+        type,
+        year,
+        month,
+        week,
+        ...(concept && {
+          concept,
+        }),
+        ...(userId && {
+          userId,
+        }),
+        ...(lessonId && {
+          lessonId,
+        }),
+      },
+    });
+    return RequestResponse.success();
+  } catch (error) {
+    console.error("Error in CreateNewDebts()", error);
+    return RequestResponse.error();
+  }
+}
+
 export async function getAllDebt() {
   try {
     const all_debt = await prisma.debt.findMany({
       orderBy: {
-        date: "desc"
-      }
-    })
+        date: "desc",
+      },
+    });
     return RequestResponse.success(all_debt);
   } catch (error) {
     console.error("Error in getAllDebt()", error);
