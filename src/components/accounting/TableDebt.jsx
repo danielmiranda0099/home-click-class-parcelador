@@ -10,103 +10,139 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PencilIcon, TrashIcon } from "@/components/icons";
+import { PencilIcon, SearchIcon, TrashIcon } from "@/components/icons";
+import { formatCurrency } from "@/utils/formatCurrency";
+import { useState } from "react";
 
-export function TableDebt() {
+export function TableDebt({ debts }) {
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 15;
+
+  // Calcular los elementos visibles según la página actual
+  const startIndex = currentPage * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const visibleDebts = debts?.slice(startIndex, endIndex);
+
+  const total_income = debts?.reduce(
+    (accu, current) =>
+      current.type === "income" ? accu + current.amount : accu + 0,
+    0
+  );
+
+  const total_expense = debts?.reduce(
+    (accu, current) =>
+      current.type === "expense" ? accu + current.amount : accu + 0,
+    0
+  );
+
+  const total_balance = total_income - total_expense;
+
   return (
     <>
       <Card className="md:w-[40%] w-full">
         <CardHeader className="flex justify-between items-center">
           <CardTitle>Cartera</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col justify-between min-h-[25rem] p-2 pb-6 gap-3">
-          <Table>
-            <TableHeader className="bg-slate-900">
-              <TableRow className="hover:bg-current">
-                <TableHead className="">Monto</TableHead>
-                <TableHead className="">Concepto</TableHead>
-                <TableHead className=""></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="border-gray-100 border-2">
-              <TableRow>
-                <TableCell className="text-red-600 py-0">$50,00</TableCell>
+        <CardContent className="flex flex-col justify-between min-h-[25rem] max-h-[40rem] p-2 pb-6 gap-3">
+          {debts ? (
+            <>
+              <Table className="relative">
+                <TableHeader className="bg-slate-900 sticky top-0">
+                  <TableRow className="hover:bg-current">
+                    <TableHead className="">Monto</TableHead>
+                    <TableHead className="">Concepto</TableHead>
+                    <TableHead className=""></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="border-gray-100 border-2 max-h-[40rem] overflow-y-scroll">
+                  {visibleDebts?.map((debt) => (
+                    <TableRow key={debt.id}>
+                      <TableCell
+                        className={`py-0 ${debt.type === "income" ? "text-green-600" : "text-red-600"}`}
+                      >
+                        {debt.type === "expense" && "-"}
+                        {formatCurrency(debt.amount)}
+                      </TableCell>
 
-                <TableCell className="py-0">Pendiente pago profesor</TableCell>
-                <TableCell className="py-0">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    aria-label="Editar movimiento"
-                  >
-                    <PencilIcon className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    aria-label="Eliminar movimiento"
-                  >
-                    <TrashIcon className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="text-red-600 py-0">$70,00</TableCell>
+                      <TableCell className="py-0">{debt.concept}</TableCell>
+                      <TableCell className="py-0">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          aria-label="Editar movimiento"
+                        >
+                          <PencilIcon className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          aria-label="Eliminar movimiento"
+                        >
+                          <TrashIcon className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <div className="border-2 border-gray-100 bg-gray-50 p-3">
+                <div className="flex gap-2 justify-start pl-4 py-3 pb-1">
+                  <p className="font-medium">Total Ingresos:</p>
+                  <p className="font-bold text-green-400">
+                    {formatCurrency(total_income)}
+                  </p>
+                </div>
 
-                <TableCell className="py-0">
-                  Pagar factura del hosting
-                </TableCell>
-                <TableCell className="py-0">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    aria-label="Editar movimiento"
-                  >
-                    <PencilIcon className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    aria-label="Eliminar movimiento"
-                  >
-                    <TrashIcon className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="py-0 text-green-600">$60,000</TableCell>
+                <div className="flex gap-2 justify-start pl-4 py-3 pt-0">
+                  <p className="font-medium">Total Egresos:</p>
+                  <p className="font-bold text-red-400">-{formatCurrency(total_expense)}</p>
+                </div>
+                <div className="flex gap-2 justify-start pl-4 py-3 pt-0">
+                  <p className="font-medium">Balance Cartera:</p>
+                  <p className={`font-bold ${ total_balance >= 0 ? "text-blue-400" : "text-red-400"}`}>
+                    {formatCurrency(
+                     total_balance
+                    )}
+                  </p>
+                </div>
 
-                <TableCell className="py-0">Pendiente pago student</TableCell>
-                <TableCell className="py-0">
+                <div className="flex gap-3 justify-center">
                   <Button
-                    variant="ghost"
-                    size="sm"
-                    aria-label="Editar movimiento"
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 0))
+                    }
+                    disabled={currentPage === 0}
                   >
-                    <PencilIcon className="h-4 w-4" />
+                    Anterior
                   </Button>
+                  <span>
+                    Página {currentPage + 1} de{" "}
+                    {Math.ceil(debts.length / itemsPerPage)}
+                  </span>
                   <Button
-                    variant="ghost"
-                    size="sm"
-                    aria-label="Eliminar movimiento"
+                    onClick={() =>
+                      setCurrentPage((prev) =>
+                        Math.min(
+                          prev + 1,
+                          Math.ceil(debts.length / itemsPerPage) - 1
+                        )
+                      )
+                    }
+                    disabled={endIndex >= debts.length}
                   >
-                    <TrashIcon className="h-4 w-4" />
+                    Siguiente
                   </Button>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-          <div className="border-2 border-gray-100 border-t-0">
-            <div className="flex gap-2 justify-start pl-4 py-3 pb-1">
-              <p className="font-medium text-green-600">Total:</p>
-              <p className="font-bold text-green-600">$60,000</p>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col gap-3 flex-1 justify-center items-center h-full">
+              <SearchIcon size={"3rem"} />
+              <p className="text-xl font-bold">
+                No se han encontrado movimientos.
+              </p>
             </div>
-
-            <div className="flex gap-2 justify-start pl-4 py-3 pt-0">
-              <p className="font-medium text-red-600">Total:</p>
-              <p className="font-bold text-red-600">$120,000</p>
-            </div>
-          </div>
+          )}
         </CardContent>
       </Card>
     </>

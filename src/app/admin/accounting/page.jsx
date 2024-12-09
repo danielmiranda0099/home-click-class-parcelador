@@ -4,6 +4,7 @@ import { useFormState } from "react-dom";
 import Link from "next/link";
 import {
   createNewTransaction,
+  getAllDebt,
   getMonhtlyTransactions,
 } from "@/actions/accounting";
 import { useEffect, useState } from "react";
@@ -20,6 +21,7 @@ import {
 
 export default function AccountingPage() {
   const [monhtly_transactions, setMonhtlyTransactions] = useState(null);
+  const [ all_debts, setAllDebts ] = useState(null);
 
   const [form_state, dispath] = useFormState(createNewTransaction, {
     data: [],
@@ -52,6 +54,15 @@ export default function AccountingPage() {
     }
   };
 
+  const handleGetAllDebt = async () => {
+    const response_all_debt = await getAllDebt();
+    if (response_all_debt.success) {
+      setAllDebts(response_all_debt.data);
+    } else {
+      setAllDebts(null);
+    }
+  }
+
   const onCreateNewTransaction = (form_data) => {
     form_data.forEach((value, key) => {
       console.log(key, value);
@@ -72,6 +83,7 @@ export default function AccountingPage() {
 
   useEffect(() => {
     handleGetMonhtlyTransactions();
+    handleGetAllDebt();
   }, []);
 
   useEffect(() => {
@@ -120,7 +132,7 @@ export default function AccountingPage() {
         >
           <TableTransactions monhtly_transactions={monhtly_transactions} />
 
-          <TableDebt />
+          <TableDebt debts={all_debts} />
         </div>
       </main>
     </div>
