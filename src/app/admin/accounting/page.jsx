@@ -3,6 +3,7 @@ import { useFormState } from "react-dom";
 
 import Link from "next/link";
 import {
+  createNewDebts,
   createNewTransaction,
   getAllDebt,
   getMonhtlyTransactions,
@@ -23,7 +24,7 @@ export default function AccountingPage() {
   const [monhtly_transactions, setMonhtlyTransactions] = useState(null);
   const [ all_debts, setAllDebts ] = useState(null);
 
-  const [form_state, dispath] = useFormState(createNewTransaction, {
+  const [form_state_form_transaction, dispathFormTransaction] = useFormState(createNewTransaction, {
     data: [],
     success: null,
     error: false,
@@ -33,6 +34,12 @@ export default function AccountingPage() {
     error_message_form_new_transaction,
     setErrorMessageFormNewTransaction,
   ] = useState("");
+  const [form_state_form_debt, dispathFormDebt] = useFormState(createNewDebts, {
+    data: [],
+    success: null,
+    error: false,
+    message: null,
+  });
   const [error_message_form_new_Debt, setErrorMessageFormNewDebt] =
     useState("");
 
@@ -64,21 +71,24 @@ export default function AccountingPage() {
   }
 
   const onCreateNewTransaction = (form_data) => {
-    form_data.forEach((value, key) => {
-      console.log(key, value);
-    });
     const data = {
       date: form_data.get("date"),
       amount: parseCurrencyToNumber(form_data.get("amount")),
       type: form_data.get("type"),
       concept: form_data.get("concept"),
     };
-    dispath(data);
+    dispathFormTransaction(data);
     setErrorMessageFormNewTransaction("");
   };
 
   const onCreateNewDebt = (form_data) => {
-    form_data.forEach((data) => console.log(data));
+    const data = {
+      amount: parseCurrencyToNumber(form_data.get("amount")),
+      type: form_data.get("type"),
+      concept: form_data.get("concept"),
+    };
+    dispathFormDebt(data);
+    setErrorMessageFormNewDebt("");
   };
 
   useEffect(() => {
@@ -87,17 +97,30 @@ export default function AccountingPage() {
   }, []);
 
   useEffect(() => {
-    if (form_state.success) {
+    if (form_state_form_transaction.success) {
       handleGetMonhtlyTransactions();
       toastSuccess({ title: "Movimiento creado exitosamente." });
       setIsOpenFormNewTransaction(false);
     }
-    if (form_state.error) {
-      setErrorMessageFormNewTransaction(form_state.message);
+    if (form_state_form_transaction.error) {
+      setErrorMessageFormNewTransaction(form_state_form_transaction.message);
     } else {
       setErrorMessageFormNewTransaction("");
     }
-  }, [form_state]);
+  }, [form_state_form_transaction]);
+
+  useEffect(() => {
+    if (form_state_form_debt.success) {
+      handleGetAllDebt();
+      toastSuccess({ title: "Movimiento de cartera creado exitosamente." });
+      setIsOpenFormNewDebt(false);
+    }
+    if (form_state_form_debt.error) {
+      setErrorMessageFormNewDebt(form_state_form_debt.message);
+    } else {
+      setErrorMessageFormNewDebt("");
+    }
+  }, [form_state_form_debt]);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
