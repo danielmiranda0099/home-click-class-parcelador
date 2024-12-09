@@ -149,6 +149,20 @@ export async function getWeeklyTransactions() {
   }
 }
 
+export async function getAllDebt() {
+  try {
+    const all_debt = await prisma.debt.findMany({
+      orderBy: {
+        date: "desc"
+      }
+    })
+    return RequestResponse.success(all_debt);
+  } catch (error) {
+    console.error("Error in getAllDebt()", error);
+    return RequestResponse.error();
+  }
+}
+
 // Para filtrar por usuario, puedes agregar una condición en la cláusula where:
 const userTransactions = await prisma.transaction.findMany({
   where: {
