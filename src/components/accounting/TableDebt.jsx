@@ -44,7 +44,7 @@ export function TableDebt({ debts }) {
           <CardTitle>Cartera</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col justify-between min-h-[25rem] max-h-[40rem] p-2 pb-6 gap-3">
-          {debts ? (
+          {debts?.length > 0 ? (
             <>
               <Table className="relative">
                 <TableHeader className="bg-slate-900 sticky top-0">
