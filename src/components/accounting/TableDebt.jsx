@@ -43,7 +43,7 @@ export function TableDebt({ debts }) {
         <CardHeader className="flex justify-between items-center">
           <CardTitle>Cartera</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col justify-between min-h-[25rem] max-h-[40rem] p-2 pb-6 gap-3">
+        <CardContent className="flex flex-col justify-between h-[40rem] p-2 pb-6 gap-3">
           {debts?.length > 0 ? (
             <>
               <Table className="relative">
@@ -106,7 +106,7 @@ export function TableDebt({ debts }) {
                   </p>
                 </div>
 
-                <div className="flex gap-3 justify-center">
+                <div className="flex gap-3 justify-center items-center">
                   <Button
                     onClick={() =>
                       setCurrentPage((prev) => Math.max(prev - 1, 0))
