@@ -29,11 +29,11 @@ export function TableTransactions({ monhtly_transactions }) {
       <CardHeader className="flex justify-between items-center">
         <CardTitle>Movimientos Del Mes Actual</CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col justify-between min-h-[25rem] p-2 pb-6 gap-3">
+      <CardContent className="flex flex-col justify-between h-[40rem] p-2 pb-6 gap-3">
         {monhtly_transactions &&
         monhtly_transactions.all_transactions.length > 0 ? (
-          <Table>
-            <TableHeader className="bg-slate-900">
+          <Table className="relative">
+            <TableHeader className="bg-slate-900 sticky top-0">
               <TableRow className="hover:bg-current">
                 <TableHead className="">Fecha</TableHead>
                 <TableHead className="">Monto</TableHead>
@@ -42,7 +42,7 @@ export function TableTransactions({ monhtly_transactions }) {
                 <TableHead className=""></TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody className="border-gray-100 border-2 p-3">
+            <TableBody className="border-gray-100 border-2 max-h-[40rem] overflow-y-scroll">
               {monhtly_transactions?.all_transactions[
                 current_page
               ]?.transactions.map((transaction) => (
@@ -98,6 +98,7 @@ export function TableTransactions({ monhtly_transactions }) {
               >
                 Semana Anterior
               </Button>
+              <span>Página {current_page + 1} de { monhtly_transactions.all_transactions.length}</span>
               <Button
                 onClick={() => goToPage(current_page - 1)}
                 disabled={current_page === 0}
