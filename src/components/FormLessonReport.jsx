@@ -15,10 +15,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useLessonsStore } from "@/store/lessonStore";
-import { registerAndSaveLessonReport } from "@/actions/CrudLesson";
 import { CheckIcon } from "@/components/icons";
 import { ErrorAlert } from "@/components";
 import { useCustomToast } from "@/hooks";
+import { registerAndSaveLessonReportAndRegisterDebt } from "@/actions/lessonDebts";
 
 function SubmitButton({ message }) {
   const { pending } = useFormStatus();
@@ -38,7 +38,7 @@ export function FormLessonReport({ rol }) {
     setPopupFormLessonReport: setIsOpen,
   } = useUiStore();
   const [form_state, formActionDispath] = useFormState(
-    registerAndSaveLessonReport,
+    registerAndSaveLessonReportAndRegisterDebt,
     {
       data: [],
       succes: null,
@@ -68,7 +68,7 @@ export function FormLessonReport({ rol }) {
 
   const onSubmit = async (form_data) => {
     const form_report_data = Object.fromEntries(form_data.entries());
-    form_report_data.lessonId = lesson.id;
+    form_report_data.lesson_id = lesson.id;
     form_report_data.isConfirmed = lesson.isConfirmed;
     formActionDispath(form_report_data);
     setErrorMessage("");
@@ -89,7 +89,7 @@ export function FormLessonReport({ rol }) {
               </Label>
               <Textarea
                 id="oriented-week"
-                name="week"
+                name="week_lesson"
                 className="h-32"
                 placeholder="Enter oriented week..."
                 defaultValue={lesson?.week || ""}
