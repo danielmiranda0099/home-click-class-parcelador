@@ -14,15 +14,17 @@ export async function confirmLessonAndRegisterDebt(prev, data_form) {
       currentAverageScore,
       studentObservations,
     } = data_form;
-    console.log(data_form)
+
     if (!lesson_id || !lessonScore || !teacherId || !currentAverageScore) {
-      throw new Error('Fild Problems !lesson_id || !lessonScore || !teacherId || !currentAverageScore');
+      throw new Error(
+        "Fild Problems !lesson_id || !lessonScore || !teacherId || !currentAverageScore"
+      );
     }
 
     const { user } = await auth();
 
     if (!user) {
-      throw new Error('Not found user auth()');
+      throw new Error("Not found user auth()");
     }
 
     const student_id = parseInt(user.id, 10);
@@ -33,21 +35,19 @@ export async function confirmLessonAndRegisterDebt(prev, data_form) {
       where: {
         studentId_lessonId: {
           studentId: student_id,
-          lessonId: lesson_id
-        }
-      }
+          lessonId: lesson_id,
+        },
+      },
     });
 
-    if(!student_lesson){
-      throw new Error('Not found student lesson');
+    if (!student_lesson) {
+      throw new Error("Not found student lesson");
     }
 
-    const current_date =  new Date();
+    const current_date = new Date();
     const year = getYear(current_date);
     const month = getMonth(current_date) + 1;
     const week = getWeek(current_date);
-
-    console.log(year, month, week);
 
     await prisma.$transaction(async (tx) => {
       await tx.lesson.update({
@@ -80,7 +80,7 @@ export async function confirmLessonAndRegisterDebt(prev, data_form) {
         },
       });
 
-      if(!student_lesson.isStudentPaid){
+      if (!student_lesson.isStudentPaid) {
         await tx.debt.create({
           data: {
             date: current_date.toISOString(),
@@ -91,8 +91,8 @@ export async function confirmLessonAndRegisterDebt(prev, data_form) {
             userId: parseInt(user.id, 10),
             year: year,
             month: month,
-            week: week
-          }
+            week: week,
+          },
         });
       }
     });
