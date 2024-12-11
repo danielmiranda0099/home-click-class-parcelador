@@ -13,11 +13,12 @@ import {
 } from "./ui/dialog";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
-import { confirmLesson } from "@/actions/CrudLesson";
+
 import { useLessonsStore } from "@/store/lessonStore";
 import { CheckIcon } from "@/components/icons";
 import { ErrorAlert } from "@/components";
 import { useCustomToast } from "@/hooks";
+import { confirmLessonAndRegisterDebt } from "@/actions/lessonDebts";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -31,7 +32,7 @@ function SubmitButton() {
 }
 
 export function FormConfirmClass() {
-  const [form_state, formActionDispath] = useFormState(confirmLesson, {
+  const [form_state, formActionDispath] = useFormState(confirmLessonAndRegisterDebt, {
     data: [],
     succes: null,
     error: false,
@@ -60,7 +61,7 @@ export function FormConfirmClass() {
 
   const onSubmit = async (form_data) => {
     const confirm_lesson_data = {
-      id: lesson?.id,
+      lesson_id: lesson?.id,
       teacherId: lesson.teacher.id,
       currentAverageScore: lesson.teacher.averageScore,
       lessonScore: parseInt(form_data.get("lesson_score")),
