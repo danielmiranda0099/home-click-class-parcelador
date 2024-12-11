@@ -3,7 +3,7 @@ import { formatCurrency } from "@/utils/formatCurrency";
 
 export function CardsMontlyReport({ monhtly_transactions }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-2">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">

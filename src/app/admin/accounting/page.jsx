@@ -125,7 +125,7 @@ export default function AccountingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <main className="w-full flex-grow">
-        <div className="w-full flex gap-3 mb-8 justify-end items-end">
+        <div className="w-full flex gap-3 mb-3 justify-end items-end">
           <Link
             href="#"
             className="pb-[0.08rem] border-b-2 border-gray-700 hover:text-blue-500 hover:border-blue-500 hover:bg-gray-200"
@@ -150,7 +150,7 @@ export default function AccountingPage() {
         <CardsMontlyReport monhtly_transactions={monhtly_transactions} />
 
         <div
-          className="flex flex-col md:flex-row gap-3 mb-8 items-start
+          className="flex flex-col md:flex-row gap-3 mb-3 items-start
         "
         >
           <TableTransactions monhtly_transactions={monhtly_transactions} />
