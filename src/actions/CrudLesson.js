@@ -243,67 +243,6 @@ export async function registerAndSaveLessonReport(prev, form_data) {
   }
 }
 
-export async function confirmLesson(prev_state, data_form) {
-  try {
-    let {
-      id,
-      teacherId,
-      lessonScore,
-      currentAverageScore,
-      studentObservations,
-    } = data_form;
-
-    if (!id || !lessonScore || !teacherId || !currentAverageScore) {
-      return RequestResponse.error();
-    }
-
-    const { user } = await auth();
-
-    if (!user) {
-      return RequestResponse.error();
-    }
-
-    const studentId = parseInt(user.id, 10);
-    id = parseInt(id, 10);
-    teacherId = parseInt(teacherId, 10);
-
-    await prisma.lesson.update({
-      where: { id },
-      data: {
-        isConfirmed: true,
-        studentLessons: {
-          update: {
-            where: {
-              studentId_lessonId: {
-                lessonId: id,
-                studentId: studentId,
-              },
-            },
-            data: {
-              lessonScore,
-              isConfirmed: true,
-              ...(studentObservations !== undefined &&
-                studentObservations && {
-                  studentObservations: studentObservations,
-                }),
-            },
-          },
-        },
-        teacher: {
-          update: {
-            averageScore: (currentAverageScore + lessonScore) / 2,
-          },
-        },
-      },
-    });
-
-    return RequestResponse.success();
-  } catch (error) {
-    console.error("Error Confirming Lesson", error);
-    return RequestResponse.error();
-  }
-}
-
 export async function rescheduleLesson(data_form) {
   try {
     const { id, startDate, reasonsRescheduled } = data_form;
