@@ -65,21 +65,25 @@ export function TableDebt({ debts }) {
                       </TableCell>
 
                       <TableCell className="py-0">{debt.concept}</TableCell>
-                      <TableCell className="py-0">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          aria-label="Editar movimiento"
-                        >
-                          <PencilIcon className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          aria-label="Eliminar movimiento"
-                        >
-                          <TrashIcon className="h-4 w-4" />
-                        </Button>
+                      <TableCell className={`${debt.lessonId ? "py-4": "py-0"}`}>
+                        {!debt.lessonId && (
+                          <>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              aria-label="Editar movimiento"
+                            >
+                              <PencilIcon className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              aria-label="Eliminar movimiento"
+                            >
+                              <TrashIcon className="h-4 w-4" />
+                            </Button>
+                          </>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -95,14 +99,16 @@ export function TableDebt({ debts }) {
 
                 <div className="flex gap-2 justify-start pl-4 py-3 pt-0">
                   <p className="font-medium">Total Egresos:</p>
-                  <p className="font-bold text-red-400">-{formatCurrency(total_expense)}</p>
+                  <p className="font-bold text-red-400">
+                    -{formatCurrency(total_expense)}
+                  </p>
                 </div>
                 <div className="flex gap-2 justify-start pl-4 py-3 pt-0">
                   <p className="font-medium">Balance Cartera:</p>
-                  <p className={`font-bold ${ total_balance >= 0 ? "text-blue-400" : "text-red-400"}`}>
-                    {formatCurrency(
-                     total_balance
-                    )}
+                  <p
+                    className={`font-bold ${total_balance >= 0 ? "text-blue-400" : "text-red-400"}`}
+                  >
+                    {formatCurrency(total_balance)}
                   </p>
                 </div>
 

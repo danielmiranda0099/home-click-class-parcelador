@@ -15,6 +15,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function TableTransactions({ monhtly_transactions }) {
+  console.log(monhtly_transactions);
   const [current_page, setCurrentPage] = useState(0);
   const goToPage = (pageIndex) => {
     if (
@@ -58,21 +59,25 @@ export function TableTransactions({ monhtly_transactions }) {
                   </TableCell>
 
                   <TableCell className="py-0">{transaction.concept}</TableCell>
-                  <TableCell className="py-0">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      aria-label="Editar movimiento"
-                    >
-                      <PencilIcon className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      aria-label="Eliminar movimiento"
-                    >
-                      <TrashIcon className="h-4 w-4" />
-                    </Button>
+                  <TableCell className={`${transaction.lessonId ? "py-4": "py-0"}`}>
+                    {!transaction.lessonId && (
+                      <>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          aria-label="Editar movimiento"
+                        >
+                          <PencilIcon className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          aria-label="Eliminar movimiento"
+                        >
+                          <TrashIcon className="h-4 w-4" />
+                        </Button>
+                      </>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -98,7 +103,10 @@ export function TableTransactions({ monhtly_transactions }) {
               >
                 Semana Anterior
               </Button>
-              <span>Página {current_page + 1} de { monhtly_transactions.all_transactions.length}</span>
+              <span>
+                Página {current_page + 1} de{" "}
+                {monhtly_transactions.all_transactions.length}
+              </span>
               <Button
                 onClick={() => goToPage(current_page - 1)}
                 disabled={current_page === 0}
