@@ -239,44 +239,6 @@ export async function rescheduleLesson(data_form) {
   }
 }
 
-export async function payTeacherLesson(lesson_ids) {
-  try {
-    if (!lesson_ids || lesson_ids.length < 1) {
-      return RequestResponse.error();
-    }
-
-    const lessons_ids_in_db = await prisma.lesson.findMany({
-      where: {
-        id: {
-          in: lesson_ids,
-        },
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    if (lesson_ids.length !== lessons_ids_in_db.length) {
-      return RequestResponse.error();
-    }
-
-    await prisma.lesson.updateMany({
-      where: {
-        id: {
-          in: lesson_ids,
-        },
-      },
-      data: {
-        isTeacherPaid: true,
-      },
-    });
-    return RequestResponse.success();
-  } catch (error) {
-    console.error("Error confirming teacher payment:", error);
-    return RequestResponse.error();
-  }
-}
-
 export async function processPaymentByRole(payments, user) {
   try {
     if (!payments || !user) {
