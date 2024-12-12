@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
 import { useUserStore } from "@/store/userStore";
-import { processPaymentByRole, unpaidLessons } from "@/actions/CrudLesson";
+import { unpaidLessons } from "@/actions/CrudLesson";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { PaperSearchIcon } from "@/components/icons";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -27,6 +27,7 @@ import {
 import { useUiStore } from "@/store/uiStores";
 import { ErrorAlert } from "@/components";
 import { useCustomToast } from "@/hooks";
+import { processPaymentByRole } from "@/actions/lessonTransactions";
 
 //TODO: Refact component
 export function Payments() {

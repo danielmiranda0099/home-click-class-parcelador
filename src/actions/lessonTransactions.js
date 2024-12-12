@@ -199,3 +199,91 @@ export async function payTeacherLessonAndRegisterTransaction(lesson_ids) {
     return RequestResponse.error();
   }
 }
+
+export async function processPaymentByRole(payments, user) {
+  try {
+    if (!payments || !user) {
+      return RequestResponse.error();
+    }
+
+    const user_exist = prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!user_exist) {
+      return RequestResponse.error();
+    }
+
+    if (user.role.includes("teacher")) {
+      // Filtrar lecciones seleccionadas para pago
+      const unpaid_lesson_ids = payments
+        ?.filter((lesson) => lesson.isPay && !lesson.isTeacherPaid)
+        .map((lesson) => lesson.id);
+
+      const lesson_exist = await prisma.lesson.findMany({
+        where: {
+          id: {
+            in: unpaid_lesson_ids,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (
+        unpaid_lesson_ids.lenth < 1 ||
+        unpaid_lesson_ids.length !== lesson_exist.length
+      ) {
+        return RequestResponse.error();
+      }
+
+      await payTeacherLessonAndRegisterTransaction(unpaid_lesson_ids);
+    }
+
+    if (user.role.includes("student")) {
+      // Filtrar lecciones seleccionadas para pago y obtener IDs de StudentLesson
+      const unpaid_lesson_ids = payments
+        ?.filter((lesson) => lesson.isPay && lesson.studentLessons)
+        .flatMap((lesson) =>
+          lesson.studentLessons
+            .filter(
+              (studentLesson) =>
+                !studentLesson.isStudentPaid &&
+                studentLesson.studentId === user.id
+            )
+            .map((studentLesson) => studentLesson.id)
+        );
+
+      const lesson_exist = await prisma.studentLesson.findMany({
+        where: {
+          id: {
+            in: unpaid_lesson_ids,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (
+        unpaid_lesson_ids.lenth < 1 ||
+        unpaid_lesson_ids.length !== lesson_exist.length
+      ) {
+        return RequestResponse.error();
+      }
+
+      await payStudentLessonsAndRegisterTransactions(unpaid_lesson_ids);
+    }
+
+    return RequestResponse.success();
+  } catch (error) {
+    console.error("Error in processPaymentByRole()", error);
+    return RequestResponse.error();
+  }
+}
