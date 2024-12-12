@@ -23,30 +23,25 @@ import { FormLesson } from "@/components/formLesson";
 import { DetailReviewLesson } from "./DetailReviewLesson";
 import { FooterDetailLesson } from "./FooterDetailLesson";
 import { ReasonsRescheduled } from "./ReasonsRescheduled";
-import { Badge } from "../ui/badge";
+import { Badge } from "@/components/ui/badge";
 
 const formattedDate = (start_date, end_date) => {
   const startDate = moment(start_date, "YYYY-MM-DD HH:mm");
   const endDate = moment(end_date, "YYYY-MM-DD HH:mm");
 
-  // Formatear la fecha como "September 3"
   const datePart = startDate.format("MMMM D");
 
-  // Formatear las horas como "4:00p.m" y "5:00p.m"
   const startTime = startDate.format("h:mmA").toLowerCase();
   const endTime = endDate.format("h:mmA").toLowerCase();
 
-  // Combinar todo en el formato deseado
   return `${datePart}, de ${startTime} a ${endTime}`;
 };
 
 //TODO: Refact Component
-export function PopupDetailLesson({ user, rol }) {
+export function PopupDetailLesson({ user, rol, showFooter = true }) {
   const { selected_lesson: lesson } = useLessonsStore();
   const { popupDetailLesson: is_open, setPopupDetailLesson } = useUiStore();
 
-  console.log("lesson en modal", lesson);
-  console.log("userrrr", user);
   return (
     <>
       {/* TODO: QUITAR Y COLOCAR <RORMLESSON /> EN UN AMAYOR HERARQUIA */}
@@ -73,9 +68,7 @@ export function PopupDetailLesson({ user, rol }) {
                   </div>
                   <div>
                     <p className="font-medium">Class Status</p>
-                    {/*TODO: hacer funcion para esto */}
                     <p className="text-muted-foreground">
-                      {/*TODO: corregir _ */}
                       {lesson && lesson?.lesson_status}
                     </p>
                   </div>
@@ -154,7 +147,6 @@ export function PopupDetailLesson({ user, rol }) {
                   <UserIcon className="h-8 w-8 text-primary" />
                   <div>
                     <p className="font-medium">Profesor</p>
-                    {/*TODO: hacer funcion para esto */}
                     <div className="flex gap-2">
                       <p className="text-muted-foreground">
                         {lesson && lesson?.teacher.shortName}
@@ -187,7 +179,7 @@ export function PopupDetailLesson({ user, rol }) {
               )}
             </div>
 
-            <FooterDetailLesson rol={rol} />
+            <FooterDetailLesson rol={rol} showFooter={showFooter} />
           </DialogContent>
         </Dialog>
       )}
