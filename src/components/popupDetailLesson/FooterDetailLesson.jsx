@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import {
   CancelLesson,
   DeleteLesson,
-  payStudentLesson,
   payTeacherLesson,
 } from "@/actions/CrudLesson";
 import { useLessonsStore } from "@/store/lessonStore";
@@ -24,6 +23,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { payStudentLessonsAndRegisterTransactions } from "@/actions/lessonTransactions";
 
 export function FooterDetailLesson({ rol }) {
   const [status_button, setStatusButton] = useState({
@@ -118,7 +118,7 @@ export function FooterDetailLesson({ rol }) {
                 disabled={status_button.paidStudent}
                 onClick={async () => {
                   setStatusButton({ ...status_button, paidStudent: true });
-                  const data = await payStudentLesson([
+                  const data = await payStudentLessonsAndRegisterTransactions([
                     lesson?.studentLessons[0].id,
                   ]);
                   setStatusButton({ ...status_button, paidStudent: false });
@@ -162,9 +162,10 @@ export function FooterDetailLesson({ rol }) {
                                 ...status_button,
                                 paidStudent: true,
                               });
-                              const data = await payStudentLesson([
-                                student_lesson.id,
-                              ]);
+                              const data =
+                                await payStudentLessonsAndRegisterTransactions([
+                                  student_lesson.id,
+                                ]);
                               setStatusButton({
                                 ...status_button,
                                 paidStudent: false,
