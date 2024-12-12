@@ -13,8 +13,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PencilIcon, SearchIcon, TrashIcon } from "@/components/icons";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useState } from "react";
+import { useLessonsStore } from "@/store/lessonStore";
+import { useUiStore } from "@/store/uiStores";
 
 export function TableDebt({ debts }) {
+   const { lessons, setSelectedLesson, setLessons } = useLessonsStore();
+    const { setPopupDetailLesson } = useUiStore();
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 15;
 
@@ -36,6 +40,17 @@ export function TableDebt({ debts }) {
   );
 
   const total_balance = total_income - total_expense;
+
+  const getLessonById = (id) => {
+    return lessons.find((lesson) => lesson.id === id);
+  };
+
+  const handleShowLesson = (id) => {
+    const lesson = getLessonById(id);
+    setSelectedLesson(lesson);
+    setPopupDetailLesson(true);
+  };
+
 
   return (
     <>
@@ -65,7 +80,16 @@ export function TableDebt({ debts }) {
                       </TableCell>
 
                       <TableCell className="py-0">{debt.concept}</TableCell>
-                      <TableCell className={`${debt.lessonId ? "py-4": "py-0"}`}>
+                      <TableCell className="py-1">
+                      {debt.lessonId && (
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleShowLesson(debt.lessonId)}
+                      >
+                        Ver
+                      </Button>
+                    )}
                         {!debt.lessonId && (
                           <>
                             <Button
