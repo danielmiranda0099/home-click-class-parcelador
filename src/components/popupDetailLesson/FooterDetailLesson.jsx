@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import {
   CancelLesson,
   DeleteLesson,
-  payTeacherLesson,
 } from "@/actions/CrudLesson";
 import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
@@ -23,7 +22,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { payStudentLessonsAndRegisterTransactions } from "@/actions/lessonTransactions";
+import { payStudentLessonsAndRegisterTransactions, payTeacherLessonAndRegisterTransaction } from "@/actions/lessonTransactions";
 
 export function FooterDetailLesson({ rol }) {
   const [status_button, setStatusButton] = useState({
@@ -199,7 +198,7 @@ export function FooterDetailLesson({ rol }) {
                     ...status_button,
                     paidTeacher: true,
                   });
-                  const data = await payTeacherLesson([lesson?.id]);
+                  const data = await payTeacherLessonAndRegisterTransaction([lesson?.id]);
                   setStatusButton({
                     ...status_button,
                     paidTeacher: false,

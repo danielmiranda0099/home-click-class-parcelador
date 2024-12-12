@@ -27,7 +27,7 @@ export async function payStudentLessonsAndRegisterTransactions(
         isConfirmed: true,
       },
     });
-    
+
     if (student_lesson_ids.length !== student_lessons.length) {
       throw new Error(
         "Error in student_lesson_ids.length !== student_lessons.length"
@@ -56,7 +56,7 @@ export async function payStudentLessonsAndRegisterTransactions(
     if (!user) {
       throw new Error("User not found");
     }
-    
+
     const current_date = new Date();
     const year = getYear(current_date);
     const month = getMonth(current_date) + 1;
@@ -73,7 +73,7 @@ export async function payStudentLessonsAndRegisterTransactions(
       month: month,
       week: week,
     }));
-    
+
     await prisma.$transaction(async (tx) => {
       if (lesson_debt_ids.length > 0) {
         await tx.debt.deleteMany({
@@ -108,6 +108,94 @@ export async function payStudentLessonsAndRegisterTransactions(
       "Error in payStudentLessonsAndRegisterTransactions():",
       error
     );
+    return RequestResponse.error();
+  }
+}
+
+export async function payTeacherLessonAndRegisterTransaction(lesson_ids) {
+  try {
+    if (!lesson_ids || lesson_ids.length < 1) {
+      throw new Error("Field problems in !lesson_ids || lesson_ids.length < 1");
+    }
+
+    const lessons = await prisma.lesson.findMany({
+      where: {
+        id: {
+          in: lesson_ids,
+        },
+      },
+      select: {
+        id: true,
+        teacherId: true,
+        teacherPayment: true,
+      },
+    });
+
+    if (lesson_ids.length !== lessons.length) {
+      throw new Error("Error in lesson_ids.length !== lessons_ids.length");
+    }
+
+    const user_id = lessons[0].teacherId;
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: user_id,
+      },
+      select: {
+        shortName: true,
+      },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const current_date = new Date();
+    const year = getYear(current_date);
+    const month = getMonth(current_date) + 1;
+    const week = getWeek(current_date);
+
+    const data_transactions = lessons.map((lesson) => ({
+      date: current_date.toISOString(),
+      amount: lesson.teacherPayment,
+      type: "expense",
+      concept: `Pago a profesor ${user.shortName}`,
+      lessonId: lesson.id,
+      userId: user_id,
+      year: year,
+      month: month,
+      week: week,
+    }));
+
+    await prisma.$transaction(async (tx) => {
+      await tx.debt.deleteMany({
+        where: {
+          lessonId: {
+            in: lesson_ids,
+          },
+          userId: user_id,
+        },
+      });
+
+      await tx.transaction.createMany({
+        data: data_transactions,
+      });
+
+      await tx.lesson.updateMany({
+        where: {
+          id: {
+            in: lesson_ids,
+          },
+        },
+        data: {
+          isTeacherPaid: true,
+        },
+      });
+    });
+
+    return RequestResponse.success();
+  } catch (error) {
+    console.error("Error confirming teacher payment:", error);
     return RequestResponse.error();
   }
 }
