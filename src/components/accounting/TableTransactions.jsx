@@ -11,11 +11,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLessonsStore } from "@/store/lessonStore";
+import { useUiStore } from "@/store/uiStores";
 
 export function TableTransactions({ monhtly_transactions }) {
-  console.log(monhtly_transactions);
+  const { lessons, setSelectedLesson, setLessons } = useLessonsStore();
+  const { setPopupDetailLesson } = useUiStore();
   const [current_page, setCurrentPage] = useState(0);
   const goToPage = (pageIndex) => {
     if (
@@ -25,6 +28,21 @@ export function TableTransactions({ monhtly_transactions }) {
       setCurrentPage(pageIndex);
     }
   };
+  const getLessonById = (id) => {
+    return lessons.find((lesson) => lesson.id === id);
+  };
+
+  const handleShowLesson = (id) => {
+    const lesson = getLessonById(id);
+    setSelectedLesson(lesson);
+    setPopupDetailLesson(true);
+  };
+
+  useEffect(() => {
+    if (lessons.length < 1) {
+      setLessons("admin");
+    }
+  }, []);
   return (
     <Card className="md:w-[60%] w-full">
       <CardHeader className="flex justify-between items-center">
@@ -59,7 +77,16 @@ export function TableTransactions({ monhtly_transactions }) {
                   </TableCell>
 
                   <TableCell className="py-0">{transaction.concept}</TableCell>
-                  <TableCell className={`${transaction.lessonId ? "py-4": "py-0"}`}>
+                  <TableCell className="py-1">
+                    {transaction.lessonId && (
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleShowLesson(transaction.lessonId)}
+                      >
+                        Ver
+                      </Button>
+                    )}
                     {!transaction.lessonId && (
                       <>
                         <Button

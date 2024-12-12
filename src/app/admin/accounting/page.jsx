@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import { getMonth } from "date-fns";
 import { parseCurrencyToNumber } from "@/utils/parseCurrencyToNumber";
-import { useCustomToast } from "@/hooks";
+import { useCustomToast, useUserSession } from "@/hooks";
 import {
   CardsMontlyReport,
   PopupFormCreateNewDebt,
@@ -19,17 +19,23 @@ import {
   TableDebt,
   TableTransactions,
 } from "@/components/accounting";
+import { PopupDetailLesson } from "@/components/popupDetailLesson";
 
 export default function AccountingPage() {
   const [monhtly_transactions, setMonhtlyTransactions] = useState(null);
-  const [ all_debts, setAllDebts ] = useState(null);
+  const [all_debts, setAllDebts] = useState(null);
 
-  const [form_state_form_transaction, dispathFormTransaction] = useFormState(createNewTransaction, {
-    data: [],
-    success: null,
-    error: false,
-    message: null,
-  });
+  const user_session = useUserSession();
+
+  const [form_state_form_transaction, dispathFormTransaction] = useFormState(
+    createNewTransaction,
+    {
+      data: [],
+      success: null,
+      error: false,
+      message: null,
+    }
+  );
   const [
     error_message_form_new_transaction,
     setErrorMessageFormNewTransaction,
@@ -68,7 +74,7 @@ export default function AccountingPage() {
     } else {
       setAllDebts(null);
     }
-  }
+  };
 
   const onCreateNewTransaction = (form_data) => {
     const data = {
@@ -124,6 +130,11 @@ export default function AccountingPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
+      <PopupDetailLesson
+        rol={"admin"}
+        user={user_session?.user}
+        showFooter={false}
+      />
       <main className="w-full flex-grow">
         <div className="w-full flex gap-3 mb-3 justify-end items-end">
           <Link
