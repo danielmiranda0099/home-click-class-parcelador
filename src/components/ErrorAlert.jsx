@@ -42,6 +42,7 @@ export function ErrorAlert({ message, duration = 5000, className = "" }) {
         duration-500
         ${isLeaving ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}
         animate-fadeIn
+        w-full
       ` +
         " " +
         className
