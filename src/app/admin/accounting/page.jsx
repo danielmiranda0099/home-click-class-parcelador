@@ -164,7 +164,10 @@ export default function AccountingPage() {
           className="flex flex-col md:flex-row gap-3 mb-3 items-start
         "
         >
-          <TableTransactions monhtly_transactions={monhtly_transactions} />
+          <TableTransactions
+            monhtly_transactions={monhtly_transactions}
+            handleGetMonhtlyTransactions={handleGetMonhtlyTransactions}
+          />
 
           <TableDebt debts={all_debts} />
         </div>
