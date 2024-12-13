@@ -119,7 +119,7 @@ export async function getMonhtlyTransactions(month) {
       total_expense: totals.expense,
       balance: balance,
     };
-    console.log(monthtly_transactions);
+
     return RequestResponse.success(monthtly_transactions);
   } catch (error) {
     console.error("Error in getWeeklyTransactions()", error);
@@ -141,10 +141,50 @@ export async function getWeeklyTransactions() {
         month: "asc",
       },
     });
-    console.log(weekly_transactions);
+    
     return RequestResponse.success();
   } catch (error) {
     console.error("Error in getWeeklyTransactions()", error);
+    return RequestResponse.error();
+  }
+}
+
+export async function deleteTransactions(prev, transaction_ids) {
+  try {
+    if (!transaction_ids || transaction_ids.length < 1) {
+      throw new Error(
+        "Field problems in !transaction_ids || transaction_ids.length < 1"
+      );
+    }
+
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        id: {
+          in: transaction_ids,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (transaction_ids.length !== transactions.length) {
+      throw new Error(
+        "Error in transaction_ids.length !== transactions.length"
+      );
+    }
+
+    await prisma.transaction.deleteMany({
+      where: {
+        id: {
+          in: transaction_ids,
+        },
+      },
+    });
+
+    return RequestResponse.success();
+  } catch (error) {
+    console.error("Error in deleteTransactions()", error);
     return RequestResponse.error();
   }
 }
@@ -231,27 +271,3 @@ export async function getAllDebt() {
     return RequestResponse.error();
   }
 }
-
-// Para filtrar por usuario, puedes agregar una condición en la cláusula where:
-const userTransactions = await prisma.transaction.findMany({
-  where: {
-    userId: 1, // ID del usuario
-  },
-  include: {
-    user: true,
-    lesson: true,
-  },
-});
-
-// Para calcular el balance, puedes usar groupBy() con _sum:
-const balance = await prisma.transaction.groupBy({
-  by: ["type"],
-  _sum: {
-    amount: true,
-  },
-});
-
-const totalIncome = balance.find((b) => b.type === "INCOME")?._sum.amount ?? 0;
-const totalExpense =
-  balance.find((b) => b.type === "EXPENSE")?._sum.amount ?? 0;
-const totalBalance = totalIncome - totalExpense;
