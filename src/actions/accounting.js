@@ -73,6 +73,175 @@ export async function createNewTransaction(prev, form_dada) {
   }
 }
 
+export async function updateTransaction(prev, form_dada) {
+  try {
+    const { date, amount, type, concept, userId, lessonId, updateId } = form_dada;
+
+    if (!date || !amount || !type || !updateId) {
+      return RequestResponse.error(
+        "Por favor rellene los campos obligatorios."
+      );
+    }
+
+    if (amount <= 0) {
+      return RequestResponse.error(
+        "Por favor ingrese un valor valido en el monto."
+      );
+    }
+
+    if (userId) {
+      const exist_user = await prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+      });
+      if (!exist_user) {
+        return RequestResponse.error();
+      }
+    }
+
+    if (lessonId) {
+      const exist_lesson = await prisma.lesson.findUnique({
+        where: {
+          id: lessonId,
+        },
+      });
+      if (!exist_lesson) {
+        return RequestResponse.error();
+      }
+    }
+
+    const transaction_prev = prisma.transaction.findUnique({
+      where: {
+        id: updateId
+      },
+      select: {
+        id: true
+      }
+    });
+
+    if(!transaction_prev){
+      throw new Error("transaction not found");
+    }
+
+    const date_current = parse(date, "yyyy-MM-dd", new Date());
+    const year = getYear(date_current);
+    const month = getMonth(date_current) + 1;
+    const week = getWeek(new Date(date_current));
+
+    await prisma.transaction.update({
+      where: {
+        id: updateId
+      },
+      data: {
+        date: new Date(date).toISOString(),
+        amount,
+        type,
+        year,
+        month,
+        week,
+        ...(concept && {
+          concept,
+        }),
+        ...(userId && {
+          userId,
+        }),
+        ...(lessonId && {
+          lessonId,
+        }),
+      },
+    });
+
+    return RequestResponse.success();
+  } catch (error) {
+    console.error("Error in updateTransaction()", error);
+    return RequestResponse.error();
+  }
+}
+
+export async function handleUpsertTransaction(prev, form_dada){
+  try {
+    const { operation } = form_dada;
+    if(!operation) return RequestResponse.error();
+
+    if(operation === "create") return createNewTransaction(null, form_dada);
+    if(operation === "update") return updateTransaction(null, form_dada);
+  } catch (error) {
+    console.log("Error in handleUpsertTransaction()", error);
+    return RequestResponse.error();
+  }
+}
+
+export async function createNewDebts(prev, form_dada) {
+  try {
+    const { amount, type, concept, userId, lessonId } = form_dada;
+
+    if (!amount || !type) {
+      return RequestResponse.error(
+        "Por favor rellene los campos obligatorios."
+      );
+    }
+
+    if (amount <= 0) {
+      return RequestResponse.error(
+        "Por favor ingrese un valor valido en el monto."
+      );
+    }
+
+    if (userId) {
+      const exist_user = await prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+      });
+      if (!exist_user) {
+        return RequestResponse.error();
+      }
+    }
+
+    if (lessonId) {
+      const exist_lesson = await prisma.lesson.findUnique({
+        where: {
+          id: lessonId,
+        },
+      });
+      if (!exist_lesson) {
+        return RequestResponse.error();
+      }
+    }
+
+    const current_date = new Date();
+    const year = getYear(current_date);
+    const month = getMonth(current_date) + 1;
+    const week = getWeek(new Date(current_date));
+
+    const new_debts = await prisma.debt.create({
+      data: {
+        date: new Date().toISOString(),
+        amount,
+        type,
+        year,
+        month,
+        week,
+        ...(concept && {
+          concept,
+        }),
+        ...(userId && {
+          userId,
+        }),
+        ...(lessonId && {
+          lessonId,
+        }),
+      },
+    });
+    return RequestResponse.success();
+  } catch (error) {
+    console.error("Error in CreateNewDebts()", error);
+    return RequestResponse.error();
+  }
+}
+
+
 export async function getMonhtlyTransactions(month) {
   try {
     const weekly_transactions = await prisma.transaction.findMany({
@@ -185,75 +354,6 @@ export async function deleteTransactions(prev, transaction_ids) {
     return RequestResponse.success();
   } catch (error) {
     console.error("Error in deleteTransactions()", error);
-    return RequestResponse.error();
-  }
-}
-
-export async function createNewDebts(prev, form_dada) {
-  try {
-    const { amount, type, concept, userId, lessonId } = form_dada;
-
-    if (!amount || !type) {
-      return RequestResponse.error(
-        "Por favor rellene los campos obligatorios."
-      );
-    }
-
-    if (amount <= 0) {
-      return RequestResponse.error(
-        "Por favor ingrese un valor valido en el monto."
-      );
-    }
-
-    if (userId) {
-      const exist_user = await prisma.user.findUnique({
-        where: {
-          id: userId,
-        },
-      });
-      if (!exist_user) {
-        return RequestResponse.error();
-      }
-    }
-
-    if (lessonId) {
-      const exist_lesson = await prisma.lesson.findUnique({
-        where: {
-          id: lessonId,
-        },
-      });
-      if (!exist_lesson) {
-        return RequestResponse.error();
-      }
-    }
-
-    const current_date = new Date();
-    const year = getYear(current_date);
-    const month = getMonth(current_date) + 1;
-    const week = getWeek(new Date(current_date));
-
-    const new_debts = await prisma.debt.create({
-      data: {
-        date: new Date().toISOString(),
-        amount,
-        type,
-        year,
-        month,
-        week,
-        ...(concept && {
-          concept,
-        }),
-        ...(userId && {
-          userId,
-        }),
-        ...(lessonId && {
-          lessonId,
-        }),
-      },
-    });
-    return RequestResponse.success();
-  } catch (error) {
-    console.error("Error in CreateNewDebts()", error);
     return RequestResponse.error();
   }
 }
