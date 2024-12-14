@@ -17,11 +17,14 @@ import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 import { PopupDeleteTransaction } from "./PopupDeleteTransaction";
 import { deleteDebts } from "@/actions/accounting";
+import { useAccountingStore } from "@/store/accountingStore";
 
-export function TableDebt({ debts, handleGetAllDebt }) {
+export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt }) {
   const [is_open_popup_delete, setIsOpenPopupDelete] = useState(false);
   const [transaction_id_current, setTransactionIdCurrent] = useState(null);
   const { lessons, setSelectedLesson, setLessons } = useLessonsStore();
+  const { setEditDebt } = useAccountingStore();
+
   const { setPopupDetailLesson } = useUiStore();
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 15;
@@ -106,6 +109,16 @@ export function TableDebt({ debts, handleGetAllDebt }) {
                               variant="ghost"
                               size="sm"
                               aria-label="Editar movimiento"
+                              onClick={() => {
+                                setEditDebt({
+                                  id: debt.id,
+                                  amount: debt.amount,
+                                  type: debt.type,
+                                  concept: debt.concept,
+                                });
+
+                                setIsOpenFormDebt(true);
+                              }}
                             >
                               <PencilIcon className="h-4 w-4" />
                             </Button>

@@ -1,19 +1,12 @@
 "use client";
-import { useFormState } from "react-dom";
-
 import Link from "next/link";
-import {
-  createNewDebts,
-  getAllDebt,
-  getMonhtlyTransactions,
-} from "@/actions/accounting";
+import { getAllDebt, getMonhtlyTransactions } from "@/actions/accounting";
 import { useEffect, useState } from "react";
 import { getMonth } from "date-fns";
-import { parseCurrencyToNumber } from "@/utils/parseCurrencyToNumber";
-import { useCustomToast, useUserSession } from "@/hooks";
+import { useUserSession } from "@/hooks";
 import {
   CardsMontlyReport,
-  PopupFormCreateNewDebt,
+  PopupFormDebt,
   PopupFormTransaction,
   TableDebt,
   TableTransactions,
@@ -26,20 +19,9 @@ export default function AccountingPage() {
 
   const user_session = useUserSession();
 
-  const [form_state_form_debt, dispathFormDebt] = useFormState(createNewDebts, {
-    data: [],
-    success: null,
-    error: false,
-    message: null,
-  });
-  const [error_message_form_new_Debt, setErrorMessageFormNewDebt] =
-    useState("");
-
   const [is_open_form_transaction, setIsOpenFormTransaction] = useState(false);
 
-  const [is_open_form_new_debt, setIsOpenFormNewDebt] = useState(false);
-
-  const { toastSuccess } = useCustomToast();
+  const [is_open_form_debt, setIsOpenFormDebt] = useState(false);
 
   const handleGetMonhtlyTransactions = async () => {
     const response_monhtly_transactions = await getMonhtlyTransactions(
@@ -61,33 +43,10 @@ export default function AccountingPage() {
     }
   };
 
-  const onCreateNewDebt = (form_data) => {
-    const data = {
-      amount: parseCurrencyToNumber(form_data.get("amount")),
-      type: form_data.get("type"),
-      concept: form_data.get("concept"),
-    };
-    dispathFormDebt(data);
-    setErrorMessageFormNewDebt("");
-  };
-
   useEffect(() => {
     handleGetMonhtlyTransactions();
     handleGetAllDebt();
   }, []);
-
-  useEffect(() => {
-    if (form_state_form_debt.success) {
-      handleGetAllDebt();
-      toastSuccess({ title: "Movimiento de cartera creado exitosamente." });
-      setIsOpenFormNewDebt(false);
-    }
-    if (form_state_form_debt.error) {
-      setErrorMessageFormNewDebt(form_state_form_debt.message);
-    } else {
-      setErrorMessageFormNewDebt("");
-    }
-  }, [form_state_form_debt]);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -110,11 +69,10 @@ export default function AccountingPage() {
             setIsOpen={setIsOpenFormTransaction}
             handleAction={handleGetMonhtlyTransactions}
           />
-          <PopupFormCreateNewDebt
-            is_open={is_open_form_new_debt}
-            setIsOpen={setIsOpenFormNewDebt}
-            error_message={error_message_form_new_Debt}
-            onCreateNewDebt={onCreateNewDebt}
+          <PopupFormDebt
+            is_open={is_open_form_debt}
+            setIsOpen={setIsOpenFormDebt}
+            handleAction={handleGetAllDebt}
           />
         </div>
 
@@ -130,7 +88,7 @@ export default function AccountingPage() {
             handleGetMonhtlyTransactions={handleGetMonhtlyTransactions}
           />
 
-          <TableDebt debts={all_debts} handleGetAllDebt={handleGetAllDebt} />
+          <TableDebt debts={all_debts} handleGetAllDebt={handleGetAllDebt} setIsOpenFormDebt={setIsOpenFormDebt}/>
         </div>
       </main>
     </div>
