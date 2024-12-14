@@ -15,7 +15,7 @@ import { useCustomToast, useUserSession } from "@/hooks";
 import {
   CardsMontlyReport,
   PopupFormCreateNewDebt,
-  PopupFormCreateNewTransaction,
+  PopupFormTransaction,
   TableDebt,
   TableTransactions,
 } from "@/components/accounting";
@@ -49,7 +49,7 @@ export default function AccountingPage() {
   const [error_message_form_new_Debt, setErrorMessageFormNewDebt] =
     useState("");
 
-  const [is_open_form_new_transaction, setIsOpenFormNewTransaction] =
+  const [is_open_form_transaction, setIsOpenFormTransaction] =
     useState(false);
 
   const [is_open_form_new_debt, setIsOpenFormNewDebt] = useState(false);
@@ -106,7 +106,7 @@ export default function AccountingPage() {
     if (form_state_form_transaction.success) {
       handleGetMonhtlyTransactions();
       toastSuccess({ title: "Movimiento creado exitosamente." });
-      setIsOpenFormNewTransaction(false);
+      setIsOpenFormTransaction(false);
     }
     if (form_state_form_transaction.error) {
       setErrorMessageFormNewTransaction(form_state_form_transaction.message);
@@ -144,9 +144,9 @@ export default function AccountingPage() {
             Ver todos los movimientos
           </Link>
 
-          <PopupFormCreateNewTransaction
-            is_open={is_open_form_new_transaction}
-            setIsOpen={setIsOpenFormNewTransaction}
+          <PopupFormTransaction
+            is_open={is_open_form_transaction}
+            setIsOpen={setIsOpenFormTransaction}
             onCreateNewTransaction={onCreateNewTransaction}
             error_message={error_message_form_new_transaction}
           />
@@ -166,6 +166,7 @@ export default function AccountingPage() {
         >
           <TableTransactions
             monhtly_transactions={monhtly_transactions}
+            setIsOpenFormTransaction={setIsOpenFormTransaction}
             handleGetMonhtlyTransactions={handleGetMonhtlyTransactions}
           />
 

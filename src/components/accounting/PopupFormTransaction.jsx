@@ -28,13 +28,14 @@ function SubmitButton() {
   );
 }
 
-export function PopupFormCreateNewTransaction({
+export function PopupFormTransaction({
   is_open,
   setIsOpen,
   onCreateNewTransaction,
   error_message,
 }) {
   const [amount_transaction, setAmountTransaction] = useState();
+
   return (
     <Dialog open={is_open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
