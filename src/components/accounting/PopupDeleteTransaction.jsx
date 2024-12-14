@@ -9,7 +9,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { deleteTransactions } from "@/actions/accounting";
 import { ErrorAlert } from "..";
 import { useCustomToast } from "@/hooks";
 
@@ -32,10 +31,11 @@ export function PopupDeleteTransaction({
   is_open_popup_delete,
   setIsOpenPopupDelete,
   transactionId,
-  handleGetMonhtlyTransactions,
+  handleDispath,
+  handleAction = null,
 }) {
   const [form_state_form_delete_transactiom, dispathFormDeleteTransactiom] =
-    useFormState(deleteTransactions, {
+    useFormState(handleDispath, {
       data: [],
       success: null,
       error: false,
@@ -59,7 +59,9 @@ export function PopupDeleteTransaction({
     if (form_state_form_delete_transactiom.success) {
       toastSuccess({ title: "Movimiento eliminado exitosamente." });
       setIsOpenPopupDelete(false);
-      handleGetMonhtlyTransactions();
+      if (handleAction) {
+        handleAction();
+      }
     }
     if (
       form_state_form_delete_transactiom.error &&
