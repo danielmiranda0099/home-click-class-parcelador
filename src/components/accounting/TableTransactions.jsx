@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 import { PopupDeleteTransaction } from "./PopupDeleteTransaction";
+import { deleteTransactions } from "@/actions/accounting";
 
 export function TableTransactions({
   monhtly_transactions,
@@ -55,7 +56,8 @@ export function TableTransactions({
         is_open_popup_delete={is_open_popup_delete}
         setIsOpenPopupDelete={setIsOpenPopupDelete}
         transactionId={transaction_id_current}
-        handleGetMonhtlyTransactions={handleGetMonhtlyTransactions}
+        handleDispath={deleteTransactions}
+        handleAction={handleGetMonhtlyTransactions}
       />
       <Card className="md:w-[60%] w-full">
         <CardHeader className="flex justify-between items-center">
