@@ -17,16 +17,21 @@ import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 import { PopupDeleteTransaction } from "./PopupDeleteTransaction";
 import { deleteTransactions } from "@/actions/accounting";
+import { useAccountingStore } from "@/store/accountingStore";
 
 export function TableTransactions({
   monhtly_transactions,
   handleGetMonhtlyTransactions,
+  setIsOpenFormTransaction
 }) {
   const [is_open_popup_delete, setIsOpenPopupDelete] = useState(false);
   const { lessons, setSelectedLesson, setLessons } = useLessonsStore();
   const [transaction_id_current, setTransactionIdCurrent] = useState(null);
   const { setPopupDetailLesson } = useUiStore();
   const [current_page, setCurrentPage] = useState(0);
+
+  const {setEditTransaction} = useAccountingStore();
+
   const goToPage = (pageIndex) => {
     if (
       pageIndex >= 0 &&
@@ -35,6 +40,7 @@ export function TableTransactions({
       setCurrentPage(pageIndex);
     }
   };
+
   const getLessonById = (id) => {
     return lessons.find((lesson) => lesson.id === id);
   };
@@ -110,7 +116,16 @@ export function TableTransactions({
                             variant="ghost"
                             size="sm"
                             aria-label="Editar movimiento"
-                          >
+                            onClick={() => {
+                              setEditTransaction({
+                                id: transaction.id,
+                                date: new Date(transaction.date).toISOString(),
+                                amount: transaction.amount,
+                                type: transaction.type,
+                                concept: transaction.concept,
+                              });
+                              setIsOpenFormTransaction(true);
+                            }}                          >
                             <PencilIcon className="h-4 w-4" />
                           </Button>
                           <Button
