@@ -169,7 +169,7 @@ export default function AccountingPage() {
             handleGetMonhtlyTransactions={handleGetMonhtlyTransactions}
           />
 
-          <TableDebt debts={all_debts} />
+          <TableDebt debts={all_debts} handleGetAllDebt={handleGetAllDebt}/>
         </div>
       </main>
     </div>

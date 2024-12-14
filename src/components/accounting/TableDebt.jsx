@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -12,13 +13,16 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PencilIcon, SearchIcon, TrashIcon } from "@/components/icons";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { useState } from "react";
 import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
+import { PopupDeleteTransaction } from "./PopupDeleteTransaction";
+import { deleteDebts } from "@/actions/accounting";
 
-export function TableDebt({ debts }) {
-   const { lessons, setSelectedLesson, setLessons } = useLessonsStore();
-    const { setPopupDetailLesson } = useUiStore();
+export function TableDebt({ debts, handleGetAllDebt }) {
+  const [is_open_popup_delete, setIsOpenPopupDelete] = useState(false);
+  const [transaction_id_current, setTransactionIdCurrent] = useState(null);
+  const { lessons, setSelectedLesson, setLessons } = useLessonsStore();
+  const { setPopupDetailLesson } = useUiStore();
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 15;
 
@@ -51,9 +55,15 @@ export function TableDebt({ debts }) {
     setPopupDetailLesson(true);
   };
 
-
   return (
     <>
+      <PopupDeleteTransaction
+        is_open_popup_delete={is_open_popup_delete}
+        setIsOpenPopupDelete={setIsOpenPopupDelete}
+        transactionId={transaction_id_current}
+        handleDispath={deleteDebts}
+        handleAction={handleGetAllDebt}
+      />
       <Card className="md:w-[40%] w-full">
         <CardHeader className="flex justify-between items-center">
           <CardTitle>Cartera</CardTitle>
@@ -81,15 +91,15 @@ export function TableDebt({ debts }) {
 
                       <TableCell className="py-0">{debt.concept}</TableCell>
                       <TableCell className="py-1">
-                      {debt.lessonId && (
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleShowLesson(debt.lessonId)}
-                      >
-                        Ver
-                      </Button>
-                    )}
+                        {debt.lessonId && (
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleShowLesson(debt.lessonId)}
+                          >
+                            Ver
+                          </Button>
+                        )}
                         {!debt.lessonId && (
                           <>
                             <Button
@@ -103,6 +113,10 @@ export function TableDebt({ debts }) {
                               variant="ghost"
                               size="sm"
                               aria-label="Eliminar movimiento"
+                              onClick={() => {
+                                setTransactionIdCurrent(debt.id);
+                                setIsOpenPopupDelete(true);
+                              }}
                             >
                               <TrashIcon className="h-4 w-4" />
                             </Button>
