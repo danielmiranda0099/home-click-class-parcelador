@@ -56,6 +56,7 @@ export function TableTransactions({
       setLessons("admin");
     }
   }, []);
+  
   return (
     <>
       <PopupDeleteTransaction
