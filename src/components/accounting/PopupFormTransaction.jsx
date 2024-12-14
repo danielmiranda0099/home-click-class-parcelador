@@ -1,6 +1,6 @@
 "use client";
-import { useFormStatus } from "react-dom";
-import { useState } from "react";
+import { useFormState, useFormStatus } from "react-dom";
+import { useEffect, useState } from "react";
 import { ErrorAlert, InputPriceLesson } from "@/components";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,12 +16,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CheckIcon, PlusIcon } from "@/components/icons";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useAccountingStore } from "@/store/accountingStore";
+import { handleUpsertTransaction } from "@/actions/accounting";
+import { useCustomToast } from "@/hooks";
+import { parseCurrencyToNumber } from "@/utils/parseCurrencyToNumber";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" disabled={pending} className="flex gap-1 justify-center items-center">
+    <Button
+      type="submit"
+      disabled={pending}
+      className="flex gap-1 justify-center items-center"
+    >
       <CheckIcon size={"1.2rem"} />
       Guardar
     </Button>
@@ -31,13 +39,76 @@ function SubmitButton() {
 export function PopupFormTransaction({
   is_open,
   setIsOpen,
-  onCreateNewTransaction,
-  error_message,
+  handleAction=null,
 }) {
-  const [amount_transaction, setAmountTransaction] = useState();
+  const { editTransaction, setEditTransaction } = useAccountingStore();
+  const [amount_transaction, setAmountTransaction] = useState("");
+
+  const [error_message_form_transaction, setErrorMessageFormTransaction] =
+    useState("");
+  const [form_state_form_transaction, dispathFormTransaction] = useFormState(
+    handleUpsertTransaction,
+    {
+      data: [],
+      success: null,
+      error: false,
+      message: null,
+    }
+  );
+
+  const { toastSuccess } = useCustomToast();
+
+  const onHandleUpsertTransaction = (form_data) => {
+    const data = {
+      date: form_data.get("date"),
+      amount: parseCurrencyToNumber(form_data.get("amount")),
+      type: form_data.get("type"),
+      concept: form_data.get("concept"),
+    };
+    if(editTransaction){
+      data.operation = "update"
+      data.updateId = editTransaction.id;
+    }else {
+      data.operation = "create"
+    }
+    dispathFormTransaction(data);
+    setErrorMessageFormTransaction("");
+  };
+
+  useEffect(() => {
+    if (editTransaction) {
+      setAmountTransaction(editTransaction.amount.toString());
+    }
+  }, [editTransaction]);
+
+  useEffect(() => {
+    if (form_state_form_transaction.success) {
+      toastSuccess({ title: "Movimiento creado exitosamente." });
+      setIsOpen(false);
+      if(handleAction){
+        handleAction();
+      }
+    }
+    if (
+      form_state_form_transaction.error &&
+      error_message_form_transaction.length === 0
+    ) {
+      setErrorMessageFormTransaction(form_state_form_transaction.message);
+    }
+  }, [form_state_form_transaction]);
 
   return (
-    <Dialog open={is_open} onOpenChange={setIsOpen}>
+    <Dialog
+      open={is_open}
+      onOpenChange={(open) => {
+        if (!open) {
+          setEditTransaction(null);
+          setErrorMessageFormTransaction("");
+          setAmountTransaction("");
+        }
+        setIsOpen(open);
+      }}
+    >
       <DialogTrigger asChild>
         <Button size="sm">
           <PlusIcon className="mr-2 h-4 w-4" />
@@ -47,11 +118,9 @@ export function PopupFormTransaction({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Agregar Movimiento</DialogTitle>
-          <DialogDescription>
-            Ingrese los detalles del nuevo movimiento aquí.
-          </DialogDescription>
+          <DialogDescription></DialogDescription>
         </DialogHeader>
-        <form className="space-y-4" action={onCreateNewTransaction}>
+        <form className="space-y-4" action={onHandleUpsertTransaction}>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="fecha">Fecha</Label>
@@ -60,12 +129,14 @@ export function PopupFormTransaction({
                 type="date"
                 name="date"
                 defaultValue={
-                  new Date(
-                    new Date().getTime() -
-                      new Date().getTimezoneOffset() * 60000
-                  )
-                    .toISOString()
-                    .split("T")[0]
+                  editTransaction
+                    ? new Date(editTransaction.date).toISOString().split("T")[0]
+                    : new Date(
+                        new Date().getTime() -
+                          new Date().getTimezoneOffset() * 60000
+                      )
+                        .toISOString()
+                        .split("T")[0]
                 }
               />
             </div>
@@ -80,13 +151,26 @@ export function PopupFormTransaction({
             </div>
           </div>
           <div className="space-y-5">
-            <RadioGroup name="type" required className="flex gap-3">
+            <RadioGroup
+              name="type"
+              required
+              className="flex gap-3"
+              defaultValue={editTransaction?.type}
+            >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="income" id="option-one" className="data-[state=checked]:text-green-500" />
+                <RadioGroupItem
+                  value="income"
+                  id="option-one"
+                  className="data-[state=checked]:text-green-500"
+                />
                 <Label htmlFor="option-one">Ingreso</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="expense" id="option-two" className="data-[state=checked]:text-red-500"/>
+                <RadioGroupItem
+                  value="expense"
+                  id="option-two"
+                  className="data-[state=checked]:text-red-500"
+                />
                 <Label htmlFor="option-two">Egreso</Label>
               </div>
             </RadioGroup>
@@ -97,11 +181,12 @@ export function PopupFormTransaction({
               id="descripcion"
               placeholder="Ingrese una descripción"
               name="concept"
+              defaultValue={editTransaction?.concept}
               required
             />
           </div>
           <div className="mb-6">
-            <ErrorAlert message={error_message} />
+            <ErrorAlert message={error_message_form_transaction} />
           </div>
           <div className="flex justify-end gap-3">
             <DialogClose asChild>

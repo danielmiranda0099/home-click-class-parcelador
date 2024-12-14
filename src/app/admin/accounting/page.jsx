@@ -4,7 +4,6 @@ import { useFormState } from "react-dom";
 import Link from "next/link";
 import {
   createNewDebts,
-  createNewTransaction,
   getAllDebt,
   getMonhtlyTransactions,
 } from "@/actions/accounting";
@@ -27,19 +26,6 @@ export default function AccountingPage() {
 
   const user_session = useUserSession();
 
-  const [form_state_form_transaction, dispathFormTransaction] = useFormState(
-    createNewTransaction,
-    {
-      data: [],
-      success: null,
-      error: false,
-      message: null,
-    }
-  );
-  const [
-    error_message_form_new_transaction,
-    setErrorMessageFormNewTransaction,
-  ] = useState("");
   const [form_state_form_debt, dispathFormDebt] = useFormState(createNewDebts, {
     data: [],
     success: null,
@@ -49,8 +35,7 @@ export default function AccountingPage() {
   const [error_message_form_new_Debt, setErrorMessageFormNewDebt] =
     useState("");
 
-  const [is_open_form_transaction, setIsOpenFormTransaction] =
-    useState(false);
+  const [is_open_form_transaction, setIsOpenFormTransaction] = useState(false);
 
   const [is_open_form_new_debt, setIsOpenFormNewDebt] = useState(false);
 
@@ -76,17 +61,6 @@ export default function AccountingPage() {
     }
   };
 
-  const onCreateNewTransaction = (form_data) => {
-    const data = {
-      date: form_data.get("date"),
-      amount: parseCurrencyToNumber(form_data.get("amount")),
-      type: form_data.get("type"),
-      concept: form_data.get("concept"),
-    };
-    dispathFormTransaction(data);
-    setErrorMessageFormNewTransaction("");
-  };
-
   const onCreateNewDebt = (form_data) => {
     const data = {
       amount: parseCurrencyToNumber(form_data.get("amount")),
@@ -101,19 +75,6 @@ export default function AccountingPage() {
     handleGetMonhtlyTransactions();
     handleGetAllDebt();
   }, []);
-
-  useEffect(() => {
-    if (form_state_form_transaction.success) {
-      handleGetMonhtlyTransactions();
-      toastSuccess({ title: "Movimiento creado exitosamente." });
-      setIsOpenFormTransaction(false);
-    }
-    if (form_state_form_transaction.error) {
-      setErrorMessageFormNewTransaction(form_state_form_transaction.message);
-    } else {
-      setErrorMessageFormNewTransaction("");
-    }
-  }, [form_state_form_transaction]);
 
   useEffect(() => {
     if (form_state_form_debt.success) {
@@ -147,8 +108,7 @@ export default function AccountingPage() {
           <PopupFormTransaction
             is_open={is_open_form_transaction}
             setIsOpen={setIsOpenFormTransaction}
-            onCreateNewTransaction={onCreateNewTransaction}
-            error_message={error_message_form_new_transaction}
+            handleAction={handleGetMonhtlyTransactions}
           />
           <PopupFormCreateNewDebt
             is_open={is_open_form_new_debt}
@@ -170,7 +130,7 @@ export default function AccountingPage() {
             handleGetMonhtlyTransactions={handleGetMonhtlyTransactions}
           />
 
-          <TableDebt debts={all_debts} handleGetAllDebt={handleGetAllDebt}/>
+          <TableDebt debts={all_debts} handleGetAllDebt={handleGetAllDebt} />
         </div>
       </main>
     </div>
