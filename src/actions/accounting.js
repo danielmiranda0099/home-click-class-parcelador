@@ -271,3 +271,43 @@ export async function getAllDebt() {
     return RequestResponse.error();
   }
 }
+
+export async function deleteDebts(prev, debt_ids) {
+  try {
+    if (!debt_ids || debt_ids.length < 1) {
+      throw new Error(
+        "Field problems in !debt_ids || debt_ids.length < 1"
+      );
+    }
+
+    const debts = await prisma.debt.findMany({
+      where: {
+        id: {
+          in: debt_ids,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (debt_ids.length !== debts.length) {
+      throw new Error(
+        "Error in debt_ids.length !== transactions.length"
+      );
+    }
+
+    await prisma.debt.deleteMany({
+      where: {
+        id: {
+          in: debt_ids,
+        },
+      },
+    });
+
+    return RequestResponse.success();
+  } catch (error) {
+    console.error("Error in deleteDebts()", error);
+    return RequestResponse.error();
+  }
+}
