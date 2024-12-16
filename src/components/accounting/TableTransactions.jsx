@@ -1,6 +1,11 @@
 "use client";
 import moment from "moment";
-import { PencilIcon, SearchIcon, TrashIcon } from "@/components/icons";
+import {
+  FilterIcon,
+  PencilIcon,
+  SearchIcon,
+  TrashIcon,
+} from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -18,19 +23,22 @@ import { useUiStore } from "@/store/uiStores";
 import { PopupDeleteTransaction } from "./PopupDeleteTransaction";
 import { deleteTransactions } from "@/actions/accounting";
 import { useAccountingStore } from "@/store/accountingStore";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Label } from "../ui/label";
 
 export function TableTransactions({
   monhtly_transactions,
   handleGetMonhtlyTransactions,
-  setIsOpenFormTransaction
+  setIsOpenFormTransaction,
 }) {
   const [is_open_popup_delete, setIsOpenPopupDelete] = useState(false);
   const { lessons, setSelectedLesson, setLessons } = useLessonsStore();
   const [transaction_id_current, setTransactionIdCurrent] = useState(null);
   const { setPopupDetailLesson } = useUiStore();
   const [current_page, setCurrentPage] = useState(0);
+  const [filter_transaction, setFilterTransaction] = useState("all");
 
-  const {setEditTransaction} = useAccountingStore();
+  const { setEditTransaction } = useAccountingStore();
 
   const goToPage = (pageIndex) => {
     if (
@@ -56,7 +64,7 @@ export function TableTransactions({
       setLessons("admin");
     }
   }, []);
-  
+
   return (
     <>
       <PopupDeleteTransaction
@@ -70,83 +78,129 @@ export function TableTransactions({
         <CardHeader className="flex justify-between items-center">
           <CardTitle>Movimientos Del Mes Actual</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col justify-between h-[40rem] p-2 pb-6 gap-3">
+        <CardContent className="flex flex-col justify-between h-[45rem] p-2 pb-6 gap-3">
           {monhtly_transactions &&
           monhtly_transactions.all_transactions.length > 0 ? (
-            <Table className="relative">
-              <TableHeader className="bg-slate-900 sticky top-0">
-                <TableRow className="hover:bg-current">
-                  <TableHead className="">Fecha</TableHead>
-                  <TableHead className="">Monto</TableHead>
+            <div className="flex flex-col justify-start h-[40rem] p-2 pb-6 gap-3">
+              <div className="flex gap-2">
+                <FilterIcon />
+                <RadioGroup
+                  defaultValue="all"
+                  onValueChange={(value) => setFilterTransaction(value)}
+                  className="flex gap-4"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value="all"
+                      id="r1"
+                      className="data-[state=checked]:text-blue-400"
+                    />
+                    <Label htmlFor="r1">Todo</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value="income"
+                      id="r2"
+                      className="data-[state=checked]:text-green-400"
+                    />
+                    <Label htmlFor="r2">Ingreso</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem
+                      value="expense"
+                      id="r3"
+                      className="data-[state=checked]:text-red-400"
+                    />
+                    <Label htmlFor="r3">Egreso</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+              <Table className="relative">
+                <TableHeader className="bg-slate-900 sticky top-0">
+                  <TableRow className="hover:bg-current">
+                    <TableHead className="">Fecha</TableHead>
+                    <TableHead className="">Monto</TableHead>
 
-                  <TableHead className="">Concepto</TableHead>
-                  <TableHead className=""></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody className="border-gray-100 border-2 max-h-[40rem] overflow-y-scroll">
-                {monhtly_transactions?.all_transactions[
-                  current_page
-                ]?.transactions.map((transaction) => (
-                  <TableRow key={transaction.id}>
-                    <TableCell className="py-0 text-sm min-w-24">
-                      {moment(transaction.date).utc().format("D-M-Y")}
-                    </TableCell>
-                    <TableCell
-                      className={`py-0 ${transaction.type === "income" ? "text-green-600" : "text-red-600"}`}
-                    >
-                      {transaction.type === "expense" && "-"}
-                      {formatCurrency(transaction.amount)}
-                    </TableCell>
-
-                    <TableCell className="py-0">
-                      {transaction.concept}
-                    </TableCell>
-                    <TableCell className="py-1">
-                      {transaction.lessonId && (
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => handleShowLesson(transaction.lessonId)}
-                        >
-                          Ver
-                        </Button>
-                      )}
-                      {!transaction.lessonId && (
-                        <>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            aria-label="Editar movimiento"
-                            onClick={() => {
-                              setEditTransaction({
-                                id: transaction.id,
-                                date: new Date(transaction.date).toISOString(),
-                                amount: transaction.amount,
-                                type: transaction.type,
-                                concept: transaction.concept,
-                              });
-                              setIsOpenFormTransaction(true);
-                            }}                          >
-                            <PencilIcon className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            aria-label="Eliminar movimiento"
-                            onClick={() => {
-                              setTransactionIdCurrent(transaction.id);
-                              setIsOpenPopupDelete(true);
-                            }}
-                          >
-                            <TrashIcon className="h-4 w-4" />
-                          </Button>
-                        </>
-                      )}
-                    </TableCell>
+                    <TableHead className="">Concepto</TableHead>
+                    <TableHead className=""></TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody className="border-gray-100 border-2 max-h-[40rem] overflow-y-scroll">
+                  {monhtly_transactions?.all_transactions[
+                    current_page
+                  ]?.transactions
+                    .filter(
+                      (transaction) =>
+                        filter_transaction === "all" ||
+                        transaction.type === filter_transaction
+                    )
+                    .map((transaction) => (
+                      <TableRow key={transaction.id}>
+                        <TableCell className="py-0 text-sm min-w-24">
+                          {moment(transaction.date).utc().format("D-M-Y")}
+                        </TableCell>
+                        <TableCell
+                          className={`py-0 ${transaction.type === "income" ? "text-green-600" : "text-red-600"}`}
+                        >
+                          {transaction.type === "expense" && "-"}
+                          {formatCurrency(transaction.amount)}
+                        </TableCell>
+
+                        <TableCell className="py-0">
+                          {transaction.concept}
+                        </TableCell>
+                        <TableCell className="py-1">
+                          {transaction.lessonId && (
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() =>
+                                handleShowLesson(transaction.lessonId)
+                              }
+                            >
+                              Ver
+                            </Button>
+                          )}
+                          {!transaction.lessonId && (
+                            <>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                aria-label="Editar movimiento"
+                                onClick={() => {
+                                  setEditTransaction({
+                                    id: transaction.id,
+                                    date: new Date(
+                                      transaction.date
+                                    ).toISOString(),
+                                    amount: transaction.amount,
+                                    type: transaction.type,
+                                    concept: transaction.concept,
+                                  });
+                                  setIsOpenFormTransaction(true);
+                                }}
+                              >
+                                <PencilIcon className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                aria-label="Eliminar movimiento"
+                                onClick={() => {
+                                  setTransactionIdCurrent(transaction.id);
+                                  setIsOpenPopupDelete(true);
+                                }}
+                              >
+                                <TrashIcon className="h-4 w-4" />
+                              </Button>
+                            </>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </div>
           ) : (
             <div className="flex flex-col gap-3 flex-1 justify-center items-center h-full">
               <SearchIcon size={"3rem"} />
@@ -168,7 +222,9 @@ export function TableTransactions({
                   Semana Anterior
                 </Button>
                 <span>
-                  Página {current_page + 1} de{" "}
+                  Página{" "}
+                  {monhtly_transactions.all_transactions.length - current_page}{" "}
+                  de{" "}
                   {monhtly_transactions.all_transactions.length}
                 </span>
                 <Button
