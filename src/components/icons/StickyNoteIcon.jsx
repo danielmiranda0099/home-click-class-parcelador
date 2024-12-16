@@ -1,4 +1,9 @@
-export function StickyNoteIcon(props) {
+export function StickyNoteIcon({
+  size = 24,
+  color = "currentColor",
+  className = "",
+  ...props
+}) {
   return (
     <svg
       {...props}
