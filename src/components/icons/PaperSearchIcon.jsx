@@ -18,30 +18,10 @@ export function PaperSearchIcon({
       strokeLinejoin="round"
       className={className}
     >
-      <path
-        d="M4 4C4 2.89543 4.89543 2 6 2H14L20 8V20C20 21.1046 19.1046 22 18 22H6C4.89543 22 4 21.1046 4 20V4Z"
-        stroke="#4A5568"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-
-      <path
-        d="M14 2V8H20"
-        stroke="#4A5568"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-
-      <circle cx="11" cy="14" r="4" stroke="#4A5568" strokeWidth="2" />
-      <path
-        d="M15.5 18.5L18 21"
-        stroke="#4A5568"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M4 4C4 2.89543 4.89543 2 6 2H14L20 8V20C20 21.1046 19.1046 22 18 22H6C4.89543 22 4 21.1046 4 20V4Z" />
+      <path d="M14 2V8H20" />
+      <circle cx="11" cy="14" r="4" />
+      <path d="M15.5 18.5L18 21" />
     </svg>
   );
 }
