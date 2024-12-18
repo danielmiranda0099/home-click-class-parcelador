@@ -58,7 +58,7 @@ export default function AccountingPage() {
       <main className="w-full flex-grow">
         <div className="w-full flex gap-3 mb-3 justify-end items-end">
           <Link
-            href="#"
+            href="/admin/accounting/history"
             className="pb-[0.08rem] border-b-2 border-gray-700 hover:text-blue-500 hover:border-blue-500 hover:bg-gray-200"
           >
             Ver todos los movimientos
