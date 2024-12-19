@@ -551,8 +551,13 @@ export async function getMonthlyTransactionsByYear(year) {
   }
 }
 
-export async function getAnnualAndMonthlyBalance(year) {
+export async function getAnnualAndMonthlyBalance(prev, year_data) {
   try {
+    const year = parseInt(year_data, 10);
+    if (typeof year !== "number" || !year) {
+      throw new Error("Invalid year, typeof year !== 'number' || !year");
+    }
+
     const yearly_transactions_response = await yearlyTransactions(year);
     const monthly_transactions_response =
       await getMonthlyTransactionsByYear(year);
