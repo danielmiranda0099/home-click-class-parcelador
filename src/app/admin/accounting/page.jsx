@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { getAllDebt, getMonhtlyTransactions } from "@/actions/accounting";
 import { useEffect, useState } from "react";
-import { getMonth } from "date-fns";
+import { getMonth, getYear } from "date-fns";
 import { useUserSession } from "@/hooks";
 import {
   CardsMontlyReport,
@@ -25,7 +25,7 @@ export default function AccountingPage() {
 
   const handleGetMonhtlyTransactions = async () => {
     const response_monhtly_transactions = await getMonhtlyTransactions(
-      getMonth(new Date()) + 1
+      getMonth(new Date()) + 1, getYear(new Date())
     );
     if (response_monhtly_transactions.success) {
       setMonhtlyTransactions(response_monhtly_transactions.data);
