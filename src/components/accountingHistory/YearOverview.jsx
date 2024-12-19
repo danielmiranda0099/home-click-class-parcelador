@@ -20,7 +20,7 @@ export function YearOverview({year, balance}) {
         </CardHeader>
         <CardContent>
           <div className={`text-lg lg:text-2xl font-bold text-red-400`}>
-            {formatCurrency(balance.expense)}
+            -{formatCurrency(balance.expense)}
           </div>
         </CardContent>
       </Card>
@@ -29,7 +29,7 @@ export function YearOverview({year, balance}) {
           <CardTitle className="text-sm font-medium">Total Balance {year}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className={`text-lg lg:text-2xl font-bold text-blue-400`}>
+          <div className={`text-lg lg:text-2xl font-bold  ${(balance.income - balance.expense) >= 0 ? "text-blue-400" : "text-red-400"}`}>
             {formatCurrency(balance.income - balance.expense)}
           </div>
         </CardContent>
