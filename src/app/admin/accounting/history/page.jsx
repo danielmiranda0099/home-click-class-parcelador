@@ -30,7 +30,7 @@ export default function AccountingHistoryPage() {
         <>
           <YearOverview balance={annual_and_monthly_balance.balance} year={annual_and_monthly_balance.year}/>
 
-          <MonthlyBreakdown months={annual_and_monthly_balance.months} />
+          <MonthlyBreakdown months={annual_and_monthly_balance.months} year={annual_and_monthly_balance.year} />
         </>
       )}
     </div>

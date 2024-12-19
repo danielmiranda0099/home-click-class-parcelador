@@ -30,15 +30,20 @@ const months_format = {
   12: "Diciembre",
 };
 
-export function MonthlyBreakdown({months}) {
+export function MonthlyBreakdown({ year, months }) {
   return (
-    <Accordion type="multiple" className="w-full" >
+    <Accordion type="multiple" className="w-full">
       {months.map((month) => (
-        <AccordionItem key={months_format[month.month]} value={`item-${months_format[month.month]}`}>
-          <AccordionTrigger>{months_format[month.month]}</AccordionTrigger>
-          <AccordionContent>
+        <AccordionItem
+          className="mb-5"
+          key={months_format[month.month]}
+          value={`item-${months_format[month.month]}`}
+        >
+          <AccordionTrigger className="border-b-2 border-b-foreground p-0 hover:text-blue-500 hover:border-b-blue-500">
+            {months_format[month.month]} - {year}
+          </AccordionTrigger>
+          <AccordionContent className="p-5">
             <MonthlyOverview month={month} />
-            
           </AccordionContent>
         </AccordionItem>
       ))}
@@ -65,7 +70,7 @@ function MonthlyOverview({ month }) {
         </CardHeader>
         <CardContent>
           <div className="text-lg font-bold text-red-400">
-            {formatCurrency(month.expense)}
+            -{formatCurrency(month.expense)}
           </div>
         </CardContent>
       </Card>
@@ -74,7 +79,9 @@ function MonthlyOverview({ month }) {
           <CardTitle className="text-sm font-medium">Balance</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className={`text-lg font-bold ${(month.income - month.expense) >= 0 ? "text-blue-400" : "text-red-400"}`}>
+          <div
+            className={`text-lg font-bold ${month.income - month.expense >= 0 ? "text-blue-400" : "text-red-400"}`}
+          >
             {formatCurrency(month.income - month.expense)}
           </div>
         </CardContent>
@@ -82,4 +89,3 @@ function MonthlyOverview({ month }) {
     </div>
   );
 }
-
