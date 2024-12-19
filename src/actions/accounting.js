@@ -172,7 +172,7 @@ export async function handleUpsertTransaction(prev, form_dada) {
     return RequestResponse.error();
   }
 }
-
+//TODO: 10 - ADD year to the query
 export async function getMonhtlyTransactions(month) {
   try {
     const weekly_transactions = await prisma.transaction.findMany({
@@ -374,8 +374,7 @@ export async function getAllDebt() {
 
 export async function updateDebt(prev, form_dada) {
   try {
-    const { amount, type, concept, userId, lessonId, updateId } =
-      form_dada;
+    const { amount, type, concept, userId, lessonId, updateId } = form_dada;
 
     if (!amount || !type || !updateId) {
       return RequestResponse.error(
@@ -504,6 +503,105 @@ export async function deleteDebts(prev, debt_ids) {
     return RequestResponse.success();
   } catch (error) {
     console.error("Error in deleteDebts()", error);
+    return RequestResponse.error();
+  }
+}
+
+export async function yearlyTransactions(year) {
+  try {
+    const yearly_transactions = await prisma.transaction.groupBy({
+      by: ["year", "type"],
+      where: {
+        year,
+      },
+      _sum: {
+        amount: true,
+      },
+      orderBy: {
+        year: "asc",
+      },
+    });
+    console.log("yearly_transactions", yearly_transactions);
+    return RequestResponse.success(yearly_transactions);
+  } catch (error) {
+    console.error("Error in yearlyTransactions()", error);
+    return RequestResponse.error();
+  }
+}
+
+export async function getMonthlyTransactionsByYear(year) {
+  try {
+    const monthtly_transactions = await prisma.transaction.groupBy({
+      by: ["year", "month", "type"],
+      where: {
+        year: year,
+      },
+      _sum: {
+        amount: true,
+      },
+      orderBy: {
+        month: "asc",
+      },
+    });
+    console.log("monthtly_transactions", monthtly_transactions);
+    return RequestResponse.success(monthtly_transactions);
+  } catch (error) {
+    console.error("Error in getMonthlyTransactions()", error);
+    return RequestResponse.error();
+  }
+}
+
+export async function getAnnualAndMonthlyBalance(year) {
+  try {
+    const yearly_transactions_response = await yearlyTransactions(year);
+    const monthly_transactions_response =
+      await getMonthlyTransactionsByYear(year);
+
+    const yearly_transactions = yearly_transactions_response.data;
+    const monthly_transactions = monthly_transactions_response.data;
+
+    const balance = {
+      income:
+        yearly_transactions.find((t) => t.type === "income")?._sum.amount ?? 0,
+      expense:
+        yearly_transactions.find((t) => t.type === "expense")?._sum.amount ?? 0,
+    };
+
+    const months = monthly_transactions.reduce((acc, transaction) => {
+      const month = transaction.month;
+
+      if (!acc[month]) {
+        acc[month] = {
+          month,
+          income: 0,
+          expense: 0,
+        };
+      }
+
+      if (transaction.type === "income") {
+        acc[month].income = transaction._sum.amount;
+      } else {
+        acc[month].expense = transaction._sum.amount;
+      }
+
+      return acc;
+    }, {});
+
+    const months_array = Object.values(months).sort(
+      (a, b) => a.month - b.month
+    );
+
+    const annual_and_monthly_balance = {
+      year,
+      balance,
+      months: months_array,
+    };
+
+    console.log("annual_and_monthly_balance", annual_and_monthly_balance);
+
+    return RequestResponse.success(annual_and_monthly_balance);
+  } catch (error) {
+    console.error("Error in getAnnualAndMonthlyBalance()", error);
     return RequestResponse.error();
   }
 }
