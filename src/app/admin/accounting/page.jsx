@@ -24,9 +24,10 @@ export default function AccountingPage() {
   const [is_open_form_debt, setIsOpenFormDebt] = useState(false);
 
   const handleGetMonhtlyTransactions = async () => {
-    const response_monhtly_transactions = await getMonhtlyTransactions(
-      getMonth(new Date()) + 1, getYear(new Date())
-    );
+    const response_monhtly_transactions = await getMonhtlyTransactions(null, {
+      month: getMonth(new Date()) + 1,
+      year: getYear(new Date()),
+    });
     if (response_monhtly_transactions.success) {
       setMonhtlyTransactions(response_monhtly_transactions.data);
     } else {
@@ -88,7 +89,11 @@ export default function AccountingPage() {
             handleGetMonhtlyTransactions={handleGetMonhtlyTransactions}
           />
 
-          <TableDebt debts={all_debts} handleGetAllDebt={handleGetAllDebt} setIsOpenFormDebt={setIsOpenFormDebt}/>
+          <TableDebt
+            debts={all_debts}
+            handleGetAllDebt={handleGetAllDebt}
+            setIsOpenFormDebt={setIsOpenFormDebt}
+          />
         </div>
       </main>
     </div>
