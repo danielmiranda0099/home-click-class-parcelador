@@ -223,6 +223,8 @@ export async function getMonhtlyTransactions(prev, form_dada) {
       total_income: totals.income,
       total_expense: totals.expense,
       balance: balance,
+      month: month,
+      year: year,
     };
 
     return RequestResponse.success(monthtly_transactions);
