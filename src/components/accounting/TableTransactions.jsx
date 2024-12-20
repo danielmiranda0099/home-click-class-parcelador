@@ -25,6 +25,7 @@ import { deleteTransactions } from "@/actions/accounting";
 import { useAccountingStore } from "@/store/accountingStore";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
+import { MONTHS_OF_YEAR } from "@/utils/constans";
 
 export function TableTransactions({
   monhtly_transactions,
@@ -77,7 +78,9 @@ export function TableTransactions({
       />
       <Card className="md:w-[60%] w-full">
         <CardHeader className="flex justify-between items-center">
-          <CardTitle>Movimientos Del Mes Actual</CardTitle>
+          <CardTitle className="text-lg font-bold">
+            Movimientos {monhtly_transactions && MONTHS_OF_YEAR[monhtly_transactions.month]} - {monhtly_transactions && monhtly_transactions.year}
+          </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col justify-between h-[45rem] p-2 pb-6 gap-3">
           {monhtly_transactions &&
@@ -225,8 +228,7 @@ export function TableTransactions({
                 <span>
                   Página{" "}
                   {monhtly_transactions.all_transactions.length - current_page}{" "}
-                  de{" "}
-                  {monhtly_transactions.all_transactions.length}
+                  de {monhtly_transactions.all_transactions.length}
                 </span>
                 <Button
                   onClick={() => goToPage(current_page - 1)}

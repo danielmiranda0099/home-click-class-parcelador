@@ -77,7 +77,7 @@ export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt }) {
       />
       <Card className="md:w-[40%] w-full">
         <CardHeader className="flex justify-between items-center">
-          <CardTitle>Cartera</CardTitle>
+          <CardTitle className="text-lg font-bold">Cartera</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col justify-between h-[45rem] p-2 pb-6 gap-3">
           {debts?.length > 0 ? (
