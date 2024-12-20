@@ -34,7 +34,7 @@ export async function CardOverView({ role, id }) {
   return (
     <Card className="w-[fit-content]">
       <CardHeader>
-        <CardTitle>Resumen De Clases</CardTitle>
+        <CardTitle>Estado de cuenta y horarios</CardTitle>
       </CardHeader>
       <CardContent className="grid gap-10 grid-flow-col auto-cols-max">
         {role === "teacher" && (

@@ -31,7 +31,7 @@ export default async function Home() {
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
             Home Click Class
           </h1>
-          <p className="text-muted-foreground">Welcome to our platform</p>
+          <p className="text-muted-foreground">Estado de cuenta y horarios</p>
         </div>
         <FormLogin />
       </div>
