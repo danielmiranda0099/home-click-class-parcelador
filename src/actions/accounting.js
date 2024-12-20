@@ -168,7 +168,7 @@ export async function handleUpsertTransaction(prev, form_dada) {
     if (operation === "create") return createNewTransaction(null, form_dada);
     if (operation === "update") return updateTransaction(null, form_dada);
   } catch (error) {
-    console.log("Error in handleUpsertTransaction()", error);
+    console.error("Error in handleUpsertTransaction()", error);
     return RequestResponse.error();
   }
 }
@@ -176,7 +176,7 @@ export async function handleUpsertTransaction(prev, form_dada) {
 export async function getMonhtlyTransactions(prev, form_dada) {
   try {
     const { month, year } = form_dada;
-    if(!month || !year) {
+    if (!month || !year) {
       throw new Error("Field problems in !month || !year");
     }
     const weekly_transactions = await prisma.transaction.findMany({
@@ -471,7 +471,7 @@ export async function handleUpsertDebt(prev, form_dada) {
     if (operation === "create") return createNewDebts(null, form_dada);
     if (operation === "update") return updateDebt(null, form_dada);
   } catch (error) {
-    console.log("Error in handleUpsertDebt()", error);
+    console.error("Error in handleUpsertDebt()", error);
     return RequestResponse.error();
   }
 }
@@ -526,7 +526,7 @@ export async function yearlyTransactions(year) {
         year: "asc",
       },
     });
-    console.log("yearly_transactions", yearly_transactions);
+
     return RequestResponse.success(yearly_transactions);
   } catch (error) {
     console.error("Error in yearlyTransactions()", error);
@@ -548,7 +548,7 @@ export async function getMonthlyTransactionsByYear(year) {
         month: "asc",
       },
     });
-    console.log("monthtly_transactions", monthtly_transactions);
+
     return RequestResponse.success(monthtly_transactions);
   } catch (error) {
     console.error("Error in getMonthlyTransactions()", error);
@@ -606,8 +606,6 @@ export async function getAnnualAndMonthlyBalance(prev, year_data) {
       balance,
       months: months_array,
     };
-
-    console.log("annual_and_monthly_balance", annual_and_monthly_balance);
 
     return RequestResponse.success(annual_and_monthly_balance);
   } catch (error) {
