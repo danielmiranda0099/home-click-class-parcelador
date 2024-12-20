@@ -172,9 +172,13 @@ export async function handleUpsertTransaction(prev, form_dada) {
     return RequestResponse.error();
   }
 }
-//TODO: 10 - ADD year to the query
-export async function getMonhtlyTransactions(month, year) {
+
+export async function getMonhtlyTransactions(prev, form_dada) {
   try {
+    const { month, year } = form_dada;
+    if(!month || !year) {
+      throw new Error("Field problems in !month || !year");
+    }
     const weekly_transactions = await prisma.transaction.findMany({
       where: {
         month,
