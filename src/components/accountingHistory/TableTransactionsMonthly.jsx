@@ -57,6 +57,7 @@ export function TableTransactionsMonthly({ month, year, setIsOpenFormTransaction
           handleGetMonhtlyTransactions={onGetTransactionsMonthly}
           setIsOpenFormTransaction={setIsOpenFormTransaction}
           idPrefix={idPrefix}
+          size="small"
         />
       )}
     </div>

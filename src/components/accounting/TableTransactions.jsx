@@ -32,6 +32,7 @@ export function TableTransactions({
   handleGetMonhtlyTransactions,
   setIsOpenFormTransaction,
   idPrefix = "",
+  size="lg",
 }) {
   const [is_open_popup_delete, setIsOpenPopupDelete] = useState(false);
   const { lessons, setSelectedLesson, setLessons } = useLessonsStore();
@@ -77,15 +78,15 @@ export function TableTransactions({
         handleAction={handleGetMonhtlyTransactions}
       />
       <Card className="md:w-[60%] w-full">
-        <CardHeader className="flex justify-between items-center">
+        <CardHeader className="flex justify-between items-center p-4">
           <CardTitle className="text-lg font-bold">
             Movimientos {monhtly_transactions && MONTHS_OF_YEAR[monhtly_transactions.month]} - {monhtly_transactions && monhtly_transactions.year}
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col justify-between h-[45rem] p-2 pb-6 gap-3">
+        <CardContent className={`flex flex-col justify-between ${size === "lg" ? "h-[45rem]" : "h-[33rem]"} p-1 pb-6 gap-3`}>
           {monhtly_transactions &&
           monhtly_transactions.all_transactions.length > 0 ? (
-            <div className="flex flex-col justify-start h-[40rem] p-2 pb-6 gap-3">
+            <div className={`flex flex-col justify-start ${size === "lg" ? "h-[40rem]" : "h-[28rem]"} p-2 pb-6 gap-3`}>
               <div className="flex gap-2">
                 <FilterIcon />
                 <RadioGroup
@@ -129,7 +130,7 @@ export function TableTransactions({
                     <TableHead className=""></TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody className="border-gray-100 border-2 max-h-[40rem] overflow-y-scroll">
+                <TableBody className={`border-gray-100 border-2 ${size === "lg" ? "max-h-[40rem]" : "max-h-[28rem]"} overflow-y-scroll`}>
                   {monhtly_transactions?.all_transactions[
                     current_page
                   ]?.transactions
