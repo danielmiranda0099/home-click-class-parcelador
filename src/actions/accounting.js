@@ -205,16 +205,31 @@ export async function getMonhtlyTransactions(prev, form_dada) {
 
     const grouped_data = weekly_transactions.reduce((acc, transaction) => {
       if (!acc[transaction.week]) {
-        acc[transaction.week] = [];
+        acc[transaction.week] = {
+          transactions: [],
+          income_week: 0,
+          expense_week: 0,
+        };
       }
-      acc[transaction.week].push(transaction);
+      acc[transaction.week].transactions.push(transaction);
+
+      // Calculamos los totales semanales
+      if (transaction.type === "income") {
+        acc[transaction.week].income_week += transaction.amount;
+      } else if (transaction.type === "expense") {
+        acc[transaction.week].expense_week += transaction.amount;
+      }
+
       return acc;
     }, {});
 
     const sorted_weeks = Object.entries(grouped_data)
-      .map(([week, transactions]) => ({
+      .map(([week, data]) => ({
         week: Number(week),
-        transactions,
+        transactions: data.transactions,
+        income: data.income_week,
+        expense: data.expense_week,
+        balance: data.income_week - data.expense_week,
       }))
       .sort((a, b) => b.week - a.week);
 
