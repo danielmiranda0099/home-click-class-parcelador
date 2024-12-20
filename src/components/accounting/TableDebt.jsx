@@ -79,9 +79,9 @@ export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt }) {
         <CardHeader className="flex justify-between items-center p-4">
           <CardTitle className="text-lg font-bold">Cartera</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col justify-between h-[45rem] p-1 pb-6 gap-3">
+        <CardContent className="flex flex-col justify-between h-[48.5rem] p-1 pb-6 gap-3">
           {debts?.length > 0 ? (
-            <div className="flex flex-col justify-start h-[31rem] p-2 pb-6 gap-3">
+            <div className="flex flex-col justify-start h-[35.7rem] p-2 pb-6 gap-3">
               <div className="flex gap-2">
                 <FilterIcon />
                 <RadioGroup
@@ -123,7 +123,7 @@ export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt }) {
                     <TableHead className=""></TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody className="border-gray-100 border-2 max-h-[31rem] overflow-y-scroll">
+                <TableBody className="border-gray-100 border-2 max-h-[35.7rem] overflow-y-scroll">
                   {visibleDebts
                     ?.filter(
                       (debt) =>
@@ -198,14 +198,14 @@ export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt }) {
 
           {debts?.length > 0 && (
             <div className="border-2 border-gray-100 bg-gray-50 p-3 ">
-              <div className="flex gap-2 justify-start pl-4 py-3 pb-1">
+              <div className="flex gap-2 justify-start pl-4 py-3 pb-0">
                 <p className="font-medium">Total Ingresos:</p>
                 <p className="font-bold text-green-400">
                   {formatCurrency(total_income)}
                 </p>
               </div>
 
-              <div className="flex gap-2 justify-start pl-4 py-3 pt-0">
+              <div className="flex gap-2 justify-start pl-4 py-3 pb-0 pt-0">
                 <p className="font-medium">Total Egresos:</p>
                 <p className="font-bold text-red-400">
                   -{formatCurrency(total_expense)}
