@@ -30,6 +30,7 @@ export function TableTransactions({
   monhtly_transactions,
   handleGetMonhtlyTransactions,
   setIsOpenFormTransaction,
+  idPrefix = "",
 }) {
   const [is_open_popup_delete, setIsOpenPopupDelete] = useState(false);
   const { lessons, setSelectedLesson, setLessons } = useLessonsStore();
@@ -64,7 +65,7 @@ export function TableTransactions({
       setLessons("admin");
     }
   }, []);
-
+  console.log("monhtly transactioooon", monhtly_transactions);
   return (
     <>
       <PopupDeleteTransaction
@@ -92,26 +93,26 @@ export function TableTransactions({
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem
                       value="all"
-                      id="r1"
+                      id={`r1-${idPrefix}`}
                       className="data-[state=checked]:text-blue-400"
                     />
-                    <Label htmlFor="r1">Todo</Label>
+                    <Label htmlFor={`r1-${idPrefix}`}>Todo</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem
                       value="income"
-                      id="r2"
+                      id={`r2-${idPrefix}`}
                       className="data-[state=checked]:text-green-400"
                     />
-                    <Label htmlFor="r2">Ingreso</Label>
+                    <Label htmlFor={`r2-${idPrefix}`}>Ingreso</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem
                       value="expense"
-                      id="r3"
+                      id={`r3-${idPrefix}`}
                       className="data-[state=checked]:text-red-400"
                     />
-                    <Label htmlFor="r3">Egreso</Label>
+                    <Label htmlFor={`r3-${idPrefix}`}>Egreso</Label>
                   </div>
                 </RadioGroup>
               </div>
