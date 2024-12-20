@@ -39,7 +39,8 @@ function SubmitButton() {
 export function PopupFormTransaction({
   is_open,
   setIsOpen,
-  handleAction=null,
+  handleAction = null,
+  showButtonTrigger = true,
 }) {
   const { editTransaction, setEditTransaction } = useAccountingStore();
   const [amount_transaction, setAmountTransaction] = useState("");
@@ -65,11 +66,11 @@ export function PopupFormTransaction({
       type: form_data.get("type"),
       concept: form_data.get("concept"),
     };
-    if(editTransaction){
-      data.operation = "update"
+    if (editTransaction) {
+      data.operation = "update";
       data.updateId = editTransaction.id;
-    }else {
-      data.operation = "create"
+    } else {
+      data.operation = "create";
     }
     dispathFormTransaction(data);
     setErrorMessageFormTransaction("");
@@ -85,7 +86,7 @@ export function PopupFormTransaction({
     if (form_state_form_transaction.success) {
       toastSuccess({ title: "Movimiento creado exitosamente." });
       setIsOpen(false);
-      if(handleAction){
+      if (handleAction) {
         handleAction();
       }
     }
@@ -109,12 +110,14 @@ export function PopupFormTransaction({
         setIsOpen(open);
       }}
     >
-      <DialogTrigger asChild>
-        <Button size="sm">
-          <PlusIcon className="mr-2 h-4 w-4" />
-          Movimiento
-        </Button>
-      </DialogTrigger>
+      {showButtonTrigger && (
+        <DialogTrigger asChild>
+          <Button size="sm">
+            <PlusIcon className="mr-2 h-4 w-4" />
+            Movimiento
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Agregar Movimiento</DialogTitle>
