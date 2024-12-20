@@ -26,13 +26,14 @@ import { useAccountingStore } from "@/store/accountingStore";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import { MONTHS_OF_YEAR } from "@/utils/constans";
+import { getWeekDateRange } from "@/utils/getMonthDateRange";
 
 export function TableTransactions({
   monhtly_transactions,
   handleGetMonhtlyTransactions,
   setIsOpenFormTransaction,
   idPrefix = "",
-  size="lg",
+  size = "lg",
 }) {
   const [is_open_popup_delete, setIsOpenPopupDelete] = useState(false);
   const { lessons, setSelectedLesson, setLessons } = useLessonsStore();
@@ -80,13 +81,19 @@ export function TableTransactions({
       <Card className="md:w-[60%] w-full">
         <CardHeader className="flex justify-between items-center p-4">
           <CardTitle className="text-lg font-bold">
-            Movimientos {monhtly_transactions && MONTHS_OF_YEAR[monhtly_transactions.month]} - {monhtly_transactions && monhtly_transactions.year}
+            Movimientos{" "}
+            {monhtly_transactions && MONTHS_OF_YEAR[monhtly_transactions.month]}{" "}
+            - {monhtly_transactions && monhtly_transactions.year}
           </CardTitle>
         </CardHeader>
-        <CardContent className={`flex flex-col justify-between ${size === "lg" ? "h-[45rem]" : "h-[33rem]"} p-1 pb-6 gap-3`}>
+        <CardContent
+          className={`flex flex-col justify-between ${size === "lg" ? "h-[48.5rem]" : "h-[38rem]"} p-1 pb-6 gap-3`}
+        >
           {monhtly_transactions &&
           monhtly_transactions.all_transactions.length > 0 ? (
-            <div className={`flex flex-col justify-start ${size === "lg" ? "h-[40rem]" : "h-[28rem]"} p-2 pb-6 gap-3`}>
+            <div
+              className={`flex flex-col justify-start ${size === "lg" ? "h-[37.5rem]" : "h-[27.5rem]"} p-2 pb-6 gap-3`}
+            >
               <div className="flex gap-2">
                 <FilterIcon />
                 <RadioGroup
@@ -130,7 +137,9 @@ export function TableTransactions({
                     <TableHead className=""></TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody className={`border-gray-100 border-2 ${size === "lg" ? "max-h-[40rem]" : "max-h-[28rem]"} overflow-y-scroll`}>
+                <TableBody
+                  className={`border-gray-100 border-2 ${size === "lg" ? "max-h-[37.5rem]" : "max-h-[27.5rem]"} overflow-y-scroll`}
+                >
                   {monhtly_transactions?.all_transactions[
                     current_page
                   ]?.transactions
@@ -216,27 +225,86 @@ export function TableTransactions({
           )}
           {monhtly_transactions &&
             monhtly_transactions.all_transactions.length > 0 && (
-              <div className="flex gap-2 items-center justify-center">
-                <Button
-                  onClick={() => goToPage(current_page + 1)}
-                  disabled={
-                    current_page ===
-                    monhtly_transactions.all_transactions.length - 1
-                  }
-                >
-                  Semana Anterior
-                </Button>
-                <span>
-                  Página{" "}
-                  {monhtly_transactions.all_transactions.length - current_page}{" "}
-                  de {monhtly_transactions.all_transactions.length}
-                </span>
-                <Button
-                  onClick={() => goToPage(current_page - 1)}
-                  disabled={current_page === 0}
-                >
-                  Semana Siguiente
-                </Button>
+              <div className="p-0 m-0">
+                <div className="p-0 m-0">
+                  <div className="flex gap-2 justify-start pl-4 py-0 pb-0">
+                    <p className={`${size === "sm" && "text-sm"} font-medium`}>
+                      Fecha:
+                    </p>
+                    <p
+                      className={`${size === "sm" && "text-sm"} font-semibold`}
+                    >
+                      {getWeekDateRange(
+                        monhtly_transactions.all_transactions[current_page]
+                          .week,
+                        monhtly_transactions.year
+                      )}
+                    </p>
+                  </div>
+                  <div className="flex gap-2 justify-start pl-4 pb-0">
+                    <p className={`${size === "sm" && "text-sm"} font-medium`}>
+                      Ingreso semanal:
+                    </p>
+                    <p
+                      className={`${size === "sm" && "text-sm"} font-bold text-green-400`}
+                    >
+                      {formatCurrency(
+                        monhtly_transactions.all_transactions[current_page]
+                          .income
+                      )}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-2 justify-start pl-4 pb-0 pt-0">
+                    <p className={`${size === "sm" && "text-sm"} font-medium`}>
+                      Egreso semanal:
+                    </p>
+                    <p
+                      className={`${size === "sm" && "text-sm"} font-bold text-red-400`}
+                    >
+                      {formatCurrency(
+                        monhtly_transactions.all_transactions[current_page]
+                          .expense
+                      )}
+                    </p>
+                  </div>
+                  <div className="flex gap-2 justify-start pl-4 pt-0">
+                    <p className={`${size === "sm" && "text-sm"} font-medium`}>
+                      Balance semanal:
+                    </p>
+                    <p
+                      className={`${size === "sm" && "text-sm"} font-bold ${1 >= 0 ? "text-blue-400" : "text-red-400"}`}
+                    >
+                      {formatCurrency(
+                        monhtly_transactions.all_transactions[current_page]
+                          .balance
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2 items-center justify-center m-0 p-0">
+                  <Button
+                    onClick={() => goToPage(current_page + 1)}
+                    disabled={
+                      current_page ===
+                      monhtly_transactions.all_transactions.length - 1
+                    }
+                  >
+                    Semana Anterior
+                  </Button>
+                  <span>
+                    Página{" "}
+                    {monhtly_transactions.all_transactions.length -
+                      current_page}{" "}
+                    de {monhtly_transactions.all_transactions.length}
+                  </span>
+                  <Button
+                    onClick={() => goToPage(current_page - 1)}
+                    disabled={current_page === 0}
+                  >
+                    Semana Siguiente
+                  </Button>
+                </div>
               </div>
             )}
         </CardContent>
