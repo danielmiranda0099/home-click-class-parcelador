@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { MONTHS_OF_YEAR } from "@/utils/constans";
 import { formatCurrency } from "@/utils/formatCurrency";
 
 export function CardsMontlyReport({ monhtly_transactions }) {
@@ -7,7 +8,8 @@ export function CardsMontlyReport({ monhtly_transactions }) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
-            Ingresos Mes Actuales
+            Ingresos {" "}
+            {monhtly_transactions && MONTHS_OF_YEAR[monhtly_transactions.month]}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -21,7 +23,8 @@ export function CardsMontlyReport({ monhtly_transactions }) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
-            Egresos Mes Actuales
+            Egresos {" "}
+            {monhtly_transactions && MONTHS_OF_YEAR[monhtly_transactions.month]}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -35,7 +38,8 @@ export function CardsMontlyReport({ monhtly_transactions }) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
-            Balance Mes Actual
+            Balance {" "}
+            {monhtly_transactions && MONTHS_OF_YEAR[monhtly_transactions.month]}
           </CardTitle>
         </CardHeader>
         <CardContent>

@@ -35,11 +35,12 @@ export function MonthlyBreakdown({ year, months, setIsOpenFormTransaction }) {
 }
 
 function MonthlyOverview({ month }) {
+  console.log("month", month);
   return (
     <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Ingresos</CardTitle>
+          <CardTitle className="text-sm font-medium">Ingresos  {month && MONTHS_OF_YEAR[month.month]}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-lg font-bold text-green-400">
@@ -49,7 +50,7 @@ function MonthlyOverview({ month }) {
       </Card>
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Egresos</CardTitle>
+          <CardTitle className="text-sm font-medium">Egresos  {month && MONTHS_OF_YEAR[month.month]}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-lg font-bold text-red-400">
@@ -59,7 +60,7 @@ function MonthlyOverview({ month }) {
       </Card>
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Balance</CardTitle>
+          <CardTitle className="text-sm font-medium">Balance  {month && MONTHS_OF_YEAR[month.month]}</CardTitle>
         </CardHeader>
         <CardContent>
           <div
