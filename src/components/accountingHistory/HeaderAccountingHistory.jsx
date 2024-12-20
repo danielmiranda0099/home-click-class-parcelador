@@ -1,6 +1,8 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SearchIcon } from "@/components/icons";
@@ -17,12 +19,14 @@ function SubmitButton() {
       className="flex gap-1 justify-center items-center"
     >
       <SearchIcon className="mr-2 h-4 w-4" />
-      Search
+      Buscar
     </Button>
   );
 }
 
 export function HeaderAccountingHistory({ handleAction = null }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [form_state_form_search_year, dispathFormSearchYear] = useFormState(
     getAnnualAndMonthlyBalance,
     {
@@ -34,10 +38,13 @@ export function HeaderAccountingHistory({ handleAction = null }) {
   );
   const [error_message_form_search_year, setErrorMessageFormSearchYear] =
     useState("");
+  const [year, setYear] = useState(searchParams.get("year") || "");
 
   const onGetAnnualAndMonthlyBalance = (form_data) => {
-    dispathFormSearchYear(form_data.get("year"));
+    const yearValue = form_data.get("year");
+    dispathFormSearchYear(yearValue);
     setErrorMessageFormSearchYear("");
+    router.push(`?year=${yearValue}`);
   }
 
   useEffect(() => {
@@ -52,6 +59,14 @@ export function HeaderAccountingHistory({ handleAction = null }) {
       setErrorMessageFormSearchYear("");
     }
   }, [form_state_form_search_year]);
+
+  useEffect(() => {
+    const yearFromUrl = searchParams.get("year");
+    if (yearFromUrl) {
+      setYear(yearFromUrl);
+      dispathFormSearchYear(yearFromUrl);
+    }
+  }, [searchParams]);
 
   return (
     <header className="flex flex-col items-between justify-center gap-3 mb-6">
@@ -70,6 +85,9 @@ export function HeaderAccountingHistory({ handleAction = null }) {
             max="3000"
             className="w-32"
             required
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            placeholder="Año"
           />
           <SubmitButton />
         </div>
@@ -80,3 +98,4 @@ export function HeaderAccountingHistory({ handleAction = null }) {
     </header>
   );
 }
+
