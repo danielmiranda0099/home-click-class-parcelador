@@ -9,9 +9,7 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { TableTransactionsMonthly } from "./TableTransactionsMonthly";
 import { MONTHS_OF_YEAR } from "@/utils/constans";
 
-
-
-export function MonthlyBreakdown({ year, months, setIsOpenFormTransaction }) {
+export function MonthlyBreakdown({ year, months }) {
   return (
     <Accordion type="multiple" className="w-full">
       {months.map((month, index) => (
@@ -26,7 +24,11 @@ export function MonthlyBreakdown({ year, months, setIsOpenFormTransaction }) {
           <AccordionContent className="p-5">
             <MonthlyOverview month={month} />
 
-            <TableTransactionsMonthly month={month.month} year={year} setIsOpenFormTransaction={setIsOpenFormTransaction} idPrefix={index} />
+            <TableTransactionsMonthly
+              month={month.month}
+              year={year}
+              idPrefix={index}
+            />
           </AccordionContent>
         </AccordionItem>
       ))}
@@ -35,12 +37,13 @@ export function MonthlyBreakdown({ year, months, setIsOpenFormTransaction }) {
 }
 
 function MonthlyOverview({ month }) {
-  console.log("month", month);
   return (
     <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Ingresos  {month && MONTHS_OF_YEAR[month.month]}</CardTitle>
+          <CardTitle className="text-sm font-medium">
+            Ingresos {month && MONTHS_OF_YEAR[month.month]}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-lg font-bold text-green-400">
@@ -50,7 +53,9 @@ function MonthlyOverview({ month }) {
       </Card>
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Egresos  {month && MONTHS_OF_YEAR[month.month]}</CardTitle>
+          <CardTitle className="text-sm font-medium">
+            Egresos {month && MONTHS_OF_YEAR[month.month]}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-lg font-bold text-red-400">
@@ -60,7 +65,9 @@ function MonthlyOverview({ month }) {
       </Card>
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium">Balance  {month && MONTHS_OF_YEAR[month.month]}</CardTitle>
+          <CardTitle className="text-sm font-medium">
+            Balance {month && MONTHS_OF_YEAR[month.month]}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div

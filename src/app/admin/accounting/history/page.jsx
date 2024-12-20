@@ -1,6 +1,5 @@
 "use client";
 
-import { PopupFormTransaction } from "@/components/accounting";
 import {
   HeaderAccountingHistory,
   MonthlyBreakdown,
@@ -13,8 +12,6 @@ import { useState } from "react";
 export default function AccountingHistoryPage() {
   const [annual_and_monthly_balance, setAnnualAndMonthlyBalance] =
     useState(null);
-
-  const [is_open_form_transaction, setIsOpenFormTransaction] = useState(false);
 
   const user_session = useUserSession();
 
@@ -34,11 +31,7 @@ export default function AccountingHistoryPage() {
         user={user_session?.user}
         showFooter={false}
       />
-      <PopupFormTransaction
-        is_open={is_open_form_transaction}
-        setIsOpen={setIsOpenFormTransaction}
-        showButtonTrigger={false}
-      />
+
       <div className="container mx-auto p-4 space-y-6">
         <HeaderAccountingHistory handleAction={onGetAnnualAndMonthlyBalance} />
 
@@ -52,7 +45,6 @@ export default function AccountingHistoryPage() {
             <MonthlyBreakdown
               months={annual_and_monthly_balance.months}
               year={annual_and_monthly_balance.year}
-              setIsOpenFormTransaction={setIsOpenFormTransaction}
             />
           </>
         )}

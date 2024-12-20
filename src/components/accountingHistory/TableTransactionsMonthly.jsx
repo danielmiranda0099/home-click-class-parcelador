@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { MONTHS_OF_YEAR } from "@/utils/constans";
 import { getMonhtlyTransactions } from "@/actions/accounting";
 import { ErrorAlert } from "@/components";
-import { TableTransactions } from "@/components/accounting";
+import {
+  PopupFormTransaction,
+  TableTransactions,
+} from "@/components/accounting";
 
-
-export function TableTransactionsMonthly({ month, year, setIsOpenFormTransaction, idPrefix }) {
+export function TableTransactionsMonthly({ month, year, idPrefix }) {
   const [monhtly_transactions, setMonhtlyTransactions] = useState(null);
   const { pending } = useFormStatus();
   const [form_state_form, dispathForm] = useFormState(getMonhtlyTransactions, {
@@ -18,10 +20,10 @@ export function TableTransactionsMonthly({ month, year, setIsOpenFormTransaction
     message: null,
   });
   const [error_message_form, setErrorMessageForm] = useState("");
+  const [is_open_form_transaction, setIsOpenFormTransaction] = useState(false);
 
   useEffect(() => {
     if (form_state_form.success) {
-      console.log(form_state_form.data);
       setMonhtlyTransactions(form_state_form.data);
     }
     if (form_state_form.error) {
@@ -37,6 +39,12 @@ export function TableTransactionsMonthly({ month, year, setIsOpenFormTransaction
   };
   return (
     <div>
+      <PopupFormTransaction
+        is_open={is_open_form_transaction}
+        setIsOpen={setIsOpenFormTransaction}
+        showButtonTrigger={false}
+        handleAction={onGetTransactionsMonthly}
+      />
       <form action={onGetTransactionsMonthly}>
         <Button
           variant="outline"
