@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { SearchIcon } from "@/components/icons";
 import { ErrorAlert } from "..";
 import { getAnnualAndMonthlyBalance } from "@/actions/accounting";
+import { getYear } from "date-fns";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -38,7 +39,7 @@ export function HeaderAccountingHistory({ handleAction = null }) {
   );
   const [error_message_form_search_year, setErrorMessageFormSearchYear] =
     useState("");
-  const [year, setYear] = useState(searchParams.get("year") || "");
+  const [year, setYear] = useState(searchParams.get("year") || getYear(new Date()));
 
   const onGetAnnualAndMonthlyBalance = (form_data) => {
     const yearValue = form_data.get("year");
@@ -67,6 +68,8 @@ export function HeaderAccountingHistory({ handleAction = null }) {
       dispathFormSearchYear(yearFromUrl);
     }
   }, [searchParams]);
+
+  useEffect(() => { if(searchParams.get("year") === null || !searchParams.get("year")) router.push(`?year=${getYear(new Date)}`) }, []);
 
   return (
     <header className="flex flex-col items-between justify-center gap-3 mb-6">
