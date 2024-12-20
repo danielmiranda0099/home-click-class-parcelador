@@ -5,45 +5,28 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { TableTransactionsMonthly } from "./TableTransactionsMonthly";
+import { MONTHS_OF_YEAR } from "@/utils/constans";
 
-const months_format = {
-  1: "Enero",
-  2: "Febrero",
-  3: "Marzo",
-  4: "Abril",
-  5: "Mayo",
-  6: "Junio",
-  7: "Julio",
-  8: "Agosto",
-  9: "Septiembre",
-  10: "Octubre",
-  11: "Noviembre",
-  12: "Diciembre",
-};
 
-export function MonthlyBreakdown({ year, months }) {
+
+export function MonthlyBreakdown({ year, months, setIsOpenFormTransaction }) {
   return (
     <Accordion type="multiple" className="w-full">
-      {months.map((month) => (
+      {months.map((month, index) => (
         <AccordionItem
           className="mb-5"
-          key={months_format[month.month]}
-          value={`item-${months_format[month.month]}`}
+          key={`${MONTHS_OF_YEAR[month.month]}-${year}`}
+          value={`item-${MONTHS_OF_YEAR[month.month]}`}
         >
           <AccordionTrigger className="border-b-2 border-b-foreground p-0 hover:text-blue-500 hover:border-b-blue-500">
-            {months_format[month.month]} - {year}
+            {MONTHS_OF_YEAR[month.month]} - {year}
           </AccordionTrigger>
           <AccordionContent className="p-5">
             <MonthlyOverview month={month} />
+
+            <TableTransactionsMonthly month={month.month} year={year} setIsOpenFormTransaction={setIsOpenFormTransaction} idPrefix={index} />
           </AccordionContent>
         </AccordionItem>
       ))}
