@@ -529,6 +529,60 @@ export async function deleteDebts(prev, debt_ids) {
   }
 }
 
+export async function moveDebtToTransaction(debt_ids) {
+  try {
+    if (!debt_ids || debt_ids.length < 1) {
+      throw new Error("Field problems in !debt_ids || debt_ids.length < 1");
+    }
+
+    const debts = await prisma.debt.findMany({
+      where: {
+        id: {
+          in: debt_ids,
+        },
+      },
+    });
+
+    if (debt_ids.length !== debts.length) {
+      throw new Error("Error in debt_ids.length !== debts.length");
+    }
+
+    const current_date = new Date();
+    const year = getYear(current_date);
+    const month = getMonth(current_date) + 1;
+    const week = getWeek(new Date(current_date));
+
+    const data_transactions = debts.map((debt) => ({
+      date: new Date().toISOString(),
+      amount: debt.amount,
+      type: debt.type,
+      concept: debt.concept,
+      year,
+      month,
+      week,
+    }));
+
+    await prisma.$transaction(async (tx) => {
+      await tx.debt.deleteMany({
+        where: {
+          id: {
+            in: debt_ids,
+          },
+        },
+      });
+
+      await tx.transaction.createMany({
+        data: data_transactions,
+      });
+    });
+
+    return RequestResponse.success();
+  } catch (error) {
+    console.error("Error in moveDebtToTransaction()", error);
+    return RequestResponse.error();
+  }
+}
+
 export async function yearlyTransactions(year) {
   try {
     const yearly_transactions = await prisma.transaction.groupBy({
