@@ -34,7 +34,6 @@ const formattedLessonForBD = (form_data) => {
     lesson_formated.teacherPayment = parseFloat(lesson_formated.teacherPayment);
   if (lesson_formated.studentFee)
     lesson_formated.studentFee = parseFloat(lesson_formated.studentFee);
-  console.log("Formated lesson***", lesson_formated);
   return lesson_formated;
 };
 
@@ -109,7 +108,6 @@ export async function CreateNewLesson(prev_state, lessons_data) {
         })
       )
     );
-    console.log(JSON.stringify(new_lessons.slice(2), null, 2));
     return RequestResponse.success(new_lessons);
   } catch (error) {
     console.error("Error Crating and Scheduling lessons:", error);
@@ -155,7 +153,6 @@ export async function getLessons() {
     });
 
     if (!lessons) return [];
-    // console.log("Lessons", JSON.stringify(lessons.slice(1), null, 2));
     return lessons;
   } catch (error) {
     console.error("Error fetching lessons:", error);
@@ -173,7 +170,7 @@ export async function updateLesson(id, updated_lesson) {
       data: updated_lesson_formated,
     });
   } catch (error) {
-    console.log("Error Updating Lesson", error);
+    console.error("Error Updating Lesson", error);
   }
 }
 
@@ -324,7 +321,7 @@ export async function unpaidLessons(
     });
     return RequestResponse.success(unpaid_lessons);
   } catch (error) {
-    console.log("Error Getting Unpaid Lessons", error);
+    console.error("Error Getting Unpaid Lessons", error);
     return RequestResponse.error();
   }
 }
@@ -485,8 +482,6 @@ export async function overViewLessonStudent(id) {
       data.scheduled = scheduledLessons;
       data.debt = totalDebt;
     }
-
-    console.log(student_lessons_data);
 
     return RequestResponse.success(data);
   } catch (error) {
