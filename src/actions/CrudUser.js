@@ -138,6 +138,7 @@ export async function getUserById(id_user) {
         phoneNumber: true,
         city: true,
         country: true,
+        isActive: true,
       },
     });
     if (!user) {
@@ -146,6 +147,48 @@ export async function getUserById(id_user) {
     return RequestResponse.success(user);
   } catch (error) {
     console.error("Error in getUserById", error);
+    return RequestResponse.error();
+  }
+}
+
+export async function deactivateUser(id_user) {
+  try {
+    let id = parseInt(id_user, 10);
+    if (isNaN(id)) {
+      throw new Error("Invalid id user");
+    }
+    await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        isActive: false,
+      },
+    });
+    return RequestResponse.success();
+  } catch (error) {
+    console.error("Error in deactivateUser()", error);
+    return RequestResponse.error();
+  }
+}
+
+export async function activateUser(id_user) {
+  try {
+    let id = parseInt(id_user, 10);
+    if (isNaN(id)) {
+      throw new Error("Invalid id user");
+    }
+    await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        isActive: true,
+      },
+    });
+    return RequestResponse.success();
+  } catch (error) {
+    console.error("Error in activateUser()", error);
     return RequestResponse.error();
   }
 }
