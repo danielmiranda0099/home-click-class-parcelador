@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   FilterIcon,
   PencilIcon,
+  RepeatIcon,
   SearchIcon,
   TrashIcon,
 } from "@/components/icons";
@@ -21,12 +22,13 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 import { PopupDeleteTransaction } from "./PopupDeleteTransaction";
-import { deleteDebts } from "@/actions/accounting";
+import { deleteDebts, moveDebtToTransaction } from "@/actions/accounting";
 import { useAccountingStore } from "@/store/accountingStore";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
+import { useCustomToast } from "@/hooks";
 
-export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt }) {
+export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt, handleGetMonhtlyTransactions }) {
   const [is_open_popup_delete, setIsOpenPopupDelete] = useState(false);
   const [transaction_id_current, setTransactionIdCurrent] = useState(null);
   const [filter_debt, setFilterDebt] = useState("all");
@@ -36,6 +38,8 @@ export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt }) {
   const { setPopupDetailLesson } = useUiStore();
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 15;
+
+  const { toastSuccess, toastError } = useCustomToast();
 
   // Calcular los elementos visibles según la página actual
   const startIndex = currentPage * itemsPerPage;
@@ -151,6 +155,29 @@ export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt }) {
                           )}
                           {!debt.lessonId && (
                             <>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                aria-label="Eliminar movimiento"
+                                onClick={async () => {
+                                  const response = await moveDebtToTransaction([
+                                    debt.id,
+                                  ]);
+                                  if (response.success) {
+                                    toastSuccess({
+                                      title: "Cartera movido a transacción",
+                                    });
+                                    handleGetAllDebt();
+                                    handleGetMonhtlyTransactions();
+                                  } else {
+                                    toastError({
+                                      title: "Error al mover la cartera",
+                                    });
+                                  }
+                                }}
+                              >
+                                <RepeatIcon className="h-4 w-4" />
+                              </Button>
                               <Button
                                 variant="ghost"
                                 size="sm"

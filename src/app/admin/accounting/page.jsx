@@ -93,6 +93,7 @@ export default function AccountingPage() {
             debts={all_debts}
             handleGetAllDebt={handleGetAllDebt}
             setIsOpenFormDebt={setIsOpenFormDebt}
+            handleGetMonhtlyTransactions={handleGetMonhtlyTransactions}
           />
         </div>
       </main>
