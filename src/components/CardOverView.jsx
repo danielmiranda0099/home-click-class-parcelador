@@ -1,3 +1,4 @@
+"use client";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   BookOpenIcon,
@@ -10,26 +11,38 @@ import {
   overViewLessonTeacher,
 } from "@/actions/CrudLesson";
 import { formatCurrency } from "@/utils/formatCurrency";
+import { useEffect, useState } from "react";
 
-export async function CardOverView({ role, id }) {
-  let data = {
+export function CardOverView({ role, id }) {
+  const [data, setData] = useState({
     averageScore: 0,
     completed: 0,
     scheduled: 0,
     debt: 0,
-  };
-  if (role === "teacher") {
+  });
+
+  const onOverViewLessonTeacher = async () => {
     const response = await overViewLessonTeacher(id);
     if (response.success) {
-      data = response.data;
+      setData(response.data);
     }
-  }
-  if (role === "student") {
+  };
+
+  const onOverViewLessonStudent = async () => {
     const response = await overViewLessonStudent(id);
     if (response.success) {
-      data = response.data;
+      setData(response.data);
     }
-  }
+  };
+
+  useEffect(() => {
+    if (role === "teacher") {
+      onOverViewLessonTeacher();
+    }
+    if (role === "student") {
+      onOverViewLessonStudent();
+    }
+  }, []);
 
   return (
     <Card className="w-[fit-content]">
@@ -48,7 +61,7 @@ export async function CardOverView({ role, id }) {
               </div>
             </div>
 
-            <h2 className="text-lg font-bold">{data.averageScore}</h2>
+            <h2 className="text-lg font-bold">{data?.averageScore}</h2>
           </div>
         )}
 
@@ -62,7 +75,7 @@ export async function CardOverView({ role, id }) {
             </div>
           </div>
 
-          <h2 className="text-lg font-bold">{data.completed}</h2>
+          <h2 className="text-lg font-bold">{data?.completed}</h2>
         </div>
 
         <div className="flex items-center justify-center gap-3">
@@ -75,7 +88,7 @@ export async function CardOverView({ role, id }) {
             </div>
           </div>
 
-          <h2 className="text-lg font-bold">{data.scheduled}</h2>
+          <h2 className="text-lg font-bold">{data?.scheduled}</h2>
         </div>
 
         <div className="flex items-center justify-center gap-3">
@@ -90,7 +103,7 @@ export async function CardOverView({ role, id }) {
           </div>
 
           <h2 className="text-lg font-bold text-red-600">
-            {formatCurrency(data.debt.toString())}
+            {formatCurrency(data?.debt.toString())}
           </h2>
         </div>
       </CardContent>
