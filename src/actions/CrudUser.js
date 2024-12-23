@@ -192,3 +192,27 @@ export async function activateUser(id_user) {
     return RequestResponse.error();
   }
 }
+
+export async function getIsActiveUser(id_user) {
+  try {
+    let id = parseInt(id_user, 10);
+    if (isNaN(id)) {
+      throw new Error("Invalid id user");
+    }
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        isActive: true,
+      },
+    });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return RequestResponse.success(user);
+  } catch (error) {
+    console.error("Error in getIsActiveUser()", error);
+    return RequestResponse.error();
+  }
+}
