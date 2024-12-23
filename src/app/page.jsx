@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 export default async function Home() {
   const session = await auth();
 
-  if (session?.user) {
+  if (session?.user && session?.user?.isActive) {
     if (
       session.user.role.includes("student") ||
       session.user.role.includes("teacher")
