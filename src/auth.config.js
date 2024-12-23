@@ -24,7 +24,7 @@ export default {
           user.password
         );
 
-        if (!isPasswordValid) {
+        if (!isPasswordValid || !user.isActive) {
           return null;
         }
 
@@ -33,6 +33,7 @@ export default {
           email: user.email,
           role: user.role,
           name: user.shortName,
+          isActive: user.isActive,
         };
       },
     }),
