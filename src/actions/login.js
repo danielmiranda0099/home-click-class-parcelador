@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn } from "@/auth";
+import { signIn, signOut } from "@/auth";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
@@ -38,6 +38,12 @@ export async function login(prevState, formData) {
       };
     }
 
+    if (user && !user.isActive) {
+      return {
+        error: "El usuario no esta activo.",
+      };
+    }
+
     const result = await signIn("credentials", {
       email,
       password,
@@ -56,4 +62,8 @@ export async function login(prevState, formData) {
     console.error("Error en el inicio de sesión", error);
     return { error: "Ocurrió un error inesperado" };
   }
+}
+
+export async function handleSignOut() {
+  await signOut({ redirect: false });
 }
