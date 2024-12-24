@@ -146,6 +146,9 @@ export async function updateUser(prev_state, form_dada) {
       );
     } else {
       delete normalized_data.password;
+    }
+
+    if (normalized_data.isChangePassword) {
       delete normalized_data.isChangePassword;
     }
 
