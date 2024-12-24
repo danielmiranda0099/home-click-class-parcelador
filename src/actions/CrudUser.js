@@ -84,6 +84,7 @@ export async function updateUser(prev_state, form_dada) {
       country,
       role,
       password,
+      isChangePassword,
     } = form_dada;
 
     if (
@@ -138,13 +139,14 @@ export async function updateUser(prev_state, form_dada) {
     const short_name = firstName.split(" ")[0] + " " + lastName.split(" ")[0];
     const full_name = firstName + " " + lastName;
 
-    if (password && password.length > 5) {
+    if (password && password.length > 5 && isChangePassword) {
       normalized_data.password = await bcrypt.hash(
         normalized_data.password,
         10
       );
     } else {
       delete normalized_data.password;
+      delete normalized_data.isChangePassword;
     }
 
     if (normalized_data.idUser) {

@@ -29,10 +29,9 @@ import { ErrorAlert } from "@/components/";
 import { useCustomToast } from "@/hooks";
 import { Checkbox } from "./ui/checkbox";
 
-
 function SubmitButton() {
   const { pending } = useFormStatus();
-  
+
   return (
     <Button type="submit" disabled={pending}>
       Editar usuario
@@ -50,10 +49,11 @@ export function PopupFormEditUser({ is_open, setIsOpen, data, handleAction }) {
     country: data?.country || "",
     role: data?.role[0] || "",
     password: "",
+    isChangePassword: false,
     idUser: data?.id,
   };
   const [userInfo, setUserInfo] = useState(DEFAULT_DATA_USER);
-  const [is_change_password, setIsChangePassword] = useState(false);
+
   const [form_state, dispath] = useFormState(updateUser, {
     data: [],
     success: null,
@@ -75,7 +75,7 @@ export function PopupFormEditUser({ is_open, setIsOpen, data, handleAction }) {
     }
     if (form_state.error) {
       setErrorMessage(form_state.message);
-    } 
+    }
   }, [form_state, setIsOpen]);
 
   const handleStudentInfoChange = (e) => {
@@ -199,9 +199,12 @@ export function PopupFormEditUser({ is_open, setIsOpen, data, handleAction }) {
               <div className="flex items-center gap-2">
                 <Label>Cambiar contraseña</Label>
                 <Checkbox
-                  checked={is_change_password}
+                  checked={userInfo.isChangePassword}
                   onCheckedChange={() =>
-                    setIsChangePassword(!is_change_password)
+                    setUserInfo({
+                      ...userInfo,
+                      isChangePassword: !userInfo.isChangePassword,
+                    })
                   }
                 />
               </div>
@@ -213,13 +216,13 @@ export function PopupFormEditUser({ is_open, setIsOpen, data, handleAction }) {
                     value={userInfo.password}
                     onChange={handleStudentInfoChange}
                     required
-                    disabled={!is_change_password}
+                    disabled={!userInfo.isChangePassword}
                   />
                   <Button
                     variant="outline"
                     type="button"
                     onClick={() => handleGeneratePassword()}
-                    disabled={!is_change_password}
+                    disabled={!userInfo.isChangePassword}
                   >
                     <RepeatIcon />
                   </Button>
@@ -227,7 +230,7 @@ export function PopupFormEditUser({ is_open, setIsOpen, data, handleAction }) {
                     variant="outline"
                     type="button"
                     onClick={() => copyToClipboard()}
-                    disabled={!is_change_password}
+                    disabled={!userInfo.isChangePassword}
                   >
                     Copy
                   </Button>
