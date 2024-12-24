@@ -72,6 +72,105 @@ export async function createNewUser(prev_state, form_dada) {
   }
 }
 
+export async function updateUser(prev_state, form_dada) {
+  try {
+    const {
+      idUser,
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      city,
+      country,
+      role,
+      password,
+    } = form_dada;
+
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !phoneNumber ||
+      !city ||
+      !country ||
+      !role
+    ) {
+      return RequestResponse.error("Porfavor introdusca todos los datos");
+    }
+
+    if (phoneNumber.length < 9 || !/^[0-9]+$/.test(phoneNumber)) {
+      return RequestResponse.error(
+        "Porfavor introdusca un numero de telefono valido"
+      );
+    }
+
+    if (!idUser) {
+      throw new Error("Error in label !idUser");
+    }
+
+    if (password && password.length < 5) {
+      return RequestResponse.error(
+        "La contraseña debe tener al menos 6 caracteres"
+      );
+    }
+
+    const normalized_data = Object.fromEntries(
+      Object.entries(form_dada).map(([key, value]) =>
+        key !== "password"
+          ? [key, typeof value === "string" ? value.toLowerCase() : value]
+          : [key, value]
+      )
+    );
+
+    const exist_user = await prisma.user.findFirst({
+      where: {
+        id: parseInt(idUser),
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!exist_user) {
+      return RequestResponse.error("El usuario no existe.");
+    }
+
+    const short_name = firstName.split(" ")[0] + " " + lastName.split(" ")[0];
+    const full_name = firstName + " " + lastName;
+
+    if (password && password.length > 5) {
+      normalized_data.password = await bcrypt.hash(
+        normalized_data.password,
+        10
+      );
+    } else {
+      delete normalized_data.password;
+    }
+
+    if (normalized_data.idUser) {
+      delete normalized_data.idUser;
+    }
+
+    normalized_data.role = [normalized_data.role];
+
+    normalized_data.shortName = short_name;
+    normalized_data.fullName = full_name;
+
+    await prisma.user.update({
+      where: {
+        id: exist_user.id,
+      },
+      data: {
+        ...normalized_data,
+      },
+    });
+    return RequestResponse.success();
+  } catch (error) {
+    console.error("Error updateUser():", error);
+    return RequestResponse.error();
+  }
+}
+
 //TODO: Refact
 export async function GetAllUsers() {
   try {
