@@ -31,3 +31,4 @@ export * from "./GraduationIcon";
 export * from "./PlusIcon";
 export * from "./TrashIcon";
 export * from "./FilterIcon";
+export * from "./EllipsisVerticalIcon";
