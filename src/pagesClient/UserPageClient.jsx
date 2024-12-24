@@ -1,17 +1,18 @@
 "use client";
 
 import { activateUser, deactivateUser, getUserById } from "@/actions/CrudUser";
-import { CardOverView } from "@/components";
-import { CheckIcon, UserIcon, XIcon } from "@/components/icons";
+import { CardOverView, PopupFormEditUser } from "@/components";
+import { CheckIcon, PencilIcon, UserIcon, XIcon } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useCustomToast } from "@/hooks";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 export function UserPageClient({ initialData = { error: true }, id }) {
   const [data, setData] = useState(initialData);
   const { data: user, error } = data;
+  const [is_open, setIsOpen] = useState(false);
 
   const { toastSuccess, toastError } = useCustomToast();
 
@@ -36,6 +37,12 @@ export function UserPageClient({ initialData = { error: true }, id }) {
   if (user) {
     return (
       <div className="flex flex-col gap-8 container mx-auto p-4 max-w-[1200px]">
+        <PopupFormEditUser
+          is_open={is_open}
+          setIsOpen={setIsOpen}
+          data={data?.data}
+          handleAction={onGetUser}
+        />
         <div className="flex flex-col gap-2">
           <h2 className="text-3xl">{user.fullName}</h2>
           <div className="flex gap-2">
@@ -61,7 +68,17 @@ export function UserPageClient({ initialData = { error: true }, id }) {
         )}
 
         <Card className="flex flex-col gap-3 w-[fit-content] p-5">
-          <p className="text-2xl font-bold">Datos del usuario</p>
+          <div className="flex gap-12 justify-between items-center">
+            <p className="text-lg font-semibold">Datos del usuario</p>
+            <Button
+              variant="outline"
+              className="flex gap-2"
+              onClick={() => setIsOpen(true)}
+            >
+              {" "}
+              <PencilIcon className="h-4 w-4" /> Editar
+            </Button>
+          </div>
           <div className="flex gap-2 border-b-2 pb-2 border-gray-300">
             <p className="text-lg font-semibold">Email:</p>
             <p className="text-lg">{user.email}</p>
@@ -89,7 +106,7 @@ export function UserPageClient({ initialData = { error: true }, id }) {
               if (response.success) {
                 onGetUser();
                 toastSuccess({ title: "Usuario activado correctamente" });
-              }else{
+              } else {
                 toastError({ title: "Error al activar usuario" });
               }
             }}
@@ -107,7 +124,7 @@ export function UserPageClient({ initialData = { error: true }, id }) {
               if (response.success) {
                 onGetUser();
                 toastSuccess({ title: "Usuario desactivado correctamente" });
-              }else{
+              } else {
                 toastError({ title: "Error al activar usuario" });
               }
             }}
