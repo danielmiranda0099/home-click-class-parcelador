@@ -326,17 +326,28 @@ export async function unpaidLessons(
   }
 }
 
-export async function DeleteLesson(ids) {
+export async function deleteLessons(prev, ids) {
   try {
-    await prisma.lesson.deleteMany({
-      where: {
-        id: {
-          in: ids,
+    await prisma.$transaction([
+      prisma.studentLesson.deleteMany({
+        where: {
+          lessonId: {
+            in: ids,
+          },
         },
-      },
-    });
+      }),
+      prisma.lesson.deleteMany({
+        where: {
+          id: {
+            in: ids,
+          },
+        },
+      }),
+    ]);
+    return RequestResponse.success();
   } catch (error) {
-    console.error("Error Unpaying Lesson", error);
+    console.error("Error in deleteLesson()", error);
+    return RequestResponse.error();
   }
 }
 
