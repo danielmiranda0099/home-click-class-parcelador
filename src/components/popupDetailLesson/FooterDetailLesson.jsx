@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CancelLesson, DeleteLesson } from "@/actions/CrudLesson";
+import { CancelLesson } from "@/actions/CrudLesson";
 import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 import { useCustomToast, useUserSession } from "@/hooks";
@@ -24,12 +24,14 @@ import {
   payStudentLessonsAndRegisterTransactions,
   payTeacherLessonAndRegisterTransaction,
 } from "@/actions/lessonTransactions";
+import { PopupDeleteLesson } from "./PopupDeleteLesson";
 
 export function FooterDetailLesson({ rol, showFooter }) {
   const [status_button, setStatusButton] = useState({
     paidStudent: false,
     paidTeacher: false,
   });
+  const [is_open_popup_delete, setIsOpenPopupDelete] = useState(false);
   const { selected_lesson: lesson, setLessons } = useLessonsStore();
   const user_session = useUserSession();
   const {
@@ -40,21 +42,30 @@ export function FooterDetailLesson({ rol, showFooter }) {
     setPopupFormLessonReport,
   } = useUiStore();
   const { toastSuccess, toastError } = useCustomToast();
-console.log(lesson)
+
   return (
     <DialogFooter className="sm:justify-between">
       {showFooter && (
         <>
+          <PopupDeleteLesson
+            is_open_popup_delete={is_open_popup_delete}
+            setIsOpenPopupDelete={setIsOpenPopupDelete}
+            lesson_id={lesson?.id}
+            handleAction={() => {
+              setPopupDetailLesson(false);
+              setLessons(rol);
+            }}
+          />
           <div className="flex gap-2">
             {!lesson?.isConfirmed &&
               !lesson?.isRegistered &&
-              !lesson?.studentLessons.some((student_lesson => student_lesson.isStudentPaid)) &&
+              !lesson?.studentLessons.some(
+                (student_lesson) => student_lesson.isStudentPaid
+              ) &&
               rol === "admin" && (
                 <DropdownMenu>
                   <DropdownMenuTrigger>
-                    <Button variant="ghost">
-                      <EllipsisVerticalIcon className="h-5 w-5" />
-                    </Button>
+                    <EllipsisVerticalIcon className="h-5 w-5" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuItem>
@@ -91,10 +102,11 @@ console.log(lesson)
                       <Button
                         variant="outline"
                         className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
-                        onClick={async () => {
-                          await DeleteLesson([lesson.id]);
-                          setLessons(rol);
-                          setPopupDetailLesson(false);
+                        onClick={() => {
+                          setIsOpenPopupDelete(true);
+                          // await DeleteLesson([lesson.id]);
+                          // setLessons(rol);
+                          // setPopupDetailLesson(false);
                         }}
                       >
                         Eliminar
