@@ -40,7 +40,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
     setPopupFormLessonReport,
   } = useUiStore();
   const { toastSuccess, toastError } = useCustomToast();
-
+console.log(lesson)
   return (
     <DialogFooter className="sm:justify-between">
       {showFooter && (
@@ -48,6 +48,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
           <div className="flex gap-2">
             {!lesson?.isConfirmed &&
               !lesson?.isRegistered &&
+              !lesson?.studentLessons.some((student_lesson => student_lesson.isStudentPaid)) &&
               rol === "admin" && (
                 <DropdownMenu>
                   <DropdownMenuTrigger>
