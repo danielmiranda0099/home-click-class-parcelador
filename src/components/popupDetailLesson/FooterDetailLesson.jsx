@@ -35,7 +35,6 @@ export function FooterDetailLesson({ rol, showFooter }) {
   const {
     setPopupFormLesson,
     setPopupDetailLesson,
-    setPopupFormLessonState,
     setPopupFormConfirmClass,
     setPopupFormReschedule,
     setPopupFormLessonReport,
@@ -270,7 +269,6 @@ export function FooterDetailLesson({ rol, showFooter }) {
                       className="flex gap-2"
                       onClick={() => {
                         setPopupDetailLesson(false);
-                        setPopupFormLessonState("EDIT");
                         setPopupFormLesson(true);
                       }}
                     >
