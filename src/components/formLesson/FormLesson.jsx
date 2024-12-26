@@ -32,8 +32,6 @@ export function FormLesson({ rol }) {
 
   useEffect(() => {
     if (selected_lesson) {
-      console.log("UseEffect Edit formLesson");
-      console.log(selected_lesson.students);
       setTeacherPayment(selected_lesson.teacherPayment.toString());
       // setStudentFee(selected_lesson.studentFee.toString());
 
@@ -57,7 +55,7 @@ export function FormLesson({ rol }) {
     const student_fee_string = student_fee?.replace(/[^0-9]/g, "");
     const student_fee_formated = parseInt(student_fee_string, 10) || 0;
 
-    form_data.forEach((value, key) => console.log(key, value));
+    // form_data.forEach((value, key) => console.log(key, value));
     if (rol === "admin") {
       if (!form_data.get("is_student_paid") && selected_lesson.isStudentPaid) {
         form_data.append("is_student_paid", "0");
@@ -69,7 +67,6 @@ export function FormLesson({ rol }) {
       form_data.append("teacherPayment", teacher_payment_formated);
       form_data.append("studentFee", student_fee_formated);
       const form_data_object = Object.fromEntries(form_data.entries());
-      console.log(form_data_object);
 
       await updateLesson(selected_lesson.id, form_data);
 
