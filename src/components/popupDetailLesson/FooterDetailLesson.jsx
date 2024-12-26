@@ -11,6 +11,7 @@ import {
   CheckIcon,
   ChevronDown,
   DollarIcon,
+  EllipsisVerticalIcon,
   PencilIcon,
 } from "@/components/icons";
 import {
@@ -49,47 +50,58 @@ export function FooterDetailLesson({ rol, showFooter }) {
             {!lesson?.isConfirmed &&
               !lesson?.isRegistered &&
               rol === "admin" && (
-                <>
-                  {!lesson?.isCanceled && (
-                    <Button
-                      variant="outline"
-                      className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
-                      onClick={async () => {
-                        CancelLesson(lesson?.id, true);
-                        setLessons(rol);
-                        setPopupDetailLesson(false);
-                      }}
-                    >
-                      Cancelar
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <Button variant="ghost">
+                      <EllipsisVerticalIcon className="h-5 w-5" />
                     </Button>
-                  )}
-
-                  {lesson?.isCanceled && (
-                    <Button
-                      variant="outline"
-                      className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
-                      onClick={async () => {
-                        CancelLesson(lesson?.id, false);
-                        setLessons(rol);
-                        setPopupDetailLesson(false);
-                      }}
-                    >
-                      Reactivar
-                    </Button>
-                  )}
-
-                  <Button
-                    variant="outline"
-                    className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
-                    onClick={async () => {
-                      DeleteLesson([lesson.id]);
-                      setLessons(rol);
-                      setPopupDetailLesson(false);
-                    }}
-                  >
-                    Eliminar
-                  </Button>
-                </>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>
+                      {!lesson?.isCanceled && (
+                        <Button
+                          variant="outline"
+                          className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
+                          onClick={async () => {
+                            await CancelLesson(lesson?.id, true);
+                            setLessons(rol);
+                            setPopupDetailLesson(false);
+                          }}
+                        >
+                          Cancelar
+                        </Button>
+                      )}
+                    </DropdownMenuItem>
+                    {lesson?.isCanceled && (
+                      <DropdownMenuItem>
+                        <Button
+                          variant="outline"
+                          className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
+                          onClick={async () => {
+                            await CancelLesson(lesson?.id, false);
+                            setLessons(rol);
+                            setPopupDetailLesson(false);
+                          }}
+                        >
+                          Reactivar
+                        </Button>
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem>
+                      <Button
+                        variant="outline"
+                        className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
+                        onClick={async () => {
+                          await DeleteLesson([lesson.id]);
+                          setLessons(rol);
+                          setPopupDetailLesson(false);
+                        }}
+                      >
+                        Eliminar
+                      </Button>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
           </div>
           <div className="flex gap-2">
