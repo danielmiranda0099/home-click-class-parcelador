@@ -19,34 +19,73 @@ import { students, teachers } from "@/mockData";
 import { InputPriceLesson, InputSearch } from "..";
 import { FormLessonReview } from "./FormLessonReview";
 import { CheckIcon } from "../icons";
+import { FormFieldStudents } from "../PopupFormCreateNewLesson/FormFieldStudents";
+import { DATA_LESSON_DEFAULT } from "@/utils/constans";
+import { FormFieldTeacher } from "../PopupFormCreateNewLesson/FormFieldTeacher";
 
 export function FormLesson({ rol }) {
   const { popupFormLesson: is_open, setPopupFormLesson: setIsOpen } =
     useUiStore();
   const { selected_lesson, setLessons } = useLessonsStore();
-
+  console.log("selected lesson", selected_lesson);
   const [teacher, setTeacher] = useState("");
   const [teacher_payment, setTeacherPayment] = useState("");
   const [student, setStudent] = useState("");
   const [student_fee, setStudentFee] = useState("");
 
-  useEffect(() => {
-    if (selected_lesson) {
-      setTeacherPayment(selected_lesson.teacherPayment.toString());
-      // setStudentFee(selected_lesson.studentFee.toString());
+  const [data_lesson, setDataLesson] = useState(DATA_LESSON_DEFAULT);
 
-      setStudent(
-        () =>
-          students.find((item) => item.label === selected_lesson.students)
-            ?.value ?? selected_lesson.students
-      );
-      setTeacher(
-        () =>
-          teachers.find((item) => item.label === selected_lesson.teacher)
-            ?.value || selected_lesson.teacher
-      );
+  useEffect(() => {
+    if (selected_lesson && is_open) {
+      setDataLesson({
+        ...data_lesson,
+        students: selected_lesson?.studentLessons?.map((student_lesson) => ({
+          fee: student_lesson.studentFee,
+          student: {
+            ...student_lesson.student,
+            value:
+              student_lesson.student.firstName +
+              "-" +
+              student_lesson.student.lastName,
+            label:
+              student_lesson.student.firstName +
+              " " +
+              student_lesson.student.lastName,
+          },
+          isPay: student_lesson.isStudentPaid
+        })),
+        teacher: {
+          payment: selected_lesson?.teacherPayment,
+          teacher: {
+            ...selected_lesson?.teacher,
+            value:
+              selected_lesson?.teacher.firstName +
+              "-" +
+              selected_lesson?.teacher.lastName,
+            label:
+              selected_lesson?.teacher.firstName +
+              " " +
+              selected_lesson?.teacher.lastName,
+          },
+          isPay: selected_lesson?.isTeacherPaid
+        },
+      });
+      // setTeacherPayment(selected_lesson.teacherPayment.toString());
+      // // setStudentFee(selected_lesson.studentFee.toString());
+
+      // setStudent(
+      //   () =>
+      //     students.find((item) => item.label === selected_lesson.students)
+      //       ?.value ?? selected_lesson.students
+      // );
+      // setTeacher(
+      //   () =>
+      //     teachers.find((item) => item.label === selected_lesson.teacher)
+      //       ?.value || selected_lesson.teacher
+      // );
     }
-  }, [selected_lesson]);
+  }, [selected_lesson, is_open]);
+  console.log("data_lesson", data_lesson);
 
   const OnSubmit = async (form_data) => {
     const teacher_payment_string = teacher_payment?.replace(/[^0-9]/g, "");
@@ -77,7 +116,15 @@ export function FormLesson({ rol }) {
 
   return (
     selected_lesson && (
-      <Dialog open={is_open} onOpenChange={setIsOpen}>
+      <Dialog
+        open={is_open}
+        onOpenChange={(open) => {
+          if (!open) {
+            // setErrorMessage("");
+          }
+          setIsOpen(open);
+        }}
+      >
         <DialogContent className="sm:max-w-[700px] pt-0">
           <DialogDescription></DialogDescription>
           <DialogHeader className="p-0">
@@ -86,37 +133,15 @@ export function FormLesson({ rol }) {
           <div>
             <form action={OnSubmit} className="grid gap-4">
               <>
-                {rol === "admin" && (
-                  <>
-                    <div className={`grid grid-cols-2 gap-4`}>
-                      <div className="grid gap-2">
-                        <Label>Price Student</Label>
-                        <InputPriceLesson
-                          value={student_fee}
-                          setValue={setStudentFee}
-                        />
-                      </div>
-                    </div>
-                    <div className={`grid grid-cols-2 gap-4`}>
-                      <div className="grid gap-2">
-                        <Label>Teacher</Label>
-                        <InputSearch
-                          value={teacher}
-                          setValue={setTeacher}
-                          data={teachers}
-                          placeholder="Select a teacher"
-                        />
-                      </div>
-                      <div className="grid gap-2">
-                        <Label>Price Teacher</Label>
-                        <InputPriceLesson
-                          value={teacher_payment}
-                          setValue={setTeacherPayment}
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
+                <FormFieldStudents
+                  data_lesson={data_lesson}
+                  setDataLesson={setDataLesson}
+                />
+
+                <FormFieldTeacher
+                  data_lesson={data_lesson}
+                  setDataLesson={setDataLesson}
+                />
               </>
 
               <FormLessonReview lesson={selected_lesson} rol={rol} />
