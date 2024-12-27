@@ -9,7 +9,7 @@ export function DetailReviewLesson({ lesson, rol }) {
         <div className="flex items-start gap-4">
           <FeedbackIcon className="h-8 w-8 text-primary" />
 
-          <p className="font-medium">Estado de cuenta y horarios</p>
+          <p className="font-medium">Resumen de clase</p>
         </div>
 
         {rol === "admin" &&
