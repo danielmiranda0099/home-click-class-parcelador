@@ -277,7 +277,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
                     </Button>
                   )}
 
-                  {!lesson?.isRegistered && rol === "admin" && (
+                  {rol === "admin" && (
                     <Button
                       className="flex gap-2"
                       onClick={() => {
