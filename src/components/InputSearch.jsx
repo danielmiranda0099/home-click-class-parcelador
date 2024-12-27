@@ -21,6 +21,7 @@ export function InputSearch({
   setValue,
   data = [],
   placeholder = "Search",
+  ...props
 }) {
   const [open, setOpen] = useState(false);
 
@@ -32,6 +33,7 @@ export function InputSearch({
           role="combobox"
           aria-expanded={open}
           className="min-w-60 justify-between"
+          {...props}
         >
           {value
             ? data?.find((item) => item.value === value?.value)?.label
