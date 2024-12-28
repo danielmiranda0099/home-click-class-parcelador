@@ -28,6 +28,7 @@ export function FormFieldTeacher({ data_lesson, setDataLesson }) {
           }
           data={teachers_for_input_search}
           placeholder="Select a teacher"
+          disabled={data_lesson?.isRegistered}
         />
       </div>
       <div className="grid gap-2">

@@ -53,7 +53,7 @@ export function FormFieldStudents({ data_lesson, setDataLesson }) {
               setValue={(value) => updateStudentData(index, "student", value)}
               data={students_for_input_search}
               placeholder="Select a student"
-              disabled={studentData?.isPay}
+              disabled={studentData?.isPay || data_lesson?.isConfirmed}
             />
           </div>
           <div className="grid gap-2">

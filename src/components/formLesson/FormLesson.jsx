@@ -92,6 +92,8 @@ export function FormLesson({ rol }) {
           },
           isPay: selected_lesson?.isTeacherPaid,
         },
+        isConfirmed: selected_lesson?.isConfirmed,
+        isRegistered: selected_lesson?.isRegistered,
       });
       // setTeacherPayment(selected_lesson.teacherPayment.toString());
       // // setStudentFee(selected_lesson.studentFee.toString());
@@ -172,11 +174,12 @@ export function FormLesson({ rol }) {
                   data_lesson={data_lesson}
                   setDataLesson={setDataLesson}
                 />
-
-                <FormFieldTeacher
-                  data_lesson={data_lesson}
-                  setDataLesson={setDataLesson}
-                />
+                {!selected_lesson?.isTeacherPaid && (
+                  <FormFieldTeacher
+                    data_lesson={data_lesson}
+                    setDataLesson={setDataLesson}
+                  />
+                )}
               </>
 
               <FormLessonReview lesson={selected_lesson} rol={rol} />
