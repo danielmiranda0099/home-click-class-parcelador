@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useFormState, useFormStatus } from "react-dom";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +23,19 @@ import { CheckIcon } from "../icons";
 import { FormFieldStudents } from "../PopupFormCreateNewLesson/FormFieldStudents";
 import { DATA_LESSON_DEFAULT } from "@/utils/constans";
 import { FormFieldTeacher } from "../PopupFormCreateNewLesson/FormFieldTeacher";
+import { ErrorAlert } from "@/components";
+import { useCustomToast } from "@/hooks";
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" className="flex gap-2" disabled={pending}>
+      <CheckIcon size={18} />
+      Guardar
+    </Button>
+  );
+}
 
 export function FormLesson({ rol }) {
   const { popupFormLesson: is_open, setPopupFormLesson: setIsOpen } =
@@ -34,6 +48,15 @@ export function FormLesson({ rol }) {
   const [student_fee, setStudentFee] = useState("");
 
   const [data_lesson, setDataLesson] = useState(DATA_LESSON_DEFAULT);
+
+  const [form_state, dispath] = useFormState(updateLesson, {
+    data: [],
+    succes: null,
+    error: false,
+    message: null,
+  });
+  const [error_message, setErrorMessage] = useState("");
+  const { toastSuccess } = useCustomToast();
 
   useEffect(() => {
     if (selected_lesson && is_open) {
@@ -52,7 +75,7 @@ export function FormLesson({ rol }) {
               " " +
               student_lesson.student.lastName,
           },
-          isPay: student_lesson.isStudentPaid
+          isPay: student_lesson.isStudentPaid,
         })),
         teacher: {
           payment: selected_lesson?.teacherPayment,
@@ -67,7 +90,7 @@ export function FormLesson({ rol }) {
               " " +
               selected_lesson?.teacher.lastName,
           },
-          isPay: selected_lesson?.isTeacherPaid
+          isPay: selected_lesson?.isTeacherPaid,
         },
       });
       // setTeacherPayment(selected_lesson.teacherPayment.toString());
@@ -85,6 +108,21 @@ export function FormLesson({ rol }) {
       // );
     }
   }, [selected_lesson, is_open]);
+
+  useEffect(() => {
+    console.log(form_state);
+    if (form_state?.success) {
+      toastSuccess({ title: "Clase editada." });
+      setLessons("admin");
+      setIsOpen(false);
+    }
+    if (form_state?.error) {
+      setErrorMessage(form_state.message);
+    } else {
+      setErrorMessage("");
+    }
+  }, [form_state]);
+
   console.log("data_lesson", data_lesson);
 
   const OnSubmit = async (form_data) => {
@@ -95,23 +133,20 @@ export function FormLesson({ rol }) {
     const student_fee_formated = parseInt(student_fee_string, 10) || 0;
 
     // form_data.forEach((value, key) => console.log(key, value));
-    if (rol === "admin") {
-      if (!form_data.get("is_student_paid") && selected_lesson.isStudentPaid) {
-        form_data.append("is_student_paid", "0");
-      }
-      if (!form_data.get("is_teacher_paid") && selected_lesson.isTeacherPaid) {
-        form_data.append("is_teacher_paid", "0");
-      }
 
-      form_data.append("teacherPayment", teacher_payment_formated);
-      form_data.append("studentFee", student_fee_formated);
-      const form_data_object = Object.fromEntries(form_data.entries());
-
-      await updateLesson(selected_lesson.id, form_data);
-
-      setLessons(rol);
+    if (!form_data.get("is_student_paid") && selected_lesson.isStudentPaid) {
+      form_data.append("is_student_paid", "0");
     }
-    setIsOpen(false);
+    if (!form_data.get("is_teacher_paid") && selected_lesson.isTeacherPaid) {
+      form_data.append("is_teacher_paid", "0");
+    }
+
+    form_data.append("teacherPayment", teacher_payment_formated);
+    form_data.append("studentFee", student_fee_formated);
+    const form_data_object = Object.fromEntries(form_data.entries());
+
+    setErrorMessage("");
+    dispath(selected_lesson.id, form_data);
   };
 
   return (
@@ -120,7 +155,7 @@ export function FormLesson({ rol }) {
         open={is_open}
         onOpenChange={(open) => {
           if (!open) {
-            // setErrorMessage("");
+            setErrorMessage("");
           }
           setIsOpen(open);
         }}
@@ -146,15 +181,14 @@ export function FormLesson({ rol }) {
 
               <FormLessonReview lesson={selected_lesson} rol={rol} />
 
+              <ErrorAlert message={error_message} />
+
               <DialogFooter>
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
 
-                <Button type="submit" className="flex gap-2">
-                  <CheckIcon size={18} />
-                  Guardar
-                </Button>
+                <SubmitButton />
               </DialogFooter>
             </form>
           </div>
