@@ -6,7 +6,7 @@ export function FormLessonReview({ lesson, rol }) {
   return (
     <>
       <div className="flex flex-wrap -mx-2 mb-4">
-        <div className="w-full mb-4">
+        {/* <div className="w-full mb-4">
           {lesson?.isConfirmed &&
             lesson.studentLessons.map((lesson_student) => (
               <div className="grid grid-cols-3" key={lesson_student.id}>
@@ -46,7 +46,7 @@ export function FormLessonReview({ lesson, rol }) {
                 )}
               </div>
             ))}
-        </div>
+        </div> */}
 
         <div className="w-full sm:w-1/5 px-2 mb-4 sm:mb-0">
           <Label htmlFor="oriented-week" className="block mb-1">
