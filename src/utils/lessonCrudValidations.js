@@ -6,6 +6,12 @@ import { isValidDate } from "@/utils/dateValidator";
 import { validateScheduleTimes } from "@/utils/validateScheduleTimes";
 
 export async function validateStudents(students) {
+  if (!students || students.length <= 0) {
+    return {
+      isValid: false,
+      error: "Complete los campos del estudiante.",
+    };
+  }
   const hasInvalidStudent = students.some(
     (student) => !student.student || !student.fee
   );
@@ -93,7 +99,10 @@ export async function formatAndValidateStudents(students) {
           throw new Error("El estudiante no está activo o registrado.");
 
         // Parsear y validar el monto
-        const fee = parseInt(data.fee.replace(/[^0-9]/g, ""), 10);
+        let fee = data.fee;
+        if (typeof fee !== "number") {
+          fee = parseInt(fee.replace(/[^0-9]/g, ""), 10);
+        }
         if (isNaN(fee) || fee <= 0) {
           throw new Error("Monto del estudiante inválido");
         }
