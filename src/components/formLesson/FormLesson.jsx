@@ -11,13 +11,9 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { updateLesson } from "@/actions/CrudLesson";
 import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
-
-import { students, teachers } from "@/mockData";
-import { InputPriceLesson, InputSearch } from "..";
 import { FormLessonReview } from "./FormLessonReview";
 import { CheckIcon } from "../icons";
 import { FormFieldStudents } from "../PopupFormCreateNewLesson/FormFieldStudents";
@@ -42,10 +38,6 @@ export function FormLesson({ rol }) {
     useUiStore();
   const { selected_lesson, setLessons } = useLessonsStore();
   console.log("selected lesson", selected_lesson);
-  const [teacher, setTeacher] = useState("");
-  const [teacher_payment, setTeacherPayment] = useState("");
-  const [student, setStudent] = useState("");
-  const [student_fee, setStudentFee] = useState("");
 
   const [data_lesson, setDataLesson] = useState(DATA_LESSON_DEFAULT);
 
@@ -76,6 +68,7 @@ export function FormLesson({ rol }) {
               student_lesson.student.lastName,
           },
           isPay: student_lesson.isStudentPaid,
+          isConfirmed: student_lesson.isConfirmed,
         })),
         teacher: {
           payment: selected_lesson?.teacherPayment,
@@ -92,22 +85,8 @@ export function FormLesson({ rol }) {
           },
           isPay: selected_lesson?.isTeacherPaid,
         },
-        isConfirmed: selected_lesson?.isConfirmed,
         isRegistered: selected_lesson?.isRegistered,
       });
-      // setTeacherPayment(selected_lesson.teacherPayment.toString());
-      // // setStudentFee(selected_lesson.studentFee.toString());
-
-      // setStudent(
-      //   () =>
-      //     students.find((item) => item.label === selected_lesson.students)
-      //       ?.value ?? selected_lesson.students
-      // );
-      // setTeacher(
-      //   () =>
-      //     teachers.find((item) => item.label === selected_lesson.teacher)
-      //       ?.value || selected_lesson.teacher
-      // );
     }
   }, [selected_lesson, is_open]);
 
@@ -115,8 +94,8 @@ export function FormLesson({ rol }) {
     console.log(form_state);
     if (form_state?.success) {
       toastSuccess({ title: "Clase editada." });
-      setLessons("admin");
-      setIsOpen(false);
+      // setLessons("admin");
+      // setIsOpen(false);
     }
     if (form_state?.error) {
       setErrorMessage(form_state.message);
@@ -125,30 +104,20 @@ export function FormLesson({ rol }) {
     }
   }, [form_state]);
 
-  console.log("data_lesson", data_lesson);
-
-  const OnSubmit = async (form_data) => {
-    const teacher_payment_string = teacher_payment?.replace(/[^0-9]/g, "");
-    const teacher_payment_formated = parseInt(teacher_payment_string, 10) || 0;
-
-    const student_fee_string = student_fee?.replace(/[^0-9]/g, "");
-    const student_fee_formated = parseInt(student_fee_string, 10) || 0;
-
-    // form_data.forEach((value, key) => console.log(key, value));
-
-    if (!form_data.get("is_student_paid") && selected_lesson.isStudentPaid) {
-      form_data.append("is_student_paid", "0");
-    }
-    if (!form_data.get("is_teacher_paid") && selected_lesson.isTeacherPaid) {
-      form_data.append("is_teacher_paid", "0");
-    }
-
-    form_data.append("teacherPayment", teacher_payment_formated);
-    form_data.append("studentFee", student_fee_formated);
+  const onSubmit = async (form_data) => {
+    console.log("data_lesson", data_lesson);
+    console.log("form_data");
+    form_data.forEach((value, key) => console.log(key, ":", value));
     const form_data_object = Object.fromEntries(form_data.entries());
-
+    const data = {
+      students: data_lesson.students,
+      teacher: data_lesson.teacher,
+      ...form_data_object,
+      lessonId: selected_lesson?.id,
+    };
+    console.log("data", data);
     setErrorMessage("");
-    dispath(selected_lesson.id, form_data);
+    dispath(data);
   };
 
   return (
@@ -168,7 +137,7 @@ export function FormLesson({ rol }) {
             <DialogTitle>Edit Class</DialogTitle>
           </DialogHeader>
           <div>
-            <form action={OnSubmit} className="grid gap-4">
+            <form action={onSubmit} className="grid gap-4">
               <>
                 <FormFieldStudents
                   data_lesson={data_lesson}
