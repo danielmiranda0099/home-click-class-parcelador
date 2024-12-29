@@ -74,7 +74,7 @@ export async function validateSchedule(times, selectedDays) {
   }
   return { isValid: true };
 }
-//TODO: Agregar verificacion si el student esta activo o no
+
 export async function formatAndValidateStudents(students) {
   try {
     const formattedStudents = await Promise.all(
@@ -83,6 +83,7 @@ export async function formatAndValidateStudents(students) {
         const user = await prisma.user.findFirst({
           where: {
             id: data.student.id,
+            isActive: true
           },
           select: {
             id: true,
