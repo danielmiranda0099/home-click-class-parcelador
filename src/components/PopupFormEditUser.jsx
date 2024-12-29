@@ -14,8 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { createNewUser, updateUser } from "@/actions/CrudUser";
-import { useUserStore } from "@/store/userStore";
+import { updateUser } from "@/actions/CrudUser";
 import {
   Select,
   SelectContent,
@@ -62,15 +61,13 @@ export function PopupFormEditUser({ is_open, setIsOpen, data, handleAction }) {
   });
 
   const [error_message, setErrorMessage] = useState("");
-  const { setUsers } = useUserStore();
   const { toastSuccess } = useCustomToast();
 
   useEffect(() => {
     setErrorMessage("");
     if (form_state.success) {
-      setUsers();
       setUserInfo(DEFAULT_DATA_USER);
-      toastSuccess({ title: "Usuario creado exitosamente" });
+      toastSuccess({ title: "Usuario editado exitosamente" });
       setIsOpen(false);
     }
     if (form_state.error) {
