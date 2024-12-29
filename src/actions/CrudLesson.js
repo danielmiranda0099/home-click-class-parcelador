@@ -222,24 +222,25 @@ export async function updateLesson(prev, updated_lesson_data) {
       // console.log("********* NO *********");
     }
 
-    if (data_teacher.teacherId !== lesson_current.teacherId) {
-      console.log("***** CAMBIANO PROFESOR *********************");
+    if (data_teacher.teacherId !== lesson_current.teacherId && !lesson_current.isRegistered) {
+      data.teacherId = data_teacher.teacherId;
+      data.teacherPayment = data_teacher.teacherPayment;
     }
     if (
       data_teacher.teacherId === lesson_current.teacherId &&
       data_teacher.teacherPayment !== lesson_current.teacherPayment
     ) {
       data.teacherPayment = data_teacher.teacherPayment;
-      if(lesson_current.isRegistered){
+      if (lesson_current.isRegistered) {
         await prisma.debt.updateMany({
           where: {
             lessonId: lesson_current.id,
             userId: lesson_current.teacherId,
           },
           data: {
-            amount: data_teacher.teacherPayment
-          }
-        })
+            amount: data_teacher.teacherPayment,
+          },
+        });
       }
     }
     if (
