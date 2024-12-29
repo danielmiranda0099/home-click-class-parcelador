@@ -65,7 +65,7 @@ export async function CreateNewLesson(prev_state, lessons_data) {
     const { data: data_students } = students_formated;
 
     const teacher_formated = await formatAndValidateteacher(teacher);
-    if (!students_formated.isValid) {
+    if (!teacher_formated.isValid) {
       return RequestResponse.error(students_formated.error);
     }
     const { data: data_teacher } = teacher_formated;
@@ -160,17 +160,93 @@ export async function getLessons() {
   }
 }
 
-export async function updateLesson(id, updated_lesson) {
-  const updated_lesson_formated = formattedLessonForBD(updated_lesson);
+export async function updateLesson(prev, updated_lesson_data) {
   try {
+    const {
+      lessonId,
+      students,
+      week,
+      topic,
+      teacherObservations,
+      issues,
+      otherObservations,
+    } = updated_lesson_data;
+    // console.log(updated_lesson_data);
+
+    const students_formated = await formatAndValidateStudents(students);
+    if (!students_formated.isValid) {
+      return RequestResponse.error(students_formated.error);
+    }
+    const { data: data_students } = students_formated;
+
+    const lesson_current = await prisma.lesson.findUnique({
+      where: {
+        id: lessonId,
+      },
+      include: {
+        teacher: true,
+        studentLessons: {
+          include: {
+            student: true,
+          },
+        },
+      },
+    });
+    if (!lesson_current) {
+      throw new Error("Field problem !lesson");
+    }
+
+    // console.log("lesson current", lesson_current)
+
+    if (students.length !== lesson_current.studentLessons.length) {
+      // console.log("********* CAMBIANDO STUDENT *********");
+    } else {
+      // console.log("********* NO *********");
+    }
+    if (
+      lesson_current.isRegistered &&
+      (!week || !topic || !teacherObservations)
+    ) {
+      return RequestResponse.error(
+        "Por favor complete los campos de observaciones."
+      );
+    }
+
+    let data = {};
+    if (week && week !== lesson_current.week) {
+      data.week = week;
+    }
+    if (topic && topic !== lesson_current.topic) {
+      data.topic = topic;
+    }
+    if (
+      teacherObservations &&
+      teacherObservations !== lesson_current.teacherObservations
+    ) {
+      data.teacherObservations = teacherObservations;
+    }
+    if (issues && issues !== lesson_current.issues) {
+      data.issues = issues;
+    }
+    if (
+      otherObservations &&
+      otherObservations !== lesson_current.otherObservations
+    ) {
+      data.otherObservations = otherObservations;
+    }
+    console.log(data);
     await prisma.lesson.update({
       where: {
-        id,
+        id: lessonId,
       },
-      data: updated_lesson_formated,
+      data: {
+        ...data,
+      },
     });
+    return RequestResponse.success();
   } catch (error) {
-    console.error("Error Updating Lesson", error);
+    console.error("Error updateLesson()", error);
+    return RequestResponse.error();
   }
 }
 
