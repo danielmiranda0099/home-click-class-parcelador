@@ -66,7 +66,7 @@ export async function CreateNewLesson(prev_state, lessons_data) {
 
     const teacher_formated = await formatAndValidateteacher(teacher);
     if (!teacher_formated.isValid) {
-      return RequestResponse.error(students_formated.error);
+      return RequestResponse.error(teacher_formated.error);
     }
     const { data: data_teacher } = teacher_formated;
 
@@ -165,19 +165,36 @@ export async function updateLesson(prev, updated_lesson_data) {
     const {
       lessonId,
       students,
+      teacher,
       week,
       topic,
       teacherObservations,
       issues,
       otherObservations,
     } = updated_lesson_data;
-    // console.log(updated_lesson_data);
+    console.log(updated_lesson_data);
+
+    const validations = [
+      await validateStudents(students),
+      await validateTeacher(teacher),
+    ];
+
+    const validationError = validations.find((v) => !v.isValid);
+    if (validationError) {
+      return RequestResponse.error(validationError.error);
+    }
 
     const students_formated = await formatAndValidateStudents(students);
     if (!students_formated.isValid) {
       return RequestResponse.error(students_formated.error);
     }
     const { data: data_students } = students_formated;
+
+    const teacher_formated = await formatAndValidateteacher(teacher);
+    if (!teacher_formated.isValid) {
+      return RequestResponse.error(teacher_formated.error);
+    }
+    const { data: data_teacher } = teacher_formated;
 
     const lesson_current = await prisma.lesson.findUnique({
       where: {
@@ -197,11 +214,33 @@ export async function updateLesson(prev, updated_lesson_data) {
     }
 
     // console.log("lesson current", lesson_current)
+    let data = {};
 
     if (students.length !== lesson_current.studentLessons.length) {
       // console.log("********* CAMBIANDO STUDENT *********");
     } else {
       // console.log("********* NO *********");
+    }
+
+    if (data_teacher.teacherId !== lesson_current.teacherId) {
+      console.log("***** CAMBIANO PROFESOR *********************");
+    }
+    if (
+      data_teacher.teacherId === lesson_current.teacherId &&
+      data_teacher.teacherPayment !== lesson_current.teacherPayment
+    ) {
+      data.teacherPayment = data_teacher.teacherPayment;
+      if(lesson_current.isRegistered){
+        await prisma.debt.updateMany({
+          where: {
+            lessonId: lesson_current.id,
+            userId: lesson_current.teacherId,
+          },
+          data: {
+            amount: data_teacher.teacherPayment
+          }
+        })
+      }
     }
     if (
       lesson_current.isRegistered &&
@@ -212,7 +251,6 @@ export async function updateLesson(prev, updated_lesson_data) {
       );
     }
 
-    let data = {};
     if (week && week !== lesson_current.week) {
       data.week = week;
     }
@@ -234,7 +272,7 @@ export async function updateLesson(prev, updated_lesson_data) {
     ) {
       data.otherObservations = otherObservations;
     }
-    console.log(data);
+    // console.log(data);
     await prisma.lesson.update({
       where: {
         id: lessonId,
