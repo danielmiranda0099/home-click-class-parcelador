@@ -146,8 +146,12 @@ export async function formatAndValidateteacher(teacher) {
       },
     });
     if (!user) throw new Error("El profesor no está activo o registrado.");
+    if (!teacher.payment) throw new Error("Porfavor ingrese un monto valido para el profesor.");
+    let payment = teacher.payment;
+    if (typeof payment !== "number") {
+      payment = parseInt(payment.replace(/[^0-9]/g, ""), 10);
+    }
 
-    const payment = parseInt(teacher.payment.replace(/[^0-9]/g, ""), 10);
     return {
       isValid: true,
       data: { teacherId: teacher.teacher.id, teacherPayment: payment },
