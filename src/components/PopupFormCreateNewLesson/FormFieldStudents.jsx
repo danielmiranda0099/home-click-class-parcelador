@@ -12,10 +12,8 @@ export function FormFieldStudents({ data_lesson, setDataLesson }) {
   const [students_for_input_search, setStudentsForInputSearh] = useState([]);
   const { users } = useUserStore();
 
-  //TODO: eliminar useeffect o que se actulice los inputs cuando se crea un user sin necesitar del useeffects o pasarlo a un CUSTOM HOOK
   useEffect(() => {
     const students_formated = formatUsersForInputSearch(users, "student");
-
     setStudentsForInputSearh(students_formated);
   }, [users]);
 
@@ -65,7 +63,7 @@ export function FormFieldStudents({ data_lesson, setDataLesson }) {
             />
           </div>
 
-          {index > 0 && (
+          {!studentData?.isConfirmed && !studentData?.isPay && (
             <div
               className="bg-white rounded-full shadow-xl border border-gray-300 p-2 absolute right-0 cursor-pointer hover:bg-gray-200"
               onClick={() => handlerRemoveStudent(index)}
