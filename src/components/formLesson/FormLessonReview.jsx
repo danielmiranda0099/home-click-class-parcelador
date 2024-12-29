@@ -58,7 +58,7 @@ export function FormLessonReview({ lesson, rol }) {
             className="h-32"
             placeholder="Enter oriented week..."
             defaultValue={lesson?.week || ""}
-            required={rol === "teacher"}
+            required={lesson?.isRegistered}
           />
         </div>
         <div className="w-full sm:w-1/5 px-2 mb-4 sm:mb-0">
@@ -71,6 +71,7 @@ export function FormLessonReview({ lesson, rol }) {
             className="h-32"
             placeholder="Enter oriented topic..."
             defaultValue={lesson?.topic || ""}
+            required={lesson?.isRegistered}
           />
         </div>
         <div className="w-full sm:w-1/5 px-2 mb-4 sm:mb-0">
@@ -83,6 +84,7 @@ export function FormLessonReview({ lesson, rol }) {
             className="h-32"
             placeholder="Enter observation..."
             defaultValue={lesson?.teacherObservations || ""}
+            required={lesson?.isRegistered}
           />
         </div>
         <div className="w-full sm:w-1/5 px-2 mb-4 sm:mb-0">
