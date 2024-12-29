@@ -147,10 +147,7 @@ export async function updateUser(prev_state, form_dada) {
     } else {
       delete normalized_data.password;
     }
-
-    if (normalized_data.isChangePassword) {
-      delete normalized_data.isChangePassword;
-    }
+    delete normalized_data.isChangePassword;
 
     if (normalized_data.idUser) {
       delete normalized_data.idUser;
@@ -177,9 +174,12 @@ export async function updateUser(prev_state, form_dada) {
 }
 
 //TODO: Refact
-export async function GetAllUsers() {
+export async function getAllActiveUsers() {
   try {
     const users = await prisma.user.findMany({
+      where: {
+        isActive: true,
+      },
       select: {
         id: true,
         firstName: true,
