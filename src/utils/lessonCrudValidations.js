@@ -83,7 +83,7 @@ export async function formatAndValidateStudents(students) {
         const user = await prisma.user.findFirst({
           where: {
             id: data.student.id,
-            isActive: true
+            isActive: true,
           },
           select: {
             id: true,
@@ -130,6 +130,7 @@ export async function formatAndValidateteacher(teacher) {
     const user = await prisma.user.findFirst({
       where: {
         id: teacher.teacher.id,
+        isActive: true,
       },
       select: {
         id: true,
