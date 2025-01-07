@@ -263,15 +263,15 @@ export async function updateLesson(prev, updated_lesson_data) {
           current.fee !== newStudent.fee
       )
     );
-    console.log("*********** students_to_add **********", students_to_add);
-    console.log(
-      "*********** students_to_remove **********",
-      students_to_remove
-    );
-    console.log(
-      "*********** students_to_update **********",
-      students_to_update
-    );
+    // console.log("*********** students_to_add **********", students_to_add);
+    // console.log(
+    //   "*********** students_to_remove **********",
+    //   students_to_remove
+    // );
+    // console.log(
+    //   "*********** students_to_update **********",
+    //   students_to_update
+    // );
     // // Ejecutar las operaciones en la base de datos
     if (
       students_to_add.length > 0 ||
