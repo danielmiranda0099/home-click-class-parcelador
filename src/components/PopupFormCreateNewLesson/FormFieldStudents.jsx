@@ -7,6 +7,7 @@ import { InputSearch } from "@/components/InputSearch";
 import { InputPriceLesson } from "@/components/InputPriceLesson";
 import { useUserStore } from "@/store/userStore";
 import { formatUsersForInputSearch } from "@/utils/formatUsersForInputSearch";
+import { useLessonsStore } from "@/store/lessonStore";
 
 export function FormFieldStudents({ data_lesson, setDataLesson }) {
   const [students_for_input_search, setStudentsForInputSearh] = useState([]);
@@ -39,7 +40,7 @@ export function FormFieldStudents({ data_lesson, setDataLesson }) {
       students: student_filtered,
     });
   };
-
+  
   return (
     <>
       {data_lesson.students.map((studentData, index) => (
@@ -51,7 +52,7 @@ export function FormFieldStudents({ data_lesson, setDataLesson }) {
               setValue={(value) => updateStudentData(index, "student", value)}
               data={students_for_input_search}
               placeholder="Select a student"
-              disabled={studentData?.isPay || studentData?.isConfirmed}
+              disabled={studentData?.disabled}
             />
           </div>
           <div className="grid gap-2">
