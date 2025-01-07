@@ -14,6 +14,7 @@ import {
 import { scheduleLessons } from "@/utils/scheduleLessons";
 import { auth } from "@/auth";
 import moment from "moment";
+import { parseCurrencyToNumber } from "@/utils/parseCurrencyToNumber";
 
 const formattedLessonForBD = (form_data) => {
   // TODO Mirar como adtener los de mas datos del formulario
@@ -214,15 +215,114 @@ export async function updateLesson(prev, updated_lesson_data) {
     }
 
     // console.log("lesson current", lesson_current)
+    // console.log("*********** data_students *********", data_students);
     let data = {};
 
-    if (students.length !== lesson_current.studentLessons.length) {
-      // console.log("********* CAMBIANDO STUDENT *********");
-    } else {
-      // console.log("********* NO *********");
+    // if student pay        NO
+    // if student confirm    ONLY FEE
+    // if scheduled          ALL
+    //
+    // Identificar estudiantes a agregar
+    const students_data_current = lesson_current.studentLessons.map(
+      (student_lesson) => ({
+        fee: student_lesson.studentFee,
+        studentId: student_lesson.studentId,
+      })
+    );
+    const students_data = students.map((student) => ({
+      fee: parseCurrencyToNumber(student.fee),
+      studentId: student.student.id,
+    }));
+
+    console.log(
+      "************** students_data_current *************",
+      students_data_current
+    );
+    console.log("********* students **********", students_data);
+
+    const students_to_add = students_data.filter(
+      (newStudent) =>
+        !students_data_current.some(
+          (current) => current.studentId === newStudent.studentId
+        )
+    );
+
+    // Identificar estudiantes a eliminar
+    const students_to_remove = students_data_current.filter(
+      (current) =>
+        !students_data.some(
+          (newStudent) => newStudent.studentId === current.studentId
+        )
+    );
+
+    // Identificar estudiantes a actualizar
+    const students_to_update = students_data.filter((newStudent) =>
+      students_data_current.some(
+        (current) =>
+          current.studentId === newStudent.studentId &&
+          current.fee !== newStudent.fee
+      )
+    );
+    console.log("*********** students_to_add **********", students_to_add);
+    console.log(
+      "*********** students_to_remove **********",
+      students_to_remove
+    );
+    console.log(
+      "*********** students_to_update **********",
+      students_to_update
+    );
+    // // Ejecutar las operaciones en la base de datos
+    if (
+      students_to_add.length > 0 ||
+      students_to_remove.length > 0 ||
+      students_to_update.length > 0
+    ) {
+      await prisma.$transaction([
+        // Agregar nuevos estudiantes
+        ...students_to_add.map((student) =>
+          prisma.studentLesson.create({
+            data: {
+              lessonId,
+              studentId: student.studentId,
+              studentFee: student.fee,
+            },
+          })
+        ),
+
+        // Eliminar estudiantes
+        ...students_to_remove.map((student) =>
+          prisma.studentLesson.delete({
+            where: {
+              studentId_lessonId: {
+                studentId: student.studentId,
+                lessonId,
+              },
+            },
+          })
+        ),
+
+        // Actualizar estudiantes
+        ...students_to_update.map((student) =>
+          prisma.studentLesson.update({
+            where: {
+              studentId_lessonId: {
+                studentId: student.studentId,
+                lessonId,
+              },
+            },
+            data: {
+              studentFee: student.fee,
+            },
+          })
+        ),
+      ]);
     }
 
-    if (data_teacher.teacherId !== lesson_current.teacherId && !lesson_current.isRegistered) {
+    if (
+      data_teacher.teacherId !== lesson_current.teacherId &&
+      !lesson_current.isRegistered
+    ) {
       data.teacherId = data_teacher.teacherId;
       data.teacherPayment = data_teacher.teacherPayment;
     }
