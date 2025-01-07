@@ -69,6 +69,7 @@ export function FormLesson({ rol }) {
           },
           isPay: student_lesson.isStudentPaid,
           isConfirmed: student_lesson.isConfirmed,
+          disabled: true
         })),
         teacher: {
           payment: selected_lesson?.teacherPayment,
