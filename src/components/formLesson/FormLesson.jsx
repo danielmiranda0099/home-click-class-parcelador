@@ -95,8 +95,8 @@ export function FormLesson({ rol }) {
     console.log(form_state);
     if (form_state?.success) {
       toastSuccess({ title: "Clase editada." });
-      // setLessons("admin");
-      // setIsOpen(false);
+      setLessons("admin");
+      setIsOpen(false);
     }
     if (form_state?.error) {
       setErrorMessage(form_state.message);
