@@ -81,6 +81,18 @@ export async function validateSchedule(times, selectedDays) {
   return { isValid: true };
 }
 
+export async function validateDates(all_dates) {
+  all_dates.forEach((date, index) => {
+    if (isNaN(Date.parse(date))) {
+      return {
+        isValid: false,
+        error: "Error en las fechas.",
+      };
+    }
+  });
+  return { isValid: true };
+}
+
 export async function formatAndValidateStudents(students) {
   try {
     const formattedStudents = await Promise.all(
@@ -146,7 +158,8 @@ export async function formatAndValidateteacher(teacher) {
       },
     });
     if (!user) throw new Error("El profesor no está activo o registrado.");
-    if (!teacher.payment) throw new Error("Porfavor ingrese un monto valido para el profesor.");
+    if (!teacher.payment)
+      throw new Error("Porfavor ingrese un monto valido para el profesor.");
     let payment = teacher.payment;
     if (typeof payment !== "number") {
       payment = parseInt(payment.replace(/[^0-9]/g, ""), 10);
