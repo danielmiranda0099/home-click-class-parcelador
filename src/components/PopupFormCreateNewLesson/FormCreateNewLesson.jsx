@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 
-import { DATA_LESSON_DEFAULT, DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
+import { DATA_LESSON_DEFAULT } from "@/utils/constans";
 
 import { CreateNewLesson } from "@/actions/CrudLesson";
 import { PeriodOfTime } from "./PeriodOfTime";
@@ -19,7 +19,6 @@ import { FormFieldStudents } from "./FormFieldStudents";
 import { FormFieldTeacher } from "./FormFieldTeacher";
 import { ErrorAlert } from "@/components";
 import { useCustomToast } from "@/hooks";
-import moment from "moment";
 import { scheduleLessons } from "@/utils/scheduleLessons";
 
 function SubmitButton() {
@@ -49,8 +48,8 @@ export function FormCreateNewLesson() {
     console.log(form_state);
     if (form_state?.success) {
       toastSuccess({ title: "Clases creadas." });
-      // setLessons("admin");
-      // setIsOpen(false);
+      setLessons("admin");
+      setIsOpen(false);
     }
     if (form_state?.error) {
       setErrorMessage(form_state.message);
@@ -67,7 +66,7 @@ export function FormCreateNewLesson() {
       data_lesson.times,
       data_lesson.periodOfTime,
       data_lesson.startDate
-    )
+    );
 
     console.log("********* all_date *******", all_dates);
     data_lesson.allDates = all_dates;

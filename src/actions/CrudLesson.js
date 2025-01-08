@@ -41,9 +41,16 @@ const formattedLessonForBD = (form_data) => {
 
 export async function CreateNewLesson(prev_state, lessons_data) {
   try {
-    const { students, teacher, periodOfTime, startDate, selectedDays, times, allDates } =
-      lessons_data;
-    console.log("*********** lessons_data ***********", lessons_data);
+    const {
+      students,
+      teacher,
+      periodOfTime,
+      startDate,
+      selectedDays,
+      times,
+      allDates,
+    } = lessons_data;
+
     const validations = [
       await validateStudents(students),
       await validateTeacher(teacher),
@@ -73,8 +80,6 @@ export async function CreateNewLesson(prev_state, lessons_data) {
     }
     const { data: data_teacher } = teacher_formated;
 
-    
-    console.log("****** all_date *********", allDates);
     const lesson = {
       teacherId: data_teacher.teacherId,
       teacherPayment: data_teacher.teacherPayment,
@@ -88,26 +93,25 @@ export async function CreateNewLesson(prev_state, lessons_data) {
         create: data_students,
       },
     }));
-    console.log("****** data *********", data);
-    // const new_lessons = await prisma.$transaction(
-    //   data.map((lesson_data) =>
-    //     prisma.lesson.create({
-    //       data: {
-    //         ...lesson_data,
-    //       },
-    //       include: {
-    //         teacher: true,
-    //         studentLessons: {
-    //           include: {
-    //             student: true,
-    //           },
-    //         },
-    //       },
-    //     })
-    //   )
-    // );
-    // return RequestResponse.success(new_lessons);
-    return RequestResponse.success();
+
+    const new_lessons = await prisma.$transaction(
+      data.map((lesson_data) =>
+        prisma.lesson.create({
+          data: {
+            ...lesson_data,
+          },
+          include: {
+            teacher: true,
+            studentLessons: {
+              include: {
+                student: true,
+              },
+            },
+          },
+        })
+      )
+    );
+    return RequestResponse.success(new_lessons);
   } catch (error) {
     console.error("Error Crating and Scheduling lessons:", error);
     return RequestResponse.error();
