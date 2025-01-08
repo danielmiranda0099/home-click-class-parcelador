@@ -31,7 +31,7 @@ export function scheduleLessons(selected_days, times, period, startDate) {
         .hour(times[currentDate.day()].split(":")[0])
         .minute(times[currentDate.day()].split(":")[1]);
 
-      dates.push(dateWithTime.format());
+      dates.push(new Date(dateWithTime.format()).toISOString());
     }
     currentDate.add(1, "days"); // Avanzar al siguiente día
   }
