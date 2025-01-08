@@ -10,6 +10,7 @@ import {
   validateStudents,
   validateTeacher,
   formatAndValidateteacher,
+  validateDates,
 } from "@/utils/lessonCrudValidations";
 import { scheduleLessons } from "@/utils/scheduleLessons";
 import { auth } from "@/auth";
@@ -40,9 +41,9 @@ const formattedLessonForBD = (form_data) => {
 
 export async function CreateNewLesson(prev_state, lessons_data) {
   try {
-    const { students, teacher, periodOfTime, startDate, selectedDays, times } =
+    const { students, teacher, periodOfTime, startDate, selectedDays, times, allDates } =
       lessons_data;
-
+    console.log("*********** lessons_data ***********", lessons_data);
     const validations = [
       await validateStudents(students),
       await validateTeacher(teacher),
@@ -50,6 +51,7 @@ export async function CreateNewLesson(prev_state, lessons_data) {
       await validateStartDate(startDate),
       await validateSelectedDays(selectedDays),
       await validateSchedule(times, selectedDays),
+      await validateDates(allDates),
     ];
 
     // Verificar si hay errores
@@ -71,19 +73,14 @@ export async function CreateNewLesson(prev_state, lessons_data) {
     }
     const { data: data_teacher } = teacher_formated;
 
-    const all_date = scheduleLessons(
-      selectedDays,
-      times,
-      periodOfTime,
-      startDate
-    );
-
+    
+    console.log("****** all_date *********", allDates);
     const lesson = {
       teacherId: data_teacher.teacherId,
       teacherPayment: data_teacher.teacherPayment,
     };
 
-    const data = all_date.map((date) => ({
+    const data = allDates.map((date) => ({
       ...lesson,
       isGroup: data_students.length > 1,
       startDate: date,
@@ -91,25 +88,26 @@ export async function CreateNewLesson(prev_state, lessons_data) {
         create: data_students,
       },
     }));
-
-    const new_lessons = await prisma.$transaction(
-      data.map((lesson_data) =>
-        prisma.lesson.create({
-          data: {
-            ...lesson_data,
-          },
-          include: {
-            teacher: true,
-            studentLessons: {
-              include: {
-                student: true,
-              },
-            },
-          },
-        })
-      )
-    );
-    return RequestResponse.success(new_lessons);
+    console.log("****** data *********", data);
+    // const new_lessons = await prisma.$transaction(
+    //   data.map((lesson_data) =>
+    //     prisma.lesson.create({
+    //       data: {
+    //         ...lesson_data,
+    //       },
+    //       include: {
+    //         teacher: true,
+    //         studentLessons: {
+    //           include: {
+    //             student: true,
+    //           },
+    //         },
+    //       },
+    //     })
+    //   )
+    // );
+    // return RequestResponse.success(new_lessons);
+    return RequestResponse.success();
   } catch (error) {
     console.error("Error Crating and Scheduling lessons:", error);
     return RequestResponse.error();
