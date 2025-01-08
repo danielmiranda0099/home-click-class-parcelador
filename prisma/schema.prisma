@@ -8,7 +8,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  // directUrl = env("DIRECT_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
@@ -37,12 +37,12 @@ model User {
 
   transactions Transaction[]
   debts        Debt[]
-  isActive  Boolean @default(true)
+  isActive     Boolean       @default(true)
 }
 
 model Lesson {
   id                  Int      @id @default(autoincrement())
-  startDate           DateTime
+  startDate           DateTime @db.Timestamptz
   topic               String?
   issues              String?
   week                String?
