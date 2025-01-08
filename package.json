@@ -12,7 +12,8 @@
     "seed": "node src/seed/seed.js",
     "seed-create-user": "node src/seed/registerUser.js",
     "seed-transaction": "node src/seed/transactionsSeed.js",
-    "seed-debt": "node src/seed/debtSeed.js"
+    "seed-debt": "node src/seed/debtSeed.js",
+    "fix-startDate": "node src/scripts/fixStartDate.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.2",
