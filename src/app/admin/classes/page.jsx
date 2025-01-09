@@ -88,7 +88,7 @@ export default function DashboardPage() {
         </section>
 
         <TabsContent value="calendar">
-          <CalendarUI rol="admin" />
+          {/* <CalendarUI rol="admin" /> */}
         </TabsContent>
 
         <TabsContent value="table">
