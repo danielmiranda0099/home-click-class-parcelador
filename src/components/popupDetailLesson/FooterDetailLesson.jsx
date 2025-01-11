@@ -51,7 +51,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
           <PopupDeleteLesson
             is_open_popup_delete={is_open_popup_delete}
             setIsOpenPopupDelete={setIsOpenPopupDelete}
-            lesson_id={lesson?.id}
+            lesson_ids={[lesson?.id]}
             handleAction={() => {
               setPopupDetailLesson(false);
               setLessons(rol);

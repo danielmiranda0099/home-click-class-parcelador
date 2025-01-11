@@ -31,7 +31,7 @@ function SubmitButton() {
 export function PopupDeleteLesson({
   is_open_popup_delete,
   setIsOpenPopupDelete,
-  lesson_id,
+  lesson_ids,
   handleAction = null,
 }) {
   const [form_state_form_delete_lesson, dispathFormDeleteLesson] =
@@ -51,7 +51,7 @@ export function PopupDeleteLesson({
 
   const onDeleteLesson = () => {
     setErrorMessageFormDeleteLesson("");
-    dispathFormDeleteLesson([lesson_id]);
+    dispathFormDeleteLesson(lesson_ids);
   };
 
   useEffect(() => {
