@@ -27,6 +27,7 @@ import {
 import { PopupDeleteLesson } from "./PopupDeleteLesson";
 
 export function FooterDetailLesson({ rol, showFooter }) {
+  const { isShowFooterDetailLesson } = useUiStore();
   const [status_button, setStatusButton] = useState({
     paidStudent: false,
     paidTeacher: false,
@@ -45,7 +46,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
 
   return (
     <DialogFooter className="sm:justify-between">
-      {showFooter && (
+      {showFooter && isShowFooterDetailLesson && (
         <>
           <PopupDeleteLesson
             is_open_popup_delete={is_open_popup_delete}

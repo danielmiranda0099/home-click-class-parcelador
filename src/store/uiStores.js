@@ -13,6 +13,10 @@ export const useUiStore = create((set) => ({
       popupDetailLesson: is_open,
     })),
 
+  isShowFooterDetailLesson: true,
+  setIsShowFooterDetailLesson: (isShow) =>
+    set({ isShowFooterDetailLesson: isShow }),
+
   popupFormConfirmClass: false,
   setPopupFormConfirmClass: (is_open) =>
     set(() => ({

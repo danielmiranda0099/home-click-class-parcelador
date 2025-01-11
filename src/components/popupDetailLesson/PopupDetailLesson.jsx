@@ -39,6 +39,7 @@ const formattedDate = (start_date, end_date) => {
 
 //TODO: Refact Component
 export function PopupDetailLesson({ user, rol, showFooter = true }) {
+  const { setIsShowFooterDetailLesson } = useUiStore();
   const { selected_lesson: lesson } = useLessonsStore();
   const { popupDetailLesson: is_open, setPopupDetailLesson } = useUiStore();
 
@@ -47,7 +48,15 @@ export function PopupDetailLesson({ user, rol, showFooter = true }) {
       {/* TODO: QUITAR Y COLOCAR <RORMLESSON /> EN UN AMAYOR HERARQUIA */}
       {rol !== "student" && <FormLesson rol={rol} />}
       {lesson && (
-        <Dialog open={is_open} onOpenChange={setPopupDetailLesson}>
+        <Dialog
+          open={is_open}
+          onOpenChange={(open) => {
+            if (!open) {
+              setIsShowFooterDetailLesson(true);
+            }
+            setPopupDetailLesson(open);
+          }}
+        >
           <DialogContent className="sm:max-w-[800px] overflow-y-scroll max-h-[95vh]">
             <DialogDescription></DialogDescription>
             <DialogHeader>

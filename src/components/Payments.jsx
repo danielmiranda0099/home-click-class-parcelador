@@ -43,7 +43,7 @@ export function Payments() {
   const { lessons, setLessons, setSelectedLesson } = useLessonsStore();
   const [total, setTotal] = useState(0);
   const { user_selected: user } = useUserStore();
-  const { setPopupDetailLesson } = useUiStore();
+  const { setPopupDetailLesson, setIsShowFooterDetailLesson } = useUiStore();
   const { toastSuccess } = useCustomToast();
   const [state_form_search, setStateFormSearch] = useState({
     pending: false,
@@ -117,6 +117,7 @@ export function Payments() {
   const handleClickShow = (id) => {
     const lesson = lessons.find((lesson) => lesson.id === id);
     setSelectedLesson(lesson);
+    setIsShowFooterDetailLesson(false);
     setPopupDetailLesson(true);
   };
 
