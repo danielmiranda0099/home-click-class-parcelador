@@ -2,10 +2,7 @@
 import { auth } from "@/auth";
 import { COLORS } from "./colorsStatusLesson";
 import { FormattedDate } from "./formattedDate";
-import {
-  formatNamesForCalendar,
-  getNamesStudentsFromLesson,
-} from "./getNamesForLesson";
+import { formatNamesForCalendar } from "./getNamesForLesson";
 
 //TODO: Refact llevar esta funcion a otro archivo
 export async function statusLesson(lesson, rol) {
@@ -224,7 +221,9 @@ export async function formattedLessonsForCalendar(original_lesson, rol) {
         id: lesson.id,
         title:
           formatNamesForCalendar(
-            getNamesStudentsFromLesson(lesson?.studentLessons)
+            lesson?.studentLessons?.map(
+              (student_lesson) => student_lesson.student.shortName
+            )
           ) || "UNKNOW",
         start: new Date(FormattedDate(lesson.startDate)),
         end: new Date(FormattedDate(lesson.startDate, true)),
