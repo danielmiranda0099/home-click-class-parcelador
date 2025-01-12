@@ -60,7 +60,7 @@ export function FormRegisterUser() {
   });
   const [is_copied_credentials, setIsCopiedCredentials] = useState(false);
   const [error_message, setErrorMessage] = useState("");
-  const { setUsers } = useUserStore();
+  const { users, setUsers } = useUserStore();
   const { popupFormNewUser: is_open, setPopupFormNewUser: setIsOpen } =
     useUiStore();
   const { toastSuccess } = useCustomToast();
@@ -78,6 +78,10 @@ export function FormRegisterUser() {
       setErrorMessage("");
     }
   }, [form_state, setIsOpen]);
+
+  useEffect(() => {
+    setUsers();
+  }, []);
 
   const handleStudentInfoChange = (e) => {
     setUserInfo({ ...userInfo, [e.target.id]: e.target.value });

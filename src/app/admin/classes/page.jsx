@@ -30,15 +30,12 @@ export default function DashboardPage() {
   const user_session = useUserSession();
 
   useEffect(() => {
-    setUsers();
-  }, []);
-
-  useEffect(() => {
     if (users) {
       const users_formated = formatUsersForInputSearch(users);
       setUsersFormated(users_formated);
     }
   }, [users]);
+ 
 
   useEffect(() => {}, [user_selected]);
 
