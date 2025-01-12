@@ -45,7 +45,6 @@ export function FormCreateNewLesson() {
   const { toastSuccess } = useCustomToast();
 
   useEffect(() => {
-    console.log(form_state);
     if (form_state?.success) {
       toastSuccess({ title: "Clases creadas." });
       setLessons("admin");
@@ -60,7 +59,6 @@ export function FormCreateNewLesson() {
 
   const OnCreateNewLessons = async () => {
     setErrorMessage("");
-    console.log(data_lesson);
     const all_dates = scheduleLessons(
       data_lesson.selectedDays,
       data_lesson.times,
@@ -68,7 +66,6 @@ export function FormCreateNewLesson() {
       data_lesson.startDate
     );
 
-    console.log("********* all_date *******", all_dates);
     data_lesson.allDates = all_dates;
 
     dispath(data_lesson);

@@ -68,7 +68,7 @@ export function TableTransactions({
       setLessons("admin");
     }
   }, []);
-  console.log("monhtly transactioooon", monhtly_transactions);
+  // console.log("monhtly transactioooon", monhtly_transactions);
   return (
     <>
       <PopupDeleteTransaction

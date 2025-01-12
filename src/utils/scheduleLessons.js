@@ -2,7 +2,6 @@ import moment from "moment";
 import { DAYS_OF_WEEK_NUMBER } from "./constans";
 
 export function scheduleLessons(selected_days, times, period, startDate) {
-  console.log("*************** scheduleLessons *************", selected_days, times, period, startDate)
   const dates = [];
   let currentDate = moment(startDate); // Iniciar desde la fecha proporcionada
   let endDate;

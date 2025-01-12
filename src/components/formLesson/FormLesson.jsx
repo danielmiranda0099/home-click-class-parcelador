@@ -37,7 +37,7 @@ export function FormLesson({ rol }) {
   const { popupFormLesson: is_open, setPopupFormLesson: setIsOpen } =
     useUiStore();
   const { selected_lesson, setLessons } = useLessonsStore();
-  console.log("selected lesson", selected_lesson);
+  // console.log("selected lesson", selected_lesson);
 
   const [data_lesson, setDataLesson] = useState(DATA_LESSON_DEFAULT);
 
@@ -92,7 +92,6 @@ export function FormLesson({ rol }) {
   }, [selected_lesson, is_open]);
 
   useEffect(() => {
-    console.log(form_state);
     if (form_state?.success) {
       toastSuccess({ title: "Clase editada." });
       setLessons("admin");
@@ -106,9 +105,7 @@ export function FormLesson({ rol }) {
   }, [form_state]);
 
   const onSubmit = async (form_data) => {
-    console.log("data_lesson", data_lesson);
-    console.log("form_data");
-    form_data.forEach((value, key) => console.log(key, ":", value));
+    // form_data.forEach((value, key) => console.log(key, ":", value));
     const form_data_object = Object.fromEntries(form_data.entries());
     const data = {
       students: data_lesson.students,
@@ -116,7 +113,6 @@ export function FormLesson({ rol }) {
       ...form_data_object,
       lessonId: selected_lesson?.id,
     };
-    console.log("data", data);
     setErrorMessage("");
     dispath(data);
   };

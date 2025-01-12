@@ -1,6 +1,5 @@
 export function ReasonsRescheduled({ reason = "" }) {
   const parts = reason.split(/(\$%|\$&)/);
-  console.log(parts);
   return (
     <>
       {parts.map((part, index) => {
