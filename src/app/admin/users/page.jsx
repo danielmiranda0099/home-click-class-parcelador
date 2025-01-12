@@ -27,7 +27,6 @@ export default function UsersPage() {
 
   useEffect(() => {
     setFilterUsers(users);
-    console.log(users);
   }, [users]);
 
   useEffect(() => {

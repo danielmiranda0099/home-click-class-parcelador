@@ -37,7 +37,6 @@ export default function DashboardPage() {
     if (users) {
       const users_formated = formatUsersForInputSearch(users);
       setUsersFormated(users_formated);
-      console.log("users", users);
     }
   }, [users]);
 
