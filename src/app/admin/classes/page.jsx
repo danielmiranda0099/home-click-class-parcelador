@@ -1,6 +1,7 @@
 "use client";
 //TODO: use client? quiero mantenerlo del lado del server
 import {
+  ActionLessons,
   CalendarUI,
   CardStatusLegendLesson,
   FilterLesson,
@@ -74,6 +75,13 @@ export default function DashboardPage() {
             >
               Pagos
             </TabsTrigger>
+            <TabsTrigger
+              value="actions"
+              className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-lg"
+              onClick={() => setStatetab("actions")}
+            >
+              Acciones
+            </TabsTrigger>
           </TabsList>
         </div>
 
@@ -82,9 +90,12 @@ export default function DashboardPage() {
             data={users_formated}
             value={user_selected}
             setValue={setUser}
+            disabled={state_tab === "actions"}
           />
 
-          <FilterLesson isDisabled={state_tab === "payments"} />
+          <FilterLesson
+            isDisabled={state_tab === "payments" || state_tab === "actions"}
+          />
         </section>
 
         <TabsContent value="calendar">
@@ -97,6 +108,10 @@ export default function DashboardPage() {
 
         <TabsContent value="payments">
           <Payments />
+        </TabsContent>
+
+        <TabsContent value="actions">
+          <ActionLessons />
         </TabsContent>
       </Tabs>
     </>
