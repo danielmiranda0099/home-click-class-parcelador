@@ -163,6 +163,111 @@ export async function getLessons() {
   }
 }
 
+/**
+ * Fetches lessons based on the provided filters.
+ * @param {Object} filters - Object containing teacherId, studentId, startDate, and/or endDate.
+ * @returns {Promise<Array>} A list of lessons matching the filters.
+ */
+export async function getLessonsByFilters(prev, filters) {
+  try {
+    const { teacherId, studentId, startDate, endDate } = filters;
+
+    if (!startDate && !endDate) {
+      return RequestResponse.error("Por favor introdusca un rango de fecha.");
+    }
+
+    if (startDate > endDate) {
+      return RequestResponse.error(
+        "La fecha de inicio debe ser menor a la fecha final."
+      );
+    }
+
+    // Construct dynamic Prisma query filters
+    const where = {
+      AND: [{ isConfirmed: false }],
+    };
+
+    // Add condition for all studentLessons having isStudentPaid as false
+    where.AND.push({
+      studentLessons: {
+        every: {
+          isStudentPaid: false,
+        },
+      },
+    });
+
+    if (teacherId) {
+      where.AND.push({ teacherId });
+    }
+
+    if (studentId) {
+      where.AND.push({
+        studentLessons: {
+          some: {
+            studentId,
+          },
+        },
+      });
+    }
+
+    if (startDate || endDate) {
+      where.AND.push({
+        startDate: {
+          ...(startDate
+            ? { gte: new Date(new Date(startDate).setHours(0, 0, 0, 0)) }
+            : {}),
+          ...(endDate
+            ? { lte: new Date(new Date(endDate).setHours(23, 59, 59, 0)) }
+            : {}),
+        },
+      });
+    }
+
+    if (where.AND.length === 0) {
+      delete where.AND; // Remove unnecessary AND if no filters
+    }
+
+    // Query lessons from the database
+    const lessons = await prisma.lesson.findMany({
+      where,
+      select: {
+        id: true,
+        startDate: true,
+        isGroup: true,
+        isScheduled: true,
+        isCanceled: true,
+        isRegistered: true,
+        isTeacherPaid: true,
+        teacher: {
+          select: {
+            shortName: true,
+          },
+        },
+        studentLessons: {
+          select: {
+            id: true,
+            studentId: true,
+            isStudentPaid: true,
+            student: {
+              select: {
+                shortName: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        startDate: "asc",
+      },
+    });
+
+    return RequestResponse.success(lessons);
+  } catch (error) {
+    console.error("Error in getLessonsByFilters()", error);
+    return RequestResponse.error();
+  }
+}
+
 export async function updateLesson(prev, updated_lesson_data) {
   try {
     const {
@@ -471,7 +576,7 @@ export async function unpaidLessons(
 
     if (start_date > end_date) {
       return RequestResponse.error(
-        "La fecha de busqueda de inicio debe ser menor a la fecha final."
+        "La fecha de inicio debe ser menor a la fecha final."
       );
     }
 
