@@ -34,18 +34,18 @@ export function PopupDeleteLesson({
   lesson_ids,
   handleAction = null,
 }) {
-  const [form_state_form_delete_lesson, dispathFormDeleteLesson] =
-    useFormState(deleteLessons, {
+  const [form_state_form_delete_lesson, dispathFormDeleteLesson] = useFormState(
+    deleteLessons,
+    {
       data: [],
       success: null,
       error: false,
       message: null,
-    });
+    }
+  );
 
-  const [
-    error_message_form_delete_lesson,
-    setErrorMessageFormDeleteLesson,
-  ] = useState("");
+  const [error_message_form_delete_lesson, setErrorMessageFormDeleteLesson] =
+    useState("");
 
   const { toastSuccess } = useCustomToast();
 
@@ -57,7 +57,7 @@ export function PopupDeleteLesson({
   useEffect(() => {
     setErrorMessageFormDeleteLesson("");
     if (form_state_form_delete_lesson?.success) {
-      toastSuccess({ title: "Clase eliminada exitosamente." });
+      toastSuccess({ title:  lesson_ids?.length > 1 ? "Clases eliminadas exitosamente." : "Clase eliminada exitosamente." });
       setIsOpenPopupDelete(false);
       if (handleAction) {
         handleAction();
@@ -67,9 +67,7 @@ export function PopupDeleteLesson({
       form_state_form_delete_lesson?.error &&
       error_message_form_delete_lesson.length === 0
     ) {
-      setErrorMessageFormDeleteLesson(
-        form_state_form_delete_lesson.message
-      );
+      setErrorMessageFormDeleteLesson(form_state_form_delete_lesson.message);
     }
   }, [form_state_form_delete_lesson]);
 
@@ -85,7 +83,12 @@ export function PopupDeleteLesson({
     >
       <DialogContent className="w-full">
         <DialogHeader>
-          <DialogTitle>¿Estás seguro de eliminar esta clase?</DialogTitle>
+          <DialogTitle>
+            {" "}
+            {lesson_ids?.length > 1
+              ? "¿Estás seguro de eliminar estas clases?"
+              : "¿Estás seguro de eliminar esta clase?"}
+          </DialogTitle>
           <DialogDescription>
             Esta acción no puede deshacerse.
           </DialogDescription>
