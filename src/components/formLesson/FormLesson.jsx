@@ -69,7 +69,7 @@ export function FormLesson({ rol }) {
           },
           isPay: student_lesson.isStudentPaid,
           isConfirmed: student_lesson.isConfirmed,
-          disabled: true
+          disabled: true,
         })),
         teacher: {
           payment: selected_lesson?.teacherPayment,
@@ -140,12 +140,11 @@ export function FormLesson({ rol }) {
                   data_lesson={data_lesson}
                   setDataLesson={setDataLesson}
                 />
-                {!selected_lesson?.isTeacherPaid && (
-                  <FormFieldTeacher
-                    data_lesson={data_lesson}
-                    setDataLesson={setDataLesson}
-                  />
-                )}
+
+                <FormFieldTeacher
+                  data_lesson={data_lesson}
+                  setDataLesson={setDataLesson}
+                />
               </>
 
               <FormLessonReview lesson={selected_lesson} rol={rol} />

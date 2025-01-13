@@ -41,6 +41,7 @@ export function FormFieldTeacher({ data_lesson, setDataLesson }) {
               teacher: { ...data_lesson.teacher, payment: value },
             })
           }
+          disabled={data_lesson?.teacher.isPay}
         />
       </div>
     </div>
