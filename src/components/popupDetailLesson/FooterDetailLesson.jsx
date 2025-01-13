@@ -25,7 +25,10 @@ import {
   payTeacherLessonAndRegisterTransaction,
 } from "@/actions/lessonTransactions";
 import { PopupDeleteLesson } from "./PopupDeleteLesson";
-import { cancelTeacherPaymentAndRegisterDebt } from "@/actions/lessonDebts";
+import {
+  cancelStudentPaymentAndRegisterDebt,
+  cancelTeacherPaymentAndRegisterDebt,
+} from "@/actions/lessonDebts";
 
 export function FooterDetailLesson({ rol, showFooter }) {
   const { isShowFooterDetailLesson } = useUiStore();
@@ -167,6 +170,33 @@ export function FooterDetailLesson({ rol, showFooter }) {
                   </Button>
                 )}
               {rol === "admin" &&
+                lesson?.studentLessons[0].isStudentPaid &&
+                !lesson.isGroup && (
+                  <Button
+                    variant="outline"
+                    className="flex gap-2 border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
+                    disabled={status_button.paidStudent}
+                    onClick={async () => {
+                      setStatusButton({ ...status_button, paidStudent: true });
+                      const data = await cancelStudentPaymentAndRegisterDebt(
+                        lesson?.id,
+                        lesson?.studentLessons[0].studentId
+                      );
+                      setStatusButton({ ...status_button, paidStudent: false });
+                      if (data.success) {
+                        toastSuccess({ title: "Pago Cancelado." });
+                        setLessons(rol);
+                        setPopupDetailLesson(false);
+                      } else {
+                        toastError({ title: "Al parecer hubo un error." });
+                      }
+                    }}
+                  >
+                    <DollarIcon size={18} />
+                    Pago Estudiante
+                  </Button>
+                )}
+              {rol === "admin" &&
                 lesson.isGroup &&
                 lesson?.studentLessons?.some(
                   (student_lesson) => student_lesson.isStudentPaid === false
@@ -203,6 +233,62 @@ export function FooterDetailLesson({ rol, showFooter }) {
                                   });
                                   if (data.success) {
                                     toastSuccess({ title: "Pago Confirmado." });
+                                    setLessons(rol);
+                                    setPopupDetailLesson(false);
+                                  } else {
+                                    toastError({
+                                      title: "Al parecer hubo un error.",
+                                    });
+                                  }
+                                }}
+                              >
+                                {student_lesson.student.shortName}
+                              </DropdownMenuItem>
+                            )
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                )}
+              {rol === "admin" &&
+                lesson.isGroup &&
+                lesson?.studentLessons?.some(
+                  (student_lesson) => student_lesson.isStudentPaid === true
+                ) && (
+                  <div className="flex flex-col items-center gap-4">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="flex gap-2 border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
+                          disabled={status_button.paidStudent}
+                        >
+                          <ChevronDown size={18} />
+                          Pago Estudiante
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        {lesson?.studentLessons.map(
+                          (student_lesson) =>
+                            student_lesson.isStudentPaid && (
+                              <DropdownMenuItem
+                                key={student_lesson.id}
+                                onClick={async () => {
+                                  setStatusButton({
+                                    ...status_button,
+                                    paidStudent: true,
+                                  });
+                                  const data =
+                                    await cancelStudentPaymentAndRegisterDebt(
+                                      lesson?.id,
+                                      student_lesson.studentId,
+                                    );
+                                  setStatusButton({
+                                    ...status_button,
+                                    paidStudent: false,
+                                  });
+                                  if (data.success) {
+                                    toastSuccess({ title: "Pago Cancelado." });
                                     setLessons(rol);
                                     setPopupDetailLesson(false);
                                   } else {
@@ -266,7 +352,8 @@ export function FooterDetailLesson({ rol, showFooter }) {
                         paidTeacher: true,
                       });
                       const data = await cancelTeacherPaymentAndRegisterDebt(
-                        lesson?.id, lesson?.teacherId
+                        lesson?.id,
+                        lesson?.teacherId
                       );
                       setStatusButton({
                         ...status_button,
