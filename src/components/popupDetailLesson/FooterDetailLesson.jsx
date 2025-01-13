@@ -25,6 +25,7 @@ import {
   payTeacherLessonAndRegisterTransaction,
 } from "@/actions/lessonTransactions";
 import { PopupDeleteLesson } from "./PopupDeleteLesson";
+import { cancelTeacherPaymentAndRegisterDebt } from "@/actions/lessonDebts";
 
 export function FooterDetailLesson({ rol, showFooter }) {
   const { isShowFooterDetailLesson } = useUiStore();
@@ -238,6 +239,41 @@ export function FooterDetailLesson({ rol, showFooter }) {
                       });
                       if (data.success) {
                         toastSuccess({ title: "Pago Confirmado." });
+                        setLessons(rol);
+                        setPopupDetailLesson(false);
+                      } else {
+                        toastError({
+                          title: "Al parecer hubo un error.",
+                        });
+                      }
+                    }}
+                  >
+                    <DollarIcon size={18} />
+                    Pago Profesor
+                  </Button>
+                )}
+
+              {rol === "admin" &&
+                lesson?.isRegistered &&
+                lesson?.isTeacherPaid && (
+                  <Button
+                    variant="outline"
+                    className="flex gap-2 border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
+                    disabled={status_button.paidTeacher}
+                    onClick={async () => {
+                      setStatusButton({
+                        ...status_button,
+                        paidTeacher: true,
+                      });
+                      const data = await cancelTeacherPaymentAndRegisterDebt(
+                        lesson?.id, lesson?.teacherId
+                      );
+                      setStatusButton({
+                        ...status_button,
+                        paidTeacher: false,
+                      });
+                      if (data.success) {
+                        toastSuccess({ title: "Pago Cancelado." });
                         setLessons(rol);
                         setPopupDetailLesson(false);
                       } else {
