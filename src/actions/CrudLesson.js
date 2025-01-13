@@ -280,7 +280,6 @@ export async function updateLesson(prev, updated_lesson_data) {
       issues,
       otherObservations,
     } = updated_lesson_data;
-    console.log(updated_lesson_data);
 
     const validations = [
       await validateStudents(students),
@@ -321,14 +320,8 @@ export async function updateLesson(prev, updated_lesson_data) {
       throw new Error("Field problem !lesson");
     }
 
-    // console.log("lesson current", lesson_current)
-    // console.log("*********** data_students *********", data_students);
     let data = {};
 
-    // if student pay        NO
-    // if student confirm    ONLY FEE
-    // if scheduled          ALL
-    //
     // Identificar estudiantes a agregar
     const students_data_current = lesson_current.studentLessons.map(
       (student_lesson) => ({
@@ -340,12 +333,6 @@ export async function updateLesson(prev, updated_lesson_data) {
       fee: parseCurrencyToNumber(student.fee),
       studentId: student.student.id,
     }));
-
-    console.log(
-      "************** students_data_current *************",
-      students_data_current
-    );
-    console.log("********* students **********", students_data);
 
     const students_to_add = students_data.filter(
       (newStudent) =>
@@ -370,16 +357,7 @@ export async function updateLesson(prev, updated_lesson_data) {
           current.fee !== newStudent.fee
       )
     );
-    // console.log("*********** students_to_add **********", students_to_add);
-    // console.log(
-    //   "*********** students_to_remove **********",
-    //   students_to_remove
-    // );
-    // console.log(
-    //   "*********** students_to_update **********",
-    //   students_to_update
-    // );
-    // // Ejecutar las operaciones en la base de datos
+
     if (
       students_to_add.length > 0 ||
       students_to_remove.length > 0 ||
@@ -480,6 +458,9 @@ export async function updateLesson(prev, updated_lesson_data) {
     ) {
       data.otherObservations = otherObservations;
     }
+
+    data.isGroup = students_data.length > 1;
+
     // console.log(data);
     await prisma.lesson.update({
       where: {
