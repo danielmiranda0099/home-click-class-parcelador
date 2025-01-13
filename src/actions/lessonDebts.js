@@ -266,3 +266,79 @@ export async function cancelTeacherPaymentAndRegisterDebt(lessonId, teacherId) {
     return RequestResponse.error();
   }
 }
+
+/**
+ * Cancela el pago de una lección asociada a un profesor.
+ * Elimina la transacción y la registra como deuda, asegurando la atomicidad con una transacción.
+ *
+ * @param {number} lessonId - ID de la lección
+ * @param {number} studentId - ID del profesor
+ */
+export async function cancelStudentPaymentAndRegisterDebt(lessonId, studentId) {
+  try {
+    await prisma.$transaction(async (tx) => {
+      // Verificar si la transacción existe
+      const transaction = await tx.transaction.findFirst({
+        where: {
+          lessonId: lessonId,
+          userId: studentId,
+        },
+      });
+
+      const lesson = await tx.lesson.findUnique({
+        where: {
+          id: lessonId,
+        },
+      });
+
+      await tx.studentLesson.update({
+        where: {
+          studentId_lessonId: {
+            studentId: studentId,
+            lessonId: lessonId,
+          },
+        },
+        data: {
+          isStudentPaid: false,
+        },
+      });
+
+      if (!transaction || !lesson) {
+        throw new Error(
+          "No se encontró una transacción asociada a esta lección y profesor."
+        );
+      }
+      if (lesson.isConfirmed) {
+        const current_date = new Date();
+        const year = getYear(current_date);
+        const month = getMonth(current_date) + 1;
+        const week = getWeek(current_date);
+        // Crear la deuda basada en la transacción existente
+        await tx.debt.create({
+          data: {
+            date: current_date.toISOString(), // Fecha actual
+            amount: transaction.amount, // Monto de la deuda
+            type: "income", // Mismo tipo que la transacción eliminada
+            concept: transaction.concept, // Descripción de la deuda
+            lessonId: transaction.lessonId, // Asociada a la misma lección
+            userId: transaction.userId, // Asociada al mismo profesor
+            year: year,
+            month: month,
+            week: week,
+          },
+        });
+      }
+
+      // Eliminar la transacción
+      await tx.transaction.delete({
+        where: {
+          id: transaction.id,
+        },
+      });
+    });
+    return RequestResponse.success();
+  } catch (error) {
+    console.error("Error in cancelTeacherPayment()", error);
+    return RequestResponse.error();
+  }
+}
