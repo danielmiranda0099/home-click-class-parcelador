@@ -338,7 +338,7 @@ export async function cancelStudentPaymentAndRegisterDebt(lessonId, studentId) {
     });
     return RequestResponse.success();
   } catch (error) {
-    console.error("Error in cancelTeacherPayment()", error);
+    console.error("Error in cancelStudentPaymentAndRegisterDebt()", error);
     return RequestResponse.error();
   }
 }
