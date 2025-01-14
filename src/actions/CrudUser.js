@@ -174,12 +174,9 @@ export async function updateUser(prev_state, form_dada) {
 }
 
 //TODO: Refact
-export async function getAllActiveUsers() {
+export async function getAllUsers() {
   try {
     const users = await prisma.user.findMany({
-      where: {
-        isActive: true,
-      },
       select: {
         id: true,
         firstName: true,

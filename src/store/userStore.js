@@ -1,11 +1,11 @@
-import { getAllActiveUsers, getUserSession } from "@/actions/CrudUser";
+import { getAllUsers, getUserSession } from "@/actions/CrudUser";
 import { create } from "zustand";
 
 export const useUserStore = create((set) => ({
   users: [],
   setUsers: async () => {
     try {
-      const all_users = await getAllActiveUsers();
+      const all_users = await getAllUsers();
       set({ users: all_users });
     } catch (error) {
       console.error("Error UserStore setUsers():", error);
