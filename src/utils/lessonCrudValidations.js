@@ -101,14 +101,19 @@ export async function formatAndValidateStudents(students) {
         const user = await prisma.user.findFirst({
           where: {
             id: data.student.id,
-            isActive: true,
           },
           select: {
             id: true,
+            fullName: true,
+            isActive: true,
           },
         });
         if (!user)
-          throw new Error("El estudiante no está activo o registrado.");
+          throw new Error(
+            "Por favor, verifique que los estudiantes están registrados."
+          );
+        if (!user.isActive)
+          throw new Error(`El estudiente ${user?.fullName} no está activado.`);
 
         // Parsear y validar el monto
         let fee = data.fee;
@@ -151,15 +156,19 @@ export async function formatAndValidateteacher(teacher) {
     const user = await prisma.user.findFirst({
       where: {
         id: teacher.teacher.id,
-        isActive: true,
       },
       select: {
         id: true,
+        fullName: true,
+        isActive: true,
       },
     });
-    if (!user) throw new Error("El profesor no está activo o registrado.");
+    if (!user) throw new Error("Por favor, verifique que el profesor esté registrado.");
+    
+    if (!user.isActive)
+      throw new Error(`El profesor ${user?.fullName} no está activado.`);
     if (!teacher.payment)
-      throw new Error("Porfavor ingrese un monto valido para el profesor.");
+      throw new Error("Por favor, ingrese un monto valido para el profesor.");
     let payment = teacher.payment;
     if (typeof payment !== "number") {
       payment = parseInt(payment.replace(/[^0-9]/g, ""), 10);

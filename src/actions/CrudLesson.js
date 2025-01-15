@@ -12,32 +12,9 @@ import {
   formatAndValidateteacher,
   validateDates,
 } from "@/utils/lessonCrudValidations";
-import { scheduleLessons } from "@/utils/scheduleLessons";
 import { auth } from "@/auth";
 import moment from "moment";
 import { parseCurrencyToNumber } from "@/utils/parseCurrencyToNumber";
-
-const formattedLessonForBD = (form_data) => {
-  // TODO Mirar como adtener los de mas datos del formulario
-  const lesson_formated = Object.fromEntries(form_data.entries());
-  if (lesson_formated.isGroup)
-    lesson_formated.isGroup = Boolean(lesson_formated.isGroup);
-  if (lesson_formated.isStudentPaid)
-    lesson_formated.isStudentPaid = Boolean(
-      parseInt(lesson_formated.isStudentPaid, 10)
-    );
-  if (lesson_formated.isTeacherPaid)
-    lesson_formated.isTeacherPaid = Boolean(
-      parseInt(lesson_formated.isTeacherPaid, 10)
-    );
-  if (lesson_formated.isRegistered)
-    lesson_formated.isRegistered = Boolean(lesson_formated.isRegistered);
-  if (lesson_formated.teacherPayment)
-    lesson_formated.teacherPayment = parseFloat(lesson_formated.teacherPayment);
-  if (lesson_formated.studentFee)
-    lesson_formated.studentFee = parseFloat(lesson_formated.studentFee);
-  return lesson_formated;
-};
 
 export async function CreateNewLesson(prev_state, lessons_data) {
   try {
