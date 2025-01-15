@@ -27,20 +27,30 @@ export function InputSearch({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+      <div className="flex gap-2 max-w-full">
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="flex-1 justify-between"
+            {...props}
+          >
+            {value
+              ? data?.find((item) => item.value === value?.value)?.label
+              : placeholder}
+            <SearchIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
         <Button
           variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="min-w-60 justify-between"
-          {...props}
+          onClick={() => setValue(null)}
+          type="button"
+          disabled={props.disabled || !value}
         >
-          {value
-            ? data?.find((item) => item.value === value?.value)?.label
-            : placeholder}
-          <SearchIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          Clear
         </Button>
-      </PopoverTrigger>
+      </div>
       <PopoverContent className="p-0">
         <Command>
           <CommandInput placeholder="Search" />
