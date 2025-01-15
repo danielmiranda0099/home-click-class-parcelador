@@ -12,6 +12,7 @@ import {
 } from "@/actions/CrudLesson";
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useEffect, useState } from "react";
+import { useUserSession } from "@/hooks";
 
 export function CardOverView({ role, id }) {
   const [data, setData] = useState({
@@ -19,7 +20,12 @@ export function CardOverView({ role, id }) {
     completed: 0,
     scheduled: 0,
     debt: 0,
+    averageScoreReal: 0,
   });
+
+  const user_session = useUserSession();
+
+  console.log("user_session", user_session);
 
   const onOverViewLessonTeacher = async () => {
     const response = await overViewLessonTeacher(id);
@@ -60,7 +66,15 @@ export function CardOverView({ role, id }) {
                 </span>
               </div>
             </div>
-
+            {user_session?.user.role.includes("admin") && (
+              <>
+                <h2 className="text-lg font-bold">
+                  {data?.averageScoreReal.toFixed(2)}
+                  <span className="text-xs">Real</span>
+                </h2>
+                <h2 className="text-lg font-bold">/</h2>
+              </>
+            )}
             <h2 className="text-lg font-bold">{data?.averageScore}</h2>
           </div>
         )}

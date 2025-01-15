@@ -676,10 +676,11 @@ export async function overViewLessonTeacher(id) {
       completed: 0,
       scheduled: 0,
       debt: 0,
+      averageScoreReal: 0
     };
     if (!teacher) return RequestResponse.error();
 
-    data.averageScore = Math.min(Math.ceil(teacher.averageScore + 0.5), 10);
+    data.averageScore = Math.min(Math.ceil(teacher.averageScore + 0.6), 10);
 
     const teacherLessonsData = await prisma.user.findUnique({
       where: { id: id_formated },
@@ -720,6 +721,7 @@ export async function overViewLessonTeacher(id) {
       data.completed = completedLessons;
       data.debt = totalDebt;
       data.scheduled = scheduledLessons;
+      data.averageScoreReal = teacher.averageScore
     }
 
     return RequestResponse.success(data);
