@@ -40,17 +40,6 @@ export async function Header() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem>
-                <Link
-                  href="#"
-                  className="flex items-center gap-2"
-                  prefetch={false}
-                >
-                  <div className="h-4 w-4" />
-                  <span>Perfil</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
                 <ButtonSignOut />
               </DropdownMenuItem>
             </DropdownMenuContent>
