@@ -67,3 +67,33 @@
     @apply bg-background text-foreground;
   }
 }
+
+.has-ping {
+  position: relative; /* Contexto para posicionamiento absoluto */
+}
+
+.has-ping::after {
+  content: "";
+  position: absolute;
+  top: 50%; /* Centrar verticalmente */
+  left: 50%; /* Centrar horizontalmente */
+  width: 80%;
+  height: 140%;
+  transform: translate(-50%, -50%) scale(1); /* Centrar y empezar desde escala 1 */
+  border-radius: 50%; /* Hace que el pseudo-elemento sea un círculo */
+  background-color: inherit;
+  animation: ping-c 0.6s infinite;
+  opacity: 0.8;
+  z-index: 100; /* Coloca el pseudo-elemento detrás del contenido */
+}
+
+@keyframes ping-c {
+  0% {
+    transform: translate(-50%, -50%) scale(1); /* Comienza en el centro */
+    opacity: 0.8;
+  }
+  75%, 100% {
+    transform: translate(-50%, -50%) scale(1.7); /* Crece uniformemente */
+    opacity: 0; /* Se desvanece mientras crece */
+  }
+}

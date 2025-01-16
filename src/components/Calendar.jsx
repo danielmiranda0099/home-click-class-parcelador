@@ -6,6 +6,8 @@ import { useLessonsStore } from "@/store/lessonStore";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useUiStore } from "@/store/uiStores";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { isCurrentDateGreater } from "@/utils/isCurrentDateGreater";
+import { FormattedDate } from "@/utils/formattedDate";
 
 const localizer = momentLocalizer(moment);
 
@@ -73,6 +75,7 @@ export function CalendarUI({ rol }) {
               backgroundColor: event.background || "#adb5bd",
               color: event.color || "white",
             },
+            className: ( (rol === "student" && !event.isConfirmed) || (rol === "teacher" && event.isConfirmed && !event.isRegistered)) && isCurrentDateGreater(FormattedDate(event.startDate)) && `has-ping`,
           };
         }}
       />
