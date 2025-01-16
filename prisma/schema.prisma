@@ -66,9 +66,8 @@ model Lesson {
   teacherId Int
 
   studentLessons StudentLesson[]
-
-  transactions Transaction[]
-  debts        Debt[]
+  transactions   Transaction[]
+  debts          Debt[]
 }
 
 model StudentLesson {
@@ -82,7 +81,7 @@ model StudentLesson {
   // Relaciones
   student   User   @relation(fields: [studentId], references: [id])
   studentId Int
-  lesson    Lesson @relation(fields: [lessonId], references: [id])
+  lesson    Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   lessonId  Int
 
   @@unique([studentId, lessonId])
@@ -95,7 +94,7 @@ model Transaction {
   type      TransactionType
   concept   String
   lessonId  Int?
-  lesson    Lesson?         @relation(fields: [lessonId], references: [id])
+  lesson    Lesson?         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   userId    Int?
   user      User?           @relation(fields: [userId], references: [id])
   year      Int
@@ -117,7 +116,7 @@ model Debt {
   type      TransactionType
   concept   String
   lessonId  Int?
-  lesson    Lesson?         @relation(fields: [lessonId], references: [id])
+  lesson    Lesson?         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   userId    Int?
   user      User?           @relation(fields: [userId], references: [id])
   year      Int
