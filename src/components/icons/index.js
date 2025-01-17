@@ -32,3 +32,5 @@ export * from "./PlusIcon";
 export * from "./TrashIcon";
 export * from "./FilterIcon";
 export * from "./EllipsisVerticalIcon";
+export * from "./ArrowLeftIcon";
+export * from "./CopyIcon";
