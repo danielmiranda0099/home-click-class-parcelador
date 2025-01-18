@@ -6,9 +6,10 @@ import {
   FormConfirmClass,
   FormLessonReport,
   FormReschedule,
-  PopupImagePay,
 } from "@/components";
+import { DollarIcon } from "@/components/icons";
 import { PopupDetailLesson } from "@/components/popupDetailLesson";
+import Link from "next/link";
 
 export default async function ClassesPage() {
   const session = await auth();
@@ -32,7 +33,14 @@ export default async function ClassesPage() {
 
       {role[0] === "student" && (
         <div className="absolute top-2 right-8">
-          <PopupImagePay />
+          <Link
+            href="/payment-methods"
+            className="relative p-2 flex gap-1 rounded-full text-white bg-green-500 font-semibold"
+          >
+            <span className="animate-ping absolute inset-0 m-auto rounded-full inline-flex h-[65%] w-[65%] bg-green-400 opacity-70"></span>
+            <DollarIcon />
+            Paga Aquí
+          </Link>
         </div>
       )}
 
