@@ -19,7 +19,7 @@ export async function Header() {
 
   return (
     <header className="flex h-16 w-full items-center justify-between border-b bg-background px-4 md:px-6">
-      <Link href="#" className="flex items-center gap-2" prefetch={false}>
+      <Link href="/" className="flex items-center gap-2" prefetch={false}>
         <Image
           alt="logo home click class"
           src="/logo.png"
