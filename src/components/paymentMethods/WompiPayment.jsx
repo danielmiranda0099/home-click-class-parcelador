@@ -6,7 +6,7 @@ import { QRCodeModal } from "./QRCodeModal";
 export function WompiPayment() {
   return (
     <Card className="relative z-10  overflow-hidden border p-[1px]">
-      <div class="animate-rotate absolute inset-0 h-full w-full rounded-full bg-[conic-gradient(#0ea5e9_20deg,transparent_120deg)]"></div>
+      <div class="animate-rotate absolute inset-0 h-full w-full rounded-full bg-[conic-gradient(#67bfe7_20deg,transparent_120deg)]"></div>
       <div class="relative z-20 bg-white rounded-[0.3rem] h-full">
         <CardHeader>
           <CardTitle className="">
@@ -19,15 +19,15 @@ export function WompiPayment() {
             />
 
             <p className="text-base">
-              Para pagos <span className="underline">internacionales</span> y
-              nacionales.
+              Para pagos <span className="underline">internacionales.</span>
             </p>
+            <br />
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <Button className="w-full" asChild>
             <a
-              href="https://checkout.wompi.co/l/P1zjV1"
+              href="https://checkout.wompi.co/l/gchayM"
               target="_blank"
               rel="noopener noreferrer"
             >
