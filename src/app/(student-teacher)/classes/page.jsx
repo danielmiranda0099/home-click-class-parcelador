@@ -26,13 +26,13 @@ export default async function ClassesPage() {
 
       <PopupDetailLesson rol={role[0]} user={user} />
 
-      <section className="px-10 py-3 flex flex-row justify-start gap-4">
+      <section className="px-2 py-3 flex flex-col md:flex-row justify-start gap-4 max-w-full mt-3 sm:mt-0">
         <CardOverView role={role[0]} id={user.id} />
         <CardStatusLegendLesson rol={role[0]} />
       </section>
 
       {role[0] === "student" && (
-        <div className="absolute top-2 right-8">
+        <div className="absolute top-0 sm:top-2 right-2 sm:right-8">
           <Link
             href="/payment-methods"
             className="relative p-2 flex gap-1 rounded-full text-white bg-green-500 font-semibold"
