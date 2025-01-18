@@ -6,8 +6,8 @@ import { QRCodeModal } from "./QRCodeModal";
 export function WompiPayment() {
   return (
     <Card className="relative z-10  overflow-hidden border p-[1px]">
-      <div class="animate-rotate absolute inset-0 h-full w-full rounded-full bg-[conic-gradient(#67bfe7_20deg,transparent_120deg)]"></div>
-      <div class="relative z-20 bg-white rounded-[0.3rem] h-full">
+      <div className="animate-rotate absolute inset-0 h-full w-full rounded-full bg-[conic-gradient(#67bfe7_20deg,transparent_120deg)]"></div>
+      <div className="relative z-20 bg-white rounded-[0.3rem] h-full">
         <CardHeader>
           <CardTitle className="">
             <Image
