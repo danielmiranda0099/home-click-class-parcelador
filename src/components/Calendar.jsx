@@ -52,7 +52,7 @@ export function CalendarUI({ rol }) {
   const memoizedLessons = useMemo(() => lessons_filtered, [lessons_filtered]);
 
   return (
-    <>
+    <section className="px-0 py-0 sm:px-2 sm:py-3 max-w-full overflow-x-auto mb-4">
       <Calendar
         localizer={localizer}
         events={memoizedLessons}
@@ -62,6 +62,7 @@ export function CalendarUI({ rol }) {
         views={[Views.MONTH, Views.WEEK, Views.DAY, Views.AGENDA]}
         popup
         style={{ height: "100vh" }}
+        className="w-[700px] sm:w-[1000px] lg:w-full"
         showMultiDayTimes
         defaultView={Views.MONTH}
         date={date}
@@ -79,6 +80,6 @@ export function CalendarUI({ rol }) {
           };
         }}
       />
-    </>
+    </section>
   );
 }

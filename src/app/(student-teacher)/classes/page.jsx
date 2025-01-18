@@ -44,9 +44,7 @@ export default async function ClassesPage() {
         </div>
       )}
 
-      <section className="px-10 py-3">
-        <CalendarUI rol={role[0]} />
-      </section>
+      <CalendarUI rol={role[0]} />
     </div>
   );
 }

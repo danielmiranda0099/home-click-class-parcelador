@@ -35,7 +35,6 @@ export default function DashboardPage() {
       setUsersFormated(users_formated);
     }
   }, [users]);
- 
 
   useEffect(() => {}, [user_selected]);
 
