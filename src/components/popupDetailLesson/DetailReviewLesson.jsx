@@ -7,7 +7,7 @@ export function DetailReviewLesson({ lesson, rol }) {
       <>
         <Separator />
         <div className="flex items-start gap-4">
-          <FeedbackIcon className="h-8 w-8 text-primary" />
+          <FeedbackIcon className="h-5 w-5 sm:h-8 sm:w-8 text-primary" />
 
           <p className="font-medium">Resumen de clase</p>
         </div>
@@ -50,7 +50,7 @@ export function DetailReviewLesson({ lesson, rol }) {
                   {/* <FeedbackIcon size="1.5rem" className="text-primary" /> */}
                   <div>
                     <p className="font-medium">Student Observations</p>
-                    <p className="text-muted-foreground">
+                    <p className="text-sm sm:text-base text-muted-foreground">
                       {lesson_student?.studentObservations}
                     </p>
                   </div>
@@ -68,7 +68,7 @@ export function DetailReviewLesson({ lesson, rol }) {
               <div className="flex items-start gap-4">
                 <div>
                   <p className="font-medium">Week</p>
-                  <p className="text-muted-foreground">{lesson?.week}</p>
+                  <p className="text-sm sm:text-base text-muted-foreground">{lesson?.week}</p>
                 </div>
               </div>
             )}
@@ -76,7 +76,7 @@ export function DetailReviewLesson({ lesson, rol }) {
               <div className="flex items-start gap-4">
                 <div>
                   <p className="font-medium">Topic</p>
-                  <p className="text-muted-foreground">{lesson?.topic}</p>
+                  <p className="text-sm sm:text-base text-muted-foreground">{lesson?.topic}</p>
                 </div>
               </div>
             )}
@@ -85,7 +85,7 @@ export function DetailReviewLesson({ lesson, rol }) {
               <div className="flex items-start gap-4">
                 <div>
                   <p className="font-medium">Observations</p>
-                  <p className="text-muted-foreground">
+                  <p className="text-sm sm:text-base text-muted-foreground">
                     {lesson?.teacherObservations}
                   </p>
                 </div>
@@ -96,7 +96,7 @@ export function DetailReviewLesson({ lesson, rol }) {
               <div className="flex items-start gap-4">
                 <div>
                   <p className="font-medium">Problemas</p>
-                  <p className="text-muted-foreground">{lesson?.issues}</p>
+                  <p className="text-sm sm:text-base text-muted-foreground">{lesson?.issues}</p>
                 </div>
               </div>
             )}
@@ -105,7 +105,7 @@ export function DetailReviewLesson({ lesson, rol }) {
               <div className="flex items-start gap-4">
                 <div>
                   <p className="font-medium">Others</p>
-                  <p className="text-muted-foreground">
+                  <p className="text-sm sm:text-base text-muted-foreground">
                     {lesson?.otherObservations}
                   </p>
                 </div>

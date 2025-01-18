@@ -60,10 +60,10 @@ export function PopupDetailLesson({ user, rol, showFooter = true }) {
           <DialogContent className="sm:max-w-[800px] overflow-y-scroll max-h-[95vh]">
             <DialogDescription></DialogDescription>
             <DialogHeader>
-              <DialogTitle>Class Details</DialogTitle>
-              <div className={`grid grid-cols-2 gap-4`}>
+              <DialogTitle className="text-left">Class Details</DialogTitle>
+              <div>
                 <div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-left text-sm text-muted-foreground">
                     {formattedDate(lesson.start, lesson.end)}
                   </p>
                 </div>
@@ -73,11 +73,11 @@ export function PopupDetailLesson({ user, rol, showFooter = true }) {
               <div className="grid grid-cols-2">
                 <div className="flex items-start gap-4">
                   <div>
-                    <CircleCheckIcon className="h-8 w-8 text-primary" />
+                    <CircleCheckIcon className="h-5 w-5 sm:h-8 sm:w-8 text-primary" />
                   </div>
                   <div>
                     <p className="font-medium">Class Status</p>
-                    <p className="text-muted-foreground">
+                    <p className="text-sm sm:text-base text-muted-foreground">
                       {lesson && lesson?.lesson_status}
                     </p>
                   </div>
@@ -125,17 +125,17 @@ export function PopupDetailLesson({ user, rol, showFooter = true }) {
 
               <div className="grid grid-cols-2">
                 <div className="flex items-start gap-4">
-                  <UsersIcon className="h-8 w-8 text-primary" />
+                  <UsersIcon className="h-5 w-5 sm:h-8 sm:w-8 text-primary" />
                   <div>
                     <p className="font-medium">Estudiantes</p>
                     {lesson &&
                       lesson?.studentLessons.map((student_lesson) => (
                         <div
-                          className="flex gap-2 pb-1"
+                          className="flex flex-col sm:flex-row gap-1 pb-1 border-b-2 border-gray-150 mb-2"
                           key={student_lesson.id}
                         >
                           <p
-                            className="text-muted-foreground"
+                            className="text-sm sm:text-base text-muted-foreground"
                             key={student_lesson?.student.email}
                           >
                             {student_lesson?.student.shortName}
@@ -143,9 +143,19 @@ export function PopupDetailLesson({ user, rol, showFooter = true }) {
                           {(student_lesson.studentId == user.id ||
                             rol === "admin") &&
                             (student_lesson.isStudentPaid ? (
-                              <Badge variant="outlineSucess">Pagado</Badge>
+                              <Badge
+                                className="text-[0.6rem] p-1 sm:p-2 h-fit w-fit sm:text-xs"
+                                variant="outlineSucess"
+                              >
+                                Pagado
+                              </Badge>
                             ) : (
-                              <Badge variant="outlineError">Debe</Badge>
+                              <Badge
+                                className="text-[0.6rem] p-1 sm:p-2 h-fit w-fit sm:text-xs"
+                                variant="outlineError"
+                              >
+                                Debe
+                              </Badge>
                             ))}
                         </div>
                       ))}
@@ -153,19 +163,29 @@ export function PopupDetailLesson({ user, rol, showFooter = true }) {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <UserIcon className="h-8 w-8 text-primary" />
+                  <UserIcon className="h-5 w-5 sm:h-8 sm:w-8 text-primary" />
                   <div>
                     <p className="font-medium">Profesor</p>
                     <div className="flex gap-2">
-                      <p className="text-muted-foreground">
+                      <p className="text-sm sm:text-base text-muted-foreground">
                         {lesson && lesson?.teacher.shortName}
                       </p>
                       {lesson &&
                         rol !== "student" &&
                         (lesson.isTeacherPaid ? (
-                          <Badge variant="outlineSucess">Pagado</Badge>
+                          <Badge
+                            className="text-[0.6rem] p-1 sm:p-2 h-fit w-fit sm:text-xs"
+                            variant="outlineSucess"
+                          >
+                            Pagado
+                          </Badge>
                         ) : (
-                          <Badge variant="outlineError">Por pagar</Badge>
+                          <Badge
+                            className="text-[0.6rem] p-1 sm:p-2 h-fit w-fit sm:text-xs"
+                            variant="outlineError"
+                          >
+                            Por pagar
+                          </Badge>
                         ))}
                     </div>
                   </div>
@@ -178,7 +198,7 @@ export function PopupDetailLesson({ user, rol, showFooter = true }) {
                 <>
                   <Separator />
                   <div className="flex items-start gap-4">
-                    <RescheduleIcon className="h-8 w-8 text-primary" />
+                    <RescheduleIcon className="h-5 w-5 sm:h-8 sm:w-8 text-primary" />
                     <div>
                       <p className="font-medium">Reagendada</p>
                       <ReasonsRescheduled reason={lesson.reasonsRescheduled} />
