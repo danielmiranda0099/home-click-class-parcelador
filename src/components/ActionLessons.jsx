@@ -147,7 +147,7 @@ export function ActionLessons() {
   }, [form_state_form_search]);
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-0 sm:p-4">
       <PopupDeleteLesson
         is_open_popup_delete={is_open_popup_delete}
         setIsOpenPopupDelete={setIsOpenPopupDelete}
@@ -200,7 +200,7 @@ export function ActionLessons() {
             <ErrorAlert message={error_message_form_search} />
           </div>
         </form>
-        <div className="space-y-4 p-5 rounded-lg border bg-card text-card-foreground shadow-sm">
+        <div className="space-y-4 p-1.5 sm:p-5 rounded-lg border bg-card text-card-foreground shadow-sm">
           {lessons_to_delete && lessons_to_delete?.length > 0 ? (
             <>
               <div>
@@ -212,8 +212,8 @@ export function ActionLessons() {
                 </h2>
               </div>
 
-              <div className="border relative rounded-md max-h-[50vh] overflow-y-auto">
-                <Table className="max-h-[50vh] overflow-y-auto">
+              <div className="border relative rounded-md max-h-[65vh] sm:max-h-[50vh] overflow-y-auto">
+                <Table className="max-h-[65vh] sm:max-h-[50vh] overflow-y-auto">
                   <TableHeader>
                     <TableRow>
                       <TableHead className="text-primary font-bold flex justify-start items-center">
