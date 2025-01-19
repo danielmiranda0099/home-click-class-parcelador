@@ -64,7 +64,7 @@ export function TableLessons() {
   const goToPrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
   return (
-    <div className="w-full mx-auto px-12 space-y-4">
+    <div className="w-full mx-auto px-0 sm:px-12 space-y-4">
       <Table className="border-gray-400 border-2 mx-auto w-full max-w-[1000px]">
         <TableHeader className="bg-slate-900">
           <TableRow className="hover:bg-current">
