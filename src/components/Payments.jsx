@@ -122,7 +122,7 @@ export function Payments() {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-0 sm:p-4">
       <div className="grid grid-cols-1 md:grid-cols-[35%_65%] gap-8">
         <div>
           <div className="space-y-4 p-5 rounded-lg border bg-card text-card-foreground shadow-sm">
@@ -152,7 +152,7 @@ export function Payments() {
             <ErrorAlert message={state_form_search.message} />
           </div>
         </div>
-        <div className="space-y-4 p-5 rounded-lg border bg-card text-card-foreground shadow-sm">
+        <div className="space-y-4 p-1.5 sm:p-5 rounded-lg border bg-card text-card-foreground shadow-sm">
           {payments && user ? (
             <>
               <div>
@@ -164,8 +164,8 @@ export function Payments() {
                 </h2>
               </div>
 
-              <div className="border relative rounded-md max-h-[50vh] overflow-y-auto">
-                <Table className="max-h-[50vh] overflow-y-auto">
+              <div className="border relative rounded-md max-h-[65vh] sm:max-h-[50vh] overflow-y-auto">
+                <Table className="max-h-[65vh] sm:max-h-[50vh] overflow-y-auto">
                   <TableHeader>
                     <TableRow>
                       <TableHead className="text-primary font-bold flex justify-start items-center">
