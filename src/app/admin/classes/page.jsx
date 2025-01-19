@@ -39,7 +39,7 @@ export default function DashboardPage() {
   useEffect(() => {}, [user_selected]);
 
   return (
-    <>
+    <section className="overflow-hidden max-w-full">
       <FormLessonReport rol="admin" />
       <PopupDetailLesson rol="admin" user={user_session?.user} />
       <FormReschedule rol="admin" />
@@ -47,10 +47,10 @@ export default function DashboardPage() {
       <CardStatusLegendLesson rol="admin" />
 
       <Tabs defaultValue="calendar">
-        <div className="flex justify-center items-center p-2.5 rounded-md bg-muted w-fit mx-auto">
-          <TabsList className="gap-4">
+        <div className="flex justify-center items-center p-1.5 sm:p-2.5 rounded-md bg-muted w-fit max-w-full mx-auto mt-10 sm:mt-0">
+          <TabsList className="gap-1 sm:gap-4">
             <TabsTrigger
-              className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-lg"
+              className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-base sm:text-lg"
               value="calendar"
               onClick={() => setStatetab("calendar")}
             >
@@ -58,21 +58,21 @@ export default function DashboardPage() {
             </TabsTrigger>
             <TabsTrigger
               value="table"
-              className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-lg"
+              className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-base sm:text-lg"
               onClick={() => setStatetab("table")}
             >
               Lista
             </TabsTrigger>
             <TabsTrigger
               value="payments"
-              className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-lg"
+              className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-base sm:text-lg"
               onClick={() => setStatetab("payments")}
             >
               Pagos
             </TabsTrigger>
             <TabsTrigger
               value="actions"
-              className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-lg"
+              className="data-[state=active]:bg-primary data-[state=active]:text-white font-bold text-base sm:text-lg"
               onClick={() => setStatetab("actions")}
             >
               Acciones
@@ -80,7 +80,7 @@ export default function DashboardPage() {
           </TabsList>
         </div>
 
-        <section className="w-fit my-4 flex items-center gap-2 mx-auto">
+        <section className="w-fit my-4 flex flex-col sm:flex-row items-center gap-2 mx-auto">
           <InputSearch
             data={users_formated}
             value={user_selected}
@@ -109,6 +109,6 @@ export default function DashboardPage() {
           <ActionLessons />
         </TabsContent>
       </Tabs>
-    </>
+    </section>
   );
 }
