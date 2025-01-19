@@ -23,15 +23,15 @@ const nextSevenDaysData = [
 
 export function CardWeeklyChart() {
   return (
-    <Card className="col-span-full bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <Card className="col-span-full bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-full overflow-hidden">
       <CardHeader>
-        <CardTitle className="text-xl font-semibold text-gray-700 flex items-center">
+        <CardTitle className="text-lg font-semibold text-gray-700 flex items-center">
           <UsersIcon className="h-5 w-5 mr-2 text-blue-500" />
           Clases en los Próximos 7 Días
         </CardTitle>
       </CardHeader>
-      <CardContent className="w-full h-[400px]">
-        <ResponsiveContainer width="100%" height="100%">
+      <CardContent className="w-full h-[400px] max-h-[40vh] bg-red-100">
+        <ResponsiveContainer width="100%" height="100%" backgroundColor="red">
           <BarChart data={nextSevenDaysData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
             <XAxis dataKey="day" stroke="#6b7280" />

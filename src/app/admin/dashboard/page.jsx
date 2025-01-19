@@ -24,8 +24,8 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+    <div className="p-0 sm:p-4 space-y-6 bg-gray-50 min-h-screen">
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 sm:gap-4">
         <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-gray-600">
@@ -34,7 +34,7 @@ export default async function DashboardPage() {
             <CalendarIcon size={"2rem"} color="#3b82f6" />
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold text-blue-400">
+            <div className="text-2xl sm:text-4xl font-bold text-blue-400">
               {data.scheduledLessons}
             </div>
             <p className="text-xs text-gray-500 mt-1">
@@ -50,7 +50,7 @@ export default async function DashboardPage() {
             <DollarIcon size={"2rem"} className="text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold text-red-400">
+            <div className="text-2xl sm:text-4xl font-bold text-red-400">
               {data.unpaidTeacherLessons}
             </div>
             <p className="text-xs text-gray-500 mt-1">
@@ -66,7 +66,7 @@ export default async function DashboardPage() {
             <DollarIcon size={"2rem"} className="text-yellow-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold text-yellow-500">
+            <div className="text-2xl sm:text-4xl font-bold text-yellow-500">
               {data.unpaidStudentLessons}
             </div>
             <p className="text-xs text-gray-500 mt-1">
@@ -82,7 +82,7 @@ export default async function DashboardPage() {
             <UsersIcon size={"2rem"} className="text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold text-green-400">
+            <div className="text-2xl sm:text-4xl font-bold text-green-400">
               {data.teacherCount}
             </div>
             <p className="text-xs text-gray-500 mt-1">Profesores activos</p>
@@ -96,7 +96,7 @@ export default async function DashboardPage() {
             <GraduationIcon size={"2rem"} className="text-purple-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold text-purple-400">
+            <div className="text-2xl sm:text-4xl font-bold text-purple-400">
               {data.studentCount}
             </div>
             <p className="text-xs text-gray-500 mt-1">
