@@ -62,12 +62,12 @@ export function CardOverView({ role, id }) {
                 Puntaje:
               </span>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center sm:mr-28">
               {user_session?.user.role.includes("admin") && (
                 <>
                   <h2 className="text-lg font-bold">
                     {data?.averageScoreReal.toFixed(2)}
-                    <span className="text-xs ml-1">Real</span>
+                    <span className="text-xs">Real</span>
                   </h2>
                   <h2 className="text-lg font-bold">/</h2>
                 </>
