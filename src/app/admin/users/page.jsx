@@ -40,7 +40,7 @@ export default function UsersPage() {
   }, [search_user]);
 
   return (
-    <div className="container mx-auto p-4 max-w-[1200px]">
+    <div className="container mx-auto p-0 sm:p-4 max-w-[1200px]">
       <h1 className="text-2xl font-bold mb-4">Buscador de Usuarios</h1>
       <Input
         type="text"
@@ -64,7 +64,7 @@ export default function UsersPage() {
               key={user.id}
               className={`${index % 2 === 0 && "bg-slate-100"} hover:bg-sky-100`}
             >
-              <TableCell>
+              <TableCell className="min-w-56 text-xs sm:text-sm">
                 <Link
                   href={`/admin/users/${user.id}`}
                   className="hover:underline"
@@ -72,15 +72,15 @@ export default function UsersPage() {
                   {user.fullName}
                 </Link>
               </TableCell>
-              <TableCell>
+              <TableCell className="text-xs sm:text-sm">
                 <Link
                   href={`/admin/users/${user.id}`}
                   className="hover:underline"
                 >
                   {user.email}
                 </Link>
-              </TableCell>
-              <TableCell>{user.role}</TableCell>
+              </TableCell >
+              <TableCell className="text-xs sm:text-sm">{user.role}</TableCell>
               {/* <TableCell>{user.activo ? "Sí" : "No"}</TableCell> */}
             </TableRow>
           ))}
