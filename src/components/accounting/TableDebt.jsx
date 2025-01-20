@@ -83,9 +83,9 @@ export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt, handleGe
         <CardHeader className="flex justify-between items-center p-4">
           <CardTitle className="text-lg font-bold">Cartera</CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-col justify-between h-[48.5rem] p-1 pb-6 gap-3">
+        <CardContent className="flex flex-col justify-between h-[38.5rem] sm:h-[48.5rem] p-1 pb-6 gap-3">
           {debts?.length > 0 ? (
-            <div className="flex flex-col justify-start h-[35.7rem] p-2 pb-6 gap-3">
+            <div className="flex flex-col justify-start h-[26rem] sm:h-[35.7rem] p-2 pb-6 gap-3">
               <div className="flex gap-2">
                 <FilterIcon />
                 <RadioGroup
@@ -127,7 +127,7 @@ export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt, handleGe
                     <TableHead className=""></TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody className="border-gray-100 border-2 max-h-[35.7rem] overflow-y-scroll">
+                <TableBody className="border-gray-100 border-2 max-h-[26rem] sm:max-h-[35.7rem] overflow-y-scroll">
                   {visibleDebts
                     ?.filter(
                       (debt) =>
@@ -142,7 +142,7 @@ export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt, handleGe
                           {formatCurrency(debt.amount)}
                         </TableCell>
 
-                        <TableCell className="py-0">{debt.concept}</TableCell>
+                        <TableCell className="py-0 min-w-56">{debt.concept}</TableCell>
                         <TableCell className="py-1">
                           {debt.lessonId && (
                             <Button
@@ -252,6 +252,7 @@ export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt, handleGe
                   onClick={() =>
                     setCurrentPage((prev) => Math.max(prev - 1, 0))
                   }
+                  className="text-xs sm:text-sm"
                   disabled={currentPage === 0}
                 >
                   Anterior
@@ -269,6 +270,7 @@ export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt, handleGe
                       )
                     )
                   }
+                  className="text-xs sm:text-sm"
                   disabled={endIndex >= debts.length}
                 >
                   Siguiente
