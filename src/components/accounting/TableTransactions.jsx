@@ -87,12 +87,12 @@ export function TableTransactions({
           </CardTitle>
         </CardHeader>
         <CardContent
-          className={`flex flex-col justify-between ${size === "lg" ? "h-[48.5rem]" : "h-[38rem]"} p-1 pb-6 gap-3`}
+          className={`flex flex-col justify-between ${size === "lg" ? "h-[38.5rem] sm:h-[48.5rem]" : "h-[38rem]"} p-1 pb-6 gap-3`}
         >
           {monhtly_transactions &&
           monhtly_transactions.all_transactions.length > 0 ? (
             <div
-              className={`flex flex-col justify-start ${size === "lg" ? "h-[37.5rem]" : "h-[27.5rem]"} p-2 pb-6 gap-3`}
+              className={`flex flex-col justify-start ${size === "lg" ? "h-[27.5rem] sm:h-[37.5rem]" : "h-[27.5rem]"} p-2 pb-6 gap-3`}
             >
               <div className="flex gap-2">
                 <FilterIcon />
@@ -130,7 +130,9 @@ export function TableTransactions({
               <Table className="relative">
                 <TableHeader className="bg-slate-900 sticky top-0">
                   <TableRow className="hover:bg-current">
-                    <TableHead className="">Fecha</TableHead>
+                    <TableHead className="">
+                      Fecha <span className="text-[0.7rem]">(D-M-A)</span>
+                    </TableHead>
                     <TableHead className="">Monto</TableHead>
 
                     <TableHead className="">Concepto</TableHead>
@@ -138,7 +140,7 @@ export function TableTransactions({
                   </TableRow>
                 </TableHeader>
                 <TableBody
-                  className={`border-gray-100 border-2 ${size === "lg" ? "max-h-[37.5rem]" : "max-h-[27.5rem]"} overflow-y-scroll`}
+                  className={`border-gray-100 border-2 ${size === "lg" ? "max-h-[27.5rem] sm:max-h-[37.5rem]" : "max-h-[27.5rem]"} overflow-y-scroll`}
                 >
                   {monhtly_transactions?.all_transactions[
                     current_page
@@ -150,7 +152,7 @@ export function TableTransactions({
                     )
                     .map((transaction) => (
                       <TableRow key={transaction.id}>
-                        <TableCell className="py-0 text-sm min-w-24">
+                        <TableCell className="py-0 text-sm min-w-32">
                           {moment(transaction.date).utc().format("D-M-Y")}
                         </TableCell>
                         <TableCell
@@ -160,7 +162,7 @@ export function TableTransactions({
                           {formatCurrency(transaction.amount)}
                         </TableCell>
 
-                        <TableCell className="py-0">
+                        <TableCell className="py-0 min-w-56">
                           {transaction.concept}
                         </TableCell>
                         <TableCell className="py-1">
@@ -285,12 +287,13 @@ export function TableTransactions({
                 <div className="flex gap-2 items-center justify-center m-0 p-0">
                   <Button
                     onClick={() => goToPage(current_page + 1)}
+                    className="text-xs sm:text-sm"
                     disabled={
                       current_page ===
                       monhtly_transactions.all_transactions.length - 1
                     }
                   >
-                    Semana Anterior
+                    Anterior
                   </Button>
                   <span>
                     Página{" "}
@@ -300,9 +303,10 @@ export function TableTransactions({
                   </span>
                   <Button
                     onClick={() => goToPage(current_page - 1)}
+                    className="text-xs sm:text-sm"
                     disabled={current_page === 0}
                   >
-                    Semana Siguiente
+                    Siguiente
                   </Button>
                 </div>
               </div>
