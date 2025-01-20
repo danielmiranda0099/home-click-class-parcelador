@@ -57,13 +57,15 @@ export default function AccountingPage() {
         showFooter={false}
       />
       <main className="w-full flex-grow">
-        <div className="w-full flex gap-3 mb-3 justify-end items-end">
-          <Link
-            href="/admin/accounting/history"
-            className="pb-[0.08rem] border-b-2 border-gray-700 hover:text-blue-500 hover:border-blue-500 hover:bg-gray-200"
-          >
-            Ver todos los movimientos
-          </Link>
+        <div className="w-full flex flex-col items-start sm:flex-row gap-3 mb-3 sm:justify-end sm:items-end">
+          <div>
+            <Link
+              href="/admin/accounting/history"
+              className="pb-[0.08rem] border-b-2 border-gray-700 hover:text-blue-500 hover:border-blue-500 hover:bg-gray-200"
+            >
+              Ver todos los movimientos
+            </Link>
+          </div>
 
           <PopupFormTransaction
             is_open={is_open_form_transaction}
