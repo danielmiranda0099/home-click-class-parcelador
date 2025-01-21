@@ -119,11 +119,51 @@ export async function getLessons() {
 
     const lessons = await prisma.lesson.findMany({
       where: where_clause,
-      include: {
-        teacher: true, // Incluir información del profesor si es necesario
+      select: {
+        id: true,
+        startDate: true,
+        topic: true,
+        issues: true,
+        week: true,
+        teacherObservations: true,
+        otherObservations: true,
+        isPaid:  true,
+        isScheduled: true,
+        isRescheduled: true,
+        isCanceled: true,
+        isConfirmed: true,
+        isGroup: true,
+        isRegistered: true,
+        teacherPayment: true,
+        isTeacherPaid: true,
+        reasonsRescheduled: true,
+        profit: true,
+        teacherId: true,
+        teacher: {
+          select: {
+            id: true,
+            fullName: true,
+            shortName: true,
+            email: true,
+          },
+        },
         studentLessons: {
-          include: {
-            student: true,
+          select: {
+            id: true,
+            isStudentPaid: true,
+            studentFee: true,
+            lessonScore: true,
+            studentObservations: true,
+            isConfirmed: true,
+            studentId: true,
+            student: {
+              select: {
+                id: true,
+                fullName: true,
+                shortName: true,
+                email: true,
+              },
+            },
           },
         },
       },
@@ -653,7 +693,7 @@ export async function overViewLessonTeacher(id) {
       completed: 0,
       scheduled: 0,
       debt: 0,
-      averageScoreReal: 0
+      averageScoreReal: 0,
     };
     if (!teacher) return RequestResponse.error();
 
@@ -698,7 +738,7 @@ export async function overViewLessonTeacher(id) {
       data.completed = completedLessons;
       data.debt = totalDebt;
       data.scheduled = scheduledLessons;
-      data.averageScoreReal = teacher.averageScore
+      data.averageScoreReal = teacher.averageScore;
     }
 
     return RequestResponse.success(data);
