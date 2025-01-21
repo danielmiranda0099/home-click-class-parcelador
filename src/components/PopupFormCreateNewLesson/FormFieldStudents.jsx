@@ -14,8 +14,10 @@ export function FormFieldStudents({ data_lesson, setDataLesson }) {
   const { users } = useUserStore();
 
   useEffect(() => {
-    const students_formated = formatUsersForInputSearch(users, "student");
-    setStudentsForInputSearh(students_formated);
+    if (users?.length > 0) {
+      const students_formated = formatUsersForInputSearch(users, "student");
+      setStudentsForInputSearh(students_formated);
+    }
   }, [users]);
 
   const updateStudentData = (index, field, value) => {
@@ -40,7 +42,7 @@ export function FormFieldStudents({ data_lesson, setDataLesson }) {
       students: student_filtered,
     });
   };
-  
+
   return (
     <>
       {data_lesson.students.map((studentData, index) => (
