@@ -85,13 +85,12 @@ export function TableLessons() {
               <TableCell className="min-w-48 flex flex-col">
                 {lesson?.studentLessons.map((lesson) => (
                   <span key={lesson.student.email}>
-                    {lesson.student.firstName} {lesson.student.lastName}
+                    {lesson.student.fullName}
                   </span>
                 ))}
               </TableCell>
               <TableCell className="min-w-48">
-                {lesson.teacher.firstName.split(" ")[0]}{" "}
-                {lesson.teacher.lastName.split(" ")[0]}
+                {lesson.teacher.shortName}
               </TableCell>
               <TableCell>
                 <TooltipProvider>

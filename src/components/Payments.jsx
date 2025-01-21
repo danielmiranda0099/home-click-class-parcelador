@@ -209,9 +209,7 @@ export function Payments() {
                         </TableCell>
 
                         <TableCell>
-                          {user?.firstName.split(" ")[0] +
-                            " " +
-                            user?.lastName.split(" ")[0]}
+                          {user?.shortName}
                         </TableCell>
                         <TableCell>{user?.role}</TableCell>
                         <TableCell>

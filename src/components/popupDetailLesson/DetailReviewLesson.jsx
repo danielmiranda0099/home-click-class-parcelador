@@ -23,7 +23,7 @@ export function DetailReviewLesson({ lesson, rol }) {
                     color="white"
                   />
 
-                  {`${lesson_student.student.firstName.split(" ")[0]} ${lesson_student.student.lastName.split(" ")[0]}`}
+                  {`${lesson_student.student.shortName}`}
                 </div>
               )}
               {lesson_student?.lessonScore && (
