@@ -59,12 +59,8 @@ export function FormLesson({ rol }) {
           student: {
             ...student_lesson.student,
             value:
-              student_lesson.student.firstName +
-              "-" +
-              student_lesson.student.lastName,
+              student_lesson.student.email,
             label:
-              student_lesson.student.firstName +
-              " " +
               student_lesson.student.lastName,
           },
           isPay: student_lesson.isStudentPaid,
@@ -76,13 +72,9 @@ export function FormLesson({ rol }) {
           teacher: {
             ...selected_lesson?.teacher,
             value:
-              selected_lesson?.teacher.firstName +
-              "-" +
-              selected_lesson?.teacher.lastName,
+              selected_lesson?.teacher.email,
             label:
-              selected_lesson?.teacher.firstName +
-              " " +
-              selected_lesson?.teacher.lastName,
+              selected_lesson?.teacher.fullName,
           },
           isPay: selected_lesson?.isTeacherPaid,
         },
