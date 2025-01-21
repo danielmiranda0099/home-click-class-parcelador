@@ -3,8 +3,8 @@ export function formatUsersForInputSearch(users, role = null) {
   return users
     .filter((user) => (role ? user.role.includes(role) : true))
     .map((user) => ({
-      value: `${user.firstName.toLowerCase()}-${user.lastName.toLowerCase()}`,
-      label: `${user.firstName} ${user.lastName}`,
+      value: user?.email,
+      label: user?.fullName,
       ...user,
     }));
 }
