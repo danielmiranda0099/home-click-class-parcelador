@@ -127,7 +127,6 @@ export async function getLessons() {
         week: true,
         teacherObservations: true,
         otherObservations: true,
-        isPaid: true,
         isScheduled: true,
         isRescheduled: true,
         isCanceled: true,
@@ -137,7 +136,6 @@ export async function getLessons() {
         teacherPayment: true,
         isTeacherPaid: true,
         reasonsRescheduled: true,
-        profit: true,
         teacherId: true,
         teacher: {
           select: {
