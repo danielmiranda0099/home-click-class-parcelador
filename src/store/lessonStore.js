@@ -4,9 +4,6 @@ import { formattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar
 
 export const useLessonsStore = create((set) => ({
   lessons: [],
-  isLoading: false,
-  error: null,
-
   setLessons: async (rol, is_set_lessons_filtered = false) => {
     try {
       set({ isLoading: true, error: null });
@@ -32,5 +29,4 @@ export const useLessonsStore = create((set) => ({
     set(() => ({
       selected_lesson: new_selected_lesson,
     })),
-
 }));
