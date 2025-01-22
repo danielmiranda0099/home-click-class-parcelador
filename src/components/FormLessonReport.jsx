@@ -51,7 +51,7 @@ export function FormLessonReport({ rol }) {
 
   useEffect(() => {
     if (form_state?.success) {
-      setLessons(rol, true);
+      setLessons(rol);
       toastSuccess({
         title: lesson.isConfirmed
           ? "Informe guardado y clase registrada."

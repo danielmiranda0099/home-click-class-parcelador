@@ -32,12 +32,15 @@ function SubmitButton() {
 }
 
 export function FormConfirmClass() {
-  const [form_state, formActionDispath] = useFormState(confirmLessonAndRegisterDebt, {
-    data: [],
-    succes: null,
-    error: false,
-    message: null,
-  });
+  const [form_state, formActionDispath] = useFormState(
+    confirmLessonAndRegisterDebt,
+    {
+      data: [],
+      succes: null,
+      error: false,
+      message: null,
+    }
+  );
   const { selected_lesson: lesson, setLessons } = useLessonsStore();
   const {
     popupFormConfirmClass: is_open,
@@ -48,7 +51,7 @@ export function FormConfirmClass() {
 
   useEffect(() => {
     if (form_state?.success) {
-      setLessons("student", true);
+      setLessons("student");
       toastSuccess({ title: "Clase Confirmada" });
       setIsOpen(false);
     }
