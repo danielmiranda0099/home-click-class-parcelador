@@ -33,41 +33,4 @@ export const useLessonsStore = create((set) => ({
       selected_lesson: new_selected_lesson,
     })),
 
-  createLesson: async (lessonForm) => {
-    try {
-      set({ isLoading: true, error: null });
-      await CreateNewLeccons(lessonForm);
-
-      const data = await getLessons();
-      const formatted_lessons = await formattedLessonsForCalendar(
-        data,
-        "admin"
-      );
-      set({ lessons: formatted_lessons, isLoading: false });
-
-      return formatted_lessons;
-    } catch (error) {
-      set({ error: error.message, isLoading: false });
-      throw error;
-    }
-  },
-
-  payLesson: async (lessonId, paymentData) => {
-    try {
-      set({ isLoading: true, error: null });
-      await PayLesson([lessonId], paymentData);
-
-      const data = await getLessons();
-      const formatted_lessons = await formattedLessonsForCalendar(
-        data,
-        "admin"
-      );
-      set({ lessons: formatted_lessons, isLoading: false });
-
-      return formatted_lessons;
-    } catch (error) {
-      set({ error: error.message, isLoading: false });
-      throw error;
-    }
-  },
 }));
