@@ -178,10 +178,73 @@ export async function getLessons(date_range) {
       },
     });
 
-    if (!lessons) RequestResponse.success();
+    if (!lessons) return RequestResponse.success();
     return RequestResponse.success(lessons);
   } catch (error) {
     console.error("Error in getLessons():", error);
+    return RequestResponse.error();
+  }
+}
+
+export async function getLessonById(id) {
+  try {
+    const lesson = await prisma.lesson.findUnique({
+      where: {
+        id: id,
+      },
+      select: {
+        id: true,
+        startDate: true,
+        topic: true,
+        issues: true,
+        week: true,
+        teacherObservations: true,
+        otherObservations: true,
+        isScheduled: true,
+        isRescheduled: true,
+        isCanceled: true,
+        isConfirmed: true,
+        isGroup: true,
+        isRegistered: true,
+        teacherPayment: true,
+        isTeacherPaid: true,
+        reasonsRescheduled: true,
+        teacherId: true,
+        teacher: {
+          select: {
+            id: true,
+            fullName: true,
+            shortName: true,
+            email: true,
+            averageScore: true,
+          },
+        },
+        studentLessons: {
+          select: {
+            id: true,
+            isStudentPaid: true,
+            studentFee: true,
+            lessonScore: true,
+            studentObservations: true,
+            isConfirmed: true,
+            studentId: true,
+            student: {
+              select: {
+                id: true,
+                fullName: true,
+                shortName: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!lesson) return RequestResponse.success();
+    return RequestResponse.success(lesson);
+  } catch (error) {
+    console.error("Error in getLessonById():", error);
     return RequestResponse.error();
   }
 }
