@@ -3,11 +3,14 @@
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import { useLessonsStore } from "@/store/lessonStore";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useUiStore } from "@/store/uiStores";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { isCurrentDateGreater } from "@/utils/isCurrentDateGreater";
 import { FormattedDate } from "@/utils/formattedDate";
+import { getMonth, getYear } from "date-fns";
+import { useRouter, useSearchParams } from "next/navigation";
+import { navigateMonth } from "@/utils/navigateMonth";
 
 const localizer = momentLocalizer(moment);
 
@@ -17,17 +20,47 @@ export function CalendarUI({ rol }) {
   const setPopupDetailLesson = useUiStore(
     (state) => state.setPopupDetailLesson
   );
-  const [counter_DB, setCounterDB] = useState(0);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [date, setDate] = useState(new Date());
 
   // Solo hacer la llamada a la API si no hay lecciones cargadas
   //TODO esto no tiene sentido o mejor se pasa al page
   useEffect(() => {
-    setCounterDB(counter_DB + 1);
-    if ((lessons || lessons.length === 0) && counter_DB <= 15) {
-      setCounterDB(16);
-      setLessons(rol, true);
+    // Verifica si ya están configurados
+    if (!searchParams.get("year") || !searchParams.get("year")) {
+      const currentMonth = getMonth(new Date()) + 1;
+      const currentYear = getYear(new Date());
+
+      router.push(`?month=${currentMonth}&year=${currentYear}`);
     }
   }, [lessons, setLessons, rol]);
+
+  useEffect(() => {
+    if (searchParams.get("month") && searchParams.get("year")) {
+      setLessons(rol, {
+        startOfMonth: new Date(
+          parseInt(searchParams.get("year")),
+          parseInt(searchParams.get("month")) - 1,
+          1
+        ), //new Date(date_range.year, date_range.month - 1, 1)
+        endOfMonth: new Date(
+          parseInt(searchParams.get("year")),
+          parseInt(searchParams.get("month")),
+          0
+        ), //new Date(date_range.year, date_range.month, 0);
+      });
+
+      setDate(
+        new Date(
+          parseInt(searchParams.get("year")),
+          parseInt(searchParams.get("month")) - 1,
+          1
+        )
+      );
+    }
+  }, [searchParams]);
 
   const [view, setView] = useState(Views.MONTH);
 
@@ -35,13 +68,15 @@ export function CalendarUI({ rol }) {
     setView(selectedView);
   };
 
-  const [date, setDate] = useState(new Date());
-  const onNavigate = useCallback(
-    (newDate) => {
-      return setDate(newDate);
-    },
-    [setDate]
-  );
+  const onNavigate = (newDate, view, action) => {
+    const date = navigateMonth(
+      parseInt(searchParams.get("month")) - 1,
+      parseInt(searchParams.get("year")),
+      action
+    );
+    router.push(`?month=${date.month + 1}&year=${date.year}`);
+    return setDate(newDate);
+  };
 
   const handleSelectEvent = (event) => {
     setSelectedLesson(event);
@@ -76,7 +111,13 @@ export function CalendarUI({ rol }) {
               backgroundColor: event.background || "#adb5bd",
               color: event.color || "white",
             },
-            className: ( (rol === "student" && !event.isConfirmed) || (rol === "teacher" && event.isConfirmed && !event.isRegistered)) && isCurrentDateGreater(FormattedDate(event.startDate)) && `has-ping`,
+            className:
+              ((rol === "student" && !event.isConfirmed) ||
+                (rol === "teacher" &&
+                  event.isConfirmed &&
+                  !event.isRegistered)) &&
+              isCurrentDateGreater(FormattedDate(event.startDate)) &&
+              `has-ping`,
           };
         }}
       />
