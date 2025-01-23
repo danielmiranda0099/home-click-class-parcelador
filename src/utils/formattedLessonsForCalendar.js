@@ -1,9 +1,12 @@
-"use server"
+"use server";
+import { auth } from "@/auth";
 import { statusLesson } from "./formatStatusLesson";
 import { FormattedDate } from "./formattedDate";
 import { formatNamesForCalendar } from "./getNamesForLesson";
 
-export async function formattedLessonsForCalendar(original_lesson, rol) {
+export async function formattedLessonsForCalendar(original_lesson) {
+  const { user } = await auth();
+  const rol = user?.role[0];
   if (!original_lesson || original_lesson.length <= 0) {
     return [];
   }
