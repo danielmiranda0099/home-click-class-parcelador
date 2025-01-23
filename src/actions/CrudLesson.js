@@ -95,7 +95,7 @@ export async function CreateNewLesson(prev_state, lessons_data) {
   }
 }
 
-export async function getLessons() {
+export async function getLessons(date_range) {
   try {
     const { user } = await auth();
 
@@ -104,6 +104,13 @@ export async function getLessons() {
     }
 
     const where_clause = {};
+    if (date_range.startOfMonth && date_range.endOfMonth) {
+      where_clause.startDate = {
+        gte: date_range.startOfMonth,
+        lte: date_range.endOfMonth,
+      };
+    }
+
     if (!user.role.includes("admin")) {
       if (user.role.includes("student")) {
         where_clause.studentLessons = {
@@ -171,11 +178,11 @@ export async function getLessons() {
       },
     });
 
-    if (!lessons) return [];
-    return lessons;
+    if (!lessons) RequestResponse.success();
+    return RequestResponse.success(lessons);
   } catch (error) {
-    console.error("Error fetching lessons:", error);
-    return [];
+    console.error("Error in getLessons():", error);
+    return RequestResponse.error();
   }
 }
 
