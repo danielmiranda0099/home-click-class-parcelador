@@ -15,8 +15,13 @@ import { navigateMonth } from "@/utils/navigateMonth";
 const localizer = momentLocalizer(moment);
 
 export function CalendarUI({ rol }) {
-  const { lessons, setLessons, setSelectedLesson, lessons_filtered } =
-    useLessonsStore();
+  const {
+    lessons,
+    setLessons,
+    isLoadingLessons,
+    setSelectedLesson,
+    lessons_filtered,
+  } = useLessonsStore();
   const setPopupDetailLesson = useUiStore(
     (state) => state.setPopupDetailLesson
   );
@@ -69,13 +74,22 @@ export function CalendarUI({ rol }) {
   };
 
   const onNavigate = (newDate, view, action) => {
-    const date = navigateMonth(
-      parseInt(searchParams.get("month")) - 1,
-      parseInt(searchParams.get("year")),
-      action
-    );
-    router.push(`?month=${date.month + 1}&year=${date.year}`);
-    return setDate(newDate);
+    if (!isLoadingLessons && action !== "TODAY") {
+      const date = navigateMonth(
+        parseInt(searchParams.get("month")) - 1,
+        parseInt(searchParams.get("year")),
+        action
+      );
+      router.push(`?month=${date.month + 1}&year=${date.year}`);
+      return setDate(newDate);
+    }
+    if (action === "TODAY") {
+      const currentMonth = getMonth(new Date()) + 1;
+      const currentYear = getYear(new Date());
+
+      router.push(`?month=${currentMonth}&year=${currentYear}`);
+      return setDate(newDate);
+    }
   };
 
   const handleSelectEvent = (event) => {

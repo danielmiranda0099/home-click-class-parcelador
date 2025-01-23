@@ -13,6 +13,7 @@ export const useLessonsStore = create((set, get) => ({
     if (!loadedMonths.has(key)) {
       loadedMonths.set(key, true); // Puedes guardar más datos si necesitas
       set({ loadedMonths: new Map(loadedMonths) }); // Actualizar la store
+      set({ isLoadingLessons: true });
       const data = await getLessons(date_range);
       if (data?.success) {
         const formatted_lessons = await formattedLessonsForCalendar(
@@ -23,9 +24,11 @@ export const useLessonsStore = create((set, get) => ({
         set({ lessons: [...lessons, ...formatted_lessons] });
         set({ lessons_filtered: [...lessons, ...formatted_lessons] });
       }
+      set({ isLoadingLessons: false });
     }
     console.log(loadedMonths);
   },
+  isLoadingLessons: false,
   loadedMonths: new Map(),
 
   lessons_filtered: [],
