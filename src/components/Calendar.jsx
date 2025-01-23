@@ -28,6 +28,21 @@ export function CalendarUI({ rol }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const getDateRangeFromUrl = () => {
+    return {
+      startOfMonth: new Date(
+        parseInt(searchParams.get("year")),
+        parseInt(searchParams.get("month")) - 1,
+        1
+      ),
+      endOfMonth: new Date(
+        parseInt(searchParams.get("year")),
+        parseInt(searchParams.get("month")),
+        0
+      ),
+    };
+  };
+
   const [date, setDate] = useState(new Date());
 
   // Solo hacer la llamada a la API si no hay lecciones cargadas
@@ -40,22 +55,11 @@ export function CalendarUI({ rol }) {
 
       router.push(`?month=${currentMonth}&year=${currentYear}`);
     }
-  }, [lessons, setLessons, rol]);
+  }, [lessons, setLessons]);
 
   useEffect(() => {
     if (searchParams.get("month") && searchParams.get("year")) {
-      setLessons(rol, {
-        startOfMonth: new Date(
-          parseInt(searchParams.get("year")),
-          parseInt(searchParams.get("month")) - 1,
-          1
-        ), //new Date(date_range.year, date_range.month - 1, 1)
-        endOfMonth: new Date(
-          parseInt(searchParams.get("year")),
-          parseInt(searchParams.get("month")),
-          0
-        ), //new Date(date_range.year, date_range.month, 0);
-      });
+      setLessons(getDateRangeFromUrl());
 
       setDate(
         new Date(
