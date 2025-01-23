@@ -20,6 +20,7 @@ import { FormFieldTeacher } from "./FormFieldTeacher";
 import { ErrorAlert } from "@/components";
 import { useCustomToast } from "@/hooks";
 import { scheduleLessons } from "@/utils/scheduleLessons";
+import { useSearchParams } from "next/navigation";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -42,12 +43,28 @@ export function FormCreateNewLesson() {
     message: null,
   });
   const [error_message, setErrorMessage] = useState("");
+  const searchParams = useSearchParams();
   const { toastSuccess } = useCustomToast();
+
+  const getDateRangeFromUrl = () => {
+    return {
+      startOfMonth: new Date(
+        parseInt(searchParams.get("year")),
+        parseInt(searchParams.get("month")) - 1,
+        1
+      ),
+      endOfMonth: new Date(
+        parseInt(searchParams.get("year")),
+        parseInt(searchParams.get("month")),
+        0
+      ),
+    };
+  };
 
   useEffect(() => {
     if (form_state?.success) {
       toastSuccess({ title: "Clases creadas." });
-      setLessons("admin");
+      setLessons(getDateRangeFromUrl(), true);
       setIsOpen(false);
     }
     if (form_state?.error) {

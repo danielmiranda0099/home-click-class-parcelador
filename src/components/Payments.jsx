@@ -28,6 +28,7 @@ import { useUiStore } from "@/store/uiStores";
 import { ErrorAlert } from "@/components";
 import { useCustomToast } from "@/hooks";
 import { processPaymentByRole } from "@/actions/lessonTransactions";
+import { useSearchParams } from "next/navigation";
 
 //TODO: Refact component
 export function Payments() {
@@ -44,7 +45,6 @@ export function Payments() {
   const [total, setTotal] = useState(0);
   const { user_selected: user } = useUserStore();
   const { setPopupDetailLesson, setIsShowFooterDetailLesson } = useUiStore();
-  const { toastSuccess } = useCustomToast();
   const [state_form_search, setStateFormSearch] = useState({
     pending: false,
     message: "",
@@ -53,6 +53,23 @@ export function Payments() {
     pending: false,
     message: "",
   });
+  const searchParams = useSearchParams();
+  const { toastSuccess } = useCustomToast();
+
+  const getDateRangeFromUrl = () => {
+    return {
+      startOfMonth: new Date(
+        parseInt(searchParams.get("year")),
+        parseInt(searchParams.get("month")) - 1,
+        1
+      ),
+      endOfMonth: new Date(
+        parseInt(searchParams.get("year")),
+        parseInt(searchParams.get("month")),
+        0
+      ),
+    };
+  };
 
   useEffect(() => {
     const total = payments?.reduce(
@@ -91,7 +108,7 @@ export function Payments() {
       setStateFormPayment((prev) => ({ ...prev, pending: false }));
       if (response.success) {
         setStateFormPayment((prev) => ({ ...prev, message: "" }));
-        setLessons("admin");
+        setLessons(getDateRangeFromUrl(), true);
         toastSuccess({ title: "Pago Confirmado" });
         handleSearch();
       }

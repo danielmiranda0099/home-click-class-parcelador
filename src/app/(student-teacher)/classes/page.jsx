@@ -22,7 +22,7 @@ export default async function ClassesPage() {
       {role[0] === "student" && <FormConfirmClass />}
 
       {role[0] === "teacher" && <FormLessonReport rol="teacher" />}
-      {role[0] === "teacher" && <FormReschedule rol="teacher" />}
+      {role[0] === "teacher" && <FormReschedule />}
 
       <PopupDetailLesson rol={role[0]} user={user} />
 

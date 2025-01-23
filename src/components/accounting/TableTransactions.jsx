@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import moment from "moment";
 import {
   FilterIcon,
@@ -16,7 +17,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatCurrency } from "@/utils/formatCurrency";
-import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
@@ -27,6 +27,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import { MONTHS_OF_YEAR } from "@/utils/constans";
 import { getWeekDateRange } from "@/utils/getMonthDateRange";
+import { getLessonById } from "@/actions/CrudLesson";
 
 export function TableTransactions({
   monhtly_transactions,
@@ -53,22 +54,13 @@ export function TableTransactions({
     }
   };
 
-  const getLessonById = (id) => {
-    return lessons.find((lesson) => lesson.id === id);
-  };
-
-  const handleShowLesson = (id) => {
-    const lesson = getLessonById(id);
-    setSelectedLesson(lesson);
+  const handleShowLesson = async (id) => {
+    const lesson = await getLessonById(id);
+    console.log(lesson)
+    setSelectedLesson(lesson.data);
     setPopupDetailLesson(true);
   };
 
-  useEffect(() => {
-    if (lessons.length < 1) {
-      setLessons("admin");
-    }
-  }, []);
-  // console.log("monhtly transactioooon", monhtly_transactions);
   return (
     <>
       <PopupDeleteTransaction

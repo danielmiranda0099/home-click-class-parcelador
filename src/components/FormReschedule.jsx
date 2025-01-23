@@ -20,8 +20,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { ErrorAlert } from ".";
 import { useCustomToast } from "@/hooks";
+import { useSearchParams } from "next/navigation";
 
-export function FormReschedule({ rol }) {
+export function FormReschedule() {
   const { popupFormReschedule: is_open, setPopupFormReschedule: setIsOpen } =
     useUiStore();
   const { setLessons, selected_lesson } = useLessonsStore();
@@ -29,7 +30,23 @@ export function FormReschedule({ rol }) {
     pending: false,
     errorMessage: "",
   });
+  const searchParams = useSearchParams();
   const { toastSuccess } = useCustomToast();
+
+  const getDateRangeFromUrl = () => {
+    return {
+      startOfMonth: new Date(
+        parseInt(searchParams.get("year")),
+        parseInt(searchParams.get("month")) - 1,
+        1
+      ),
+      endOfMonth: new Date(
+        parseInt(searchParams.get("year")),
+        parseInt(searchParams.get("month")),
+        0
+      ),
+    };
+  };
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -46,7 +63,7 @@ export function FormReschedule({ rol }) {
       if (response.success) {
         toastSuccess({ title: "Clase reagendada." });
         setFormState((prev) => ({ ...prev, errorMessage: "" }));
-        setLessons(rol);
+        setLessons(getDateRangeFromUrl(), true);
         setIsOpen(false);
       }
       if (response.error) {

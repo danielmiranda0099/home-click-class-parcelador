@@ -27,12 +27,13 @@ import { useAccountingStore } from "@/store/accountingStore";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import { useCustomToast } from "@/hooks";
+import { getLessonById } from "@/actions/CrudLesson";
 
 export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt, handleGetMonhtlyTransactions }) {
   const [is_open_popup_delete, setIsOpenPopupDelete] = useState(false);
   const [transaction_id_current, setTransactionIdCurrent] = useState(null);
   const [filter_debt, setFilterDebt] = useState("all");
-  const { lessons, setSelectedLesson, setLessons } = useLessonsStore();
+  const { setSelectedLesson } = useLessonsStore();
   const { setEditDebt } = useAccountingStore();
 
   const { setPopupDetailLesson } = useUiStore();
@@ -60,13 +61,9 @@ export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt, handleGe
 
   const total_balance = total_income - total_expense;
 
-  const getLessonById = (id) => {
-    return lessons.find((lesson) => lesson.id === id);
-  };
-
-  const handleShowLesson = (id) => {
-    const lesson = getLessonById(id);
-    setSelectedLesson(lesson);
+  const handleShowLesson = async (id) => {
+    const lesson = await getLessonById(id);
+    setSelectedLesson(lesson.data);
     setPopupDetailLesson(true);
   };
 

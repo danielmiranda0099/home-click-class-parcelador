@@ -19,6 +19,7 @@ import { CheckIcon } from "@/components/icons";
 import { ErrorAlert } from "@/components";
 import { useCustomToast } from "@/hooks";
 import { confirmLessonAndRegisterDebt } from "@/actions/lessonDebts";
+import { useSearchParams } from "next/navigation";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -47,11 +48,27 @@ export function FormConfirmClass() {
     setPopupFormConfirmClass: setIsOpen,
   } = useUiStore();
   const [error_message, setErrorMessage] = useState("");
+  const searchParams = useSearchParams();
   const { toastSuccess } = useCustomToast();
+
+  const getDateRangeFromUrl = () => {
+    return {
+      startOfMonth: new Date(
+        parseInt(searchParams.get("year")),
+        parseInt(searchParams.get("month")) - 1,
+        1
+      ),
+      endOfMonth: new Date(
+        parseInt(searchParams.get("year")),
+        parseInt(searchParams.get("month")),
+        0
+      ),
+    };
+  };
 
   useEffect(() => {
     if (form_state?.success) {
-      setLessons("student");
+      setLessons(getDateRangeFromUrl(), true);
       toastSuccess({ title: "Clase Confirmada" });
       setIsOpen(false);
     }

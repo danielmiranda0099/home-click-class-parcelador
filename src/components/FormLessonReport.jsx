@@ -19,6 +19,7 @@ import { CheckIcon } from "@/components/icons";
 import { ErrorAlert } from "@/components";
 import { useCustomToast } from "@/hooks";
 import { registerAndSaveLessonReportAndRegisterDebt } from "@/actions/lessonDebts";
+import { useSearchParams } from "next/navigation";
 
 function SubmitButton({ message }) {
   const { pending } = useFormStatus();
@@ -47,11 +48,27 @@ export function FormLessonReport({ rol }) {
     }
   );
   const [error_message, setErrorMessage] = useState("");
+  const searchParams = useSearchParams();
   const { toastSuccess } = useCustomToast();
+
+  const getDateRangeFromUrl = () => {
+    return {
+      startOfMonth: new Date(
+        parseInt(searchParams.get("year")),
+        parseInt(searchParams.get("month")) - 1,
+        1
+      ),
+      endOfMonth: new Date(
+        parseInt(searchParams.get("year")),
+        parseInt(searchParams.get("month")),
+        0
+      ),
+    };
+  };
 
   useEffect(() => {
     if (form_state?.success) {
-      setLessons(rol);
+      setLessons(getDateRangeFromUrl(), true);
       toastSuccess({
         title: lesson.isConfirmed
           ? "Informe guardado y clase registrada."

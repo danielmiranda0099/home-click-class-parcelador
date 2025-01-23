@@ -42,7 +42,7 @@ export default function DashboardPage() {
     <section className="overflow-hidden max-w-full">
       <FormLessonReport rol="admin" />
       <PopupDetailLesson rol="admin" user={user_session?.user} />
-      <FormReschedule rol="admin" />
+      <FormReschedule />
 
       <CardStatusLegendLesson rol="admin" />
 

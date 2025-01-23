@@ -29,6 +29,7 @@ import {
   cancelStudentPaymentAndRegisterDebt,
   cancelTeacherPaymentAndRegisterDebt,
 } from "@/actions/lessonDebts";
+import { useSearchParams } from "next/navigation";
 
 export function FooterDetailLesson({ rol, showFooter }) {
   const { isShowFooterDetailLesson } = useUiStore();
@@ -46,7 +47,23 @@ export function FooterDetailLesson({ rol, showFooter }) {
     setPopupFormReschedule,
     setPopupFormLessonReport,
   } = useUiStore();
+  const searchParams = useSearchParams();
   const { toastSuccess, toastError } = useCustomToast();
+
+  const getDateRangeFromUrl = () => {
+    return {
+      startOfMonth: new Date(
+        parseInt(searchParams.get("year")),
+        parseInt(searchParams.get("month")) - 1,
+        1
+      ),
+      endOfMonth: new Date(
+        parseInt(searchParams.get("year")),
+        parseInt(searchParams.get("month")),
+        0
+      ),
+    };
+  };
 
   return (
     <DialogFooter className="sm:justify-between">
@@ -58,7 +75,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
             lesson_ids={[lesson?.id]}
             handleAction={() => {
               setPopupDetailLesson(false);
-              setLessons(rol);
+              setLessons(getDateRangeFromUrl(), true);
             }}
           />
           <div className="flex gap-2">
@@ -80,7 +97,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
                           className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
                           onClick={async () => {
                             await CancelLesson(lesson?.id, true);
-                            setLessons(rol);
+                            setLessons(getDateRangeFromUrl(), true);
                             setPopupDetailLesson(false);
                           }}
                         >
@@ -95,7 +112,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
                           className="border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
                           onClick={async () => {
                             await CancelLesson(lesson?.id, false);
-                            setLessons(rol);
+                            setLessons(getDateRangeFromUrl(), true);
                             setPopupDetailLesson(false);
                           }}
                         >
@@ -158,7 +175,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
                       setStatusButton({ ...status_button, paidStudent: false });
                       if (data.success) {
                         toastSuccess({ title: "Pago Confirmado." });
-                        setLessons(rol);
+                        setLessons(getDateRangeFromUrl(), true);
                         setPopupDetailLesson(false);
                       } else {
                         toastError({ title: "Al parecer hubo un error." });
@@ -185,7 +202,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
                       setStatusButton({ ...status_button, paidStudent: false });
                       if (data.success) {
                         toastSuccess({ title: "Pago Cancelado." });
-                        setLessons(rol);
+                        setLessons(getDateRangeFromUrl(), true);
                         setPopupDetailLesson(false);
                       } else {
                         toastError({ title: "Al parecer hubo un error." });
@@ -233,7 +250,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
                                   });
                                   if (data.success) {
                                     toastSuccess({ title: "Pago Confirmado." });
-                                    setLessons(rol);
+                                    setLessons(getDateRangeFromUrl(), true);
                                     setPopupDetailLesson(false);
                                   } else {
                                     toastError({
@@ -289,7 +306,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
                                   });
                                   if (data.success) {
                                     toastSuccess({ title: "Pago Cancelado." });
-                                    setLessons(rol);
+                                    setLessons(getDateRangeFromUrl(), true);
                                     setPopupDetailLesson(false);
                                   } else {
                                     toastError({
@@ -325,7 +342,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
                       });
                       if (data.success) {
                         toastSuccess({ title: "Pago Confirmado." });
-                        setLessons(rol);
+                        setLessons(getDateRangeFromUrl(), true);
                         setPopupDetailLesson(false);
                       } else {
                         toastError({
@@ -361,7 +378,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
                       });
                       if (data.success) {
                         toastSuccess({ title: "Pago Cancelado." });
-                        setLessons(rol);
+                        setLessons(getDateRangeFromUrl(), true);
                         setPopupDetailLesson(false);
                       } else {
                         toastError({
