@@ -46,7 +46,7 @@ export function FormFieldStudents({ data_lesson, setDataLesson }) {
   return (
     <>
       {data_lesson.students.map((studentData, index) => (
-        <div key={index} className="grid grid-cols-2 gap-4 relative">
+        <div key={index} className="grid grid-cols-1 sm:grid-cols-2 gap-4 relative">
           <div className="grid gap-2">
             <Label>Student</Label>
             <InputSearch
@@ -58,7 +58,7 @@ export function FormFieldStudents({ data_lesson, setDataLesson }) {
             />
           </div>
           <div className="grid gap-2">
-            <Label>Price StudentPer Hour</Label>
+            <Label>Price Student Per Hour</Label>
             <InputPriceLesson
               value={studentData.fee}
               setValue={(value) => updateStudentData(index, "fee", value)}

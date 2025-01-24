@@ -15,7 +15,7 @@ export function FormFieldTeacher({ data_lesson, setDataLesson }) {
     setTeachersForInputSearh(teachers_formated);
   }, [users]);
   return (
-    <div className={`grid grid-cols-2 gap-4`}>
+    <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4`}>
       <div className="grid gap-2">
         <Label>Teacher</Label>
         <InputSearch
@@ -32,7 +32,7 @@ export function FormFieldTeacher({ data_lesson, setDataLesson }) {
         />
       </div>
       <div className="grid gap-2">
-        <Label>Price Teacher</Label>
+        <Label>Price Teacher Per Hour</Label>
         <InputPriceLesson
           value={data_lesson.teacher.payment}
           setValue={(value) =>

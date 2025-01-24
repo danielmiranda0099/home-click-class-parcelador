@@ -88,7 +88,7 @@ export function FormCreateNewLesson() {
     dispath(data_lesson);
   };
   return (
-    <form className="p-0 px-4" action={OnCreateNewLessons}>
+    <form className="px-0" action={OnCreateNewLessons}>
       <div className="space-y-4">
         <FormFieldStudents
           data_lesson={data_lesson}

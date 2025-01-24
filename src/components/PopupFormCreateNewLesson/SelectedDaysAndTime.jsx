@@ -21,7 +21,7 @@ export function SelectedDaysAndTime({ data_lesson, setDataLesson }) {
   return (
     <div className="space-y-4">
       <Label>Select days and times:</Label>
-      <div className="grid grid-cols-7 gap-2 ">
+      <div className="grid grid-cols-3 sm:grid-cols-7 gap-2 ">
         {DAYS_OF_WEEK.map((day) => (
           <div key={day} className={"flex flex-col items-center"}>
             <Button
