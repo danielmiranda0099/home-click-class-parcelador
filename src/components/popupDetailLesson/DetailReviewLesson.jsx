@@ -15,28 +15,33 @@ export function DetailReviewLesson({ lesson, rol }) {
         {rol === "admin" &&
           lesson?.isConfirmed &&
           lesson.studentLessons.map((lesson_student) => (
-            <div className="grid grid-cols-3" key={lesson_student.id}>
+            <div
+              className="grid grid-cols-3 sm:grid-cols-3"
+              key={lesson_student.id}
+            >
               {lesson.isGroup && lesson_student?.lessonScore && (
                 <div className="flex items-center gap-4 w-full">
                   <FeedbackIcon
-                    className="h-8 w-8 text-primary"
+                    className="h-8 w-8 text-primary hidden sm:block"
                     color="white"
                   />
 
-                  {`${lesson_student.student.shortName}`}
+                  <p className="text-sm sm:text-base font-medium">{`${lesson_student.student.shortName}`}</p>
                 </div>
               )}
               {lesson_student?.lessonScore && (
                 <div className="flex items-start gap-4">
                   <FeedbackIcon
-                    className="h-8 w-8 text-primary"
+                    className="h-8 w-8 text-primary hidden sm:block"
                     color="white"
                   />
 
                   <div className="flex items-start gap-4">
                     {/* <RatingIcon size="1.5rem" className="text-primary" /> */}
                     <div>
-                      <p className="font-medium">Rating Class</p>
+                      <p className="text-sm sm:text-base font-medium">
+                        Puntuación
+                      </p>
                       <p className="text-muted-foreground">
                         {lesson_student?.lessonScore}
                       </p>
@@ -49,7 +54,7 @@ export function DetailReviewLesson({ lesson, rol }) {
                 <div className="flex items-start gap-4">
                   {/* <FeedbackIcon size="1.5rem" className="text-primary" /> */}
                   <div>
-                    <p className="font-medium">Student Observations</p>
+                    <p className="text-sm sm:text-base font-medium">Opinion</p>
                     <p className="text-sm sm:text-base text-muted-foreground">
                       {lesson_student?.studentObservations}
                     </p>
@@ -58,25 +63,32 @@ export function DetailReviewLesson({ lesson, rol }) {
               )}
             </div>
           ))}
-
-        <div className="flex gap-4 w-full">
+        <Separator />
+        <div className="flex gap-2 w-full">
           <div>
-            <FeedbackIcon className="h-8 w-8 text-primary" color="white" />
+            <FeedbackIcon
+              className="h-8 w-8 text-primary hidden sm:block"
+              color="white"
+            />
           </div>
-          <div className={`grid  grid-flow-col auto-cols-fr gap-4 w-full`}>
+          <div className="grid grid-cols-2 sm:grid-flow-col sm:auto-cols-fr gap-4 w-full">
             {lesson?.week && (
               <div className="flex items-start gap-4">
                 <div>
-                  <p className="font-medium">Week</p>
-                  <p className="text-sm sm:text-base text-muted-foreground">{lesson?.week}</p>
+                  <p className="text-sm sm:text-base font-medium">Week</p>
+                  <p className="text-sm sm:text-base text-muted-foreground">
+                    {lesson?.week}
+                  </p>
                 </div>
               </div>
             )}
             {lesson?.topic && (
               <div className="flex items-start gap-4">
                 <div>
-                  <p className="font-medium">Topic</p>
-                  <p className="text-sm sm:text-base text-muted-foreground">{lesson?.topic}</p>
+                  <p className="text-sm sm:text-base font-medium">Topic</p>
+                  <p className="text-sm sm:text-base text-muted-foreground">
+                    {lesson?.topic}
+                  </p>
                 </div>
               </div>
             )}
@@ -84,7 +96,9 @@ export function DetailReviewLesson({ lesson, rol }) {
             {rol !== "student" && lesson?.teacherObservations && (
               <div className="flex items-start gap-4">
                 <div>
-                  <p className="font-medium">Observations</p>
+                  <p className="text-sm sm:text-base font-medium">
+                    Observations
+                  </p>
                   <p className="text-sm sm:text-base text-muted-foreground">
                     {lesson?.teacherObservations}
                   </p>
@@ -95,8 +109,10 @@ export function DetailReviewLesson({ lesson, rol }) {
             {lesson?.issues && (
               <div className="flex items-start gap-4">
                 <div>
-                  <p className="font-medium">Problemas</p>
-                  <p className="text-sm sm:text-base text-muted-foreground">{lesson?.issues}</p>
+                  <p className="text-sm sm:text-base font-medium">Problemas</p>
+                  <p className="text-sm sm:text-base text-muted-foreground">
+                    {lesson?.issues}
+                  </p>
                 </div>
               </div>
             )}
@@ -104,7 +120,7 @@ export function DetailReviewLesson({ lesson, rol }) {
             {lesson?.otherObservations && (
               <div className="flex items-start gap-4">
                 <div>
-                  <p className="font-medium">Others</p>
+                  <p className="text-sm sm:text-base font-medium">Others</p>
                   <p className="text-sm sm:text-base text-muted-foreground">
                     {lesson?.otherObservations}
                   </p>

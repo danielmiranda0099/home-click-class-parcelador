@@ -66,7 +66,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
   };
 
   return (
-    <DialogFooter className="sm:justify-between">
+    <DialogFooter className="flex flex-col sm:flex-row sm:justify-between">
       {showFooter && isShowFooterDetailLesson && (
         <>
           <PopupDeleteLesson
@@ -78,7 +78,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
               setLessons(getDateRangeFromUrl(), true);
             }}
           />
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             {!lesson?.isConfirmed &&
               !lesson?.isRegistered &&
               !lesson?.studentLessons.some(
@@ -86,7 +86,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
               ) &&
               rol === "admin" && (
                 <DropdownMenu>
-                  <DropdownMenuTrigger>
+                  <DropdownMenuTrigger className="w-fit">
                     <EllipsisVerticalIcon className="h-5 w-5" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
@@ -138,8 +138,8 @@ export function FooterDetailLesson({ rol, showFooter }) {
                 </DropdownMenu>
               )}
           </div>
-          <div className="flex gap-2">
-            <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               {rol === "student" &&
                 !lesson?.studentLessons.find(
                   (student_lesson) =>
@@ -159,7 +159,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
                 )}
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               {rol === "admin" &&
                 !lesson?.studentLessons[0].isStudentPaid &&
                 !lesson.isGroup && (
@@ -218,11 +218,11 @@ export function FooterDetailLesson({ rol, showFooter }) {
                 lesson?.studentLessons?.some(
                   (student_lesson) => student_lesson.isStudentPaid === false
                 ) && (
-                  <div className="flex flex-col items-center gap-4">
+                  <div className="flex flex-col items-start sm:items-center gap-4">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
-                          className="flex gap-2"
+                          className="flex gap-2 w-full"
                           disabled={status_button.paidStudent}
                         >
                           <ChevronDown size={18} />
@@ -277,7 +277,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="outline"
-                          className="flex gap-2 border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
+                          className="flex gap-2 w-full border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
                           disabled={status_button.paidStudent}
                         >
                           <ChevronDown size={18} />

@@ -56,8 +56,9 @@ export function PopupDetailLesson({ user, rol, showFooter = true }) {
             }
             setPopupDetailLesson(open);
           }}
+          className="max-w-full overflex-x-hidden"
         >
-          <DialogContent className="sm:max-w-[800px] overflow-y-scroll max-h-[95vh]">
+          <DialogContent className="max-w-full sm:max-w-[800px] overflow-y-scroll max-h-[85vh]">
             <DialogDescription></DialogDescription>
             <DialogHeader>
               <DialogTitle className="text-left">Class Details</DialogTitle>
@@ -70,7 +71,7 @@ export function PopupDetailLesson({ user, rol, showFooter = true }) {
               </div>
             </DialogHeader>
             <div className="grid gap-3">
-              <div className="grid grid-cols-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 max-w-full">
                 <div className="flex items-start gap-4">
                   <div>
                     <CircleCheckIcon className="h-5 w-5 sm:h-8 sm:w-8 text-primary" />
@@ -82,14 +83,14 @@ export function PopupDetailLesson({ user, rol, showFooter = true }) {
                     </p>
                   </div>
                 </div>
-                <div className="flex justify-center">
-                  <div className="flex flex-col items-end w-[fit-content] pl-2.5">
+                <div className="flex justify-start pl-4 sm:pl-0 mt-2 sm:mt-0 sm:justify-center">
+                  <div className="flex flex-col items-end max-w-full pl-2.5">
                     {lesson?.studentLessons &&
                       lesson?.studentLessons.map(
                         (student_lesson) =>
                           (rol === "admin" ||
                             student_lesson.studentId == user.id) && (
-                            <h2 className="font-medium" key={student_lesson.id}>
+                            <h2 className="text-sm font-medium" key={student_lesson.id}>
                               {formatCurrency(
                                 student_lesson.studentFee.toString()
                               )}
@@ -97,7 +98,7 @@ export function PopupDetailLesson({ user, rol, showFooter = true }) {
                           )
                       )}
                     {rol !== "student" && lesson?.teacherPayment && (
-                      <h2 className="font-medium">
+                      <h2 className="text-sm font-medium">
                         {rol === "admin" && "-"}{" "}
                         {formatCurrency(lesson?.teacherPayment.toString())}
                       </h2>
@@ -106,7 +107,7 @@ export function PopupDetailLesson({ user, rol, showFooter = true }) {
                     {rol === "admin" && lesson?.teacherPayment && (
                       <>
                         <Separator />
-                        <h2 className="font-medium">
+                        <h2 className="text-sm font-medium">
                           {formatCurrency(
                             (
                               lesson?.studentLessons.reduce(
@@ -123,7 +124,7 @@ export function PopupDetailLesson({ user, rol, showFooter = true }) {
               </div>
               <Separator />
 
-              <div className="grid grid-cols-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2">
                 <div className="flex items-start gap-4">
                   <UsersIcon className="h-5 w-5 sm:h-8 sm:w-8 text-primary" />
                   <div>
@@ -131,7 +132,7 @@ export function PopupDetailLesson({ user, rol, showFooter = true }) {
                     {lesson &&
                       lesson?.studentLessons.map((student_lesson) => (
                         <div
-                          className="flex flex-col sm:flex-row gap-1 pb-1 border-b-2 border-gray-150 mb-2"
+                          className="flex flex-row gap-1 pb-1 border-b-2 border-gray-150 mb-2"
                           key={student_lesson.id}
                         >
                           <p
