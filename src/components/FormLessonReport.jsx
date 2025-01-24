@@ -93,16 +93,16 @@ export function FormLessonReport({ rol }) {
 
   return (
     <Dialog open={is_open} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[700px] pt-0">
+      <DialogContent className="sm:max-w-[700px] pt-0 overflow-y-scroll max-h-[85vh]">
         <DialogDescription></DialogDescription>
         <DialogHeader className="p-0">
-          <DialogTitle>Editar Informe</DialogTitle>
+          <DialogTitle className="text-left">Editar Informe</DialogTitle>
         </DialogHeader>
         <form action={onSubmit}>
           <div className="flex flex-wrap -mx-2 mb-4">
             <div className="w-full sm:w-1/5 px-2 mb-4 sm:mb-0">
               <Label htmlFor="oriented-week" className="block mb-1">
-                Oriented Week
+                Oriented Week*
               </Label>
               <Textarea
                 id="oriented-week"
@@ -115,7 +115,7 @@ export function FormLessonReport({ rol }) {
             </div>
             <div className="w-full sm:w-1/5 px-2 mb-4 sm:mb-0">
               <Label htmlFor="oriented-topic" className="block mb-1">
-                Oriented Topic
+                Oriented Topic*
               </Label>
               <Textarea
                 name="topic"
@@ -128,7 +128,7 @@ export function FormLessonReport({ rol }) {
             </div>
             <div className="w-full sm:w-1/5 px-2 mb-4 sm:mb-0">
               <Label htmlFor="observation" className="block mb-1">
-                Observation
+                Observation*
               </Label>
               <Textarea
                 name="teacherObservations"
@@ -165,7 +165,7 @@ export function FormLessonReport({ rol }) {
             </div>
           </div>
           <ErrorAlert message={error_message} />
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
