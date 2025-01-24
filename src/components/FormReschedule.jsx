@@ -75,25 +75,20 @@ export function FormReschedule() {
 
   return (
     <Dialog open={is_open} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[700px] pt-0">
+      <DialogContent className="sm:max-w-[700px] pt-0 overflow-y-scroll max-h-[85vh]">
         <DialogDescription></DialogDescription>
         <DialogHeader className="p-0">
-          <DialogTitle>Reschedule Class</DialogTitle>
+          <DialogTitle className="text-left">Reschedule Class</DialogTitle>
         </DialogHeader>
         <div>
           <form onSubmit={onSubmit} className="grid gap-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="start_date">Start Date</Label>
+                <Label htmlFor="start_date">New Date*</Label>
                 <Input
                   id="start_date"
                   name="start_date"
                   type="datetime-local"
-                  defaultValue={
-                    selected_lesson?.start
-                      ? formattedDateForInput(selected_lesson?.start)
-                      : ""
-                  }
                   required
                 />
               </div>
@@ -106,7 +101,7 @@ export function FormReschedule() {
 
             <ErrorAlert message={form_state.errorMessage} />
 
-            <DialogFooter>
+            <DialogFooter className="gap-2">
               <DialogClose asChild>
                 <Button variant="outline" onClick={() => setIsOpen(false)}>
                   Cancel
