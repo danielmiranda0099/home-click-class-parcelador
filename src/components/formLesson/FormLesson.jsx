@@ -75,10 +75,8 @@ export function FormLesson({ rol }) {
           fee: student_lesson.studentFee,
           student: {
             ...student_lesson.student,
-            value:
-              student_lesson.student.email,
-            label:
-              student_lesson.student.lastName,
+            value: student_lesson.student.email,
+            label: student_lesson.student.lastName,
           },
           isPay: student_lesson.isStudentPaid,
           isConfirmed: student_lesson.isConfirmed,
@@ -88,10 +86,8 @@ export function FormLesson({ rol }) {
           payment: selected_lesson?.teacherPayment,
           teacher: {
             ...selected_lesson?.teacher,
-            value:
-              selected_lesson?.teacher.email,
-            label:
-              selected_lesson?.teacher.fullName,
+            value: selected_lesson?.teacher.email,
+            label: selected_lesson?.teacher.fullName,
           },
           isPay: selected_lesson?.isTeacherPaid,
         },
@@ -137,10 +133,10 @@ export function FormLesson({ rol }) {
           setIsOpen(open);
         }}
       >
-        <DialogContent className="sm:max-w-[700px] pt-0">
+        <DialogContent className="sm:max-w-[700px] pt-0 overflow-y-scroll max-h-[85vh]">
           <DialogDescription></DialogDescription>
           <DialogHeader className="p-0">
-            <DialogTitle>Edit Class</DialogTitle>
+            <DialogTitle className="text-left">Edit Class</DialogTitle>
           </DialogHeader>
           <div>
             <form action={onSubmit} className="grid gap-4">
@@ -160,7 +156,7 @@ export function FormLesson({ rol }) {
 
               <ErrorAlert message={error_message} />
 
-              <DialogFooter>
+              <DialogFooter className="gap-2">
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
