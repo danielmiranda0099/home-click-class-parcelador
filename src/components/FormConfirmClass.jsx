@@ -94,9 +94,9 @@ export function FormConfirmClass() {
 
   return (
     <Dialog open={is_open} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] overflow-y-scroll max-h-[85vh]">
         <DialogHeader>
-          <DialogTitle>Confirm Class</DialogTitle>
+          <DialogTitle className="text-left">Confirm Class</DialogTitle>
         </DialogHeader>
         <div>
           <form action={onSubmit} className="grid gap-4">
@@ -105,10 +105,10 @@ export function FormConfirmClass() {
                 Select a score from 1 to 10 for the class{" "}
                 <span>
                   (where 1 is the lowest rating and 10 is the highest)
-                </span>
+                </span>*
               </Label>
 
-              <div className="flex justify-center gap-3">
+              <div className="flex justify-center gap-2 sm:gap-3">
                 {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
                   <div
                     key={num}
@@ -143,13 +143,13 @@ export function FormConfirmClass() {
             </div>
 
             <span className="text-xs">
-              *Tu opinión cuenta,puedes evaluar libremente. La evaluación que
+              *Tu opinión cuenta, puedes evaluar libremente. La evaluación que
               realices será completamente anónima y privada.
             </span>
 
             <ErrorAlert message={error_message} />
 
-            <DialogFooter>
+            <DialogFooter className="gap-2">
               <DialogClose asChild>
                 <Button variant="outline">Exit</Button>
               </DialogClose>
