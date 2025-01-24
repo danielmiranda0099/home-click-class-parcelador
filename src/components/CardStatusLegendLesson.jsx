@@ -14,7 +14,7 @@ export function CardStatusLegendLesson({ rol }) {
         <PopoverTrigger className="absolute shadow-slate-600 p-0 shadow-md rounded-full hover:bg-gray-200">
           <HelpIcon size={"3rem"} />
         </PopoverTrigger>
-        <PopoverContent className="w-[fit-content] p-0 border-0">
+        <PopoverContent className="w-[fit-content] max-w-full p-0 border-0 ">
           <ContentCardStatusLegendLesson rol={rol} />
         </PopoverContent>
       </Popover>
@@ -25,34 +25,28 @@ export function CardStatusLegendLesson({ rol }) {
 
 function ContentCardStatusLegendLesson({ rol }) {
   return (
-    <Card className="max-w-xl">
-      <CardContent className="p-4">
+    <Card className="max-w-full sm:max-w-xl">
+      <CardContent className="flex flex-col gap-1 p-4 max-w-full sm:max-w-full ">
         <div className="flex flex-row gap-2 justify-start items-center">
           <div className="bg-blue-300 w-5 h-5 rounded-full"></div>
-          <span>Agendada</span>
+          <span className="text-sm sm:text-base">Agendada</span>
         </div>
 
-        <div className="flex flex-row gap-2 justify-start items-center">
-          <div className="bg-green-300 w-5 h-5 rounded-full"></div>
-          <span>
-            {rol === "student"
-              ? "Finalizada y pagada"
-              : rol === "teacher"
-                ? "Registrada y pagada"
-                : rol === "admin"
-                  ? "Pago Realizado Al Profesor - Pago Realizado Por Estudiante"
-                  : "UNKNOW"}
-          </span>
-        </div>
+        {rol !== "student" && (
+          <div className="flex flex-row gap-2 justify-start items-center">
+            <div className="bg-purple-300 w-5 h-5 rounded-full"></div>
+            <span className="text-sm sm:text-base">Clase confirmada</span>
+          </div>
+        )}
 
         {rol !== "teacher" && (
           <div className="flex flex-row gap-2 justify-start items-center">
             <div className="bg-yellow-300 w-5 h-5 rounded-full"></div>
-            <span>
+            <span className="text-sm sm:text-base">
               {rol === "student"
                 ? "Finalizada y en deuda"
                 : rol === "admin"
-                  ? "Finalizada y pendiente pago del estudiante"
+                  ? "Finalizada, pendiente pago del estudiante"
                   : "UNKNOW"}
             </span>
           </div>
@@ -61,22 +55,28 @@ function ContentCardStatusLegendLesson({ rol }) {
         {rol !== "student" && (
           <div className="flex flex-row gap-2 justify-start items-center">
             <div className="bg-orange-300 w-5 h-5 rounded-full"></div>
-            <span>
+            <span className="text-sm sm:text-base">
               {rol === "teacher"
                 ? "Registrada y pendiente de pago"
                 : rol === "admin"
-                  ? "Registrada y pendiente de pago al profesor"
+                  ? "Registrada, pendiente pago al profesor/estudiante"
                   : "UNKNOW"}
             </span>
           </div>
         )}
 
-        {rol !== "student" && (
-          <div className="flex flex-row gap-2 justify-start items-center">
-            <div className="bg-purple-300 w-5 h-5 rounded-full"></div>
-            <span>Clase confirmada</span>
-          </div>
-        )}
+        <div className="flex flex-row gap-2 justify-start items-center">
+          <div className="bg-green-300 w-5 h-5 rounded-full"></div>
+          <span className="text-sm sm:text-base">
+            {rol === "student"
+              ? "Finalizada y pagada"
+              : rol === "teacher"
+                ? "Registrada y pagada"
+                : rol === "admin"
+                  ? "Pagos hechos, clase finalizada"
+                  : "UNKNOW"}
+          </span>
+        </div>
       </CardContent>
     </Card>
   );
