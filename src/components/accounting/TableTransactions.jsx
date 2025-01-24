@@ -28,6 +28,7 @@ import { Label } from "../ui/label";
 import { MONTHS_OF_YEAR } from "@/utils/constans";
 import { getWeekDateRange } from "@/utils/getMonthDateRange";
 import { getLessonById } from "@/actions/CrudLesson";
+import { formattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 
 export function TableTransactions({
   monhtly_transactions,
@@ -37,7 +38,7 @@ export function TableTransactions({
   size = "lg",
 }) {
   const [is_open_popup_delete, setIsOpenPopupDelete] = useState(false);
-  const { lessons, setSelectedLesson, setLessons } = useLessonsStore();
+  const { setSelectedLesson } = useLessonsStore();
   const [transaction_id_current, setTransactionIdCurrent] = useState(null);
   const { setPopupDetailLesson } = useUiStore();
   const [current_page, setCurrentPage] = useState(0);
@@ -56,8 +57,8 @@ export function TableTransactions({
 
   const handleShowLesson = async (id) => {
     const lesson = await getLessonById(id);
-    console.log(lesson)
-    setSelectedLesson(lesson.data);
+    const lesson_formated = await formattedLessonsForCalendar([lesson.data]);
+    setSelectedLesson(lesson_formated[0]);
     setPopupDetailLesson(true);
   };
 

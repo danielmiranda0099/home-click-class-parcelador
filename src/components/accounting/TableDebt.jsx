@@ -28,8 +28,14 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import { useCustomToast } from "@/hooks";
 import { getLessonById } from "@/actions/CrudLesson";
+import { formattedLessonsForCalendar } from "@/utils/formattedLessonsForCalendar";
 
-export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt, handleGetMonhtlyTransactions }) {
+export function TableDebt({
+  debts,
+  handleGetAllDebt,
+  setIsOpenFormDebt,
+  handleGetMonhtlyTransactions,
+}) {
   const [is_open_popup_delete, setIsOpenPopupDelete] = useState(false);
   const [transaction_id_current, setTransactionIdCurrent] = useState(null);
   const [filter_debt, setFilterDebt] = useState("all");
@@ -63,7 +69,8 @@ export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt, handleGe
 
   const handleShowLesson = async (id) => {
     const lesson = await getLessonById(id);
-    setSelectedLesson(lesson.data);
+    const lesson_formated = await formattedLessonsForCalendar([lesson.data]);
+    setSelectedLesson(lesson_formated[0]);
     setPopupDetailLesson(true);
   };
 
@@ -139,7 +146,9 @@ export function TableDebt({ debts, handleGetAllDebt, setIsOpenFormDebt, handleGe
                           {formatCurrency(debt.amount)}
                         </TableCell>
 
-                        <TableCell className="py-0 min-w-56">{debt.concept}</TableCell>
+                        <TableCell className="py-0 min-w-56">
+                          {debt.concept}
+                        </TableCell>
                         <TableCell className="py-1">
                           {debt.lessonId && (
                             <Button
