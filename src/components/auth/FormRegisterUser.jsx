@@ -113,9 +113,9 @@ export function FormRegisterUser() {
 
   return (
     <Dialog open={is_open} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[900px]">
+      <DialogContent className="sm:max-w-[900px] overflow-y-scroll max-h-[85vh]">
         <DialogHeader>
-          <DialogTitle>New User</DialogTitle>
+          <DialogTitle className="text-left">New User</DialogTitle>
         </DialogHeader>
         <form className="p-0 px-4" action={OnCreateNewUser}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
