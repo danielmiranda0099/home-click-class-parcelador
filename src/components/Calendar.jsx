@@ -103,7 +103,7 @@ export function CalendarUI({ rol, user }) {
 
   // Memorizar las lecciones formateadas para evitar recalcularlas en cada render
   const memoizedLessons = useMemo(() => lessons_filtered, [lessons_filtered]);
-  console.log(user)
+  
   return (
     <section className="px-0 py-0 sm:px-2 sm:py-3 max-w-full overflow-x-auto mb-4">
       <Calendar
