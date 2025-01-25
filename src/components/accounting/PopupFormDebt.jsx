@@ -109,21 +109,12 @@ export function PopupFormDebt({ is_open, setIsOpen, handleAction = null }) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Registrar Movimiento de Cartera</DialogTitle>
-          <DialogDescription>
-            Ingrese los detalles del movimiento de cartera aquí.
-          </DialogDescription>
+          <DialogTitle className="text-left">
+            Registrar Movimiento de Cartera
+          </DialogTitle>
+          <DialogDescription></DialogDescription>
         </DialogHeader>
         <form className="space-y-4" action={onCreateNewDebt}>
-          <div className="space-y-2">
-            <Label htmlFor="monto">Monto</Label>
-            {/* TODO: Refact Name component <InputPriceLesson /> */}
-            <InputPriceLesson
-              name="amount"
-              value={amount_debt}
-              setValue={setAmountDebt}
-            />
-          </div>
           <div className="space-y-2">
             <RadioGroup
               name="type"
@@ -149,6 +140,16 @@ export function PopupFormDebt({ is_open, setIsOpen, handleAction = null }) {
               </div>
             </RadioGroup>
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="monto">Monto</Label>
+            {/* TODO: Refact Name component <InputPriceLesson /> */}
+            <InputPriceLesson
+              name="amount"
+              value={amount_debt}
+              setValue={setAmountDebt}
+            />
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="descripcion">Concepto</Label>
             <Input

@@ -66,17 +66,18 @@ export default function AccountingPage() {
               Ver todos los movimientos
             </Link>
           </div>
-
-          <PopupFormTransaction
-            is_open={is_open_form_transaction}
-            setIsOpen={setIsOpenFormTransaction}
-            handleAction={handleGetMonhtlyTransactions}
-          />
-          <PopupFormDebt
-            is_open={is_open_form_debt}
-            setIsOpen={setIsOpenFormDebt}
-            handleAction={handleGetAllDebt}
-          />
+          <div className="flex gap-3 mt-3 sm:mt-0">
+            <PopupFormTransaction
+              is_open={is_open_form_transaction}
+              setIsOpen={setIsOpenFormTransaction}
+              handleAction={handleGetMonhtlyTransactions}
+            />
+            <PopupFormDebt
+              is_open={is_open_form_debt}
+              setIsOpen={setIsOpenFormDebt}
+              handleAction={handleGetAllDebt}
+            />
+          </div>
         </div>
 
         <CardsMontlyReport monhtly_transactions={monhtly_transactions} />

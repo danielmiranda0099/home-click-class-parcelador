@@ -120,10 +120,35 @@ export function PopupFormTransaction({
       )}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Agregar Movimiento</DialogTitle>
+          <DialogTitle className="text-left">Agregar Movimiento</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <form className="space-y-4" action={onHandleUpsertTransaction}>
+          <div className="space-y-5">
+            <RadioGroup
+              name="type"
+              required
+              className="flex gap-3"
+              defaultValue={editTransaction?.type}
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem
+                  value="income"
+                  id="option-one"
+                  className="data-[state=checked]:text-green-500"
+                />
+                <Label htmlFor="option-one">Ingreso</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem
+                  value="expense"
+                  id="option-two"
+                  className="data-[state=checked]:text-red-500"
+                />
+                <Label htmlFor="option-two">Egreso</Label>
+              </div>
+            </RadioGroup>
+          </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="fecha">Fecha</Label>
@@ -153,31 +178,7 @@ export function PopupFormTransaction({
               />
             </div>
           </div>
-          <div className="space-y-5">
-            <RadioGroup
-              name="type"
-              required
-              className="flex gap-3"
-              defaultValue={editTransaction?.type}
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem
-                  value="income"
-                  id="option-one"
-                  className="data-[state=checked]:text-green-500"
-                />
-                <Label htmlFor="option-one">Ingreso</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem
-                  value="expense"
-                  id="option-two"
-                  className="data-[state=checked]:text-red-500"
-                />
-                <Label htmlFor="option-two">Egreso</Label>
-              </div>
-            </RadioGroup>
-          </div>
+
           <div className="space-y-2">
             <Label htmlFor="descripcion">Concepto</Label>
             <Input
