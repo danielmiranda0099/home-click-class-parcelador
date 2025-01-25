@@ -124,7 +124,7 @@ export async function statusLesson(lesson, rol) {
       lesson?.isConfirmed &&
       lesson?.isRegistered &&
       lesson?.isTeacherPaid &&
-      !lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+      lesson?.studentLessons.some((lesson) => !lesson.isStudentPaid)
     ) {
       return [
         COLORS.YELLOW_BG,
@@ -139,20 +139,19 @@ export async function statusLesson(lesson, rol) {
       lesson?.isConfirmed &&
       lesson?.isRegistered &&
       lesson?.isTeacherPaid &&
-      lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+      lesson?.studentLessons.every((lesson) => lesson.isStudentPaid)
     ) {
       return [
         COLORS.GREEN_BG,
         COLORS.GREEN_TEXT,
-        lesson?.isGroup
-          ? "Registrada"
-          : "Registrada - Pago Realizado Al Profesor - Pago Realizado Por Estudiante",
+        "Pagos hechos, clase finalizada",
       ]; //GREEN
     }
 
     if (
       lesson?.isScheduled &&
       lesson?.isConfirmed &&
+      !lesson?.isRegistered &&
       !lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
     ) {
       return [
@@ -166,6 +165,7 @@ export async function statusLesson(lesson, rol) {
     if (
       lesson?.isScheduled &&
       lesson?.isConfirmed &&
+      !lesson?.isRegistered &&
       lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
     ) {
       return [
@@ -183,7 +183,7 @@ export async function statusLesson(lesson, rol) {
       return [
         COLORS.BLUE_BG,
         COLORS.BLUE_TEXT,
-        lesson?.isGroup ? "Agendada" : "Agendada - Pendiente Pago Estudiante",
+        "Agendada"
       ]; //BLUE
     }
     if (
