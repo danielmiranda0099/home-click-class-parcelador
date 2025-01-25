@@ -44,7 +44,7 @@ export default async function ClassesPage() {
         </div>
       )}
 
-      <CalendarUI rol={role[0]} />
+      <CalendarUI rol={role[0]} user={user}/>
     </div>
   );
 }

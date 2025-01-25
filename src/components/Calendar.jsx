@@ -14,7 +14,7 @@ import { navigateMonth } from "@/utils/navigateMonth";
 
 const localizer = momentLocalizer(moment);
 
-export function CalendarUI({ rol }) {
+export function CalendarUI({ rol, user }) {
   const {
     lessons,
     setLessons,
@@ -103,7 +103,7 @@ export function CalendarUI({ rol }) {
 
   // Memorizar las lecciones formateadas para evitar recalcularlas en cada render
   const memoizedLessons = useMemo(() => lessons_filtered, [lessons_filtered]);
-
+  console.log(user)
   return (
     <section className="px-0 py-0 sm:px-2 sm:py-3 max-w-full overflow-x-auto mb-4">
       <Calendar
@@ -130,7 +130,7 @@ export function CalendarUI({ rol }) {
               color: event.color || "white",
             },
             className:
-              ((rol === "student" && !event.isConfirmed) ||
+              ((rol === "student" && user && !event.studentLessons?.find((student_lesson) => student_lesson.studentId === parseInt(user?.id)).isConfirmed) ||
                 (rol === "teacher" &&
                   event.isConfirmed &&
                   !event.isRegistered)) &&
