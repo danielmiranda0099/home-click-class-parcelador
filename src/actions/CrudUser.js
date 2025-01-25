@@ -187,6 +187,9 @@ export async function getAllUsers() {
         role: true,
         averageScore: true,
       },
+      orderBy: {
+        firstName: "asc",
+      },
     });
     return users;
   } catch (error) {
