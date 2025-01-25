@@ -18,7 +18,6 @@ export function FilterLesson({ isDisabled }) {
   const { user_selected: user } = useUserStore();
   const [selectedFilter, setSelectedFilter] = useState("all");
 
-  // { value: "paid", label: "Pagadas", color: COLORS.GREEN_BG }, //TODO: PONER EN DB idPaid
   const filters = [
     { value: "all", label: "Todas", color: "#6b7280" },
     {
@@ -42,7 +41,7 @@ export function FilterLesson({ isDisabled }) {
       value: "isStudentPaid",
       label: "P.P Estudiante",
       color: COLORS.YELLOW_BG,
-      filter: { isStudentPaid: false, isConfirmed: true, isCanceled: false },
+      filter: { isConfirmed: true, isCanceled: false },
     },
     {
       value: "isTeacherPaid",
@@ -61,12 +60,9 @@ export function FilterLesson({ isDisabled }) {
   //TODO: llevar este effect a Calendar
   useEffect(() => {
     if (lessons && lessons.length >= 1) {
-      // Encuentra el objeto de filtro correspondiente al filtro seleccionado
       const selectedFilterObj = filters.find((f) => f.value === selectedFilter);
 
-      // Filtra las lecciones en base al filtro seleccionado o al usuario seleccionado
       const filtered = lessons.filter((lesson) => {
-        // Verifica si el usuario coincide con el estudiante o profesor de la lección
         const matchesUser = user
           ? lesson.studentLessons.some(
               (student_lesson) => student_lesson.student?.id === user.id
@@ -74,24 +70,28 @@ export function FilterLesson({ isDisabled }) {
           : true;
 
         if (selectedFilterObj.value === "all") {
-          // Si el filtro seleccionado es "all", solo filtra por usuario (si se especificó)
           return matchesUser;
-        } else {
-          // Verifica que todas las claves y valores en el objeto de filtro coincidan con los de la lección
+        } else if (selectedFilterObj.value === "isStudentPaid") {
+          // Verifica si algún estudiante no ha pagado en esta lección
           const matchesFilter = Object.entries(selectedFilterObj.filter).every(
             ([key, value]) => lesson[key] === value
           );
-
-          // La lección debe coincidir tanto con los criterios del filtro como con el usuario (si se especificó)
+          const hasUnpaidStudent = lesson.studentLessons.some(
+            (student_lesson) => student_lesson.isStudentPaid === false
+          );
+          return hasUnpaidStudent && matchesFilter && matchesUser;
+        } else {
+          const matchesFilter = Object.entries(selectedFilterObj.filter).every(
+            ([key, value]) => lesson[key] === value
+          );
           return matchesFilter && matchesUser;
         }
       });
 
-      // Actualiza el estado con las lecciones filtradas
       setLessonsFiltered(filtered);
     }
-  }, [selectedFilter, lessons, user]); // Ejecuta el efecto cuando cambian 'selectedFilter', 'lessons' o 'user'
-
+  }, [selectedFilter, lessons, user]);
+  
   return (
     <Select
       value={selectedFilter}
