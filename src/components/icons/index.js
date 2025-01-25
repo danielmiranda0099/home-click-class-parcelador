@@ -34,3 +34,4 @@ export * from "./FilterIcon";
 export * from "./EllipsisVerticalIcon";
 export * from "./ArrowLeftIcon";
 export * from "./CopyIcon";
+export * from "./MenuIcon";
