@@ -133,7 +133,7 @@ export function FormLesson({ rol }) {
           setIsOpen(open);
         }}
       >
-        <DialogContent className="sm:max-w-[700px] pt-0 overflow-y-scroll max-h-[85vh]">
+        <DialogContent className="sm:max-w-[900px] pt-0 overflow-y-scroll max-h-[85vh]">
           <DialogDescription></DialogDescription>
           <DialogHeader className="p-0">
             <DialogTitle className="text-left">Edit Class</DialogTitle>

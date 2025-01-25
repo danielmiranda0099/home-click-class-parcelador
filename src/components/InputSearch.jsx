@@ -27,13 +27,13 @@ export function InputSearch({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <div className="flex gap-2 max-w-full">
+      <div className="grid grid-cols-[1fr_auto] gap-2 max-w-full">
         <PopoverTrigger asChild>
           <Button
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="flex-1 justify-between"
+            className={`${value ? "pl-1 justify-start" : "justify-between"} overflow-hidden`}
             {...props}
           >
             {value
@@ -47,11 +47,12 @@ export function InputSearch({
           onClick={() => setValue(null)}
           type="button"
           disabled={props.disabled || !value}
+          className="w-fit"
         >
           Clear
         </Button>
       </div>
-      <PopoverContent className="p-0">
+      <PopoverContent className="p-0 w-[120%]">
         <Command>
           <CommandInput placeholder="Search" />
           <CommandList>
