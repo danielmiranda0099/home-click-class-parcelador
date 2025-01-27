@@ -47,7 +47,7 @@ export function FilterLesson({ isDisabled }) {
       value: "isTeacherPaid",
       label: "P.P Profesor",
       color: COLORS.ORANGE_BG,
-      filter: { isTeacherPaid: false, isConfirmed: true },
+      filter: { isTeacherPaid: false, isConfirmed: true, isRegistered: true },
     },
     {
       value: "isCanceled",
