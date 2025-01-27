@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -22,120 +22,153 @@ import moment from "moment";
 import { EyeIcon, ChevronLeft, ChevronRight } from "lucide-react";
 
 export function TableLessons() {
-  const { lessons_filtered: lessons, setSelectedLesson } = useLessonsStore();
+  const { lessons_filtered: lessons, setSelectedLesson, loadedMonths } = useLessonsStore();
   const setPopupDetailLesson = useUiStore(
     (state) => state.setPopupDetailLesson
   );
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15;
 
-  useEffect(() => {
-    const defaultPage = findDefaultPage();
-    setCurrentPage(defaultPage);
-  }, [lessons]);
+  // Crear un array de meses cargados ajustando los meses (sumando 1)
+  const adjustedMonths = useMemo(() => {
+    return Array.from(loadedMonths.keys()).map((key) => {
+      const [year, month] = key.split("-").map(Number);
+      return `${year}-${month + 1}`;
+    });
+  }, [loadedMonths]);
 
-  const findDefaultPage = () => {
-    const now = moment();
-    const upcomingLessonIndex = lessons.findIndex((lesson) =>
-      moment(lesson.startDate).isAfter(now)
-    );
-    if (upcomingLessonIndex === -1) return 1;
-    return Math.floor(upcomingLessonIndex / itemsPerPage) + 1;
+  const lessonsByMonth = useMemo(() => {
+    return adjustedMonths.reduce((acc, month) => {
+      acc[month] = lessons.filter((lesson) => {
+        const lessonMonth = moment(lesson.startDate).format("YYYY-M");
+        return lessonMonth === month;
+      });
+      return acc;
+    }, {});
+  }, [adjustedMonths, lessons]);
+
+  // Convertir las claves en un array ordenado para la paginación
+  const months = useMemo(() => adjustedMonths.sort(), [adjustedMonths]);
+
+  const [currentPage, setCurrentPage] = useState(0);
+  const currentMonth = months[currentPage];
+  const currentLessons = lessonsByMonth[currentMonth] || [];
+
+  const totalPages = months.length;
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage((prev) => prev + 1);
+    }
   };
 
-  const getLessonById = (id) => {
-    return lessons.find((lesson) => lesson.id === id);
+  const goToPrevPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage((prev) => prev - 1);
+    }
   };
 
-  const handleClickEdit = (id) => {
-    const lesson = getLessonById(id);
+  const handleClickShow = (id) => {
+    const lesson = lessons.find((lesson) => lesson.id === id);
     setSelectedLesson(lesson);
     setPopupDetailLesson(true);
   };
-
-  const indexOfLastLesson = currentPage * itemsPerPage;
-  const indexOfFirstLesson = indexOfLastLesson - itemsPerPage;
-  const currentLessons = lessons.slice(indexOfFirstLesson, indexOfLastLesson);
-
-  const totalPages = Math.ceil(lessons.length / itemsPerPage);
-
-  const goToNextPage = () =>
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-  const goToPrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
-
+  console.log(currentLessons)
   return (
-    <div className="w-full mx-auto px-0 sm:px-12 space-y-4">
-      <Table className="border-gray-400 border-2 mx-auto w-full max-w-[1000px]">
-        <TableHeader className="bg-slate-900">
-          <TableRow className="hover:bg-current">
-            <TableHead>Students</TableHead>
-            <TableHead>Teacher</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {currentLessons.map((lesson, index) => (
-            <TableRow
-              key={lesson.id}
-              className={`${index % 2 === 0 && "bg-slate-100"} hover:bg-sky-100`}
-            >
-              <TableCell className="min-w-48 flex flex-col">
-                {lesson?.studentLessons.map((lesson) => (
-                  <span key={lesson.student.email}>
-                    {lesson.student.fullName}
-                  </span>
-                ))}
-              </TableCell>
-              <TableCell className="min-w-48">
-                {lesson.teacher.shortName}
-              </TableCell>
-              <TableCell>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <div
-                        className="min-w-7 h-7 rounded-full"
-                        style={{ backgroundColor: lesson?.background }}
-                      ></div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="p-3 font-bold">{lesson.lesson_status}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </TableCell>
-              <TableCell>{lesson.isGroup ? "Grupal" : "Individual"}</TableCell>
-              <TableCell className="min-w-32">
-                {moment(lesson.startDate).format("D/M/Y")}
-              </TableCell>
-              <TableCell className="">
-                <div className="flex items-end gap-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex justify-center items-center gap-2"
-                    onClick={() => handleClickEdit(lesson.id)}
-                  >
-                    <EyeIcon />
-                    ver
-                  </Button>
-                </div>
-              </TableCell>
+    <div className="w-full mx-auto px-0 sm:px-12 space-y-4 relative">
+      <div className="mx-auto w-full max-w-[1000px] h-[80vh] overflow-y-scroll relative">
+        <Table className="border-gray-150 border-2">
+          <TableHeader className="bg-slate-900 sticky top-0">
+            <TableRow className="hover:bg-current">
+              <TableHead>Students</TableHead>
+              <TableHead>Teacher</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>
+                Date <span className="text-[0.7rem]"> (D/M/A)</span>
+              </TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+
+          {
+            currentLessons?.length > 0 ? (
+              <TableBody className="h-[80vh] overflow-y-scroll">
+            {currentLessons.map((lesson, index) => (
+              <TableRow
+                key={lesson.id}
+                className={`${
+                  index % 2 === 0 && "bg-slate-100"
+                } hover:bg-sky-100`}
+              >
+                <TableCell className="min-w-48 flex flex-col">
+                  {lesson?.studentLessons.map((lesson) => (
+                    <span key={lesson.student.email}>
+                      {lesson.student.shortName}
+                    </span>
+                  ))}
+                </TableCell>
+                <TableCell className="min-w-48">
+                  {lesson.teacher.shortName}
+                </TableCell>
+                <TableCell>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <div
+                          className="min-w-7 h-7 rounded-full"
+                          style={{ backgroundColor: lesson?.background }}
+                        ></div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="p-3 font-bold">{lesson.lesson_status}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </TableCell>
+                <TableCell>
+                  {lesson.isGroup ? "Grupal" : "Individual"}
+                </TableCell>
+                <TableCell className="min-w-32">
+                  {moment(lesson.startDate).format("D/M/Y")}
+                </TableCell>
+                <TableCell className="">
+                  <div className="flex items-end gap-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex justify-center items-center gap-2"
+                      onClick={() => handleClickShow(lesson.id)}
+                    >
+                      <EyeIcon />
+                      ver
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+            ) : (
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center">
+                    No hay lecciones para este mes {currentMonth}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            )
+          }
+        </Table>
+      </div>
+
+      {/* Paginación */}
       <div className="flex justify-between items-center w-full max-w-[1000px] mx-auto">
-        <Button onClick={goToPrevPage} disabled={currentPage === 1}>
+        <Button onClick={goToPrevPage} disabled={currentPage === 0}>
           <ChevronLeft className="mr-2 h-4 w-4" /> Anterior
         </Button>
         <span>
-          Página {currentPage} de {totalPages}
+          Mes: {currentMonth || "Sin lecciones"} (Página {currentPage + 1} de{" "}
+          {totalPages})
         </span>
-        <Button onClick={goToNextPage} disabled={currentPage === totalPages}>
+        <Button onClick={goToNextPage} disabled={currentPage === totalPages - 1}>
           Siguiente <ChevronRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
