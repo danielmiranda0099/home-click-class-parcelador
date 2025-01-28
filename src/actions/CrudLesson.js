@@ -107,7 +107,7 @@ export async function getLessons(date_range) {
     if (date_range.startOfMonth && date_range.endOfMonth) {
       where_clause.startDate = {
         gte: date_range.startOfMonth,
-        lte: date_range.endOfMonth,
+        lte: new Date(new Date(date_range.endOfMonth).setHours(23, 59, 59, 0)),
       };
     }
 
