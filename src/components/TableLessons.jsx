@@ -20,10 +20,11 @@ import {
 import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 import moment from "moment";
-import { EyeIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { EyeOpenIcon } from "./icons";
+
 
 export function TableLessons() {
-  const { lessons, setSelectedLesson, isLoadingLessons, setLessons } = useLessonsStore();
+  const { lessons_filtered:lessons, setSelectedLesson, isLoadingLessons, setLessons } = useLessonsStore();
   const setPopupDetailLesson = useUiStore((state) => state.setPopupDetailLesson);
 
   const searchParams = useSearchParams();
@@ -77,12 +78,12 @@ export function TableLessons() {
 
   return (
     <div className="w-full mx-auto px-0 sm:px-12 space-y-4 relative">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mx-auto w-full max-w-[1000px]">
         <Button 
           onClick={() => navigateMonth('PREV')} 
           disabled={isLoadingLessons}
         >
-          <ChevronLeft className="h-5 w-5" />
+          Anterior
         </Button>
         
         <span className="font-semibold">
@@ -93,11 +94,11 @@ export function TableLessons() {
           onClick={() => navigateMonth('NEXT')} 
           disabled={isLoadingLessons}
         >
-          <ChevronRight className="h-5 w-5" />
+          Siguiente
         </Button>
       </div>
 
-      <div className="mx-auto w-full max-w-[1000px] h-[80vh] overflow-y-scroll relative">
+      <div className="mx-auto w-full max-w-[1000px] h-[85vh] sm:h-[95vh] overflow-y-scroll relative">
         <Table className="border-gray-150 border-2">
           <TableHeader className="bg-slate-900 sticky top-0">
             <TableRow className="hover:bg-current">
@@ -145,8 +146,8 @@ export function TableLessons() {
                   <TableCell>{lesson.isGroup ? "Grupal" : "Individual"}</TableCell>
                   <TableCell>{moment(lesson.startDate).format("D/M/YYYY")}</TableCell>
                   <TableCell>
-                    <Button onClick={() => handleClickShow(lesson.id)}>
-                      <EyeIcon className="h-5 w-5" />
+                    <Button onClick={() => handleClickShow(lesson.id)} variant="outline">
+                      <EyeOpenIcon className="h-5 w-5" />
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -162,6 +163,26 @@ export function TableLessons() {
             </TableBody>
           )}
         </Table>
+      </div>
+
+      <div className="flex justify-between items-center mx-auto w-full max-w-[1000px]">
+        <Button 
+          onClick={() => navigateMonth('PREV')} 
+          disabled={isLoadingLessons}
+        >
+          Anterior
+        </Button>
+        
+        <span className="font-semibold">
+          {currentMonth.toString().padStart(2, '0')}/{currentYear}
+        </span>
+
+        <Button 
+          onClick={() => navigateMonth('NEXT')} 
+          disabled={isLoadingLessons}
+        >
+          Siguiente
+        </Button>
       </div>
     </div>
   );
