@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   Table,
@@ -20,7 +20,6 @@ import {
 import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 import moment from "moment";
-import { EyeOpenIcon } from "./icons";
 
 
 export function TableLessons() {
@@ -147,7 +146,7 @@ export function TableLessons() {
                   <TableCell>{moment(lesson.startDate).format("D/M/YYYY")}</TableCell>
                   <TableCell>
                     <Button onClick={() => handleClickShow(lesson.id)} variant="outline">
-                      <EyeOpenIcon className="h-5 w-5" />
+                      Ver
                     </Button>
                   </TableCell>
                 </TableRow>
