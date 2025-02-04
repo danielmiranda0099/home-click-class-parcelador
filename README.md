@@ -14,8 +14,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 ## Main Routes
 
 - `/admin`: Admin dashboard for managing users, classes, and other administrative tasks.
-- `/teacher`: Teacher dashboard for managing their classes and students.
-- `/student`: Student dashboard for accessing their classes and learning materials.
+- `/classes`: Teacher ans student dashboard for managing their.
 
 ## Environment Variables
 
@@ -26,6 +25,7 @@ The application uses the following environment variables. Note that the actual v
 - `DB_NAME`: The database name.
 - `DB_PASSWORD`: The database password.
 - `DATABASE_URL`: The URL for connecting to the database.
+- `DIRECT_URL`: he URL for connecting to the database in production.
 - `AUTH_SECRET`: The secret key for authentication.
 - `AUTH_URL`: The URL for the authentication service.
 - `AUTH_TRUST_HOST`: The trusted host for authentication.
@@ -79,18 +79,3 @@ The application uses the following environment variables. Note that the actual v
     ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
