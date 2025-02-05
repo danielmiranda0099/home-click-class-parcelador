@@ -6,8 +6,9 @@ export const useUserStore = create((set) => ({
   setUsers: async () => {
     try {
       const all_users = await getAllUsers();
-      set({ users: all_users });
+      set({ users: all_users.data });
     } catch (error) {
+      set({ users: [] });
       console.error("Error UserStore setUsers():", error);
     }
   },
