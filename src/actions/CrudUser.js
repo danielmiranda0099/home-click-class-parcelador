@@ -173,7 +173,59 @@ export async function updateUser(prev_state, form_dada) {
   }
 }
 
-//TODO: Refact
+/**
+ * Fetches a list of all users with specific fields and ordering.
+ * 
+ * This function retrieves a list of all users from the database using Prisma ORM. 
+ * It selects specific fields such as `id`, `firstName`, `lastName`, `fullName`, `shortName`, 
+ * `email`, `role`, `averageScore`, and `isActive`. The users are ordered alphabetically 
+ * by their `firstName` in ascending order.
+ * 
+ * @async
+ * @function getAllUsers
+ * @returns {Promise<Object>} A promise that resolves to an object containing the following:
+ * @property {Array<Object>} data - An array of user objects, each containing the following properties:
+ * @property {string} data.id - The unique identifier of the user.
+ * @property {string} data.firstName - The first name of the user.
+ * @property {string} data.lastName - The last name of the user.
+ * @property {string} data.fullName - The full name of the user (combination of `firstName` and `lastName`).
+ * @property {string} data.shortName - A shortened version of the user's name.
+ * @property {string} data.email - The email address of the user.
+ * @property {Array<string>} data.role - An array of roles assigned to the user (e.g., "teacher", "student").
+ * @property {number} data.averageScore - The average score of the user (if applicable).
+ * @property {boolean} data.isActive - Indicates whether the user account is active.
+ * 
+ * @throws {Error} If there is an error during the database query or processing, it logs the error and returns an error response.
+ * 
+ * @example
+ * const users = await getAllUsers();
+ * console.log(users);
+ * // Output might look like:
+ * // [
+ * //   {
+ * //     id: "1",
+ * //     firstName: "John",
+ * //     lastName: "Doe",
+ * //     fullName: "John Doe",
+ * //     shortName: "J. Doe",
+ * //     email: "john.doe@example.com",
+ * //     role: ["student"],
+ * //     averageScore: 85,
+ * //     isActive: true
+ * //   },
+ * //   {
+ * //     id: "2",
+ * //     firstName: "Jane",
+ * //     lastName: "Smith",
+ * //     fullName: "Jane Smith",
+ * //     shortName: "J. Smith",
+ * //     email: "jane.smith@example.com",
+ * //     role: ["teacher"],
+ * //     averageScore: null,
+ * //     isActive: true
+ * //   }
+ * // ]
+ */
 export async function getAllUsers() {
   try {
     const users = await prisma.user.findMany({
@@ -186,14 +238,16 @@ export async function getAllUsers() {
         email: true,
         role: true,
         averageScore: true,
+        isActive: true,
       },
       orderBy: {
         firstName: "asc",
       },
     });
-    return users;
+    return RequestResponse.success(users);
   } catch (error) {
-    console.error("Error Get All Users:", error);
+    console.error("Error in getAllUsers()", error);
+    return RequestResponse.error();
   }
 }
 //TODO: Use in InputSearh in filter Calendar
