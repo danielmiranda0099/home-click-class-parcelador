@@ -100,7 +100,7 @@ export default async function DashboardPage() {
               {data.studentCount}
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              Estudiantes registrados
+              Estudiantes activos
             </p>
           </CardContent>
         </Card>
