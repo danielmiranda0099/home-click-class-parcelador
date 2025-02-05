@@ -892,13 +892,43 @@ export async function overViewLessonStudent(id) {
   }
 }
 
+/**
+ * Fetches and aggregates various data points for a dashboard.
+ * 
+ * This function retrieves counts of scheduled lessons, unpaid teacher lessons,
+ * unpaid student lessons, active teachers, and active students from the database
+ * using Prisma ORM. It then returns this data in a structured format.
+ * 
+ * @async
+ * @function dataDashboard
+ * @returns {Promise<Object>} A promise that resolves to an object containing the following properties:
+ * @property {number} scheduledLessons - The number of lessons that are scheduled but not confirmed or canceled.
+ * @property {number} unpaidTeacherLessons - The number of lessons where the teacher has not been paid yet.
+ * @property {number} unpaidStudentLessons - The number of student lessons that are confirmed but not paid by the student.
+ * @property {number} teacherCount - The number of active users with the role "teacher".
+ * @property {number} studentCount - The number of active users with the role "student".
+ * 
+ * @throws {Error} If there is an error during the database queries or processing, it logs the error and returns an error response.
+ * 
+ * @example
+ * const dashboardData = await dataDashboard();
+ * console.log(dashboardData);
+ * // Output might look like:
+ * // {
+ * //   scheduledLessons: 500,
+ * //   unpaidTeacherLessons: 15,
+ * //   unpaidStudentLessons: 3,
+ * //   teacherCount: 20,
+ * //   studentCount: 32
+ * // }
+ */
 export async function dataDashboard() {
   try {
-    // Lessons stats
     const scheduledLessons = await prisma.lesson.count({
       where: {
         isScheduled: true,
         isConfirmed: false,
+        isCanceled: false,
       },
     });
 
@@ -916,9 +946,9 @@ export async function dataDashboard() {
       },
     });
 
-    // User stats
     const teacherCount = await prisma.user.count({
       where: {
+        isActive: true,
         role: {
           has: "teacher",
         },
@@ -927,6 +957,7 @@ export async function dataDashboard() {
 
     const studentCount = await prisma.user.count({
       where: {
+        isActive: true,
         role: {
           has: "student",
         },
