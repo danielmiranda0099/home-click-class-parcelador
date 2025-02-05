@@ -41,21 +41,20 @@ export default function UsersPage() {
 
   return (
     <div className="container mx-auto p-0 sm:p-4 max-w-[1200px]">
-      <h1 className="text-2xl font-bold mb-4">Buscador de Usuarios</h1>
       <Input
         type="text"
-        placeholder="Buscar usuarios..."
+        placeholder="Buscar por nombre usuario, teacher, student, admin..."
         value={search_user}
         onChange={(e) => setSearchUser(e.target.value)}
         className="mb-4"
       />
-      <Table className="border-gray-400 border-2 mx-auto w-full">
+      <Table className="border-gray-200 border-2 mx-auto w-full">
         <TableHeader className="bg-slate-900">
           <TableRow className="hover:bg-current">
             <TableHead>Nombre</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Correo</TableHead>
             <TableHead>Rol</TableHead>
-            {/* <TableHead>Activo</TableHead> */}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -72,6 +71,7 @@ export default function UsersPage() {
                   {user.fullName}
                 </Link>
               </TableCell>
+                <TableCell className={`text-xs sm:text-sm font-bold ${user.isActive ? "text-green-400" : "text-red-400"}`}>{user.isActive ?  "Activo" : "Inactivo"}</TableCell>
               <TableCell className="text-xs sm:text-sm">
                 <Link
                   href={`/admin/users/${user.id}`}
@@ -81,7 +81,6 @@ export default function UsersPage() {
                 </Link>
               </TableCell >
               <TableCell className="text-xs sm:text-sm">{user.role}</TableCell>
-              {/* <TableCell>{user.activo ? "Sí" : "No"}</TableCell> */}
             </TableRow>
           ))}
         </TableBody>
