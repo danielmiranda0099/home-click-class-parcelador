@@ -31,7 +31,6 @@ export const useLessonsStore = create((set, get) => ({
       }
       set({ isLoadingLessons: false });
     }
-    console.log(loadedMonths);
   },
   isLoadingLessons: false,
   loadedMonths: new Map(),
