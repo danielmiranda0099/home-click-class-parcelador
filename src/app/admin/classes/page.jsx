@@ -14,12 +14,16 @@ import {
 import { PopupDetailLesson } from "@/components/popupDetailLesson";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUserSession } from "@/hooks";
+import { useLessonsStore } from "@/store/lessonStore";
 import { useUserStore } from "@/store/userStore";
+import { MONTHS_OF_YEAR } from "@/utils/constans";
 import { formatUsersForInputSearch } from "@/utils/formatUsersForInputSearch";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function DashboardPage() {
   const [users_formated, setUsersFormated] = useState(null);
+  const [count_lessons_by_month, setCountLessonsByMonth] = useState(0);
   const [state_tab, setStatetab] = useState("calendar");
   const {
     users,
@@ -27,7 +31,23 @@ export default function DashboardPage() {
     user_selected,
     setuserSelected: setUser,
   } = useUserStore();
+  const { lessons_filtered } = useLessonsStore();
   const user_session = useUserSession();
+
+  const searchParams = useSearchParams();
+
+  function countLessonsByYearAndMonth(year, month) {
+    return lessons_filtered?.reduce((count, lesson) => {
+      const lessonDate = new Date(lesson.startDate);
+      if (
+        lessonDate.getFullYear() === year &&
+        lessonDate.getMonth() + 1 === month
+      ) {
+        return count + 1;
+      }
+      return count;
+    }, 0);
+  }
 
   useEffect(() => {
     if (users) {
@@ -36,7 +56,20 @@ export default function DashboardPage() {
     }
   }, [users]);
 
-  useEffect(() => {}, [user_selected]);
+  useEffect(() => {
+    if (
+      searchParams.get("month") &&
+      searchParams.get("year") &&
+      lessons_filtered?.length > 0
+    ) {
+      const year = parseInt(searchParams.get("year"));
+      const month = parseInt(searchParams.get("month"));
+
+      const count_lessons_by_month = countLessonsByYearAndMonth(year, month);
+
+      setCountLessonsByMonth(count_lessons_by_month);
+    }
+  }, [searchParams, lessons_filtered]);
 
   return (
     <section className="overflow-hidden max-w-full">
@@ -91,6 +124,15 @@ export default function DashboardPage() {
           <FilterLesson
             isDisabled={state_tab === "payments" || state_tab === "actions"}
           />
+        </section>
+
+        <section className="h-1.5 w-fit my-4 flex flex-col sm:flex-row items-center gap-2 mx-auto">
+          {(state_tab === "calendar" || state_tab === "table") && (
+            <p className="text-lg font-medium">
+              Clases en {MONTHS_OF_YEAR[searchParams.get("month")]}:{" "}
+              <span className="font-bold">{count_lessons_by_month}</span>
+            </p>
+          )}
         </section>
 
         <TabsContent value="calendar">
