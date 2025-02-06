@@ -2,6 +2,7 @@
 
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
+import "moment/locale/es";
 import { useLessonsStore } from "@/store/lessonStore";
 import { useEffect, useMemo, useState } from "react";
 import { useUiStore } from "@/store/uiStores";
