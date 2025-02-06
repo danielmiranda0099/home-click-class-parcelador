@@ -20,11 +20,18 @@ import {
 import { useLessonsStore } from "@/store/lessonStore";
 import { useUiStore } from "@/store/uiStores";
 import moment from "moment";
-
+import { MONTHS_OF_YEAR } from "@/utils/constans";
 
 export function TableLessons() {
-  const { lessons_filtered:lessons, setSelectedLesson, isLoadingLessons, setLessons } = useLessonsStore();
-  const setPopupDetailLesson = useUiStore((state) => state.setPopupDetailLesson);
+  const {
+    lessons_filtered: lessons,
+    setSelectedLesson,
+    isLoadingLessons,
+    setLessons,
+  } = useLessonsStore();
+  const setPopupDetailLesson = useUiStore(
+    (state) => state.setPopupDetailLesson
+  );
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -35,7 +42,7 @@ export function TableLessons() {
 
   // Filtrar lecciones para el mes actual
   const currentLessons = useMemo(() => {
-    return lessons.filter(lesson => {
+    return lessons.filter((lesson) => {
       const lessonDate = new Date(lesson.startDate);
       return (
         lessonDate.getMonth() + 1 === currentMonth &&
@@ -49,7 +56,7 @@ export function TableLessons() {
     let newMonth = currentMonth;
     let newYear = currentYear;
 
-    if (direction === 'NEXT') {
+    if (direction === "NEXT") {
       newMonth = newMonth === 12 ? 1 : newMonth + 1;
       if (newMonth === 1) newYear++;
     } else {
@@ -78,19 +85,19 @@ export function TableLessons() {
   return (
     <div className="w-full mx-auto px-0 sm:px-12 space-y-4 relative">
       <div className="flex justify-between items-center mx-auto w-full max-w-[1000px]">
-        <Button 
-          onClick={() => navigateMonth('PREV')} 
+        <Button
+          onClick={() => navigateMonth("PREV")}
           disabled={isLoadingLessons}
         >
           Anterior
         </Button>
-        
-        <span className="font-semibold">
-          {currentMonth.toString().padStart(2, '0')}/{currentYear}
+
+        <span className="text-2xl font-semibold">
+          {MONTHS_OF_YEAR[currentMonth]} {currentYear}
         </span>
 
-        <Button 
-          onClick={() => navigateMonth('NEXT')} 
+        <Button
+          onClick={() => navigateMonth("NEXT")}
           disabled={isLoadingLessons}
         >
           Siguiente
@@ -137,15 +144,24 @@ export function TableLessons() {
                           ></div>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p className="p-3 font-bold">{lesson.lesson_status}</p>
+                          <p className="p-3 font-bold">
+                            {lesson.lesson_status}
+                          </p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   </TableCell>
-                  <TableCell>{lesson.isGroup ? "Grupal" : "Individual"}</TableCell>
-                  <TableCell>{moment(lesson.startDate).format("D/M/YYYY")}</TableCell>
                   <TableCell>
-                    <Button onClick={() => handleClickShow(lesson.id)} variant="outline">
+                    {lesson.isGroup ? "Grupal" : "Individual"}
+                  </TableCell>
+                  <TableCell>
+                    {moment(lesson.startDate).format("D/M/YYYY")}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      onClick={() => handleClickShow(lesson.id)}
+                      variant="outline"
+                    >
                       Ver
                     </Button>
                   </TableCell>
@@ -156,7 +172,9 @@ export function TableLessons() {
             <TableBody>
               <TableRow>
                 <TableCell colSpan={6} className="text-center">
-                  {isLoadingLessons ? "Loading..." : "No hay clases programadas."}
+                  {isLoadingLessons
+                    ? "Loading..."
+                    : "No hay clases programadas."}
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -165,19 +183,19 @@ export function TableLessons() {
       </div>
 
       <div className="flex justify-between items-center mx-auto w-full max-w-[1000px]">
-        <Button 
-          onClick={() => navigateMonth('PREV')} 
+        <Button
+          onClick={() => navigateMonth("PREV")}
           disabled={isLoadingLessons}
         >
           Anterior
         </Button>
-        
-        <span className="font-semibold">
-          {currentMonth.toString().padStart(2, '0')}/{currentYear}
+
+        <span className="text-2xl font-semibold">
+          {MONTHS_OF_YEAR[currentMonth]} {currentYear}
         </span>
 
-        <Button 
-          onClick={() => navigateMonth('NEXT')} 
+        <Button
+          onClick={() => navigateMonth("NEXT")}
           disabled={isLoadingLessons}
         >
           Siguiente
