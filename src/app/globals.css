@@ -97,3 +97,11 @@
     opacity: 0; /* Se desvanece mientras crece */
   }
 }
+
+.rbc-toolbar .rbc-toolbar-label {
+  /* color: white; */
+  margin: 0.6rem 0;
+  text-transform: uppercase;
+  font-weight: bolder;
+  font-size: 1.6rem;
+}
