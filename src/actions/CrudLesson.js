@@ -996,12 +996,13 @@ export async function dataDashboard(current_date) {
  */
 export async function getWeeklyClasses(currentDate) {
   // 1. Calcular el inicio y fin del rango de 7 días
-  const startOfCurrentDay = new Date(currentDate);
-  startOfCurrentDay.setHours(0, 0, 0, 0); // Inicio del día actual
+  const startOfCurrentDay = new Date(
+    new Date(currentDate).setHours(0, 0, 0, 0)
+  ); // Inicio del día actual
 
   const endDate = new Date(startOfCurrentDay);
   endDate.setDate(startOfCurrentDay.getDate() + 7); // 7 días después
-
+  console.log("startOfCurrentDay", startOfCurrentDay, "endDate", endDate);
   // 2. Obtener lecciones en el rango
   const lessons = await prisma.lesson.findMany({
     where: {
@@ -1011,33 +1012,10 @@ export async function getWeeklyClasses(currentDate) {
       },
     },
     select: { startDate: true },
+    orderBy: { startDate: "asc" },
   });
 
   console.log("*************** lessons_range_of_date ***************", lessons);
 
-  // 3. Contar lecciones por día
-  const counts = lessons.reduce((acc, { startDate }) => {
-    // Convertir la fecha a formato YYYY-MM-DD para usarla como clave
-    const dateKey = startDate.toISOString().split("T")[0];
-    acc[dateKey] = (acc[dateKey] || 0) + 1;
-    return acc;
-  }, {});
-
-  console.log("*************** counts ***************", counts);
-
-  // 4. Generar array de resultados para los próximos 7 días
-  const result = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(startOfCurrentDay);
-    date.setDate(startOfCurrentDay.getDate() + i);
-    // Convertir la fecha a formato YYYY-MM-DD para buscarla en `counts`
-    const dateKey = date.toISOString().split("T")[0];
-    return {
-      day: dateKey,
-      classes: counts[dateKey] || 0,
-    };
-  });
-
-  console.log("*************** result ***************", result);
-
-  return result;
+  return lessons;
 }

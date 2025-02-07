@@ -12,11 +12,36 @@ import {
 } from "recharts";
 import { UsersIcon } from "@/components/icons";
 
-function formatDaysOfWeek(data) {
+function formatDaysOfWeek(lessons) {
+  // 3. Contar lecciones por día
+  const counts = lessons.reduce((acc, { startDate }) => {
+    // Convertir la fecha a formato YYYY-MM-DD para usarla como clave
+    const dateKey =  new Date(startDate).toISOString().split("T")[0];
+    acc[dateKey] = (acc[dateKey] || 0) + 1;
+    return acc;
+  }, {});
+
+  console.log("*************** counts ***************", counts);
+
+  // 4. Generar array de resultados para los próximos 7 días
+  const result = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date(lessons[0].startDate);
+    date.setDate(lessons[0].startDate.getDate() + i);
+    // Convertir la fecha a formato YYYY-MM-DD para buscarla en `counts`
+    const dateKey = date.toISOString().split("T")[0];
+    return {
+      day: dateKey,
+      classes: counts[dateKey] || 0,
+    };
+  });
+
+  console.log("*************** result ***************", result);
+
+
   // Mapeo de días de la semana (0 = Domingo, 1 = Lunes, ..., 6 = Sábado)
   const dayAbbreviations = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"];
 
-  return data.map(({ day, classes }) => {
+  return result.map(({ day, classes }) => {
     const date = parseISO(day); // Convierte la cadena `YYYY-MM-DD` a un objeto Date
     const dayOfWeek = getDay(date); // Obtiene el día de la semana (0-6)
     return {
