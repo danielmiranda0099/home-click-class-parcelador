@@ -1,4 +1,5 @@
 "use client";
+import { format, parseISO, getDay } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   BarChart,
@@ -11,17 +12,21 @@ import {
 } from "recharts";
 import { UsersIcon } from "@/components/icons";
 
-const nextSevenDaysData = [
-  { day: "Lun", classes: 5 },
-  { day: "Mar", classes: 7 },
-  { day: "Mié", classes: 4 },
-  { day: "Jue", classes: 6 },
-  { day: "Vie", classes: 8 },
-  { day: "Sáb", classes: 3 },
-  { day: "Dom", classes: 2 },
-];
+function formatDaysOfWeek(data) {
+  // Mapeo de días de la semana (0 = Domingo, 1 = Lunes, ..., 6 = Sábado)
+  const dayAbbreviations = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"];
 
-export function CardWeeklyChart() {
+  return data.map(({ day, classes }) => {
+    const date = parseISO(day); // Convierte la cadena `YYYY-MM-DD` a un objeto Date
+    const dayOfWeek = getDay(date); // Obtiene el día de la semana (0-6)
+    return {
+      day: dayAbbreviations[dayOfWeek], // Obtiene la abreviación correspondiente
+      classes,
+    };
+  });
+}
+
+export function CardWeeklyChart({ nextSevenDaysData }) {
   return (
     <Card className="col-span-full bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 max-w-full overflow-hidden">
       <CardHeader>
@@ -30,9 +35,9 @@ export function CardWeeklyChart() {
           Clases en los Próximos 7 Días
         </CardTitle>
       </CardHeader>
-      <CardContent className="w-full h-[400px] max-h-[40vh] bg-red-100">
+      <CardContent className="w-full h-[400px] max-h-[30vh] sm:max-h-[40vh]">
         <ResponsiveContainer width="100%" height="100%" backgroundColor="red">
-          <BarChart data={nextSevenDaysData}>
+          <BarChart data={formatDaysOfWeek(nextSevenDaysData)}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
             <XAxis dataKey="day" stroke="#6b7280" />
             <YAxis stroke="#6b7280" />
