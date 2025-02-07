@@ -967,6 +967,11 @@ export async function dataDashboard(current_date) {
 
     const weekly_classes = await getWeeklyClasses(current_date);
 
+    console.log(
+      "*************** weekly_classes ***************",
+      weekly_classes
+    );
+
     return RequestResponse.success({
       scheduledLessons,
       unpaidTeacherLessons,
@@ -1002,7 +1007,7 @@ export async function getWeeklyClasses(currentDate) {
     where: {
       startDate: {
         gte: startOfCurrentDay,
-        lt: endDate,
+        lte: endDate,
       },
     },
     select: { startDate: true },
