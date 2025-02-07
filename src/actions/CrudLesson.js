@@ -894,11 +894,11 @@ export async function overViewLessonStudent(id) {
 
 /**
  * Fetches and aggregates various data points for a dashboard.
- * 
+ *
  * This function retrieves counts of scheduled lessons, unpaid teacher lessons,
  * unpaid student lessons, active teachers, and active students from the database
  * using Prisma ORM. It then returns this data in a structured format.
- * 
+ *
  * @async
  * @function dataDashboard
  * @returns {Promise<Object>} A promise that resolves to an object containing the following properties:
@@ -907,9 +907,10 @@ export async function overViewLessonStudent(id) {
  * @property {number} unpaidStudentLessons - The number of student lessons that are confirmed but not paid by the student.
  * @property {number} teacherCount - The number of active users with the role "teacher".
  * @property {number} studentCount - The number of active users with the role "student".
- * 
+ * @property {Array<{day: string, classes: number}>} weeklyClasses - An array of objects where each object represents a day and the number of classes scheduled for that day.
+ *
  * @throws {Error} If there is an error during the database queries or processing, it logs the error and returns an error response.
- * 
+ *
  * @example
  * const dashboardData = await dataDashboard();
  * console.log(dashboardData);
@@ -922,7 +923,7 @@ export async function overViewLessonStudent(id) {
  * //   studentCount: 32
  * // }
  */
-export async function dataDashboard() {
+export async function dataDashboard(current_date) {
   try {
     const scheduledLessons = await prisma.lesson.count({
       where: {
@@ -964,15 +965,68 @@ export async function dataDashboard() {
       },
     });
 
+    const weekly_classes = await getWeeklyClasses(current_date);
+
     return RequestResponse.success({
       scheduledLessons,
       unpaidTeacherLessons,
       unpaidStudentLessons,
       teacherCount,
       studentCount,
+      weeklyClasses: weekly_classes,
     });
   } catch (error) {
     console.error("Error in dataDashboard()", error);
     return RequestResponse.error();
   }
+}
+
+/**
+ * Retrieves the number of scheduled classes for each day within the next 7 days,
+ * starting from the provided current date.
+ *
+ * @param {Date} currentDate - The date from which the next 7 days will be calculated.
+ * @returns {Promise<Array<{day: string, classes: number}>>} An array of objects where each object
+ * represents a day and the number of classes scheduled for that day. The `day` format is `YYYY-MM-DD`.
+ */
+export async function getWeeklyClasses(currentDate) {
+  // 1. Calcular el inicio y fin del rango de 7 días
+  const startOfCurrentDay = new Date(currentDate);
+  startOfCurrentDay.setHours(0, 0, 0, 0); // Inicio del día actual
+
+  const endDate = new Date(startOfCurrentDay);
+  endDate.setDate(startOfCurrentDay.getDate() + 7); // 7 días después
+
+  // 2. Obtener lecciones en el rango
+  const lessons = await prisma.lesson.findMany({
+    where: {
+      startDate: {
+        gte: startOfCurrentDay,
+        lt: endDate,
+      },
+    },
+    select: { startDate: true },
+  });
+
+  // 3. Contar lecciones por día
+  const counts = lessons.reduce((acc, { startDate }) => {
+    // Convertir la fecha a formato YYYY-MM-DD para usarla como clave
+    const dateKey = startDate.toISOString().split("T")[0];
+    acc[dateKey] = (acc[dateKey] || 0) + 1;
+    return acc;
+  }, {});
+
+  // 4. Generar array de resultados para los próximos 7 días
+  const result = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date(startOfCurrentDay);
+    date.setDate(startOfCurrentDay.getDate() + i);
+    // Convertir la fecha a formato YYYY-MM-DD para buscarla en `counts`
+    const dateKey = date.toISOString().split("T")[0];
+    return {
+      day: dateKey,
+      classes: counts[dateKey] || 0,
+    };
+  });
+
+  return result;
 }
