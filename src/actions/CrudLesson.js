@@ -966,7 +966,7 @@ export async function dataDashboard(current_date) {
     });
 
     const weekly_classes = await getWeeklyClasses(current_date);
-
+    console.log("current_date", current_date);
     console.log(
       "*************** weekly_classes ***************",
       weekly_classes
@@ -1013,6 +1013,8 @@ export async function getWeeklyClasses(currentDate) {
     select: { startDate: true },
   });
 
+  console.log("*************** lessons_range_of_date ***************", lessons);
+
   // 3. Contar lecciones por día
   const counts = lessons.reduce((acc, { startDate }) => {
     // Convertir la fecha a formato YYYY-MM-DD para usarla como clave
@@ -1020,6 +1022,8 @@ export async function getWeeklyClasses(currentDate) {
     acc[dateKey] = (acc[dateKey] || 0) + 1;
     return acc;
   }, {});
+
+  console.log("*************** counts ***************", counts);
 
   // 4. Generar array de resultados para los próximos 7 días
   const result = Array.from({ length: 7 }, (_, i) => {
@@ -1032,6 +1036,8 @@ export async function getWeeklyClasses(currentDate) {
       classes: counts[dateKey] || 0,
     };
   });
+
+  console.log("*************** result ***************", result);
 
   return result;
 }
