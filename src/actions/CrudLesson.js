@@ -1008,7 +1008,7 @@ export async function getWeeklyClasses(currentDate) {
     where: {
       startDate: {
         gte: startOfCurrentDay,
-        lte: endDate,
+        lt: endDate,
       },
     },
     select: { startDate: true },
