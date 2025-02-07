@@ -8,6 +8,16 @@ import {
 import { CardWeeklyChart } from "@/components";
 import { dataDashboard } from "@/actions/CrudLesson";
 
+const nextSevenDaysDataDefault = [
+  { day: "Lu", classes: 0 },
+  { day: "Ma", classes: 0 },
+  { day: "Mi", classes: 0 },
+  { day: "Ju", classes: 0 },
+  { day: "Vi", classes: 0 },
+  { day: "Sa", classes: 0 },
+  { day: "Do", classes: 0 },
+];
+
 export default async function DashboardPage() {
   let data = {
     scheduledLessons: 0,
@@ -15,9 +25,10 @@ export default async function DashboardPage() {
     unpaidStudentLessons: 0,
     teacherCount: 0,
     studentCount: 0,
+    weeklyClasses: nextSevenDaysDataDefault,
   };
 
-  const response = await dataDashboard();
+  const response = await dataDashboard(new Date().toISOString());
 
   if (response.success) {
     data = response.data;
@@ -106,7 +117,7 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      <CardWeeklyChart />
+      <CardWeeklyChart nextSevenDaysData={data?.weeklyClasses}/>
     </div>
   );
 }
