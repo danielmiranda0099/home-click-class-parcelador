@@ -1001,7 +1001,7 @@ export async function getWeeklyClasses(currentDate) {
   ); // Inicio del día actual
 
   const endDate = new Date(startOfCurrentDay);
-  endDate.setDate(startOfCurrentDay.getDate() + 7); // 7 días después
+  endDate.setDate(new Date(startOfCurrentDay).getDate() + 7); // 7 días después
   console.log("startOfCurrentDay", startOfCurrentDay, "endDate", endDate);
   // 2. Obtener lecciones en el rango
   const lessons = await prisma.lesson.findMany({

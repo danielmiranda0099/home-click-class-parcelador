@@ -28,7 +28,7 @@ export default async function DashboardPage() {
     weeklyClasses: nextSevenDaysDataDefault,
   };
 
-  const response = await dataDashboard(new Date().toISOString());
+  const response = await dataDashboard(new Date(new Date().setHours(0,0,0,0)).toISOString());
 
   if (response.success) {
     data = response.data;
