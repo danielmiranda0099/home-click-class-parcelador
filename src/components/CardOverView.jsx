@@ -13,6 +13,7 @@ import {
 import { formatCurrency } from "@/utils/formatCurrency";
 import { useEffect, useState } from "react";
 import { useUserSession } from "@/hooks";
+import { useLessonsStore } from "@/store/lessonStore";
 
 export function CardOverView({ role, id }) {
   const [data, setData] = useState({
@@ -22,6 +23,8 @@ export function CardOverView({ role, id }) {
     debt: 0,
     averageScoreReal: 0,
   });
+
+  const { lessons } = useLessonsStore();
 
   const user_session = useUserSession();
 
@@ -46,12 +49,14 @@ export function CardOverView({ role, id }) {
     if (role === "student") {
       onOverViewLessonStudent();
     }
-  }, []);
+  }, [lessons]);
 
   return (
     <Card className="w-full max-w-4xl">
       <CardHeader>
-        <CardTitle className="text-xl sm:text-2xl">Estado de cuenta y horarios</CardTitle>
+        <CardTitle className="text-xl sm:text-2xl">
+          Estado de cuenta y horarios
+        </CardTitle>
       </CardHeader>
       <CardContent className="grid gap-2 sm:gap-8 md:gap-10 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {role === "teacher" && (
