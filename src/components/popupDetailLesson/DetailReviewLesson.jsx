@@ -109,7 +109,7 @@ export function DetailReviewLesson({ lesson, rol }) {
             {lesson?.issues && (
               <div className="flex items-start gap-4">
                 <div>
-                  <p className="text-sm sm:text-base font-medium">Problemas</p>
+                  <p className="text-sm sm:text-base font-medium">Por mejorar</p>
                   <p className="text-sm sm:text-base text-muted-foreground">
                     {lesson?.issues}
                   </p>

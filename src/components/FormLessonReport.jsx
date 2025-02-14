@@ -141,7 +141,7 @@ export function FormLessonReport({ rol }) {
             </div>
             <div className="w-full sm:w-1/5 px-2 mb-4 sm:mb-0">
               <Label htmlFor="issues" className="block mb-1">
-                Issues
+                To improve
               </Label>
               <Textarea
                 name="issues"
