@@ -3,7 +3,7 @@ export function formatUsersForInputSearch(users, role = null) {
   return users
     .filter((user) => (role ? user.role.includes(role) : true))
     .map((user) => ({
-      value: user?.email,
+      value: user?.email+' '+user?.fullName,
       label: user?.fullName,
       ...user,
     }));
