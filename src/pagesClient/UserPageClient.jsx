@@ -1,7 +1,7 @@
 "use client";
 
 import { activateUser, deactivateUser, getUserById } from "@/actions/CrudUser";
-import { CardOverView, PopupFormEditUser } from "@/components";
+import { CardOverView, PopupFormEditUser, WeeklySchedule } from "@/components";
 import { CheckIcon, PencilIcon, UserIcon, XIcon } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -67,84 +67,92 @@ export function UserPageClient({ initialData = { error: true }, id }) {
           <CardOverView role={user.role[0]} id={user.id} />
         )}
 
-        <Card className="flex flex-col gap-3 w-[fit-content] p-5">
-          <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
-            <p className="sm:text-lg font-semibold">Nombre completo:</p>
-            <p className="sm:text-lg">{user.fullName}</p>
-          </div>
-          <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
-            <p className="sm:text-lg font-semibold">Rol:</p>
-            <p className="sm:text-lg">{user.role[0]}</p>
-          </div>
-          <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
-            <p className="sm:text-lg font-semibold">Estado:</p>
-            <p className={`text-lg ${user.isActive ? "text-green-500" : "text-red-500"}`}>{user.isActive ? "Activo" : "Inactivo"}</p>
-          </div>
-          <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
-            <p className="sm:text-lg font-semibold">Email:</p>
-            <p className="sm:text-lg">{user.email}</p>
-          </div>
-          <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
-            <p className="sm:text-lg font-semibold">Telefono:</p>
-            <p className="sm:text-lg">{user.phoneNumber}</p>
-          </div>
-          <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
-            <p className="sm:text-lg font-semibold">Pais:</p>
-            <p className="sm:text-lg">{user.country}</p>
-          </div>
-          <div className="flex gap-2">
-            <p className="sm:text-lg font-semibold">Ciudad:</p>
-            <p className="sm:text-lg">{user.city}</p>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Card className="flex flex-col gap-3 w-full p-5">
+            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
+              <p className="sm:text-lg font-semibold">Nombre completo:</p>
+              <p className="sm:text-lg">{user.fullName}</p>
+            </div>
+            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
+              <p className="sm:text-lg font-semibold">Rol:</p>
+              <p className="sm:text-lg">{user.role[0]}</p>
+            </div>
+            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
+              <p className="sm:text-lg font-semibold">Estado:</p>
+              <p
+                className={`text-lg ${user.isActive ? "text-green-500" : "text-red-500"}`}
+              >
+                {user.isActive ? "Activo" : "Inactivo"}
+              </p>
+            </div>
+            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
+              <p className="sm:text-lg font-semibold">Email:</p>
+              <p className="sm:text-lg">{user.email}</p>
+            </div>
+            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
+              <p className="sm:text-lg font-semibold">Telefono:</p>
+              <p className="sm:text-lg">{user.phoneNumber}</p>
+            </div>
+            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
+              <p className="sm:text-lg font-semibold">Pais:</p>
+              <p className="sm:text-lg">{user.country}</p>
+            </div>
+            <div className="flex gap-2">
+              <p className="sm:text-lg font-semibold">Ciudad:</p>
+              <p className="sm:text-lg">{user.city}</p>
+            </div>
 
-          <div className="flex gap-4 items-center">
-            <Button
-              variant="outline"
-              className="flex gap-2"
-              onClick={() => setIsOpen(true)}
-            >
-              <PencilIcon className="h-4 w-4" /> Editar
-            </Button>
-
-            {!user.isActive && (
+            <div className="flex gap-4 items-center">
               <Button
                 variant="outline"
-                className="w-[fit-content] border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500 "
-                onClick={async () => {
-                  const response = await activateUser(user.id);
-                  if (response.success) {
-                    onGetUser();
-                    toastSuccess({ title: "Usuario activado correctamente" });
-                  } else {
-                    toastError({ title: "Error al activar usuario" });
-                  }
-                }}
+                className="flex gap-2"
+                onClick={() => setIsOpen(true)}
               >
-                Activar Usuario
+                <PencilIcon className="h-4 w-4" /> Editar
               </Button>
-            )}
 
-            {user.isActive && (
-              <Button
-                variant="outline"
-                className="w-[fit-content] border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
-                onClick={async () => {
-                  const response = await deactivateUser(user.id);
-                  if (response.success) {
-                    onGetUser();
-                    toastSuccess({
-                      title: "Usuario desactivado correctamente",
-                    });
-                  } else {
-                    toastError({ title: "Error al activar usuario" });
-                  }
-                }}
-              >
-                Desactivar Usuario
-              </Button>
-            )}
-          </div>
-        </Card>
+              {!user.isActive && (
+                <Button
+                  variant="outline"
+                  className="w-[fit-content] border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500 "
+                  onClick={async () => {
+                    const response = await activateUser(user.id);
+                    if (response.success) {
+                      onGetUser();
+                      toastSuccess({ title: "Usuario activado correctamente" });
+                    } else {
+                      toastError({ title: "Error al activar usuario" });
+                    }
+                  }}
+                >
+                  Activar Usuario
+                </Button>
+              )}
+
+              {user.isActive && (
+                <Button
+                  variant="outline"
+                  className="w-[fit-content] border-red-400 text-red-500 hover:bg-red-100 hover:text-red-500"
+                  onClick={async () => {
+                    const response = await deactivateUser(user.id);
+                    if (response.success) {
+                      onGetUser();
+                      toastSuccess({
+                        title: "Usuario desactivado correctamente",
+                      });
+                    } else {
+                      toastError({ title: "Error al activar usuario" });
+                    }
+                  }}
+                >
+                  Desactivar Usuario
+                </Button>
+              )}
+            </div>
+          </Card>
+
+          {user.role[0] !== "admin" && (<WeeklySchedule />)}
+        </div>
       </div>
     );
   }

@@ -17,3 +17,4 @@ export * from "./ErrorAlert";
 export * from "./CardWeeklyChart";
 export * from "./PopupFormEditUser";
 export * from "./ActionLessons";
+export * from "./WeeklySchedule";
