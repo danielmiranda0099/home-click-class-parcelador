@@ -30,13 +30,14 @@ model User {
   password     String
   role         Role[]
   averageScore Float   @default(10)
-  isActive     Boolean       @default(true)
+  isActive     Boolean @default(true)
 
   // Relaciones
   teacherLessons Lesson[]        @relation("TeacherLessons")
   studentLessons StudentLesson[]
-  transactions Transaction[]
-  debts        Debt[]
+  transactions   Transaction[]
+  debts          Debt[]
+  schedule       Schedule[]
 }
 
 model Lesson {
@@ -84,6 +85,16 @@ model StudentLesson {
   lessonId  Int
 
   @@unique([studentId, lessonId])
+}
+
+model Schedule {
+  id     Int        @id @default(autoincrement())
+  userId Int
+  user   User       @relation(fields: [userId], references: [id])
+  day    Int // 0-6, donde 0 es domingo, 1 es lunes, etc.
+  hours  DateTime[]
+
+  @@unique([userId, day])
 }
 
 model Transaction {
