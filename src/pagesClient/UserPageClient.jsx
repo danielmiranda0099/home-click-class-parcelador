@@ -68,47 +68,14 @@ export function UserPageClient({ initialData = { error: true }, id }) {
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <Card className="flex flex-col gap-3 w-full p-5">
-            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
-              <p className="sm:text-lg font-semibold">Nombre completo:</p>
-              <p className="sm:text-lg">{user.fullName}</p>
-            </div>
-            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
-              <p className="sm:text-lg font-semibold">Rol:</p>
-              <p className="sm:text-lg">{user.role[0]}</p>
-            </div>
-            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
-              <p className="sm:text-lg font-semibold">Estado:</p>
-              <p
-                className={`text-lg ${user.isActive ? "text-green-500" : "text-red-500"}`}
-              >
-                {user.isActive ? "Activo" : "Inactivo"}
-              </p>
-            </div>
-            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
-              <p className="sm:text-lg font-semibold">Email:</p>
-              <p className="sm:text-lg">{user.email}</p>
-            </div>
-            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
-              <p className="sm:text-lg font-semibold">Telefono:</p>
-              <p className="sm:text-lg">{user.phoneNumber}</p>
-            </div>
-            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
-              <p className="sm:text-lg font-semibold">Pais:</p>
-              <p className="sm:text-lg">{user.country}</p>
-            </div>
-            <div className="flex gap-2">
-              <p className="sm:text-lg font-semibold">Ciudad:</p>
-              <p className="sm:text-lg">{user.city}</p>
-            </div>
-
+          <Card className="flex flex-col gap-3 w-full p-5 h-fit">
             <div className="flex gap-4 items-center">
               <Button
                 variant="outline"
                 className="flex gap-2"
                 onClick={() => setIsOpen(true)}
               >
-                <PencilIcon className="h-4 w-4" /> Editar
+                <PencilIcon className="h-4 w-4" /> Editar Datos
               </Button>
 
               {!user.isActive && (
@@ -149,9 +116,41 @@ export function UserPageClient({ initialData = { error: true }, id }) {
                 </Button>
               )}
             </div>
+            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
+              <p className="sm:text-lg font-semibold">Nombre completo:</p>
+              <p className="sm:text-lg">{user.fullName}</p>
+            </div>
+            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
+              <p className="sm:text-lg font-semibold">Rol:</p>
+              <p className="sm:text-lg">{user.role[0]}</p>
+            </div>
+            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
+              <p className="sm:text-lg font-semibold">Estado:</p>
+              <p
+                className={`text-lg ${user.isActive ? "text-green-500" : "text-red-500"}`}
+              >
+                {user.isActive ? "Activo" : "Inactivo"}
+              </p>
+            </div>
+            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
+              <p className="sm:text-lg font-semibold">Email:</p>
+              <p className="sm:text-lg">{user.email}</p>
+            </div>
+            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
+              <p className="sm:text-lg font-semibold">Telefono:</p>
+              <p className="sm:text-lg">{user.phoneNumber}</p>
+            </div>
+            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
+              <p className="sm:text-lg font-semibold">Pais:</p>
+              <p className="sm:text-lg">{user.country}</p>
+            </div>
+            <div className="flex gap-2">
+              <p className="sm:text-lg font-semibold">Ciudad:</p>
+              <p className="sm:text-lg">{user.city}</p>
+            </div>
           </Card>
 
-          {user.role[0] !== "admin" && (<WeeklySchedule />)}
+          {user.role[0] !== "admin" && <WeeklySchedule userId={user.id}/>}
         </div>
       </div>
     );
