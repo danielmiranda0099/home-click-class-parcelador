@@ -1,20 +1,51 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { DAYS_OF_WEEK_FULL } from "@/utils/constans";
 import { RequestResponse } from "@/utils/requestResponse";
 
+/** @namespace ScheduleTypes */
+
 /**
- * @typedef {Object} ScheduleDay
- * @property {number} day - Número del día (0-6, 0=Domingo)
- * @property {string[]} hours - Array de horas en formato ISO UTC
+ * @typedef {Object} ScheduleTypes.ScheduleDay
+ * @property {number} day Day of the week (0-6, where 0 represents Sunday)
+ * @property {string[]} hours Array of hours in ISO UTC format (e.g., ["2024-02-21T10:00:00Z"])
  */
 
 /**
- * Actualiza el horario de un usuario con validaciones y operaciones atómicas
- * @param {any} prevState - Estado previo del formulario (no usado)
- * @param {number} userId - ID del usuario
- * @param {ScheduleDay[]} scheduleData - Datos del horario
- * @returns {Promise<{success: boolean, message?: string}>}
+ * @typedef {Object} ScheduleTypes.UpdateScheduleData
+ * @property {string} userId Unique identifier of the user
+ * @property {ScheduleTypes.ScheduleDay[]} scheduleData Array of schedule configurations for different days
+ */
+
+/**
+ * @typedef {Object} ScheduleTypes.UpdateScheduleResponse
+ * @property {boolean} success Indicates if the operation was successful
+ * @property {string} [message] Optional message providing additional information about the operation
+ */
+
+/**
+ * Updates a user's schedule with validation and atomic operations.
+ *
+ * @param {any} prevState Previous form state (unused)
+ * @param {ScheduleTypes.UpdateScheduleData} data Schedule update configuration
+ * @returns {Promise<ScheduleTypes.UpdateScheduleResponse>} Result of the schedule update operation
+ *
+ * @example
+ * const data = {
+ *   userId: "user123",
+ *   scheduleData: [{
+ *     day: 1,
+ *     hours: ["2024-02-21T10:00:00Z"]
+ *   }]
+ * };
+ *
+ * try {
+ *   const result = await updateSchedule(null, data);
+ *   console.log(result); // { success: true }
+ * } catch (error) {
+ *   console.error(error);
+ * }
  */
 export async function updateSchedule(prevState, data) {
   try {
@@ -73,7 +104,7 @@ export async function updateSchedule(prevState, data) {
         // Validar que sea en intervalos de 1 hora exacta
         if (minute !== 0) {
           return RequestResponse.error(
-            "Hours must be in exact 1-hour intervals"
+            `Las horas deben tener intervalos exactos de 1 hora en el dia ${DAYS_OF_WEEK_FULL[dayData.day]}`
           );
         }
 
@@ -82,7 +113,7 @@ export async function updateSchedule(prevState, data) {
         for (const existingMinutes of hourSet) {
           if (Math.abs(existingMinutes - minutes) < 60) {
             return RequestResponse.error(
-              `Schedule conflict: ${hourStr} overlaps with another schedule on the same day`
+              `Hay una hora repetida el dia ${DAYS_OF_WEEK_FULL[dayData.day]}`
             );
           }
         }
