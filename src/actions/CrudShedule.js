@@ -42,7 +42,6 @@ import { RequestResponse } from "@/utils/requestResponse";
  *
  * try {
  *   const result = await updateSchedule(null, data);
- *   console.log(result); // { success: true }
  * } catch (error) {
  *   console.error(error);
  * }
@@ -164,7 +163,6 @@ export async function getUserSheduleById(userId) {
       ...schedule,
       hours: schedule.hours.sort((a, b) => a.getTime() - b.getTime())
     }));
-    console.log("🚀 ~ getUserSheduleById ~ userSchedule:", userSchedule)
 
     return RequestResponse.success(sortedUserSchedule);
   } catch (error) {
