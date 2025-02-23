@@ -146,3 +146,29 @@ export async function updateSchedule(prevState, data) {
     return RequestResponse.error();
   }
 }
+
+export async function getUserSheduleById(userId) {
+  try {
+    const userSchedule = await prisma.schedule.findMany({
+      where: {
+        userId: userId,
+      },
+      select: {
+        day: true,
+        hours: true,
+      },
+      
+    });
+
+    const sortedUserSchedule = userSchedule.map(schedule => ({
+      ...schedule,
+      hours: schedule.hours.sort((a, b) => a.getTime() - b.getTime())
+    }));
+    console.log("🚀 ~ getUserSheduleById ~ userSchedule:", userSchedule)
+
+    return RequestResponse.success(sortedUserSchedule);
+  } catch (error) {
+    console.error("Error in getSheduleById()", error);
+    return RequestResponse.error();
+  }
+}
