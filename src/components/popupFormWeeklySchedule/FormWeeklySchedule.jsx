@@ -8,6 +8,7 @@ import { DAYS_OF_WEEK, DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
 import { ErrorAlert } from "@/components";
 import { useCustomToast } from "@/hooks";
 import { updateSchedule } from "@/actions/CrudShedule";
+import { convertTo24HourFormat } from "@/utils/convertTo24HourFormat";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -19,16 +20,15 @@ function SubmitButton() {
   );
 }
 
-export function FormWeeklySchedule({ userId, setIsOpen }) {
-  const [schedule, setSchedule] = useState({
-    0: [],
-    1: [],
-    2: [],
-    3: [],
-    4: [],
-    5: [],
-    6: [],
-  });
+export function FormWeeklySchedule({ userId, userSchedule, setIsOpen }) {
+  const userScheduleDefault = userSchedule.reduce((schedule, day, index) => {
+    schedule[index] = day.hours
+      .filter((hour) => hour !== "-")
+      .map((hour) => convertTo24HourFormat(hour));
+    return schedule;
+  }, {});
+
+  const [schedule, setSchedule] = useState(userScheduleDefault);
   const [form_state, dispath] = useFormState(updateSchedule, {
     data: [],
     succes: null,
@@ -63,17 +63,16 @@ export function FormWeeklySchedule({ userId, setIsOpen }) {
       return { ...prev, [day]: updatedTimes };
     });
   };
+
   const onHandleShedule = () => {
     setErrorMessage("");
-    console.log(schedule);
+
     const data = Object.entries(schedule).map(([day, times]) => ({
       day: parseInt(day),
       hours: times.map((time) => {
         return new Date(`1996-01-01T${time}:00`).toISOString();
       }),
     }));
-
-    console.log("🚀 ~ data ~ data:", data);
 
     dispath({ userId: userId, scheduleData: data });
   };

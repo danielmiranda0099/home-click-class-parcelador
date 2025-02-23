@@ -11,6 +11,17 @@ export const DAYS_OF_WEEK_NUMBER = {
 };
 
 export const DAYS_OF_WEEK = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"];
+export const DAYS_OF_WEEK_2 = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"];
+
+export const DAYS_OF_WEEK_FULL = [
+  "Domingo",
+  "Lunes",
+  "Martes",
+  "Miércoles",
+  "Jueves",
+  "Viernes",
+  "Sábado",
+];
 
 export const DATA_LESSON_DEFAULT = {
   students: [{ student: null, fee: "" }],

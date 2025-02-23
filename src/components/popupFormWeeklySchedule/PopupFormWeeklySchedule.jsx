@@ -11,10 +11,13 @@ import { Button } from "@/components/ui/button";
 
 import { CalendarIcon } from "@/components/icons";
 import { FormWeeklySchedule } from "./FormWeeklySchedule";
-import { useState } from "react";
 
-export function PopupFormWeeklySchedule({ userId }) {
-  const [is_open, setIsOpen] = useState(false);
+export function PopupFormWeeklySchedule({
+  is_open,
+  setIsOpen,
+  userId,
+  userSchedule,
+}) {
   return (
     <Dialog open={is_open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -26,7 +29,11 @@ export function PopupFormWeeklySchedule({ userId }) {
         <DialogHeader>
           <DialogTitle className="text-left">Edit Schedule</DialogTitle>
         </DialogHeader>
-        <FormWeeklySchedule userId={userId} setIsOpen={setIsOpen}/>
+        <FormWeeklySchedule
+          userId={userId}
+          userSchedule={userSchedule}
+          setIsOpen={setIsOpen}
+        />
       </DialogContent>
     </Dialog>
   );

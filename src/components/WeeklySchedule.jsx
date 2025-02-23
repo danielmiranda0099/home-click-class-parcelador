@@ -1,19 +1,22 @@
+"use client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PopupFormWeeklySchedule } from "./popupFormWeeklySchedule";
+import { getUserSheduleById } from "@/actions/CrudShedule";
+import { useEffect, useState } from "react";
+import { DAYS_OF_WEEK_2 } from "@/utils/constans";
 
-
-const weekDays = [
-  { day: "Lu", hours: ["10:00am", "7:00pm","-",] },
-  { day: "Ma", hours: ["-","-","-",] },
-  { day: "Mi", hours: ["7:00am","-","-",] },
-  { day: "Ju", hours: ["2:00pm","-","-",] },
+const weekDaysDefault = [
+  { day: "Lu", hours: ["-"] },
+  { day: "Ma", hours: ["-"] },
+  { day: "Mi", hours: ["-"] },
+  { day: "Ju", hours: ["-"] },
   {
     day: "Vi",
-    hours: ["8:00am", "10:00am", "11:00am"],
+    hours: ["-"],
   },
-  { day: "Sa", hours: ["-","-","-",] },
-  { day: "Do", hours: ["-","-","-",] },
+  { day: "Sa", hours: ["-"] },
+  { day: "Do", hours: ["-"] },
 ];
 
 function DaySchedule({ day, hours, isLast }) {
@@ -28,9 +31,9 @@ function DaySchedule({ day, hours, isLast }) {
       </h3>
       <div className="flex flex-row sm:flex-col items-end sm:items-center space-x-1 sm:space-x-0 sm:space-y-1 flex-wrap gap-2 justify-end">
         {hours.length > 0 ? (
-          hours.map((hour,index) => (
+          hours.map((hour, index) => (
             <Badge
-              key={hour+index}
+              key={hour + index}
               variant="secondary"
               className="text-xs px-1 py-0.5 sm:px-2 sm:py-1"
             >
@@ -45,17 +48,67 @@ function DaySchedule({ day, hours, isLast }) {
   );
 }
 
-export function WeeklySchedule({userId}) {
+export function WeeklySchedule({ userId }) {
+  const [user_schedule, setUserSchedule] = useState(weekDaysDefault);
+  const [is_open, setIsOpen] = useState(false);
+
+  const formatHour = (isoDate) => {
+    const date = new Date(isoDate);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? "pm" : "am";
+    const formattedHours = hours % 12 || 12;
+    return `${formattedHours}:${minutes.toString().padStart(2, "0")}${ampm}`;
+  };
+
+  const getUserShedule = async () => {
+    const { data: user_schedule } = await getUserSheduleById(userId);
+    // Encontrar el máximo número de horarios en un día
+    const maxHours = Math.max(
+      ...user_schedule.map((dayData) => dayData.hours.length)
+    );
+
+    // Verificar si hay al menos un día con horarios
+    const hasHours = maxHours > 0;
+
+    const formattedWeekDays = hasHours
+      ? user_schedule.map((dayData) => {
+          const dayName = DAYS_OF_WEEK_2[dayData.day];
+          const hours = dayData.hours.map(formatHour);
+          // Completar con "-" hasta alcanzar el máximo de horarios
+          while (hours.length < maxHours) {
+            hours.push("-");
+          }
+          return {
+            day: dayName,
+            hours: hours,
+          };
+        })
+      : [];
+    setUserSchedule(formattedWeekDays);
+  };
+
+  useEffect(() => {
+    if (!is_open) {
+      getUserShedule();
+    }
+  }, [is_open]);
+
   return (
     <Card className="p-2 sm:p-4 w-full max-w-7xl mx-auto overflow-x-hidden flex flex-col gap-3 h-fit">
-      <PopupFormWeeklySchedule userId={userId} />
+      <PopupFormWeeklySchedule
+        is_open={is_open}
+        setIsOpen={setIsOpen}
+        userId={userId}
+        userSchedule={user_schedule}
+      />
       <div className="grid grid-cols-1 sm:grid-cols-7 gap-0">
-        {weekDays.map((day, index) => (
+        {user_schedule.map((day, index) => (
           <DaySchedule
             key={day.day}
             day={day.day}
             hours={day.hours}
-            isLast={index === weekDays.length - 1}
+            isLast={index === user_schedule.length - 1}
           />
         ))}
       </div>
