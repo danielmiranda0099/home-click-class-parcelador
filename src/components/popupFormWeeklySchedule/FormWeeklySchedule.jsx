@@ -21,12 +21,15 @@ function SubmitButton() {
 }
 
 export function FormWeeklySchedule({ userId, userSchedule, setIsOpen }) {
-  const userScheduleDefault = userSchedule.reduce((schedule, day, index) => {
-    schedule[index] = day.hours
-      .filter((hour) => hour !== "-")
-      .map((hour) => convertTo24HourFormat(hour));
-    return schedule;
-  }, {});
+  const userScheduleDefault = userSchedule.reduce(
+    (schedule, day, index) => {
+      schedule[index] = day.hours
+        .filter((hour) => hour !== "-")
+        .map((hour) => convertTo24HourFormat(hour));
+      return schedule;
+    },
+    { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] }
+  );
 
   const [schedule, setSchedule] = useState(userScheduleDefault);
   const [form_state, dispath] = useFormState(updateSchedule, {
@@ -42,10 +45,11 @@ export function FormWeeklySchedule({ userId, userSchedule, setIsOpen }) {
   const maxInputs = Math.max(
     ...Object.values(schedule).map((arr) => arr.length)
   );
+
   const handleAddTime = (day) => {
     setSchedule((prev) => ({
       ...prev,
-      [day]: [...prev[day], "12:00"],
+      [day]: [...(prev[day] || []), "12:00"],
     }));
   };
 
@@ -88,6 +92,7 @@ export function FormWeeklySchedule({ userId, userSchedule, setIsOpen }) {
       setErrorMessage("");
     }
   }, [form_state]);
+
   return (
     <form action={onHandleShedule}>
       <div className="space-y-4 min-h-[35vh]">
