@@ -1,5 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+
 
 generator client {
   provider = "prisma-client-js"
@@ -77,7 +77,7 @@ model StudentLesson {
   lessonScore         Float?
   studentObservations String?
   isConfirmed         Boolean @default(false)
-
+  
   // Relaciones
   student   User   @relation(fields: [studentId], references: [id])
   studentId Int
