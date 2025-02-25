@@ -13,45 +13,57 @@ import {
 import { UsersIcon } from "@/components/icons";
 
 function formatDaysOfWeek(lessons) {
-  // Función auxiliar para ajustar la fecha UTC al huso horario local
-  function toLocalISOString(date) {
-    const offset = date.getTimezoneOffset() * 60000; // Desfase en milisegundos
-    const localDate = new Date(date.getTime() - offset); // Ajusta la fecha al huso horario local
-    return localDate.toISOString().split("T")[0]; // Formato YYYY-MM-DD
+  if (lessons.length > 0) {
+    // Función auxiliar para ajustar la fecha UTC al huso horario local
+    function toLocalISOString(date) {
+      const offset = date.getTimezoneOffset() * 60000; // Desfase en milisegundos
+      const localDate = new Date(date.getTime() - offset); // Ajusta la fecha al huso horario local
+      return localDate.toISOString().split("T")[0]; // Formato YYYY-MM-DD
+    }
+
+    // 3. Contar lecciones por día
+    const counts = lessons.reduce((acc, { startDate }) => {
+      // Convertir la fecha UTC a formato YYYY-MM-DD ajustado al huso horario local
+      const dateKey = toLocalISOString(startDate);
+      acc[dateKey] = (acc[dateKey] || 0) + 1;
+      return acc;
+    }, {});
+    console.log("*************** counts ***************", counts);
+
+    // 4. Generar array de resultados para los próximos 7 días
+    const result = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date(lessons[0].startDate); // Fecha de la primera lección
+      date.setDate(lessons[0].startDate.getDate() + i);
+      // Convertir la fecha a formato YYYY-MM-DD ajustado al huso horario local
+      const dateKey = toLocalISOString(date);
+      return {
+        day: dateKey,
+        classes: counts[dateKey] || 0,
+      };
+    });
+    console.log("*************** result ***************", result);
+
+    // Mapeo de días de la semana (0 = Domingo, 1 = Lunes, ..., 6 = Sábado)
+    const dayAbbreviations = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"];
+    return result.map(({ day, classes }) => {
+      const date = new Date(day); // Convierte la cadena YYYY-MM-DD a un objeto Date
+      const dayOfWeek = date.getDay(); // Obtiene el día de la semana (0-6)
+      return {
+        day: dayAbbreviations[dayOfWeek], // Obtiene la abreviación correspondiente
+        classes,
+      };
+    });
+  }else{
+    return [
+      { day: "Lu", classes: 0 },
+      { day: "Ma", classes: 0 },
+      { day: "Mi", classes: 0 },
+      { day: "Ju", classes: 0 },
+      { day: "Vi", classes: 0 },
+      { day: "Sa", classes: 0 },
+      { day: "Do", classes: 0 },
+    ];
   }
-
-  // 3. Contar lecciones por día
-  const counts = lessons.reduce((acc, { startDate }) => {
-    // Convertir la fecha UTC a formato YYYY-MM-DD ajustado al huso horario local
-    const dateKey = toLocalISOString(startDate);
-    acc[dateKey] = (acc[dateKey] || 0) + 1;
-    return acc;
-  }, {});
-  console.log("*************** counts ***************", counts);
-
-  // 4. Generar array de resultados para los próximos 7 días
-  const result = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(lessons[0].startDate); // Fecha de la primera lección
-    date.setDate(lessons[0].startDate.getDate() + i);
-    // Convertir la fecha a formato YYYY-MM-DD ajustado al huso horario local
-    const dateKey = toLocalISOString(date);
-    return {
-      day: dateKey,
-      classes: counts[dateKey] || 0,
-    };
-  });
-  console.log("*************** result ***************", result);
-
-  // Mapeo de días de la semana (0 = Domingo, 1 = Lunes, ..., 6 = Sábado)
-  const dayAbbreviations = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"];
-  return result.map(({ day, classes }) => {
-    const date = new Date(day); // Convierte la cadena YYYY-MM-DD a un objeto Date
-    const dayOfWeek = date.getDay(); // Obtiene el día de la semana (0-6)
-    return {
-      day: dayAbbreviations[dayOfWeek], // Obtiene la abreviación correspondiente
-      classes,
-    };
-  });
 }
 
 export function CardWeeklyChart({ nextSevenDaysData }) {
