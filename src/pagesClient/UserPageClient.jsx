@@ -2,11 +2,12 @@
 
 import { activateUser, deactivateUser, getUserById } from "@/actions/CrudUser";
 import { CardOverView, PopupFormEditUser, WeeklySchedule } from "@/components";
-import { CheckIcon, PencilIcon, UserIcon, XIcon } from "@/components/icons";
+import { ArrowLeftIcon, CheckIcon, PencilIcon, UserIcon, XIcon } from "@/components/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useCustomToast } from "@/hooks";
+import Link from "next/link";
 import { useCallback, useState } from "react";
 
 export function UserPageClient({ initialData = { error: true }, id }) {
@@ -43,6 +44,12 @@ export function UserPageClient({ initialData = { error: true }, id }) {
           data={data?.data}
           handleAction={onGetUser}
         />
+        <Button variant="ghost" asChild>
+          <Link href="/admin/users" className="flex gap-2 pl-0 text-[1.3rem] w-[fit-content] mb-[-1rem]">
+            <ArrowLeftIcon />
+            Volver
+          </Link>
+        </Button>
         <div className="flex flex-col gap-2">
           <h2 className="text-2xl sm:text-3xl">{user.fullName}</h2>
           <div className="flex gap-2">
@@ -150,7 +157,7 @@ export function UserPageClient({ initialData = { error: true }, id }) {
             </div>
           </Card>
 
-          {user.role[0] !== "admin" && <WeeklySchedule userId={user.id}/>}
+          {user.role[0] !== "admin" && <WeeklySchedule userId={user.id} />}
         </div>
       </div>
     );
