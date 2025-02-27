@@ -90,6 +90,7 @@ export async function updateSchedule(prevState, data) {
       // Validar y formatear horas
       const hours = Array.isArray(dayData.hours) ? dayData.hours : [];
       const hourSet = new Set();
+      const scheduledTimes = [];
 
       for (const hourStr of hours) {
         // Validar formato ISO UTC
@@ -98,26 +99,25 @@ export async function updateSchedule(prevState, data) {
         }
 
         // Extraer hora y minutos
-        const [hour, minute] = hourStr.split("T")[1].split(":").map(Number);
+        const date = new Date(hourStr);
+        const hour = date.getUTCHours();
+        const minute = date.getUTCMinutes();
 
-        // Validar que sea en intervalos de 1 hora exacta
-        if (minute !== 0) {
-          return RequestResponse.error(
-            `Las horas deben tener intervalos exactos de 1 hora en el dia ${DAYS_OF_WEEK_FULL[dayData.day]}`
-          );
-        }
+        // Convertir a minutos para facilitar la comparación
+        const timeInMinutes = hour * 60 + minute;
+        scheduledTimes.push(timeInMinutes);
 
-        // Verificar solapamientos
-        const minutes = hour * 60 + minute;
-        for (const existingMinutes of hourSet) {
-          if (Math.abs(existingMinutes - minutes) < 60) {
+        // Validar solapamientos - verificar que no haya horarios a menos de 60 minutos
+        for (const existingTime of hourSet) {
+          const timeDifference = Math.abs(existingTime - timeInMinutes);
+          if (timeDifference < 60) {
             return RequestResponse.error(
-              `Hay una hora repetida el dia ${DAYS_OF_WEEK_FULL[dayData.day]}`
+              `Error en día ${DAYS_OF_WEEK_FULL[dayData.day]}, No se permite programar horarios repetidos o con menos de 1 hora de diferencia `
             );
           }
         }
 
-        hourSet.add(minutes);
+        hourSet.add(timeInMinutes);
       }
 
       // Agregar día formateado
@@ -156,12 +156,11 @@ export async function getUserSheduleById(userId) {
         day: true,
         hours: true,
       },
-      
     });
 
-    const sortedUserSchedule = userSchedule.map(schedule => ({
+    const sortedUserSchedule = userSchedule.map((schedule) => ({
       ...schedule,
-      hours: schedule.hours.sort((a, b) => a.getTime() - b.getTime())
+      hours: schedule.hours.sort((a, b) => a.getTime() - b.getTime()),
     }));
 
     return RequestResponse.success(sortedUserSchedule);
