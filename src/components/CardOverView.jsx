@@ -52,7 +52,7 @@ export function CardOverView({ role, id }) {
   }, [lessons]);
 
   return (
-    <Card className="w-full max-w-7xlxl">
+    <Card className="w-full max-w-7xl">
       <CardHeader>
         <CardTitle className="text-xl sm:text-2xl">
           Estado de cuenta y horarios
