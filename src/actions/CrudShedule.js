@@ -36,7 +36,7 @@ export async function validateScheduleData(prevState, data) {
     // Validate user existence
     const userExists = await prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true },
+      select: { id: true, shortName: true },
     });
 
     if (!userExists) {
@@ -111,7 +111,7 @@ export async function validateScheduleData(prevState, data) {
     let message;
     if (days_whith_error.length > 0) {
       const days_whith_error_formated = [...new Set(days_whith_error)]
-      message = `Error en día ${days_whith_error_formated.join(", ")}. No se permite programar horarios repetidos o con menos de 1 hora de diferencia.`;
+      message = `Problema en hoario del usuario ${userExists.shortName} en los días ${days_whith_error_formated.join(", ")}.`;
     }
 
     return RequestResponse.success({

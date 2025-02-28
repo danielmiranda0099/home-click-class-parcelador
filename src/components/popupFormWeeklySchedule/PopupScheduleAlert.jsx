@@ -23,9 +23,14 @@ export function PopupScheduleAlert({
     <Dialog open={is_open_popup_alert} onOpenChange={setIsOpenPopupAlert}>
       <DialogContent className="w-full">
         <DialogHeader>
-          <DialogTitle>Hay Horario repetido o solapado.</DialogTitle>
+          <DialogTitle>Horario repetido o solapado.</DialogTitle>
           <DialogDescription>
-            <p className="text- text-red-400">{message}</p>
+            <br />
+            <p className="text-red-400">{message}</p>
+            <p className="text-red-400">
+              No se permite programar horarios repetidos o con menos de 1 hora
+              de diferencia
+            </p>
             <br />
             Por favor verifique bien antes de continuar.
           </DialogDescription>
