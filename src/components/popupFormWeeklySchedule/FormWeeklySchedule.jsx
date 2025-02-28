@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { DAYS_OF_WEEK, DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
 import { ErrorAlert } from "@/components";
 import { useCustomToast } from "@/hooks";
-import { updateSchedule } from "@/actions/CrudShedule";
+import { updateSchedule, validateScheduleData } from "@/actions/CrudShedule";
 import { convertTo24HourFormat } from "@/utils/convertTo24HourFormat";
+import { PopupScheduleAlert } from "./PopupScheduleAlert";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -38,8 +39,19 @@ export function FormWeeklySchedule({ userId, userSchedule, setIsOpen }) {
     error: false,
     message: null,
   });
+  const [form_state_validate, dispath_validate] = useFormState(
+    validateScheduleData,
+    {
+      data: [],
+      succes: null,
+      error: false,
+      message: null,
+    }
+  );
   const [error_message, setErrorMessage] = useState("");
   const { toastSuccess } = useCustomToast();
+
+  const [is_open_popup_alert, setIsOpenPopupAlert] = useState(false);
 
   // Calcular máximo número de inputs en cualquier día
   const maxInputs = Math.max(
@@ -68,7 +80,7 @@ export function FormWeeklySchedule({ userId, userSchedule, setIsOpen }) {
     });
   };
 
-  const onHandleShedule = () => {
+  const onHandleValidateSchedule = () => {
     setErrorMessage("");
 
     const data = Object.entries(schedule).map(([day, times]) => ({
@@ -78,8 +90,34 @@ export function FormWeeklySchedule({ userId, userSchedule, setIsOpen }) {
       }),
     }));
 
-    dispath({ userId: userId, scheduleData: data });
+    dispath_validate({ userId: userId, scheduleData: data });
   };
+
+  const onHandleSheduleWithOverlaps = () => {
+    dispath({
+      userId: userId,
+      formattedSchedule: form_state_validate.data.data,
+    });
+  };
+
+  useEffect(() => {
+    if (form_state_validate?.success) {
+      console.log(form_state_validate.data);
+      if (form_state_validate.data.isValid) {
+        dispath({
+          userId: userId,
+          formattedSchedule: form_state_validate.data.data,
+        });
+      }else {
+        setIsOpenPopupAlert(true);
+      }
+    }
+    if (form_state_validate?.error) {
+      setErrorMessage(form_state_validate.message);
+    } else {
+      setErrorMessage("");
+    }
+  }, [form_state_validate]);
 
   useEffect(() => {
     if (form_state?.success) {
@@ -94,7 +132,13 @@ export function FormWeeklySchedule({ userId, userSchedule, setIsOpen }) {
   }, [form_state]);
 
   return (
-    <form action={onHandleShedule}>
+    <form action={onHandleValidateSchedule}>
+      <PopupScheduleAlert
+        is_open_popup_alert={is_open_popup_alert}
+        setIsOpenPopupAlert={setIsOpenPopupAlert}
+        handleAction={onHandleSheduleWithOverlaps}
+        message={form_state_validate.data.message}
+      />
       <div className="space-y-4 min-h-[35vh]">
         <div className="grid grid-cols-3 sm:grid-cols-7 gap-2">
           {DAYS_OF_WEEK.map((day) => {
