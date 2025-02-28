@@ -4,53 +4,36 @@ import prisma from "@/lib/prisma";
 import { DAYS_OF_WEEK_FULL } from "@/utils/constans";
 import { RequestResponse } from "@/utils/requestResponse";
 
-/** @namespace ScheduleTypes */
-
 /**
- * @typedef {Object} ScheduleTypes.ScheduleDay
- * @property {number} day Day of the week (0-6, where 0 represents Sunday)
- * @property {string[]} hours Array of hours in ISO UTC format (e.g., ["2024-02-21T10:00:00Z"])
- */
-
-/**
- * @typedef {Object} ScheduleTypes.UpdateScheduleData
- * @property {string} userId Unique identifier of the user
- * @property {ScheduleTypes.ScheduleDay[]} scheduleData Array of schedule configurations for different days
- */
-
-/**
- * @typedef {Object} ScheduleTypes.UpdateScheduleResponse
- * @property {boolean} success Indicates if the operation was successful
- * @property {string} [message] Optional message providing additional information about the operation
- */
-
-/**
- * Updates a user's schedule with validation and atomic operations.
+ * Validates and formats schedule data for a user.
  *
- * @param {any} prevState Previous form state (unused)
- * @param {ScheduleTypes.UpdateScheduleData} data Schedule update configuration
- * @returns {Promise<ScheduleTypes.UpdateScheduleResponse>} Result of the schedule update operation
+ * @async
+ * @function validateScheduleData
+ * @param {Object} prevState - The previous state (unused in this function).
+ * @param {Object} data - The input data containing user ID and schedule details.
+ * @param {string} data.userId - The ID of the user.
+ * @param {Array} data.scheduleData - An array of schedule objects.
+ * @param {number} data.scheduleData[].day - The day of the week (0-6, where 0 is Sunday).
+ * @param {string[]} data.scheduleData[].hours - An array of ISO 8601 UTC timestamps (e.g., "2024-02-27T10:00:00.000Z").
+ * @returns {Promise<Object>} A response object containing validation results.
+ *
+ * @throws {Error} If an unexpected error occurs during validation.
  *
  * @example
  * const data = {
- *   userId: "user123",
- *   scheduleData: [{
- *     day: 1,
- *     hours: ["2024-02-21T10:00:00Z"]
- *   }]
+ *   userId: "123",
+ *   scheduleData: [
+ *     { day: 1, hours: ["2024-02-27T10:00:00.000Z", "2024-02-27T11:30:00.000Z"] }
+ *   ]
  * };
- *
- * try {
- *   const result = await updateSchedule(null, data);
- * } catch (error) {
- *   console.error(error);
- * }
+ * const response = await validateScheduleData(null, data);
+ * console.log(response);
  */
-export async function updateSchedule(prevState, data) {
+export async function validateScheduleData(prevState, data) {
   try {
     const { userId, scheduleData } = data;
 
-    // Validar existencia del usuario
+    // Validate user existence
     const userExists = await prisma.user.findUnique({
       where: { id: userId },
       select: { id: true },
@@ -60,17 +43,17 @@ export async function updateSchedule(prevState, data) {
       return RequestResponse.error("User not found");
     }
 
-    // Validar estructura de datos
+    // Validate data structure
     if (!Array.isArray(scheduleData)) {
       return RequestResponse.error("Invalid schedule data");
     }
 
-    // Formatear y validar el horario
+    // Format and validate the schedule
     const formattedSchedule = [];
     const daySet = new Set();
-
+    let days_whith_error = [];
     for (const dayData of scheduleData) {
-      // Validar día
+      // Validate Day
       if (
         typeof dayData.day !== "number" ||
         dayData.day < 0 ||
@@ -79,7 +62,7 @@ export async function updateSchedule(prevState, data) {
         return RequestResponse.error(`Invalid day: ${dayData.day}`);
       }
 
-      // Validar unicidad de días en el input
+      // Validate uniqueness of days in the input
       if (daySet.has(dayData.day)) {
         return RequestResponse.error(
           `Day duplicated in request: ${dayData.day}`
@@ -87,40 +70,37 @@ export async function updateSchedule(prevState, data) {
       }
       daySet.add(dayData.day);
 
-      // Validar y formatear horas
+      // Validate and format hours
       const hours = Array.isArray(dayData.hours) ? dayData.hours : [];
       const hourSet = new Set();
       const scheduledTimes = [];
 
       for (const hourStr of hours) {
-        // Validar formato ISO UTC
+        // Validate ISO UTC format
         if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/.test(hourStr)) {
           return RequestResponse.error(`Invalid hour: ${hourStr}`);
         }
 
-        // Extraer hora y minutos
+        // Extract hour and minutes
         const date = new Date(hourStr);
         const hour = date.getUTCHours();
         const minute = date.getUTCMinutes();
 
-        // Convertir a minutos para facilitar la comparación
+        // Convert to minutes for easy comparison
         const timeInMinutes = hour * 60 + minute;
         scheduledTimes.push(timeInMinutes);
 
-        // Validar solapamientos - verificar que no haya horarios a menos de 60 minutos
+        // Validate overlaps - check that there are no schedules less than 60 minutes apart
         for (const existingTime of hourSet) {
           const timeDifference = Math.abs(existingTime - timeInMinutes);
           if (timeDifference < 60) {
-            return RequestResponse.error(
-              `Error en día ${DAYS_OF_WEEK_FULL[dayData.day]}, No se permite programar horarios repetidos o con menos de 1 hora de diferencia `
-            );
+            days_whith_error.push(DAYS_OF_WEEK_FULL[dayData.day]);
           }
         }
 
         hourSet.add(timeInMinutes);
       }
 
-      // Agregar día formateado
       formattedSchedule.push({
         userId,
         day: dayData.day,
@@ -128,12 +108,49 @@ export async function updateSchedule(prevState, data) {
       });
     }
 
-    // Ejecutar transacción atómica
+    let message;
+    if (days_whith_error.length > 0) {
+      message = `Error en día ${days_whith_error.join(", ")}. No se permite programar horarios repetidos o con menos de 1 hora de diferencia.`;
+    }
+
+    return RequestResponse.success({
+      data: formattedSchedule,
+      isValid: !days_whith_error.length > 0,
+      message: message,
+    });
+  } catch (error) {
+    console.error("Error in validateSheduleData()", error);
+    return RequestResponse.error();
+  }
+}
+
+/**
+ * Updates the schedule for a user by replacing the existing schedule with a new one.
+ *
+ * @async
+ * @function updateSchedule
+ * @param {Object} prevState - The previous state (unused in this function).
+ * @param {Object} data - The input data containing user ID and the formatted schedule.
+ * @param {string} data.userId - The ID of the user.
+ * @param {Array} data.formattedSchedule - An array of schedule objects to be saved.
+ * @returns {Promise<Object>} A success response if the transaction completes successfully.
+ *
+ * @throws {Error} If an error occurs during the database transaction.
+ *
+ * @example
+ * const data = {
+ *   userId: "123",
+ *   formattedSchedule: [{ userId: "123", day: 1, hours: ["2024-02-27T10:00:00.000Z"] }]
+ * };
+ * const response = await updateSchedule(null, data);
+ * console.log(response);
+ */
+export async function updateSchedule(prevState, data) {
+  try {
+    const { userId, formattedSchedule } = data;
     await prisma.$transaction(async (tx) => {
-      // Eliminar horarios existentes del usuario
       await tx.schedule.deleteMany({ where: { userId } });
 
-      // Crear nuevos horarios
       await tx.schedule.createMany({
         data: formattedSchedule,
       });
@@ -146,6 +163,20 @@ export async function updateSchedule(prevState, data) {
   }
 }
 
+/**
+ * Retrieves the user's schedule by their ID, sorting the hours for each scheduled day.
+ *
+ * @async
+ * @function getUserSheduleById
+ * @param {string} userId - The ID of the user.
+ * @returns {Promise<Object>} A response object containing the user's sorted schedule.
+ *
+ * @throws {Error} If an error occurs while fetching the schedule from the database.
+ *
+ * @example
+ * const response = await getUserSheduleById("123");
+ * console.log(response);
+ */
 export async function getUserSheduleById(userId) {
   try {
     const userSchedule = await prisma.schedule.findMany({
