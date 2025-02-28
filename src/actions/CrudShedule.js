@@ -110,7 +110,8 @@ export async function validateScheduleData(prevState, data) {
 
     let message;
     if (days_whith_error.length > 0) {
-      message = `Error en día ${days_whith_error.join(", ")}. No se permite programar horarios repetidos o con menos de 1 hora de diferencia.`;
+      const days_whith_error_formated = [...new Set(days_whith_error)]
+      message = `Error en día ${days_whith_error_formated.join(", ")}. No se permite programar horarios repetidos o con menos de 1 hora de diferencia.`;
     }
 
     return RequestResponse.success({
