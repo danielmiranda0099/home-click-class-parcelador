@@ -62,7 +62,7 @@ export async function validateSelectedDays(selectedDays) {
   ) {
     return {
       isValid: false,
-      error: "Seleccione los dias de agendamiento de las clases.",
+      error: "Seleccione los dias y horas de agendamiento de las clases.",
     };
   }
   return { isValid: true };
@@ -82,6 +82,7 @@ export async function validateSchedule(times, selectedDays) {
 }
 
 export async function validateDates(all_dates) {
+  if(!all_dates) return { isValid: false, error: "Error en las fechas.",}
   all_dates.forEach((date, index) => {
     if (isNaN(Date.parse(date))) {
       return {
