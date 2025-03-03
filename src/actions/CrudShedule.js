@@ -31,96 +31,99 @@ import { RequestResponse } from "@/utils/requestResponse";
  */
 export async function validateScheduleData(prevState, data) {
   try {
-    const { userId, scheduleData } = data;
-
-    // Validate user existence
-    const userExists = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { id: true, shortName: true },
-    });
-
-    if (!userExists) {
-      return RequestResponse.error("User not found");
+    if (!Array.isArray(data)) {
+      return RequestResponse.error("Invalid schedule data format 0");
     }
 
-    // Validate data structure
-    if (!Array.isArray(scheduleData)) {
-      return RequestResponse.error("Invalid schedule data");
-    }
+    const formattedSchedules = [];
+    const errorMessages = [];
 
-    // Format and validate the schedule
-    const formattedSchedule = [];
-    const daySet = new Set();
-    let days_whith_error = [];
-    for (const dayData of scheduleData) {
-      // Validate Day
-      if (
-        typeof dayData.day !== "number" ||
-        dayData.day < 0 ||
-        dayData.day > 6
-      ) {
-        return RequestResponse.error(`Invalid day: ${dayData.day}`);
+    // Procesar cada usuario individualmente
+    for (const userSchedule of data) {
+      const { userId, scheduleData } = userSchedule;
+
+      const userExists = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true, shortName: true },
+      });
+
+      if (!userExists) {
+        return RequestResponse.error(`User not found: ${userId}`);
       }
 
-      // Validate uniqueness of days in the input
-      if (daySet.has(dayData.day)) {
+      if (!Array.isArray(scheduleData)) {
         return RequestResponse.error(
-          `Day duplicated in request: ${dayData.day}`
+          `Invalid schedule data for user: ${userExists.shortName}`
         );
       }
-      daySet.add(dayData.day);
 
-      // Validate and format hours
-      const hours = Array.isArray(dayData.hours) ? dayData.hours : [];
-      const hourSet = new Set();
-      const scheduledTimes = [];
+      const formattedSchedule = [];
+      const daySet = new Set();
+      // Set para almacenar los días con horarios duplicados o solapados (por usuario)
+      let daysWithError = new Set();
 
-      for (const hourStr of hours) {
-        // Validate ISO UTC format
-        if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/.test(hourStr)) {
-          return RequestResponse.error(`Invalid hour: ${hourStr}`);
+      for (const dayData of scheduleData) {
+        if (
+          typeof dayData.day !== "number" ||
+          dayData.day < 0 ||
+          dayData.day > 6
+        ) {
+          return RequestResponse.error(
+            `Invalid day: ${dayData.day} for user ${userExists.shortName}`
+          );
         }
 
-        // Extract hour and minutes
-        const date = new Date(hourStr);
-        const hour = date.getUTCHours();
-        const minute = date.getUTCMinutes();
+        if (daySet.has(dayData.day)) {
+          return RequestResponse.error(
+            `Day duplicated in request: ${dayData.day}`
+          );
+        }
+        daySet.add(dayData.day);
 
-        // Convert to minutes for easy comparison
-        const timeInMinutes = hour * 60 + minute;
-        scheduledTimes.push(timeInMinutes);
+        const hours = Array.isArray(dayData.hours) ? dayData.hours : [];
+        // Nueva colección para almacenar las horas procesadas en este día
+        const hourSet = new Set();
 
-        // Validate overlaps - check that there are no schedules less than 60 minutes apart
-        for (const existingTime of hourSet) {
-          const timeDifference = Math.abs(existingTime - timeInMinutes);
-          if (timeDifference < 60) {
-            days_whith_error.push(DAYS_OF_WEEK_FULL[dayData.day]);
+        for (const hourStr of hours) {
+          if (
+            !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(hourStr)
+          ) {
+            return RequestResponse.error(`Invalid hour: ${hourStr}`);
           }
+
+          const date = new Date(hourStr);
+          const timeInMinutes = date.getUTCHours() * 60 + date.getUTCMinutes();
+
+          // Verificar si existe alguna hora en el mismo día que esté a menos de 60 minutos de diferencia
+          for (const existingTime of hourSet) {
+            const timeDifference = Math.abs(existingTime - timeInMinutes);
+            if (timeDifference < 60) {
+              daysWithError.add(DAYS_OF_WEEK_FULL[dayData.day]);
+            }
+          }
+          hourSet.add(timeInMinutes);
         }
 
-        hourSet.add(timeInMinutes);
+        formattedSchedule.push({ userId, day: dayData.day, hours });
       }
 
-      formattedSchedule.push({
-        userId,
-        day: dayData.day,
-        hours,
-      });
-    }
+      formattedSchedules.push({ userId, formattedSchedule });
 
-    let message;
-    if (days_whith_error.length > 0) {
-      const days_whith_error_formated = [...new Set(days_whith_error)]
-      message = `Problema en hoario del usuario ${userExists.shortName} en los días ${days_whith_error_formated.join(", ")}.`;
+      // Si se detectaron solapamientos para este usuario, se agrega el mensaje de error
+      if (daysWithError.size > 0) {
+        errorMessages.push(
+          `Problema en horario del usuario ${userExists.shortName} en los días ${[...daysWithError].join(", ")}.`
+        );
+      }
     }
 
     return RequestResponse.success({
-      data: formattedSchedule,
-      isValid: !days_whith_error.length > 0,
-      message: message,
+      data: formattedSchedules,
+      isValid: errorMessages.length === 0,
+      message: errorMessages.join("/%*%/"),
     });
   } catch (error) {
-    console.error("Error in validateSheduleData()", error);
+    console.error("Error in validateScheduleData()", error);
     return RequestResponse.error();
   }
 }
@@ -148,13 +151,17 @@ export async function validateScheduleData(prevState, data) {
  */
 export async function updateSchedule(prevState, data) {
   try {
-    const { userId, formattedSchedule } = data;
-    await prisma.$transaction(async (tx) => {
-      await tx.schedule.deleteMany({ where: { userId } });
+    if (!Array.isArray(data)) {
+      return RequestResponse.error("Invalid schedule data format 1");
+    }
 
-      await tx.schedule.createMany({
-        data: formattedSchedule,
-      });
+    await prisma.$transaction(async (tx) => {
+      for (const userSchedule of data) {
+        const { userId, formattedSchedule } = userSchedule;
+
+        await tx.schedule.deleteMany({ where: { userId } });
+        await tx.schedule.createMany({ data: formattedSchedule });
+      }
     });
 
     return RequestResponse.success();
@@ -168,17 +175,17 @@ export async function updateSchedule(prevState, data) {
  * Retrieves the user's schedule by their ID, sorting the hours for each scheduled day.
  *
  * @async
- * @function getUserSheduleById
+ * @function getUserScheduleById
  * @param {string} userId - The ID of the user.
  * @returns {Promise<Object>} A response object containing the user's sorted schedule.
  *
  * @throws {Error} If an error occurs while fetching the schedule from the database.
  *
  * @example
- * const response = await getUserSheduleById("123");
+ * const response = await getUserScheduleById("123");
  * console.log(response);
  */
-export async function getUserSheduleById(userId) {
+export async function getUserScheduleById(userId) {
   try {
     const userSchedule = await prisma.schedule.findMany({
       where: {
