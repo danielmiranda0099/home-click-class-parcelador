@@ -16,7 +16,41 @@ import { auth } from "@/auth";
 import moment from "moment";
 import { parseCurrencyToNumber } from "@/utils/parseCurrencyToNumber";
 
-export async function CreateNewLesson(prev_state, lessons_data) {
+export async function createNewLesson(prev_state, lessons_data) {
+  try {
+    const { allDates, data_teacher, data_students } = lessons_data;
+
+    const lesson = {
+      teacherId: data_teacher.teacherId,
+      teacherPayment: data_teacher.teacherPayment,
+    };
+
+    const data = allDates.map((date) => ({
+      ...lesson,
+      isGroup: data_students.length > 1,
+      startDate: date,
+      studentLessons: {
+        create: data_students,
+      },
+    }));
+
+    await prisma.$transaction(
+      data.map((lesson_data) =>
+        prisma.lesson.create({
+          data: {
+            ...lesson_data,
+          },
+        })
+      )
+    );
+    return RequestResponse.success();
+  } catch (error) {
+    console.error("Error in createNewLesson():", error);
+    return RequestResponse.error();
+  }
+}
+
+export async function validateLessonData(prev_state, lesson_data) {
   try {
     const {
       students,
@@ -26,7 +60,7 @@ export async function CreateNewLesson(prev_state, lessons_data) {
       selectedDays,
       times,
       allDates,
-    } = lessons_data;
+    } = lesson_data;
 
     const validations = [
       await validateStudents(students),
@@ -57,40 +91,14 @@ export async function CreateNewLesson(prev_state, lessons_data) {
     }
     const { data: data_teacher } = teacher_formated;
 
-    const lesson = {
-      teacherId: data_teacher.teacherId,
-      teacherPayment: data_teacher.teacherPayment,
-    };
-
-    const data = allDates.map((date) => ({
-      ...lesson,
-      isGroup: data_students.length > 1,
-      startDate: date,
-      studentLessons: {
-        create: data_students,
-      },
-    }));
-
-    const new_lessons = await prisma.$transaction(
-      data.map((lesson_data) =>
-        prisma.lesson.create({
-          data: {
-            ...lesson_data,
-          },
-          include: {
-            teacher: true,
-            studentLessons: {
-              include: {
-                student: true,
-              },
-            },
-          },
-        })
-      )
-    );
-    return RequestResponse.success(new_lessons);
+    return RequestResponse.success({
+      times,
+      allDates,
+      data_teacher,
+      data_students,
+    });
   } catch (error) {
-    console.error("Error Crating and Scheduling lessons:", error);
+    console.error("Error in validateLessonData", error);
     return RequestResponse.error();
   }
 }
