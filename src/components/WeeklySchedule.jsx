@@ -2,7 +2,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PopupFormWeeklySchedule } from "./popupFormWeeklySchedule";
-import { getUserSheduleById } from "@/actions/CrudShedule";
+import { getUserScheduleById } from "@/actions/CrudShedule";
 import { useEffect, useState } from "react";
 import { DAYS_OF_WEEK_2 } from "@/utils/constans";
 
@@ -62,7 +62,7 @@ export function WeeklySchedule({ userId }) {
   };
 
   const getUserShedule = async () => {
-    const { data: user_schedule } = await getUserSheduleById(userId);
+    const { data: user_schedule } = await getUserScheduleById(userId);
     // Encontrar el máximo número de horarios en un día
     const maxHours = Math.max(
       ...user_schedule.map((dayData) => dayData.hours.length)

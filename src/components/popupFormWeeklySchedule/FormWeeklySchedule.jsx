@@ -90,25 +90,18 @@ export function FormWeeklySchedule({ userId, userSchedule, setIsOpen }) {
       }),
     }));
 
-    dispath_validate({ userId: userId, scheduleData: data });
+    dispath_validate([{ userId: userId, scheduleData: data }]);
   };
 
   const onHandleSheduleWithOverlaps = () => {
-    dispath({
-      userId: userId,
-      formattedSchedule: form_state_validate.data.data,
-    });
+    dispath(form_state_validate.data.data);
   };
 
   useEffect(() => {
     if (form_state_validate?.success) {
-      console.log(form_state_validate.data);
       if (form_state_validate.data.isValid) {
-        dispath({
-          userId: userId,
-          formattedSchedule: form_state_validate.data.data,
-        });
-      }else {
+        dispath(form_state_validate.data.data);
+      } else {
         setIsOpenPopupAlert(true);
       }
     }
