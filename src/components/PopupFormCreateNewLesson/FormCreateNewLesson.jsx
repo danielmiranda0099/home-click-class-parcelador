@@ -12,7 +12,7 @@ import { useUiStore } from "@/store/uiStores";
 
 import { DATA_LESSON_DEFAULT } from "@/utils/constans";
 
-import { CreateNewLesson } from "@/actions/CrudLesson";
+import { createNewLesson, validateLessonData } from "@/actions/CrudLesson";
 import { PeriodOfTime } from "./PeriodOfTime";
 import { SelectedDaysAndTime } from "./SelectedDaysAndTime";
 import { FormFieldStudents } from "./FormFieldStudents";
@@ -21,6 +21,12 @@ import { ErrorAlert } from "@/components";
 import { useCustomToast } from "@/hooks";
 import { scheduleLessons } from "@/utils/scheduleLessons";
 import { useSearchParams } from "next/navigation";
+import {
+  getUserScheduleById,
+  updateSchedule,
+  validateScheduleData,
+} from "@/actions/CrudShedule";
+import { PopupCreateNewLessonsAlert } from "./PopupCreateNewLessonsAlert";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -35,8 +41,29 @@ function SubmitButton() {
 export function FormCreateNewLesson() {
   const { setLessons } = useLessonsStore();
   const { setPopupFormCreateNewLesson: setIsOpen } = useUiStore();
+  const [is_open_popup_alert, setIsOpenPopupAlert] = useState(false);
   const [data_lesson, setDataLesson] = useState(DATA_LESSON_DEFAULT);
-  const [form_state, dispath] = useFormState(CreateNewLesson, {
+  const [form_state, dispath] = useFormState(createNewLesson, {
+    data: [],
+    succes: null,
+    error: false,
+    message: null,
+  });
+  const [form_state_validate_lesson_data, dispathValidateLessonData] =
+    useFormState(validateLessonData, {
+      data: [],
+      succes: null,
+      error: false,
+      message: null,
+    });
+  const [form_state_validate_schedule_data, dispathValidateScheduleData] =
+    useFormState(validateScheduleData, {
+      data: [],
+      succes: null,
+      error: false,
+      message: null,
+    });
+  const [form_state_schedule, dispathSchedule] = useFormState(updateSchedule, {
     data: [],
     succes: null,
     error: false,
@@ -61,6 +88,123 @@ export function FormCreateNewLesson() {
     };
   };
 
+  const getUserSchedule = async (id) => {
+    const response = await getUserScheduleById(id);
+    if (response.success) {
+      return response.data;
+    } else {
+      setErrorMessage(response.message);
+      return null;
+    }
+  };
+  const mergeSchedules = (current_schedule, new_schedule) => {
+    const scheduleMap = new Map(
+      current_schedule.map((item) => [item.day, item])
+    );
+    new_schedule.scheduleData.forEach(({ day, hours }) => {
+      if (scheduleMap.has(day)) {
+        scheduleMap.get(day).hours.push(...hours);
+      } else {
+        scheduleMap.set(day, { day, hours: [...hours] });
+      }
+    });
+    // Convertir el mapa de vuelta a array
+    return Array.from(scheduleMap.values());
+  };
+
+  const OnCreateNewLessons = async () => {
+    setErrorMessage("");
+    const all_dates = scheduleLessons(
+      data_lesson.selectedDays,
+      data_lesson.times,
+      data_lesson.periodOfTime,
+      data_lesson.startDate
+    );
+
+    data_lesson.allDates = all_dates.data;
+    dispathValidateLessonData(data_lesson);
+  };
+
+  useEffect(() => {
+    if (form_state_validate_lesson_data?.success) {
+      const fetchAndMergeSchedules = async () => {
+        const { times } = form_state_validate_lesson_data.data;
+        const new_schedule = Object.entries(times).map(([day, time]) => ({
+          day: parseInt(day),
+          hours: [new Date(`1996-01-01T${time}:00`).toISOString()],
+        }));
+
+        const new_schedule_users = [
+          {
+            userId: data_lesson.teacher.teacher.id,
+            scheduleData: new_schedule,
+          },
+          ...data_lesson.students.map((student) => ({
+            userId: student.student.id,
+            scheduleData: new_schedule,
+          })),
+        ];
+
+        const new_schedule_users_formated = await Promise.all(
+          new_schedule_users.map(async (schedule_user) => {
+            const current_schedule_user = await getUserSchedule(
+              schedule_user.userId
+            );
+
+            const current_schedule_user_formated = current_schedule_user.map(
+              (current_schedule) => ({
+                day: current_schedule.day,
+                hours: current_schedule.hours.map((hour) => hour.toISOString()),
+              })
+            );
+            return {
+              userId: schedule_user.userId,
+              scheduleData: mergeSchedules(
+                current_schedule_user_formated,
+                schedule_user
+              ),
+            };
+          })
+        );
+        dispathValidateScheduleData(new_schedule_users_formated);
+      };
+
+      fetchAndMergeSchedules();
+    }
+    if (form_state_validate_lesson_data?.error) {
+      setErrorMessage(form_state_validate_lesson_data.message);
+    } else {
+      setErrorMessage("");
+    }
+  }, [form_state_validate_lesson_data]);
+
+  useEffect(() => {
+    if (form_state_validate_schedule_data?.success) {
+      const { isValid } = form_state_validate_schedule_data.data;
+      if (isValid) {
+        dispathSchedule(form_state_validate_schedule_data.data.data);
+      } else {
+        setIsOpenPopupAlert(true);
+      }
+    }
+    if (form_state_validate_schedule_data?.error) {
+      setErrorMessage(form_state_validate_schedule_data.message);
+    } else {
+      setErrorMessage("");
+    }
+  }, [form_state_validate_schedule_data]);
+
+  useEffect(() => {
+    if (form_state_schedule?.success) {
+      dispath(form_state_validate_lesson_data.data);
+    }
+    if (form_state_schedule?.error) {
+      setErrorMessage(form_state_schedule.message);
+    } else {
+      setErrorMessage("");
+    }
+  }, [form_state_schedule]);
+
   useEffect(() => {
     if (form_state?.success) {
       toastSuccess({ title: "Clases creadas." });
@@ -74,21 +218,16 @@ export function FormCreateNewLesson() {
     }
   }, [form_state]);
 
-  const OnCreateNewLessons = async () => {
-    setErrorMessage("");
-    const all_dates = scheduleLessons(
-      data_lesson.selectedDays,
-      data_lesson.times,
-      data_lesson.periodOfTime,
-      data_lesson.startDate
-    );
-
-    data_lesson.allDates = all_dates;
-
-    dispath(data_lesson);
-  };
   return (
     <form className="px-0" action={OnCreateNewLessons}>
+      <PopupCreateNewLessonsAlert
+        is_open_popup_alert={is_open_popup_alert}
+        setIsOpenPopupAlert={setIsOpenPopupAlert}
+        handleAction={() =>
+          dispathSchedule(form_state_validate_schedule_data.data.data)
+        }
+        message={form_state_validate_schedule_data.data.message}
+      />
       <div className="space-y-4">
         <FormFieldStudents
           data_lesson={data_lesson}
