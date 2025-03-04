@@ -12,7 +12,7 @@ export function PopupCreateNewLessonsAlert({
   is_open_popup_alert,
   setIsOpenPopupAlert,
   handleAction = null,
-  message,
+  message="",
 }) {
   const onDeleteLesson = () => {
     setIsOpenPopupAlert(false);
@@ -26,7 +26,7 @@ export function PopupCreateNewLessonsAlert({
           <DialogTitle>Horario repetido o solapado.</DialogTitle>
           <DialogDescription>
             <br />
-            {message.split("/%*%/").map((message) => (<><p className="text-red-400 mb-2">{message}</p></>))}
+            {message?.split("/%*%/").map((message) => (<><p className="text-red-400 mb-2">{message}</p></>))}
             
             <p className="text-red-400">
               No se permite programar horarios repetidos o con menos de 1 hora
