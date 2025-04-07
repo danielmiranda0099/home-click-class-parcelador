@@ -29,7 +29,7 @@ export function NequiPayment() {
             <p className="text-xl font-semibold">{nequiNumber}</p>
             <ButtonCopyToClipboard to_copy={nequiNumber} />
           </div>
-          <QRCodeModal image_QR="nequi-qr.jpeg" title="Nequi" />
+          <QRCodeModal image_QR="nequi-qr.png" title="Nequi" />
         </CardContent>
       </div>
     </Card>
