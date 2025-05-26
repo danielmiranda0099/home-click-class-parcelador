@@ -42,7 +42,7 @@ export async function createNewUser(prev_state, form_dada) {
           : [key, value]
       )
     );
-    console.log("normalized_data *****************", normalized_data);
+    
     const exist_user = await prisma.user.findFirst({
       where: {
         email,
@@ -61,7 +61,6 @@ export async function createNewUser(prev_state, form_dada) {
     normalized_data.shortName = short_name;
     normalized_data.fullName = full_name;
 
-    console.log("normalized_data *****************", normalized_data);
     const user = await prisma.user.create({
       data: {
         ...normalized_data,
