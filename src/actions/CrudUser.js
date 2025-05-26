@@ -38,21 +38,22 @@ export async function createNewUser(prev_state, form_dada) {
     const normalized_data = Object.fromEntries(
       Object.entries(form_dada).map(([key, value]) =>
         key !== "password"
-          ? [key, typeof value === "string" ? value.toLowerCase() : value]
+          ? [key, typeof value === "string" ? value.trim().toLowerCase() : value]
           : [key, value]
       )
     );
+    console.log("normalized_data *****************", normalized_data);
     const exist_user = await prisma.user.findFirst({
       where: {
         email,
       },
     });
     if (exist_user) {
-      return RequestResponse.error("El usuario ya esta registrado.");
+      return RequestResponse.error(`El correo "${email}" ya esta registrado.`);
     }
 
-    const short_name = firstName.split(" ")[0] + " " + lastName.split(" ")[0];
-    const full_name = firstName + " " + lastName;
+    const short_name = firstName.trim().split(" ")[0] + " " + lastName.trim().split(" ")[0];
+    const full_name = firstName.trim() + " " + lastName.trim();
 
     normalized_data.password = await bcrypt.hash(normalized_data.password, 10);
     normalized_data.role = [normalized_data.role];
@@ -60,6 +61,7 @@ export async function createNewUser(prev_state, form_dada) {
     normalized_data.shortName = short_name;
     normalized_data.fullName = full_name;
 
+    console.log("normalized_data *****************", normalized_data);
     const user = await prisma.user.create({
       data: {
         ...normalized_data,
@@ -118,7 +120,7 @@ export async function updateUser(prev_state, form_dada) {
     const normalized_data = Object.fromEntries(
       Object.entries(form_dada).map(([key, value]) =>
         key !== "password"
-          ? [key, typeof value === "string" ? value.toLowerCase() : value]
+          ? [key, typeof value === "string" ? value.trim().toLowerCase() : value]
           : [key, value]
       )
     );
@@ -136,8 +138,8 @@ export async function updateUser(prev_state, form_dada) {
       return RequestResponse.error("El usuario no existe.");
     }
 
-    const short_name = firstName.split(" ")[0] + " " + lastName.split(" ")[0];
-    const full_name = firstName + " " + lastName;
+    const short_name = firstName.trim().split(" ")[0] + " " + lastName.trim().split(" ")[0];
+    const full_name = firstName.trim() + " " + lastName.trim();
 
     if (password && password.length > 5 && isChangePassword) {
       normalized_data.password = await bcrypt.hash(
