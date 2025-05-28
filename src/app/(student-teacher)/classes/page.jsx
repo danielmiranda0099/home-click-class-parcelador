@@ -6,7 +6,9 @@ import {
   FormConfirmClass,
   FormLessonReport,
   FormReschedule,
+  WeeklySchedule,
 } from "@/components";
+import CardWeeklySchedule from "@/components/CardWeeklySchedule";
 import { DollarIcon } from "@/components/icons";
 import { PopupDetailLesson } from "@/components/popupDetailLesson";
 import Link from "next/link";
@@ -31,6 +33,10 @@ export default async function ClassesPage() {
         <CardStatusLegendLesson rol={role[0]} />
       </section>
 
+      <section className="px-2">
+        <CardWeeklySchedule userId={user.id} />
+      </section>
+
       {role[0] === "student" && (
         <div className="absolute top-0 sm:top-2 right-2 sm:right-8">
           <Link
@@ -44,7 +50,7 @@ export default async function ClassesPage() {
         </div>
       )}
 
-      <CalendarUI rol={role[0]} user={user}/>
+      <CalendarUI rol={role[0]} user={user} />
     </div>
   );
 }
