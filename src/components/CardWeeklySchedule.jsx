@@ -16,7 +16,7 @@ export default function CardWeeklySchedule({ userId }) {
     >
       <AccordionItem value="item-1">
         <AccordionTrigger className="w-full px-4">
-          <div className="flex gap-2"> <h3 className="text-xl font-bold">Ver mi horario</h3> <CalendarIcon /></div>
+          <div className="flex gap-2"> <h3 className="text-xl font-bold">Mi horario</h3> <CalendarIcon /></div>
         </AccordionTrigger>
         <AccordionContent>
           <WeeklySchedule userId={userId} />
