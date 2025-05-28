@@ -10,6 +10,16 @@ export const DAYS_OF_WEEK_NUMBER = {
   Sa: 6,
 };
 
+export const DAYS_OF_WEEK_NUMBER_2 = {
+  Do: 6,
+  Lu: 0,
+  Ma: 1,
+  Mi: 2,
+  Ju: 3,
+  Vi: 4,
+  Sa: 5,
+};
+
 export const DAYS_OF_WEEK = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do"];
 export const DAYS_OF_WEEK_2 = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"];
 

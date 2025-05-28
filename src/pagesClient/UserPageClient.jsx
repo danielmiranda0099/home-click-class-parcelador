@@ -157,7 +157,7 @@ export function UserPageClient({ initialData = { error: true }, id }) {
             </div>
           </Card>
 
-          {user.role[0] !== "admin" && <WeeklySchedule userId={user.id} />}
+          {user.role[0] !== "admin" && <WeeklySchedule userId={user.id} isAdmin />}
         </div>
       </div>
     );

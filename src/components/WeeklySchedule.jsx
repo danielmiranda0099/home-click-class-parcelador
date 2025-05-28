@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { PopupFormWeeklySchedule } from "./popupFormWeeklySchedule";
 import { getUserScheduleById } from "@/actions/CrudShedule";
 import { useEffect, useState } from "react";
-import { DAYS_OF_WEEK_2 } from "@/utils/constans";
+import { DAYS_OF_WEEK, DAYS_OF_WEEK_2 } from "@/utils/constans";
 
 const weekDaysDefault = [
   { day: "Lu", hours: ["-"] },
@@ -48,7 +48,7 @@ function DaySchedule({ day, hours, isLast }) {
   );
 }
 
-export function WeeklySchedule({ userId }) {
+export function WeeklySchedule({ userId, isAdmin = false }) {
   const [user_schedule, setUserSchedule] = useState(weekDaysDefault);
   const [is_open, setIsOpen] = useState(false);
 
@@ -73,6 +73,7 @@ export function WeeklySchedule({ userId }) {
 
     const formattedWeekDays = hasHours
       ? user_schedule.map((dayData) => {
+          // const dayNumber = dayData.day === 0 ? 6 : dayData.day - 1;
           const dayName = DAYS_OF_WEEK_2[dayData.day];
           const hours = dayData.hours.map(formatHour);
           // Completar con "-" hasta alcanzar el máximo de horarios
@@ -85,6 +86,16 @@ export function WeeklySchedule({ userId }) {
           };
         })
       : [];
+    const daysMap = {
+      Lu: 0,
+      Ma: 1,
+      Mi: 2,
+      Ju: 3,
+      Vi: 4,
+      Sa: 5,
+      Do: 6,
+    };
+    formattedWeekDays.sort((a, b) => daysMap[a.day] - daysMap[b.day]);
     setUserSchedule(formattedWeekDays);
   };
 
@@ -95,13 +106,15 @@ export function WeeklySchedule({ userId }) {
   }, [is_open]);
 
   return (
-    <Card className="p-2 sm:p-4 w-full max-w-7xl mx-auto overflow-x-hidden flex flex-col gap-3 h-fit">
-      <PopupFormWeeklySchedule
-        is_open={is_open}
-        setIsOpen={setIsOpen}
-        userId={userId}
-        userSchedule={user_schedule}
-      />
+    <Card className="p-2 sm:p-4 w-full sm:w-7xl sm:max-w-7xl mx-auto overflow-x-hidden flex flex-col gap-3 h-fit">
+      {isAdmin && (
+        <PopupFormWeeklySchedule
+          is_open={is_open}
+          setIsOpen={setIsOpen}
+          userId={userId}
+          userSchedule={user_schedule}
+        />
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-7 gap-0">
         {user_schedule.map((day, index) => (
           <DaySchedule

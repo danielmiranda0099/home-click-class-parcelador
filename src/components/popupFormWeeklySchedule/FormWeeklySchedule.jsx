@@ -4,7 +4,7 @@ import { DialogClose, DialogFooter } from "@/components/ui/dialog";
 import { PlusIcon, XIcon } from "@/components/icons";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { DAYS_OF_WEEK, DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
+import { DAYS_OF_WEEK, DAYS_OF_WEEK_NUMBER_2 } from "@/utils/constans";
 import { ErrorAlert } from "@/components";
 import { useCustomToast } from "@/hooks";
 import { updateSchedule, validateScheduleData } from "@/actions/CrudShedule";
@@ -99,6 +99,11 @@ export function FormWeeklySchedule({ userId, userSchedule, setIsOpen }) {
 
   useEffect(() => {
     if (form_state_validate?.success) {
+      const updatedSchedule = form_state_validate.data.data[0].formattedSchedule.map((entry) => ({
+        ...entry,
+        day: (entry.day + 1) % 7,
+      }));
+      form_state_validate.data.data[0].formattedSchedule = updatedSchedule;
       if (form_state_validate.data.isValid) {
         dispath(form_state_validate.data.data);
       } else {
@@ -135,7 +140,7 @@ export function FormWeeklySchedule({ userId, userSchedule, setIsOpen }) {
       <div className="space-y-4 min-h-[35vh]">
         <div className="grid grid-cols-3 sm:grid-cols-7 gap-2">
           {DAYS_OF_WEEK.map((day) => {
-            const dayNumber = DAYS_OF_WEEK_NUMBER[day];
+            const dayNumber = DAYS_OF_WEEK_NUMBER_2[day];
             const dayTimes = schedule[dayNumber];
 
             return (
