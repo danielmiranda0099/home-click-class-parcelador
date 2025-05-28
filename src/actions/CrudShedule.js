@@ -85,9 +85,7 @@ export async function validateScheduleData(prevState, data) {
         const hourSet = new Set();
 
         for (const hourStr of hours) {
-          if (
-            !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(hourStr)
-          ) {
+          if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(hourStr)) {
             return RequestResponse.error(`Invalid hour: ${hourStr}`);
           }
 
@@ -155,6 +153,7 @@ export async function updateSchedule(prevState, data) {
       return RequestResponse.error("Invalid schedule data format 1");
     }
 
+    console.log("data ************************", JSON.stringify(data, null, 2))
     await prisma.$transaction(async (tx) => {
       for (const userSchedule of data) {
         const { userId, formattedSchedule } = userSchedule;
@@ -185,8 +184,9 @@ export async function updateSchedule(prevState, data) {
  * const response = await getUserScheduleById("123");
  * console.log(response);
  */
-export async function getUserScheduleById(userId) {
+export async function getUserScheduleById(id) {
   try {
+    const userId = parseInt(id);
     const userSchedule = await prisma.schedule.findMany({
       where: {
         userId: userId,
