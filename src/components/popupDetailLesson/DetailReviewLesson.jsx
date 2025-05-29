@@ -12,7 +12,7 @@ export function DetailReviewLesson({ lesson, rol }) {
           <p className="font-medium">Resumen de clase</p>
         </div>
 
-        {rol === "admin" &&
+        {(rol === "admin" || rol === "student")&&
           lesson?.isConfirmed &&
           lesson.studentLessons.map((lesson_student) => (
             <div
