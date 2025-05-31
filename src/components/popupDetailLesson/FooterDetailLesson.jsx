@@ -30,6 +30,7 @@ import {
   cancelTeacherPaymentAndRegisterDebt,
 } from "@/actions/lessonDebts";
 import { useSearchParams } from "next/navigation";
+import { DisconfirmLesson } from "./DisconfirmLesson";
 
 export function FooterDetailLesson({ rol, showFooter }) {
   const { isShowFooterDetailLesson } = useUiStore();
@@ -160,6 +161,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-2">
+              {<DisconfirmLesson rol={rol} />}
               {rol === "admin" &&
                 !lesson?.studentLessons[0].isStudentPaid &&
                 !lesson.isGroup && (
