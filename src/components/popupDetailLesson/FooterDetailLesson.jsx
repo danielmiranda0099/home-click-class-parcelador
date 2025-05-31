@@ -31,6 +31,8 @@ import {
 } from "@/actions/lessonDebts";
 import { useSearchParams } from "next/navigation";
 import { DisconfirmLesson } from "./DisconfirmLesson";
+import { isCurrentDateGreaterOrEqual } from "@/utils/isCurrentDateGreaterOrEqual";
+import { FormattedDate } from "@/utils/formattedDate";
 
 export function FooterDetailLesson({ rol, showFooter }) {
   const { isShowFooterDetailLesson } = useUiStore();
@@ -140,25 +142,27 @@ export function FooterDetailLesson({ rol, showFooter }) {
               )}
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
-            <div className="flex flex-col sm:flex-row gap-2">
-              {rol === "student" &&
-                !lesson?.studentLessons.find(
-                  (student_lesson) =>
-                    student_lesson.studentId ===
-                    parseInt(user_session?.user.id, 10)
-                )?.isConfirmed && (
-                  <Button
-                    className="flex gap-2"
-                    onClick={async () => {
-                      setPopupDetailLesson(false);
-                      setPopupFormConfirmClass(true);
-                    }}
-                  >
-                    <CheckIcon size={18} />
-                    Confirm Class
-                  </Button>
-                )}
-            </div>
+            {isCurrentDateGreaterOrEqual(FormattedDate(lesson.startDate)) && (
+              <div className="flex flex-col sm:flex-row gap-2">
+                {rol === "student" &&
+                  !lesson?.studentLessons.find(
+                    (student_lesson) =>
+                      student_lesson.studentId ===
+                      parseInt(user_session?.user.id, 10)
+                  )?.isConfirmed && (
+                    <Button
+                      className="flex gap-2"
+                      onClick={async () => {
+                        setPopupDetailLesson(false);
+                        setPopupFormConfirmClass(true);
+                      }}
+                    >
+                      <CheckIcon size={18} />
+                      Confirm Class
+                    </Button>
+                  )}
+              </div>
+            )}
 
             <div className="flex flex-col sm:flex-row gap-2">
               {<DisconfirmLesson rol={rol} />}
