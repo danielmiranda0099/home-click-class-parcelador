@@ -210,7 +210,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
                     }}
                   >
                     <DollarIcon size={18} />
-                    Pago Estudiante
+                    Canc Pago Estudiante
                   </Button>
                 )}
               {rol === "admin" &&
@@ -281,7 +281,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
                           disabled={status_button.paidStudent}
                         >
                           <ChevronDown size={18} />
-                          Pago Estudiante
+                          Canc Pago Estudiante
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
@@ -298,7 +298,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
                                   const data =
                                     await cancelStudentPaymentAndRegisterDebt(
                                       lesson?.id,
-                                      student_lesson.studentId,
+                                      student_lesson.studentId
                                     );
                                   setStatusButton({
                                     ...status_button,
@@ -388,7 +388,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
                     }}
                   >
                     <DollarIcon size={18} />
-                    Pago Profesor
+                    Canc Pago Profesor
                   </Button>
                 )}
               {rol === "teacher" && !lesson?.isRegistered && (
@@ -400,7 +400,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
                   }}
                 >
                   <PencilIcon size={18} />
-                  Editar Informe
+                  {lesson?.isConfirmed ? "Registrar Clase" : "Editar Informe"}
                 </Button>
               )}
               {rol !== "student" && (
