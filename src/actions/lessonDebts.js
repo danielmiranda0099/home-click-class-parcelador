@@ -104,6 +104,131 @@ export async function confirmLessonAndRegisterDebt(prev, data_form) {
   }
 }
 
+/**
+ * Desconfirma una lección para un estudiante y, si tiene éxito, elimina la deuda asociada.
+ * revierte la confirmación de la lección y la StudentLesson.
+ * También intenta revertir la actualización del averageScore del profesor.
+ * @param prevState - Estado anterior (para useFormState).
+ * @param formData - Datos del formulario, debe contener 'lesson_id'.
+ */
+export async function disconfirmLesson(lessonId, studentId) {
+  try {
+    const lesson_id = parseInt(lessonId, 10);
+    const student_id = parseInt(studentId, 10);
+    if (isNaN(lesson_id) || isNaN(student_id)) {
+      return RequestResponse.error("Invalid IDs.");
+    }
+
+    const studentLessonRecord = await prisma.studentLesson.findUnique({
+      where: {
+        studentId_lessonId: { studentId: student_id, lessonId: lesson_id },
+      },
+      include: {
+        lesson: {
+          include: {
+            teacher: {
+              select: { averageScore: true },
+            },
+          },
+        },
+      },
+    });
+
+    if (!studentLessonRecord) {
+      return RequestResponse.error("Registro de StudentLesson no encontrado.");
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.studentLesson.update({
+        where: {
+          studentId_lessonId: {
+            studentId: student_id,
+            lessonId: lesson_id,
+          },
+        },
+        data: {
+          isConfirmed: false,
+          lessonScore: null,
+          studentObservations: null,
+        },
+      });
+
+      const otherConfirmedStudentLessons = await tx.studentLesson.findMany({
+        where: {
+          lessonId: lesson_id,
+          isConfirmed: true,
+        },
+        select: { id: true },
+        take: 1,
+      });
+
+      const newLessonConfirmedStatus = otherConfirmedStudentLessons.length > 0;
+
+      // Update lesson isConfirmed
+      await tx.lesson.update({
+        where: { id: lesson_id },
+        data: {
+          isConfirmed: newLessonConfirmedStatus,
+          isRegistered: false,
+        },
+      });
+
+      //Adjust Teacher averageScore
+      const teacherId = studentLessonRecord.lesson.teacherId;
+      const teacher = await tx.user.findUnique({
+        where: { id: teacherId },
+        select: { averageScore: true },
+      });
+      if (teacher) {
+        let updateTeacherAverage = teacher.averageScore + 0.3;
+        await tx.user.update({
+          where: { id: teacherId },
+          data: { averageScore: updateTeacherAverage },
+        });
+      } else {
+        console.warn(
+          `Profesor con ID ${teacherId} no encontrado para revertir averageScore.`
+        );
+      }
+      const debtDeletionResult = await deleteDebt(lesson_id, student_id, tx);
+      if (!debtDeletionResult.success) {
+        //Rollback
+        throw new Error(
+          "Falló la eliminación de la deuda, revirtiendo cambios de desconfirmación."
+        );
+      }
+    });
+
+    return RequestResponse.success();
+  } catch (error) {
+    console.error("Error en desconfirmLesson():", error);
+    return RequestResponse.error(
+      error.message || "Falló la desconfirmación de la lección."
+    );
+  }
+}
+
+async function deleteDebt(lesson_id, student_id, tx) {
+  const prismaClient = tx || prisma;
+  try {
+    await prismaClient.debt.deleteMany({
+      where: {
+        lessonId: lesson_id,
+        userId: student_id,
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error(
+      `Error in deleteDebt() for lesson ${lesson_id}, student ${student_id}:`,
+      error
+    );
+    if (!tx) throw error;
+    return { success: false };
+  }
+}
+
 export async function registerAndSaveLessonReportAndRegisterDebt(
   prev,
   form_data
