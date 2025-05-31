@@ -8,7 +8,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useUiStore } from "@/store/uiStores";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { isCurrentDateGreater } from "@/utils/isCurrentDateGreater";
-import { FormattedDate } from "@/utils/formattedDate";
 import { getMonth, getYear } from "date-fns";
 import { useRouter, useSearchParams } from "next/navigation";
 import { navigateMonth } from "@/utils/navigateMonth";
@@ -135,7 +134,7 @@ export function CalendarUI({ rol, user }) {
                 (rol === "teacher" &&
                   event.isConfirmed &&
                   !event.isRegistered)) &&
-              isCurrentDateGreater(FormattedDate(event.startDate)) &&
+              isCurrentDateGreater(event.startDate) &&
               `has-ping`,
           };
         }}

@@ -1,7 +1,11 @@
-export function isCurrentDateGreaterOrEqual(providedDateStr) {
-  const providedDate = new Date(providedDateStr.replace(" ", "T"));
+import { FormattedDate } from "./formattedDate";
+
+export function isCurrentDateGreaterOrEqual(providedDate) {
+  if (!providedDate) return false;
+  const providedDateStr = FormattedDate(providedDate);
+  const new_date = new Date(providedDateStr.replace(" ", "T"));
 
   const currentDate = new Date();
 
-  return currentDate >= providedDate;
+  return currentDate >= new_date;
 }

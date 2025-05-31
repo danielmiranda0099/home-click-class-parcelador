@@ -32,7 +32,6 @@ import {
 import { useSearchParams } from "next/navigation";
 import { DisconfirmLesson } from "./DisconfirmLesson";
 import { isCurrentDateGreaterOrEqual } from "@/utils/isCurrentDateGreaterOrEqual";
-import { FormattedDate } from "@/utils/formattedDate";
 
 export function FooterDetailLesson({ rol, showFooter }) {
   const { isShowFooterDetailLesson } = useUiStore();
@@ -142,7 +141,7 @@ export function FooterDetailLesson({ rol, showFooter }) {
               )}
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
-            {isCurrentDateGreaterOrEqual(FormattedDate(lesson.startDate)) && (
+            {isCurrentDateGreaterOrEqual(lesson.startDate) && (
               <div className="flex flex-col sm:flex-row gap-2">
                 {rol === "student" &&
                   !lesson?.studentLessons.find(
