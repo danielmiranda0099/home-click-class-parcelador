@@ -46,7 +46,10 @@ export function FormFieldStudents({ data_lesson, setDataLesson }) {
   return (
     <>
       {data_lesson.students.map((studentData, index) => (
-        <div key={index} className="grid grid-cols-1 sm:grid-cols-2 gap-4 relative">
+        <div
+          key={index}
+          className="grid grid-cols-1 sm:grid-cols-2 gap-4 relative"
+        >
           <div className="grid gap-2 overflow-hidden">
             <Label>Student</Label>
             <InputSearch
@@ -84,7 +87,7 @@ export function FormFieldStudents({ data_lesson, setDataLesson }) {
           type="button"
           onClick={addNewStudent}
         >
-          Nuevo Etudiante
+          Agregar Etudiante
           <PlusCircleIcon />
         </Button>
       </div>
