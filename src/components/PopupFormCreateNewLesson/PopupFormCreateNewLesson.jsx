@@ -18,7 +18,7 @@ export function PopupFormCreateNewLesson() {
     <Dialog open={is_open} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[900px] px-2 sm:px-6 overflow-y-scroll max-h-[90vh]">
         <DialogHeader>
-          <DialogTitle className="text-left">New Class</DialogTitle>
+          <DialogTitle className="text-left">Schedule New Classes</DialogTitle>
         </DialogHeader>
         <FormCreateNewLesson />
       </DialogContent>
