@@ -10,7 +10,7 @@ import { DAYS_OF_WEEK_NUMBER } from "./constans";
  * @param {string} startDate - Start date in "YYYY-MM-DD" format.
  * @returns {string[]} Array of scheduled lesson dates in ISO format.
  */
-export function scheduleLessons(selected_days, times, period, startDate) {
+export function scheduleLessonsByPeriod(selected_days, times, period, startDate) {
   try {
     const dates = [];
     let currentDate = moment(startDate); // Iniciar desde la fecha proporcionada
