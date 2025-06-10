@@ -1,7 +1,7 @@
 "use server";
 import "server-only";
 import prisma from "@/lib/prisma";
-import { DAYS_OF_WEEK } from "@/utils/constans";
+import { DAYS_OF_WEEK, DAYS_OF_WEEK_NUMBER } from "@/utils/constans";
 import { isValidDate } from "@/utils/dateValidator";
 import { validateScheduleTimes } from "@/utils/validateScheduleTimes";
 
@@ -35,11 +35,53 @@ export async function validateTeacher(teacher) {
   return { isValid: true };
 }
 
-export async function validatePeriodOfTime(periodOfTime) {
-  if (!periodOfTime) {
+export async function validatePeriodOfTime(periodOfTime, numberOfClasses) {
+  if (
+    !periodOfTime &&
+    (numberOfClasses.numbers === "0" || !numberOfClasses.numbers)
+  ) {
     return {
       isValid: false,
-      error: "Complete el campo de periodo de tiempo.",
+      error: "Seleccione un periodo de tiempo.",
+    };
+  }
+  return { isValid: true };
+}
+
+export async function validateSheduleByCount(
+  periodOfTime,
+  numberOfClasses,
+  selected_days
+) {
+  if (periodOfTime) return { isValid: true };
+
+  const totalClasses = parseInt(numberOfClasses.numbers, 10);
+
+  if (isNaN(totalClasses) || totalClasses <= 0) {
+    return {
+      isValid: false,
+      error: "El número de clases debe ser mayor a 0.",
+    };
+  }
+
+  const selectedDaysNumbers = selected_days.map(
+    (day) => DAYS_OF_WEEK_NUMBER[day]
+  );
+
+  if(totalClasses > 1 && selectedDaysNumbers.length === 0) {
+    return {
+      isValid: false,
+      error: "Debes seleccionar al menos un día para agendar múltiples clases.",
+    };
+  }
+  if (
+    totalClasses > 1 &&
+    selectedDaysNumbers.length > 0 &&
+    selectedDaysNumbers.length > totalClasses
+  ) {
+    return {
+      isValid: false,
+      error: "Los dias seleccionados no pueden ser mayores al número de clases.",
     };
   }
   return { isValid: true };
@@ -49,15 +91,15 @@ export async function validateStartDate(startDate) {
   if (!startDate || !isValidDate(startDate)) {
     return {
       isValid: false,
-      error: "Complete o verifique el campo de fecha de inicio.",
+      error: "Seleccione una fecha de inicio.",
     };
   }
   return { isValid: true };
 }
 
-export async function validateSelectedDays(selectedDays) {
+export async function validateSelectedDays(selectedDays, numberOfClasses) {
   if (
-    selectedDays.length <= 0 ||
+    (selectedDays.length <= 0 && numberOfClasses.numbers === "0") ||
     !selectedDays.every((day) => DAYS_OF_WEEK.includes(day))
   ) {
     return {
@@ -68,9 +110,9 @@ export async function validateSelectedDays(selectedDays) {
   return { isValid: true };
 }
 
-export async function validateSchedule(times, selectedDays) {
+export async function validateSchedule(times, selectedDays, numberOfClasses) {
   if (
-    !validateScheduleTimes(times) ||
+    (!validateScheduleTimes(times) && numberOfClasses.numbers === "0") ||
     !(selectedDays.length === Object.keys(times).length)
   ) {
     return {
@@ -82,7 +124,7 @@ export async function validateSchedule(times, selectedDays) {
 }
 
 export async function validateDates(all_dates) {
-  if(!all_dates) return { isValid: false, error: "Error en las fechas.",}
+  if (!all_dates) return { isValid: false, error: "Error en las fechas." };
   all_dates.forEach((date, index) => {
     if (isNaN(Date.parse(date))) {
       return {
@@ -164,8 +206,9 @@ export async function formatAndValidateteacher(teacher) {
         isActive: true,
       },
     });
-    if (!user) throw new Error("Por favor, verifique que el profesor esté registrado.");
-    
+    if (!user)
+      throw new Error("Por favor, verifique que el profesor esté registrado.");
+
     if (!user.isActive)
       throw new Error(`El profesor ${user?.fullName} no está activado.`);
     if (!teacher.payment)

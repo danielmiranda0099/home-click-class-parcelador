@@ -11,6 +11,7 @@ import {
   validateTeacher,
   formatAndValidateteacher,
   validateDates,
+  validateSheduleByCount,
 } from "@/utils/lessonCrudValidations";
 import { auth } from "@/auth";
 import moment from "moment";
@@ -60,15 +61,17 @@ export async function validateLessonData(prev_state, lesson_data) {
       selectedDays,
       times,
       allDates,
+      numberOfClasses,
     } = lesson_data;
 
     const validations = [
       await validateStudents(students),
       await validateTeacher(teacher),
-      await validatePeriodOfTime(periodOfTime),
+      await validatePeriodOfTime(periodOfTime, numberOfClasses),
+      await validateSheduleByCount(periodOfTime, numberOfClasses, selectedDays),
       await validateStartDate(startDate),
-      await validateSelectedDays(selectedDays),
-      await validateSchedule(times, selectedDays),
+      await validateSelectedDays(selectedDays, numberOfClasses),
+      await validateSchedule(times, selectedDays, numberOfClasses),
       await validateDates(allDates),
     ];
 
