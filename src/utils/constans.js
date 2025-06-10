@@ -43,6 +43,7 @@ export const DATA_LESSON_DEFAULT = {
   startDate: moment().format("YYYY-MM-DD"),
   selectedDays: [],
   times: {},
+  numberOfClasses: {numbers: "0", hour: ""},
 };
 
 export const MONTHS_OF_YEAR = {

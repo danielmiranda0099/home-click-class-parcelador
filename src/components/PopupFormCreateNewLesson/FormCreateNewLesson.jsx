@@ -12,6 +12,8 @@ import { useUiStore } from "@/store/uiStores";
 
 import { DATA_LESSON_DEFAULT } from "@/utils/constans";
 
+import { scheduleLessonsByPeriod } from "@/utils/scheduleLessonsByPeriod";
+import { scheduleLessonsByCount } from "@/utils/scheduleLessonsByCount";
 import { createNewLesson, validateLessonData } from "@/actions/CrudLesson";
 import { PeriodOfTime } from "./PeriodOfTime";
 import { SelectedDaysAndTime } from "./SelectedDaysAndTime";
@@ -19,7 +21,6 @@ import { FormFieldStudents } from "./FormFieldStudents";
 import { FormFieldTeacher } from "./FormFieldTeacher";
 import { ErrorAlert } from "@/components";
 import { useCustomToast } from "@/hooks";
-import { scheduleLessons } from "@/utils/scheduleLessons";
 import { useSearchParams } from "next/navigation";
 import {
   getUserScheduleById,
@@ -114,13 +115,30 @@ export function FormCreateNewLesson() {
 
   const OnCreateNewLessons = async () => {
     setErrorMessage("");
-    const all_dates = scheduleLessons(
-      data_lesson.selectedDays,
-      data_lesson.times,
-      data_lesson.periodOfTime,
-      data_lesson.startDate
-    );
-
+    let all_dates;
+    if (
+      data_lesson.periodOfTime !== "" &&
+      (data_lesson.numberOfClasses.numbers === "0" || !data_lesson.numberOfClasses.numbers)
+    ) {
+      all_dates = scheduleLessonsByPeriod(
+        data_lesson.selectedDays,
+        data_lesson.times,
+        data_lesson.periodOfTime,
+        data_lesson.startDate,
+      );
+    }
+    if (
+      data_lesson.periodOfTime === "" &&
+      (data_lesson.numberOfClasses.numbers !== "0" || data_lesson.numberOfClasses.numbers)
+    ) {
+      all_dates = scheduleLessonsByCount(
+        data_lesson.selectedDays,
+        data_lesson.times,
+        data_lesson.startDate,
+        data_lesson.numberOfClasses
+      );
+    }
+    
     data_lesson.allDates = all_dates.data;
     dispathValidateLessonData(data_lesson);
   };

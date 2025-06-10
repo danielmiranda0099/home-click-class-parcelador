@@ -31,6 +31,7 @@ export function SelectedDaysAndTime({ data_lesson, setDataLesson }) {
               }
               className={`w-10 h-10 hover:bg-blue-600 hover:text-white ${data_lesson.selectedDays.includes(day) && "bg-blue-400"}`}
               onClick={() => handleDaySelect(day)}
+              disabled={data_lesson.numberOfClasses.numbers <= "1" && data_lesson.periodOfTime === ""}
             >
               {day}
             </Button>
@@ -39,7 +40,7 @@ export function SelectedDaysAndTime({ data_lesson, setDataLesson }) {
               className={`w-full mt-2 border-gray-500 ${data_lesson.selectedDays.includes(day) && "border-blue-500"}`}
               value={data_lesson.times[DAYS_OF_WEEK_NUMBER[day]] || ""}
               onChange={(e) => handleTimeChange(day, e.target.value)}
-              disabled={!data_lesson.selectedDays.includes(day)}
+              disabled={!data_lesson.selectedDays.includes(day) || (data_lesson.numberOfClasses.numbers <= "1" && data_lesson.periodOfTime === "")}
             />
           </div>
         ))}
