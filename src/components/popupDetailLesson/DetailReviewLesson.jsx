@@ -91,7 +91,7 @@ export function DetailReviewLesson({ lesson, rol }) {
             </div>
           )}
 
-          {rol !== "student" && lesson?.teacherObservations && (
+          {lesson?.teacherObservations && (
             <div className="flex items-start gap-4">
               <div>
                 <p className="text-sm sm:text-base font-medium">Observations</p>
