@@ -44,13 +44,19 @@ export async function statusLesson(lesson, rol) {
     }
     if (
       lesson?.isScheduled &&
-      lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+      lesson?.studentLessons.find(
+        (student_lesson) =>
+          student_lesson.studentId === parseInt(session?.user?.id, 10)
+      ).isStudentPaid
     ) {
       return [COLORS.BLUE_BLACK_BG, COLORS.WHITE, "Agendada - Pagada"]; //BLUE
     }
     if (
       lesson?.isScheduled &&
-      !lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+      !lesson?.studentLessons.find(
+        (student_lesson) =>
+          student_lesson.studentId === parseInt(session?.user?.id, 10)
+      ).isStudentPaid
     ) {
       return [COLORS.BLUE_BG, COLORS.BLUE_TEXT, "Agendada - Pendiente De Pago"]; //BLUE
     }
