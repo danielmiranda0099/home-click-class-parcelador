@@ -2,6 +2,7 @@ export const COLORS = {
   GREEN_BG: "#86efac",
   GREEN_TEXT: "#052e16",
   BLUE_BG: "#7dd3fc",
+  BLUE_BLACK_BG: "#0784eb",
   BLUE_TEXT: "#172554",
   PURPLE_BG: "#c4b5fd",
   PURPLE_TEXT: "#1e1b4b",
@@ -13,4 +14,5 @@ export const COLORS = {
   FUCHSIA_TEXT: "#3b0764",
   RED_BG: "#f87171",
   RED_TEXT: "#450a0a",
+  WHITE: "#ffffff",
 };
