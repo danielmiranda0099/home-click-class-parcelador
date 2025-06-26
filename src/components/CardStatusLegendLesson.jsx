@@ -32,6 +32,13 @@ function ContentCardStatusLegendLesson({ rol }) {
           <span className="text-sm sm:text-base">Agendada</span>
         </div>
 
+        {rol !== "teacher" && (
+          <div className="flex flex-row gap-2 justify-start items-center">
+            <div className="bg-blue-600 w-5 h-5 rounded-full"></div>
+            <span className="text-sm sm:text-base">Agendada y pagada</span>
+          </div>
+        )}
+
         {rol !== "student" && (
           <div className="flex flex-row gap-2 justify-start items-center">
             <div className="bg-purple-300 w-5 h-5 rounded-full"></div>
