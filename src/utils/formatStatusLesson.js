@@ -15,12 +15,12 @@ export async function statusLesson(lesson, rol) {
     if (
       lesson?.isScheduled &&
       lesson?.studentLessons.find(
-        (student_lesson) =>
-          student_lesson.studentId === parseInt(session?.user?.id, 10)
+        (sl) =>
+          sl.studentId === parseInt(session?.user?.id, 10)
       ).isConfirmed &&
       !lesson?.studentLessons.find(
-        (student_lesson) =>
-          student_lesson.studentId === parseInt(session?.user?.id, 10)
+        (sl) =>
+          sl.studentId === parseInt(session?.user?.id, 10)
       ).isStudentPaid
     ) {
       return [
@@ -32,12 +32,12 @@ export async function statusLesson(lesson, rol) {
     if (
       lesson?.isScheduled &&
       lesson?.studentLessons.find(
-        (student_lesson) =>
-          student_lesson.studentId === parseInt(session?.user?.id, 10)
+        (sl) =>
+          sl.studentId === parseInt(session?.user?.id, 10)
       ).isConfirmed &&
       lesson?.studentLessons.find(
-        (student_lesson) =>
-          student_lesson.studentId === parseInt(session?.user?.id, 10)
+        (sl) =>
+          sl.studentId === parseInt(session?.user?.id, 10)
       ).isStudentPaid
     ) {
       return [COLORS.GREEN_BG, COLORS.GREEN_TEXT, "Finalizada - Pagada"]; //Green
@@ -45,8 +45,8 @@ export async function statusLesson(lesson, rol) {
     if (
       lesson?.isScheduled &&
       lesson?.studentLessons.find(
-        (student_lesson) =>
-          student_lesson.studentId === parseInt(session?.user?.id, 10)
+        (sl) =>
+          sl.studentId === parseInt(session?.user?.id, 10)
       ).isStudentPaid
     ) {
       return [COLORS.BLUE_BLACK_BG, COLORS.WHITE, "Agendada - Pagada"]; //BLUE
@@ -54,8 +54,8 @@ export async function statusLesson(lesson, rol) {
     if (
       lesson?.isScheduled &&
       !lesson?.studentLessons.find(
-        (student_lesson) =>
-          student_lesson.studentId === parseInt(session?.user?.id, 10)
+        (sl) =>
+          sl.studentId === parseInt(session?.user?.id, 10)
       ).isStudentPaid
     ) {
       return [COLORS.BLUE_BG, COLORS.BLUE_TEXT, "Agendada - Pendiente De Pago"]; //BLUE
@@ -100,7 +100,7 @@ export async function statusLesson(lesson, rol) {
       lesson?.isConfirmed &&
       lesson?.isRegistered &&
       !lesson?.isTeacherPaid &&
-      !lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+      !lesson?.studentLessons.some((sl) => sl.isStudentPaid)
     ) {
       return [
         COLORS.ORANGE_BG,
@@ -115,7 +115,7 @@ export async function statusLesson(lesson, rol) {
       lesson?.isConfirmed &&
       lesson?.isRegistered &&
       !lesson?.isTeacherPaid &&
-      lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+      lesson?.studentLessons.some((sl) => sl.isStudentPaid)
     ) {
       return [
         COLORS.ORANGE_BG,
@@ -130,7 +130,7 @@ export async function statusLesson(lesson, rol) {
       lesson?.isConfirmed &&
       lesson?.isRegistered &&
       lesson?.isTeacherPaid &&
-      lesson?.studentLessons.some((lesson) => !lesson.isStudentPaid)
+      lesson?.studentLessons.some((sl) => !sl.isStudentPaid)
     ) {
       return [
         COLORS.YELLOW_BG,
@@ -145,7 +145,7 @@ export async function statusLesson(lesson, rol) {
       lesson?.isConfirmed &&
       lesson?.isRegistered &&
       lesson?.isTeacherPaid &&
-      lesson?.studentLessons.every((lesson) => lesson.isStudentPaid)
+      lesson?.studentLessons.every((sl) => sl.isStudentPaid)
     ) {
       return [
         COLORS.GREEN_BG,
@@ -158,7 +158,7 @@ export async function statusLesson(lesson, rol) {
       lesson?.isScheduled &&
       lesson?.isConfirmed &&
       !lesson?.isRegistered &&
-      !lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+      !lesson?.studentLessons.some((sl) => sl.isStudentPaid)
     ) {
       return [
         COLORS.PURPLE_BG,
@@ -172,7 +172,7 @@ export async function statusLesson(lesson, rol) {
       lesson?.isScheduled &&
       lesson?.isConfirmed &&
       !lesson?.isRegistered &&
-      lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+      lesson?.studentLessons.some((sl) => sl.isStudentPaid)
     ) {
       return [
         COLORS.PURPLE_BG,
@@ -184,13 +184,13 @@ export async function statusLesson(lesson, rol) {
     }
     if (
       lesson?.isScheduled &&
-      lesson?.studentLessons.every((lesson) => lesson.isStudentPaid === false)
+      lesson?.studentLessons.every((sl) => sl.isStudentPaid === false)
     ) {
       return [COLORS.BLUE_BG, COLORS.BLUE_TEXT, "Agendada"]; //BLUE
     }
     if (
       lesson?.isScheduled &&
-      lesson?.studentLessons.some((lesson) => lesson.isStudentPaid)
+      lesson?.studentLessons.some((sl) => sl.isStudentPaid)
     ) {
       return [
         COLORS.BLUE_BLACK_BG,
