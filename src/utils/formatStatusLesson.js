@@ -184,7 +184,7 @@ export async function statusLesson(lesson, rol) {
     }
     if (
       lesson?.isScheduled &&
-      !lesson?.studentLessons.every((lesson) => lesson.isStudentPaid)
+      lesson?.studentLessons.every((lesson) => lesson.isStudentPaid === false)
     ) {
       return [COLORS.BLUE_BG, COLORS.BLUE_TEXT, "Agendada"]; //BLUE
     }
