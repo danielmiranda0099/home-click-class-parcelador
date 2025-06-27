@@ -15,7 +15,7 @@ import { useUserStore } from "@/store/userStore";
 
 export function FilterLesson({ isDisabled }) {
   const { lessons, setLessonsFiltered } = useLessonsStore();
-  const { user_selected: user } = useUserStore();
+  const { user_selected } = useUserStore();
   const [selectedFilter, setSelectedFilter] = useState("all");
 
   // Memoiza tus filtros para que no se redefinan en cada render
@@ -93,24 +93,33 @@ export function FilterLesson({ isDisabled }) {
     []
   );
 
-  useEffect(() => {
-    if (!lessons) return;
+useEffect(() => {
+  if (!lessons) return;
 
-    if (selectedFilter === "all") {
-      setLessonsFiltered(lessons);
-      return;
-    }
+  const selectedFilterFn = filters.find(f => f.value === selectedFilter)?.fn ?? (() => true);
 
-    const sel = filters.find((f) => f.value === selectedFilter);
-    // Si no encuentro el filtro, devuelvo todas
-    if (!sel) {
-      setLessonsFiltered(lessons);
-      return;
-    }
+  const isTeacher = user_selected?.role?.includes("teacher");
+  const isStudent = user_selected?.role?.includes("student");
 
-    const filtered = lessons.filter((lesson) => sel.fn(lesson, user));
-    setLessonsFiltered(filtered);
-  }, [selectedFilter, lessons, user, filters, setLessonsFiltered]);
+  const belongsToUser = (lesson) => {
+    const isStudentLesson = isStudent &&
+      lesson.studentLessons.some(sl => sl.studentId === user_selected.id);
+
+    const isTeacherLesson = isTeacher &&
+      lesson.teacherId === user_selected.id;
+
+    return isStudentLesson || isTeacherLesson;
+  };
+
+  const filteredLessons = lessons
+    .filter(selectedFilterFn)
+    .filter(lesson => user_selected?.id ? belongsToUser(lesson) : true);
+
+  setLessonsFiltered(filteredLessons);
+}, [selectedFilter, lessons, user_selected, filters, setLessonsFiltered]);
+
+
+
 
   return (
     <Select
