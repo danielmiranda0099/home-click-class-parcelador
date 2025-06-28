@@ -115,10 +115,15 @@ export async function getLessons(date_range) {
     }
 
     const where_clause = {};
+
     if (date_range.startOfMonth && date_range.endOfMonth) {
+      const offset = date_range.offsetInMs ?? 0;
+
       where_clause.startDate = {
-        gte: date_range.startOfMonth,
-        lte: new Date(new Date(date_range.endOfMonth).setHours(23, 59, 59, 0)),
+        gte: new Date(date_range.startOfMonth),
+        lte: new Date(
+          new Date(date_range.endOfMonth).setHours(23, 59, 59, 999) + offset
+        ),
       };
     }
 
@@ -185,12 +190,11 @@ export async function getLessons(date_range) {
         },
       },
       orderBy: {
-        startDate: "asc", // Ordenar por startDate en orden ascendente (de más antigua a más nueva)
+        startDate: "asc",
       },
     });
 
-    if (!lessons) return RequestResponse.success();
-    return RequestResponse.success(lessons);
+    return RequestResponse.success(lessons ?? []);
   } catch (error) {
     console.error("Error in getLessons():", error);
     return RequestResponse.error();
