@@ -11,6 +11,7 @@ import {
   Payments,
   TableLessons,
 } from "@/components";
+import { CalendarBalance } from "@/components/calendar";
 import { PopupDetailLesson } from "@/components/popupDetailLesson";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUserSession } from "@/hooks";
@@ -134,6 +135,8 @@ export default function DashboardPage() {
             </p>
           )}
         </section>
+
+        <CalendarBalance lessons={lessons_filtered} />
 
         <TabsContent value="calendar">
           <CalendarUI rol="admin" />
