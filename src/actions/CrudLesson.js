@@ -562,7 +562,6 @@ export async function updateLesson(prev, updated_lesson_data) {
 
     data.isGroup = students_data.length > 1;
 
-    // console.log(data);
     await prisma.lesson.update({
       where: {
         id: lessonId,
@@ -1075,8 +1074,7 @@ export async function getWeeklyClasses(currentDate) {
   ); // Inicio del día actual
 
   const endDate = new Date(startOfCurrentDay);
-  endDate.setDate(new Date(startOfCurrentDay).getDate() + 7); // 7 días después
-  console.log("startOfCurrentDay", startOfCurrentDay, "endDate", endDate);
+  endDate.setDate(new Date(startOfCurrentDay).getDate() + 7);
   // 2. Obtener lecciones en el rango
   const lessons = await prisma.lesson.findMany({
     where: {
@@ -1088,8 +1086,6 @@ export async function getWeeklyClasses(currentDate) {
     select: { startDate: true },
     orderBy: { startDate: "asc" },
   });
-
-  console.log("*************** lessons_range_of_date ***************", lessons);
 
   return lessons;
 }
