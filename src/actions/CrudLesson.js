@@ -908,59 +908,113 @@ export async function overViewLessonStudent(id) {
 }
 
 /**
- * Fetches and aggregates various data points for a dashboard.
+ * Fetches and aggregates various data points for the admin dashboard.
  *
- * This function retrieves counts of scheduled lessons, unpaid teacher lessons,
- * unpaid student lessons, active teachers, and active students from the database
- * using Prisma ORM. It then returns this data in a structured format.
+ * This function retrieves:
+ * - Lessons that are scheduled but no estudiante ha pagado aún.
+ * - Lessons donde el profesor aún no ha sido pagado.
+ * - StudentLessons confirmadas pero no pagadas.
+ * - Lessons pagadas por estudiantes.
+ * - Totales de pagos pendientes y ganancia acumulada.
+ * - Conteo de usuarios activos por rol.
+ * - Conteo de clases programadas para la semana.
  *
  * @async
  * @function dataDashboard
- * @returns {Promise<Object>} A promise that resolves to an object containing the following properties:
- * @property {number} scheduledLessons - The number of lessons that are scheduled but not confirmed or canceled.
- * @property {number} unpaidTeacherLessons - The number of lessons where the teacher has not been paid yet.
- * @property {number} unpaidStudentLessons - The number of student lessons that are confirmed but not paid by the student.
- * @property {number} teacherCount - The number of active users with the role "teacher".
- * @property {number} studentCount - The number of active users with the role "student".
- * @property {Array<{day: string, classes: number}>} weeklyClasses - An array of objects where each object represents a day and the number of classes scheduled for that day.
+ * @param {string} current_date - ISO date string (e.g., from `new Date().toISOString()`), used for calculating weekly classes.
+ * @returns {Promise<Object>} A promise that resolves to an object containing dashboard metrics:
  *
- * @throws {Error} If there is an error during the database queries or processing, it logs the error and returns an error response.
+ * @property {number} scheduledLessons - Número de clases agendadas donde **ningún estudiante ha pagado** aún.
+ * @property {number} unpaidTeacherLessons - Número de clases impartidas que **no han sido pagadas al profesor**.
+ * @property {number} unpaidTeacherTotal - Total acumulado a pagar a profesores.
+ * @property {number} unpaidStudentLessons - Número de clases confirmadas por el estudiante pero **no pagadas**.
+ * @property {number} unpaidStudentTotal - Total acumulado que los estudiantes deben pagar.
+ * @property {number} scheduledAndPaidLessons - Número de clases agendadas **pagadas por al menos un estudiante**.
+ * @property {number} totalProfit - Suma total de lo abonado por estudiantes (usado como ganancia/profit).
+ * @property {number} teacherCount - Número de profesores activos.
+ * @property {number} studentCount - Número de estudiantes activos.
+ * @property {Array<{day: string, classes: number}>} weeklyClasses - Lista de objetos donde cada objeto representa un día y el número de clases programadas.
+ *
+ * @throws {Error} Si ocurre un error en las consultas o procesamiento, se captura y se retorna una respuesta de error.
  *
  * @example
- * const dashboardData = await dataDashboard();
+ * const dashboardData = await dataDashboard(new Date().toISOString());
  * console.log(dashboardData);
- * // Output might look like:
  * // {
- * //   scheduledLessons: 500,
- * //   unpaidTeacherLessons: 15,
- * //   unpaidStudentLessons: 3,
- * //   teacherCount: 20,
- * //   studentCount: 32
+ * //   scheduledLessons: 120,
+ * //   unpaidTeacherLessons: 8,
+ * //   unpaidTeacherTotal: 480,
+ * //   unpaidStudentLessons: 15,
+ * //   unpaidStudentTotal: 720,
+ * //   scheduledAndPaidLessons: 40,
+ * //   totalProfit: 1300,
+ * //   teacherCount: 12,
+ * //   studentCount: 58,
+ * //   weeklyClasses: [
+ * //     { day: 'Lu', classes: 8 },
+ * //     { day: 'Ma', classes: 6 },
+ * //     ...
+ * //   ]
  * // }
  */
 export async function dataDashboard(current_date) {
   try {
-    const scheduledLessons = await prisma.lesson.count({
+    const scheduledLessonsData = await prisma.lesson.findMany({
       where: {
         isScheduled: true,
-        isConfirmed: false,
         isCanceled: false,
+        isConfirmed: false,
+        studentLessons: {
+          every: {
+            isStudentPaid: false,
+          },
+        },
+      },
+      select: {
+        id: true,
       },
     });
+    const scheduledLessons = scheduledLessonsData.length;
 
-    const unpaidTeacherLessons = await prisma.lesson.count({
+    const unpaidTeacherData = await prisma.lesson.findMany({
       where: {
         isRegistered: true,
         isTeacherPaid: false,
       },
+      select: {
+        teacherPayment: true,
+      },
     });
 
-    const unpaidStudentLessons = await prisma.studentLesson.count({
+    const unpaidStudentData = await prisma.studentLesson.findMany({
       where: {
         isConfirmed: true,
         isStudentPaid: false,
       },
+      select: {
+        studentFee: true,
+      },
     });
+
+    const paidStudentLessons = await prisma.studentLesson.findMany({
+      where: {
+        isStudentPaid: true,
+        lesson: {
+          isScheduled: true,
+          isConfirmed: false,
+          isCanceled: false,
+        },
+      },
+      select: {
+        studentFee: true,
+      },
+    });
+
+    const scheduledAndPaidLessons = paidStudentLessons.length;
+    const totalProfit = paidStudentLessons.reduce(
+      (sum, l) => sum + (l.studentFee ?? 0),
+      0
+    );
 
     const teacherCount = await prisma.user.count({
       where: {
@@ -981,16 +1035,21 @@ export async function dataDashboard(current_date) {
     });
 
     const weekly_classes = await getWeeklyClasses(current_date);
-    console.log("current_date", current_date);
-    console.log(
-      "*************** weekly_classes ***************",
-      weekly_classes
-    );
 
     return RequestResponse.success({
       scheduledLessons,
-      unpaidTeacherLessons,
-      unpaidStudentLessons,
+      unpaidTeacherLessons: unpaidTeacherData.length,
+      unpaidTeacherTotal: unpaidTeacherData.reduce(
+        (sum, l) => sum + (l.teacherPayment ?? 0),
+        0
+      ),
+      unpaidStudentLessons: unpaidStudentData.length,
+      unpaidStudentTotal: unpaidStudentData.reduce(
+        (sum, s) => sum + (s.studentFee ?? 0),
+        0
+      ),
+      scheduledAndPaidLessons,
+      totalProfit,
       teacherCount,
       studentCount,
       weeklyClasses: weekly_classes,
