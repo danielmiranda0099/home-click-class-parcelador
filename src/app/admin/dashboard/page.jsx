@@ -7,6 +7,7 @@ import {
 } from "@/components/icons";
 import { CardWeeklyChart } from "@/components";
 import { dataDashboard } from "@/actions/CrudLesson";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 const nextSevenDaysDataDefault = [
   { day: "Lu", classes: 0 },
@@ -22,13 +23,19 @@ export default async function DashboardPage() {
   let data = {
     scheduledLessons: 0,
     unpaidTeacherLessons: 0,
+    unpaidTeacherTotal: 0,
     unpaidStudentLessons: 0,
+    unpaidStudentTotal: 0,
+    scheduledAndPaidLessons: 0,
+    totalProfit: 0,
     teacherCount: 0,
     studentCount: 0,
     weeklyClasses: nextSevenDaysDataDefault,
   };
 
-  const response = await dataDashboard(new Date(new Date().setHours(0,0,0,0)).toISOString());
+  const response = await dataDashboard(
+    new Date(new Date().setHours(0, 0, 0, 0)).toISOString()
+  );
 
   if (response.success) {
     data = response.data;
@@ -36,55 +43,82 @@ export default async function DashboardPage() {
 
   return (
     <div className="p-0 sm:p-4 space-y-6 bg-gray-50 min-h-screen">
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 sm:gap-4">
-        <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 sm:gap-4">
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-gray-600">
               Clases Agendadas
             </CardTitle>
-            <CalendarIcon size={"2rem"} color="#3b82f6" />
+            <CalendarIcon size="2rem" color="#3b82f6" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl sm:text-4xl font-bold text-blue-400">
+            <div className="text-xl sm:text-3xl font-bold text-blue-400">
               {data.scheduledLessons}
             </div>
-            <p className="text-xs text-gray-500 mt-1">
-              Total de clases programadas
-            </p>
+            
           </CardContent>
         </Card>
-        <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-gray-600">
               Pendientes (Profesores)
             </CardTitle>
-            <DollarIcon size={"2rem"} className="text-red-500" />
+            <DollarIcon size="2rem" className="text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl sm:text-4xl font-bold text-red-400">
-              {data.unpaidTeacherLessons}
-            </div>
+            <p className="text-xl sm:text-2xl font-bold text-red-400">
+              {formatCurrency(data.unpaidTeacherTotal)}
+            </p>
+            <p >
+              {data.unpaidTeacherLessons} clases
+            </p>
             <p className="text-xs text-gray-500 mt-1">
-              Clases por pagar a profesores
+              Total por pagar a profesores
             </p>
           </CardContent>
         </Card>
-        <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-gray-600">
               Pendientes (Estudiantes)
             </CardTitle>
-            <DollarIcon size={"2rem"} className="text-yellow-500" />
+            <DollarIcon size="2rem" className="text-yellow-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl sm:text-4xl font-bold text-yellow-500">
-              {data.unpaidStudentLessons}
-            </div>
+            <p className="text-xl sm:text-2xl font-bold text-yellow-500">
+              {formatCurrency(data.unpaidStudentTotal)}
+            </p>
+            <p >
+              {data.unpaidStudentLessons} clases
+            </p>
             <p className="text-xs text-gray-500 mt-1">
-              Clases por cobrar a estudiantes
+              Total a cobrar a estudiantes
             </p>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Agendadas y Pagadas
+            </CardTitle>
+            <DollarIcon size="2rem" className="text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-xl sm:text-2xl font-bold text-blue-600">
+              {formatCurrency(data.totalProfit)}
+            </p>
+            <p >
+              {data.scheduledAndPaidLessons} clases
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              Total abonado
+            </p>
+          </CardContent>
+        </Card>
+
         <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-gray-600">
@@ -99,6 +133,7 @@ export default async function DashboardPage() {
             <p className="text-xs text-gray-500 mt-1">Profesores activos</p>
           </CardContent>
         </Card>
+
         <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-gray-600">
@@ -110,14 +145,12 @@ export default async function DashboardPage() {
             <div className="text-2xl sm:text-4xl font-bold text-purple-400">
               {data.studentCount}
             </div>
-            <p className="text-xs text-gray-500 mt-1">
-              Estudiantes activos
-            </p>
+            <p className="text-xs text-gray-500 mt-1">Estudiantes activos</p>
           </CardContent>
         </Card>
       </div>
 
-      <CardWeeklyChart nextSevenDaysData={data?.weeklyClasses}/>
+      <CardWeeklyChart nextSevenDaysData={data?.weeklyClasses} />
     </div>
   );
 }
