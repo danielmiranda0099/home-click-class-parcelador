@@ -186,7 +186,7 @@ export function CalendarBalance({ lessons }) {
             <div className="flex flex-col items-center">
               <div className="flex items-center">
                 <span className="w-5 h-5 rounded-full mr-2 border-gray-500 border-2 bg-[#7dd3fc]" />
-                P.P Agendadas
+                Total Agendadas
               </div>
               <p className="text-blue-700">
                 {formatCurrency(totalScheduledPayments)}
