@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { formatCurrency } from "@/utils/formatCurrency";
 import {
   Tooltip,
@@ -64,24 +65,44 @@ function calculateLessonBalance(lessons) {
   );
 }
 
+function filterLessonsByMonth(lessons, year, month) {
+  return lessons.filter((lesson) => {
+    const date = new Date(lesson.startDate);
+    return date.getFullYear() === year && date.getMonth() === month - 1;
+  });
+}
+
 export function CalendarBalance({ lessons }) {
+  const searchParams = useSearchParams();
+  const month = parseInt(searchParams.get("month"));
+  const year = parseInt(searchParams.get("year"));
+
+  const filteredLessons = useMemo(() => {
+    if (!month || !year) return [];
+    return filterLessonsByMonth(lessons, year, month);
+  }, [lessons, month, year]);
+
   const {
     totalIncome,
     totalExpenses,
     pendingStudentPayments,
     pendingTeacherPayments,
     totalScheduledPayments,
-  } = useMemo(() => calculateLessonBalance(lessons), [lessons]);
+  } = useMemo(() => calculateLessonBalance(filteredLessons), [filteredLessons]);
 
   return (
     <section className="w-fit mt-4 flex flex-col sm:flex-row items-center gap-10 mx-auto">
       <TooltipProvider>
-        <Tooltip className="flex flex-col items-center">
+        <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex flex-col items-center">
               <p>Balance:</p>
               <p
-                className={`${totalIncome - totalExpenses >= 0 ? "text-green-400" : "text-red-400"}`}
+                className={`${
+                  totalIncome - totalExpenses >= 0
+                    ? "text-green-400"
+                    : "text-red-400"
+                }`}
               >
                 {formatCurrency(totalIncome - totalExpenses)}
               </p>
@@ -94,7 +115,7 @@ export function CalendarBalance({ lessons }) {
       </TooltipProvider>
 
       <TooltipProvider>
-        <Tooltip className="flex flex-col items-center">
+        <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex flex-col items-center">
               <p>T.P Estudiantes:</p>
@@ -108,7 +129,7 @@ export function CalendarBalance({ lessons }) {
       </TooltipProvider>
 
       <TooltipProvider>
-        <Tooltip className="flex flex-col items-center">
+        <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex flex-col items-center">
               <p>T.P Profesores:</p>
@@ -122,7 +143,7 @@ export function CalendarBalance({ lessons }) {
       </TooltipProvider>
 
       <TooltipProvider>
-        <Tooltip className="flex flex-col items-center">
+        <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex flex-col items-center">
               <div className="flex items-center">
@@ -141,7 +162,7 @@ export function CalendarBalance({ lessons }) {
       </TooltipProvider>
 
       <TooltipProvider>
-        <Tooltip className="flex flex-col items-center">
+        <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex flex-col items-center">
               <div className="flex items-center">
@@ -160,7 +181,7 @@ export function CalendarBalance({ lessons }) {
       </TooltipProvider>
 
       <TooltipProvider>
-        <Tooltip className="flex flex-col items-center">
+        <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex flex-col items-center">
               <div className="flex items-center">
@@ -173,7 +194,7 @@ export function CalendarBalance({ lessons }) {
             </div>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Total acumalado de clases agendadas.</p>
+            <p>Total acumulado de clases agendadas.</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
