@@ -72,7 +72,7 @@ function filterLessonsByMonth(lessons, year, month) {
   });
 }
 
-export function CalendarBalance({ lessons }) {
+export function CalendarBalance({ lessons, isDisabled = false }) {
   const searchParams = useSearchParams();
   const month = parseInt(searchParams.get("month"));
   const year = parseInt(searchParams.get("year"));
@@ -91,7 +91,11 @@ export function CalendarBalance({ lessons }) {
   } = useMemo(() => calculateLessonBalance(filteredLessons), [filteredLessons]);
 
   return (
-    <section className="w-fit mt-4 flex flex-col sm:flex-row items-center gap-10 mx-auto">
+    <section
+      className={`w-fit grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 mt-4 items-center gap-10 mx-auto ${
+        isDisabled ? "opacity-20 pointer-events-none" : ""
+      }`}
+    >
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>

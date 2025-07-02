@@ -136,7 +136,7 @@ export default function DashboardPage() {
           )}
         </section>
 
-        <CalendarBalance lessons={lessons_filtered} />
+        <CalendarBalance lessons={lessons_filtered} isDisabled={state_tab === "payments" || state_tab === "actions"}/>
 
         <TabsContent value="calendar">
           <CalendarUI rol="admin" />
