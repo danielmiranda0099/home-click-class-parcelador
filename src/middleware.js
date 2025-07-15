@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "./auth";
 
-const public_routes = ["/"];
+const public_routes = ["/", "/api/check-debts"];
 
 export default auth(async (req) => {
   const { nextUrl, auth } = req;

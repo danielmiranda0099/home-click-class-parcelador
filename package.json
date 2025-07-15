@@ -47,6 +47,7 @@
     "react-big-calendar": "^1.13.3",
     "react-dom": "^18",
     "recharts": "^2.13.3",
+    "resend": "^4.6.0",
     "server-only": "^0.0.1",
     "sqlite3": "^5.1.7",
     "tailwind-merge": "^2.5.2",
