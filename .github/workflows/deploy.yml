@@ -36,6 +36,8 @@ jobs:
           echo "AUTH_SECRET=${{ secrets.AUTH_SECRET }}" >> .env
           echo "AUTH_URL=${{ secrets.AUTH_URL }}" >> .env
           echo "AUTH_TRUST_HOST=${{ secrets.AUTH_TRUST_HOST }}" >> .env
+          echo "CRON_SECRET_KEY=${{ secrets.CRON_SECRET_KEY }}" >> .env
+          echo "RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}" >> .env
           cat .env
 
       - name: Install dependencies
