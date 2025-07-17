@@ -6,11 +6,10 @@
   "scripts": {
     "postinstall": "prisma generate",
     "dev": "next dev --turbo",
-    "build": "prisma generate && next build && npm run seed-create-user",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "seed": "node src/seed/seed.js",
-    "seed-create-user": "node src/seed/registerUser.js",
     "seed-transaction": "node src/seed/transactionsSeed.js",
     "seed-debt": "node src/seed/debtSeed.js"
   },
