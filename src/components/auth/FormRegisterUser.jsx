@@ -33,6 +33,7 @@ const DEFAULT_DATA_USER = {
   firstName: "",
   lastName: "",
   email: "",
+  personalEmail: "",
   phoneNumber: "",
   city: "",
   country: "",
@@ -143,6 +144,16 @@ export function FormRegisterUser() {
                 id="email"
                 type="email"
                 value={userInfo.email}
+                onChange={handleStudentInfoChange}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="personalEmail">Personal Email</Label>
+              <Input
+                id="personalEmail"
+                type="email"
+                value={userInfo.personalEmail}
                 onChange={handleStudentInfoChange}
                 required
               />

@@ -43,6 +43,7 @@ export function PopupFormEditUser({ is_open, setIsOpen, data, handleAction }) {
     firstName: data?.firstName || "",
     lastName: data?.lastName || "",
     email: data?.email || "",
+    personalEmail: data?.personalEmail || "",
     phoneNumber: data?.phoneNumber || "",
     city: data?.city || "",
     country: data?.country || "",
@@ -143,6 +144,16 @@ export function PopupFormEditUser({ is_open, setIsOpen, data, handleAction }) {
                 id="email"
                 type="email"
                 defaultValue={data?.email}
+                onChange={handleStudentInfoChange}
+                required
+              />
+            </div>
+             <div className="space-y-2">
+              <Label htmlFor="personalEmail">Personal Email</Label>
+              <Input
+                id="personalEmail"
+                type="email"
+                defaultValue={data?.personalEmail}
                 onChange={handleStudentInfoChange}
                 required
               />

@@ -144,6 +144,10 @@ export function UserPageClient({ initialData = { error: true }, id }) {
               <p className="sm:text-lg">{user.email}</p>
             </div>
             <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
+              <p className="sm:text-lg font-semibold">Personal Email:</p>
+              <p className="sm:text-lg">{user.personalEmail}</p>
+            </div>
+            <div className="flex flex-col gap-0 sm:flex-row sm:gap-2 border-b-2 pb-2 border-gray-300">
               <p className="sm:text-lg font-semibold">Telefono:</p>
               <p className="sm:text-lg">{user.phoneNumber}</p>
             </div>
