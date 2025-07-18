@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { Resend } from "resend";
 import { subWeeks } from "date-fns";
-import { PendingPaymentEmail } from "@/emails";
+import { PendingPaymentEmail, WeeklyDebtReportEmail } from "@/emails";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -39,6 +41,7 @@ export async function GET(request) {
         },
         select: {
           id: true,
+          studentFee: true,
           lesson: {
             select: {
               startDate: true,
@@ -76,7 +79,7 @@ export async function GET(request) {
       continue;
     }
     const { error } = await resend.emails.send({
-      from: "HOME CLICK CLASS <onboarding@resend.dev>",
+      from: "HOME CLICK CLASS <noreply@gestion.homeclickclass.com>",
       to: student.personalEmail,
       subject: "HOME CLICK CLASS ALERTS",
       react: PendingPaymentEmail({ studentName: student.shortName }),
@@ -86,8 +89,39 @@ export async function GET(request) {
     }
   }
 
+  // await resend.emails.send({
+  //   from: "HOME CLICK CLASS <noreply@gestion.homeclickclass.com>",
+  //   to: "danielmesa877@gmail.com",
+  //   subject: "HOME CLICK CLASS ALERTS",
+  //   react: PendingPaymentEmail({
+  //     studentName: "danie miranda",
+  //   }),
+  // });
+
+  const weekSummary = debtors.map((student) => {
+    const totalAmount = student.studentLessons.reduce((acc, sl) => {
+      return acc + (sl.studentFee ?? 0);
+    }, 0);
+
+    return {
+      shortName: student.shortName,
+      unpaidCount: student.unpaidCount,
+      totalAmount,
+    };
+  });
+
+  await resend.emails.send({
+    from: "HOME CLICK CLASS <noreply@gestion.homeclickclass.com>",
+    to: "araksamse@gmail.com",
+    subject: `Resumen semanal de alertas de deuda - Semana ${format(new Date(), "'del' dd 'de' MMMM", { locale: es })}`,
+    react: WeeklyDebtReportEmail({
+      week: format(new Date(), "'del' dd 'de' MMMM", { locale: es }),
+      students: weekSummary,
+      problemsStudents: problemsStudnets,
+    }),
+  });
+
   return NextResponse.json({
     message: `Se notificaron ${debtors.length} estudiantes.`,
-    data: data,
   });
 }
