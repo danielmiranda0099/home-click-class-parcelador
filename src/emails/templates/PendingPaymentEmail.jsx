@@ -31,7 +31,7 @@ export function PendingPaymentEmail({ studentName }) {
               Home Click Class
             </Heading>
             <Text style={subheading}>
-              Tu centro de aprendizaje de confianza
+              Tu centro de aprendizaje de inglés de confianza
             </Text>
           </Section>
 
@@ -55,28 +55,6 @@ export function PendingPaymentEmail({ studentName }) {
               <Heading as="h3" style={benefitsTitle}>
                 💳 Formas de Pago
               </Heading>
-
-              {/* Wompi */}
-              <div style={paymentCard}>
-                <Text style={paymentTitle}>Wompi</Text>
-                <Img
-                  src="https://gestion.homeclickclass.com/wompi_qr.jpeg"
-                  alt="QR Wompi"
-                  width="150"
-                  height="150"
-                  style={qrImage}
-                />
-                <Text>
-                  Puedes pagar fácilmente con el siguiente enlace:
-                  <br />
-                  <a
-                    href="https://checkout.wompi.co/l/gchayM"
-                    style={{ color: "#007bff" }}
-                  >
-                    Ir al enlace de pago Wompi
-                  </a>
-                </Text>
-              </div>
 
               {/* Nequi */}
               <div style={paymentCard}>
@@ -107,13 +85,36 @@ export function PendingPaymentEmail({ studentName }) {
                   Cuenta de ahorros: <strong>550-638980-14</strong>
                 </Text>
               </div>
+
+              {/* Wompi */}
+              <div style={paymentCard}>
+                <Text style={paymentTitle}>Wompi</Text>
+                <Text style={paymentSubTitle}>(para pagos internacionales)</Text>
+                <Img
+                  src="https://gestion.homeclickclass.com/wompi_qr.jpeg"
+                  alt="QR Wompi"
+                  width="150"
+                  height="150"
+                  style={qrImage}
+                />
+                <Text>
+                  Puedes pagar fácilmente con el siguiente enlace:
+                  <br />
+                  <a
+                    href="https://checkout.wompi.co/l/gchayM"
+                    style={{ color: "#007bff" }}
+                  >
+                    Ir al enlace de pago Wompi
+                  </a>
+                </Text>
+              </div>
             </Section>
 
             <Text style={message}>
               Sabemos que a veces se nos pueden pasar las fechas, ¡no te
               preocupes! Queremos facilitarte el proceso de pago para que puedas
               continuar con tu aprendizaje sin interrupciones.
-            </Text>          
+            </Text>
 
             <Text style={message}>
               Agradecemos tu confianza en nosotros y esperamos continuar siendo
@@ -195,6 +196,12 @@ const paymentCard = {
 const paymentTitle = {
   fontSize: "14px",
   fontWeight: "bold",
+  marginBottom: "10px",
+};
+const paymentSubTitle = {
+  fontSize: "12px",
+  fontWeight: "bold",
+  marginTop: "-14px",
   marginBottom: "10px",
 };
 
