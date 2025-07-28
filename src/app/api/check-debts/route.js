@@ -52,7 +52,7 @@ export async function GET(request) {
       },
     });
 
-    console.log(students)
+    console.log(JSON.stringify(students, null, 2));
 
     // const notifiedStudentsMap = new Map();
 
@@ -148,12 +148,12 @@ export async function GET(request) {
     //   }),
     // });
 
-    // console.log(`Estudiantes con deuda: ${students.length} -> ${students}
+    // console.log(`Estudiantes con deuda: ${students.length} -> ${JSON.stringify(students, null, 2)}
     //             Notificados: ${validEmailStudents.length}
     //             Sin correo: ${problemsStudents.length}
     //             Errores de envío: ${failedEmails.length}`);
     return NextResponse.json({
-      message: `Estudiantes con deuda: ${students.length} -> ${students}
+      message: `Estudiantes con deuda: ${students.length} -> ${JSON.stringify(students, null, 2)}
                 Notificados: ${validEmailStudents.length}
                 Sin correo: ${problemsStudents.length}
                 Errores de envío: ${failedEmails.length}`,
