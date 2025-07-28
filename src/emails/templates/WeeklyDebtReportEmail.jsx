@@ -1,5 +1,14 @@
-import { formatCurrency } from "@/utils/formatCurrency"
-import { Html, Head, Body, Container, Heading, Section, Text, Hr } from "@react-email/components"
+import { formatCurrency } from "@/utils/formatCurrency";
+import {
+  Html,
+  Head,
+  Body,
+  Container,
+  Heading,
+  Section,
+  Text,
+  Hr,
+} from "@react-email/components";
 
 const styles = {
   body: {
@@ -106,9 +115,14 @@ const styles = {
     backgroundColor: "#f8fafc",
     borderRadius: "8px",
   },
-}
+};
 
-export function WeeklyDebtReportEmail({ week, students, problemsStudents }) {
+export function WeeklyDebtReportEmail({
+  week,
+  students,
+  problemsStudents,
+  isLimitEmails,
+}) {
   return (
     <Html lang="es">
       <Head />
@@ -121,8 +135,19 @@ export function WeeklyDebtReportEmail({ week, students, problemsStudents }) {
 
           <Hr style={styles.hr} />
 
+          {isLimitEmails && (
+            <Heading as="h3" style={styles.problemsHeading}>
+              ❗ Si ve este mensaje es porque se alcanzó el límite de correos
+              electrónicos enviados por día. ❗
+            </Heading>
+          )}
+
+          <Hr style={styles.hr} />
+
           {students.length === 0 ? (
-            <Text style={styles.noStudentsText}>✅ No se notificó a ningún estudiante esta semana.</Text>
+            <Text style={styles.noStudentsText}>
+              ✅ No se notificó a ningún estudiante esta semana.
+            </Text>
           ) : (
             <Section>
               {students.map((student, index) => (
@@ -132,12 +157,16 @@ export function WeeklyDebtReportEmail({ week, students, problemsStudents }) {
                   <div style={styles.debtContainer}>
                     <div style={styles.debtColumn}>
                       <Text style={styles.debtLabel}>Clases en deuda</Text>
-                      <Text style={styles.debtValue}>{student.unpaidCount}</Text>
+                      <Text style={styles.debtValue}>
+                        {student.unpaidCount}
+                      </Text>
                     </div>
 
                     <div style={styles.debtColumn}>
                       <Text style={styles.debtLabel}>Monto total estimado</Text>
-                      <Text style={styles.amountValue}>{formatCurrency(student.totalAmount)}</Text>
+                      <Text style={styles.amountValue}>
+                        {formatCurrency(student.totalAmount)}
+                      </Text>
                     </div>
                   </div>
                 </Section>
@@ -145,12 +174,16 @@ export function WeeklyDebtReportEmail({ week, students, problemsStudents }) {
             </Section>
           )}
 
+          <Hr style={styles.hr} />
+
           {problemsStudents.length > 0 && (
             <>
               <Heading as="h3" style={styles.problemsHeading}>
                 ❗ Problemas al notificar
               </Heading>
-              <Text style={styles.problemsText}>No se pudo enviar notificación a los siguientes estudiantes:</Text>
+              <Text style={styles.problemsText}>
+                No se pudo enviar notificación a los siguientes estudiantes:
+              </Text>
               <ul style={styles.problemsList}>
                 {problemsStudents.map((name, i) => (
                   <li key={i} style={styles.problemsListItem}>
@@ -163,5 +196,5 @@ export function WeeklyDebtReportEmail({ week, students, problemsStudents }) {
         </Container>
       </Body>
     </Html>
-  )
+  );
 }
