@@ -72,9 +72,19 @@ export async function GET(request) {
         });
       }
     }
+    console.log(
+      "************** Notified Students Map:",
+      notifiedStudentsMap.length
+    );
+    console.log(
+      JSON.stringify(Array.from(notifiedStudentsMap.values()), null, 2)
+    );
 
     const debtors = Array.from(notifiedStudentsMap.values());
     const problemsStudents = [];
+
+    console.log("************** debtors", debtors.length);
+    console.log(JSON.stringify(debtors, null, 2));
 
     const isLimitEmails = debtors.length > 95;
 
@@ -161,7 +171,8 @@ export async function GET(request) {
     // });
     return NextResponse.json({
       students: `${JSON.stringify(students, null, 2)}`,
-      notifiedStudentsMap: `${JSON.stringify(notifiedStudentsMap, null, 2)}`,
+      notifiedStudentsMap: `${JSON.stringify(Array.from(notifiedStudentsMap.values()), null, 2)}`,
+      debtors: `${JSON.stringify(debtors, null, 2)}`,
     });
   } catch (error) {
     console.error("Error in end-point 'check-debts'", error);
