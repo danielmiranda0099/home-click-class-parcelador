@@ -152,13 +152,13 @@ export async function GET(request) {
     //             Notificados: ${validEmailStudents.length}
     //             Sin correo: ${problemsStudents.length}
     //             Errores de envío: ${failedEmails.length}`);
-    // return NextResponse.json({
-    //   message: `Estudiantes con deuda: ${students.length} -> ${students}
-    //             Notificados: ${validEmailStudents.length}
-    //             Sin correo: ${problemsStudents.length}
-    //             Errores de envío: ${failedEmails.length}`,
-    //   fallos: failedEmails,
-    // });
+    return NextResponse.json({
+      message: `Estudiantes con deuda: ${students.length} -> ${students}
+                Notificados: ${validEmailStudents.length}
+                Sin correo: ${problemsStudents.length}
+                Errores de envío: ${failedEmails.length}`,
+      fallos: failedEmails,
+    });
   } catch (error) {
     console.error("Error in end-point 'check-debts'", error);
     return NextResponse.json(
