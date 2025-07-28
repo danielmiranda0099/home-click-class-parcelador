@@ -52,8 +52,6 @@ export async function GET(request) {
       },
     });
 
-    console.log(JSON.stringify(students, null, 2));
-
     const notifiedStudentsMap = new Map();
 
     for (const student of students) {
@@ -72,19 +70,9 @@ export async function GET(request) {
         });
       }
     }
-    console.log(
-      "************** Notified Students Map:",
-      notifiedStudentsMap.length
-    );
-    console.log(
-      JSON.stringify(Array.from(notifiedStudentsMap.values()), null, 2)
-    );
 
     const debtors = Array.from(notifiedStudentsMap.values());
     const problemsStudents = [];
-
-    console.log("************** debtors", debtors.length);
-    console.log(JSON.stringify(debtors, null, 2));
 
     const isLimitEmails = debtors.length > 95;
 
@@ -98,81 +86,78 @@ export async function GET(request) {
 
     const failedEmails = [];
 
-    // // Envío individual de correos con delay de 525ms
-    // for (const student of validEmailStudents) {
-    //   try {
-    //     const { error } = await resend.emails.send({
-    //       from: "HOME CLICK CLASS <noreply@gestion.homeclickclass.com>",
-    //       to: student.personalEmail,
-    //       subject: "HOME CLICK CLASS ALERTS",
-    //       react: PendingPaymentEmail({ studentName: student.shortName }),
-    //     });
-    //     if (error) {
-    //       failedEmails.push({
-    //         shortName: student.shortName,
-    //         personalEmail: student.personalEmail,
-    //         error: error,
-    //       });
-    //     }
-    //   } catch (error) {
-    //     console.error(
-    //       `Error al enviar a ${student.shortName} (${student.personalEmail}):`,
-    //       error
-    //     );
-    //     failedEmails.push({
-    //       shortName: student.shortName,
-    //       personalEmail: student.personalEmail,
-    //       error: error || "Unknown error",
-    //     });
-    //   }
+    // Envío individual de correos con delay de 525ms
+    for (const student of validEmailStudents) {
+      try {
+        const { error } = await resend.emails.send({
+          from: "HOME CLICK CLASS <noreply@gestion.homeclickclass.com>",
+          to: student.personalEmail,
+          subject: "HOME CLICK CLASS ALERTS",
+          react: PendingPaymentEmail({ studentName: student.shortName }),
+        });
+        if (error) {
+          failedEmails.push({
+            shortName: student.shortName,
+            personalEmail: student.personalEmail,
+            error: error,
+          });
+        }
+      } catch (error) {
+        console.error(
+          `Error al enviar a ${student.shortName} (${student.personalEmail}):`,
+          error
+        );
+        failedEmails.push({
+          shortName: student.shortName,
+          personalEmail: student.personalEmail,
+          error: error || "Unknown error",
+        });
+      }
 
-    //   // Esperar 525ms para cumplir rate limit de 2 req/s
-    //   await new Promise((resolve) => setTimeout(resolve, 525));
-    // }
+      // Esperar 525ms para cumplir rate limit de 2 req/s
+      await new Promise((resolve) => setTimeout(resolve, 525));
+    }
 
-    // const weekSummary = debtors.map((student) => {
-    //   const totalAmount = student.studentLessons.reduce((acc, sl) => {
-    //     return acc + (sl.studentFee ?? 0);
-    //   }, 0);
+    const weekSummary = debtors.map((student) => {
+      const totalAmount = student.studentLessons.reduce((acc, sl) => {
+        return acc + (sl.studentFee ?? 0);
+      }, 0);
 
-    //   return {
-    //     shortName: student.shortName,
-    //     unpaidCount: student.unpaidCount,
-    //     totalAmount,
-    //   };
-    // });
+      return {
+        shortName: student.shortName,
+        unpaidCount: student.unpaidCount,
+        totalAmount,
+      };
+    });
 
-    // await new Promise((resolve) => setTimeout(resolve, 1000)); // Delay para separar el envío
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // Delay para separar el envío
 
-    // await resend.emails.send({
-    //   from: "HOME CLICK CLASS <noreply@gestion.homeclickclass.com>",
-    //   to: "araksamse@gmail.com",
-    //   subject: `Resumen semanal de alertas de deuda - Semana ${format(new Date(), "'del' dd 'de' MMMM", { locale: es })}`,
-    //   react: WeeklyDebtReportEmail({
-    //     week: format(new Date(), "'del' dd 'de' MMMM", { locale: es }),
-    //     students: weekSummary,
-    //     problemsStudents: problemsStudents.concat(
-    //       failedEmails.map(({ shortName }) => shortName)
-    //     ),
-    //     isLimitEmails: isLimitEmails,
-    //   }),
-    // });
+    await resend.emails.send({
+      from: "HOME CLICK CLASS <noreply@gestion.homeclickclass.com>",
+      to: "araksamse@gmail.com",
+      subject: `Resumen semanal de alertas de deuda - Semana ${format(new Date(), "'del' dd 'de' MMMM", { locale: es })}`,
+      react: WeeklyDebtReportEmail({
+        week: format(new Date(), "'del' dd 'de' MMMM", { locale: es }),
+        students: weekSummary,
+        problemsStudents: problemsStudents.concat(
+          failedEmails.map(({ shortName }) => shortName)
+        ),
+        isLimitEmails: isLimitEmails,
+      }),
+    });
 
-    // console.log(`Estudiantes con deuda: ${students.length} -> ${JSON.stringify(students, null, 2)}
-    //             Notificados: ${validEmailStudents.length}
-    //             Sin correo: ${problemsStudents.length}
-    //             Errores de envío: ${failedEmails.length}`);
-    // return NextResponse.json({
-    //   message: `Estudiantes con deuda: ${students.length} -> ${JSON.stringify(students, null, 2)}
-    //             Notificados: ${validEmailStudents.length}
-    //             Sin correo: ${problemsStudents.length}
-    //             Errores de envío: ${failedEmails.length}`,
-    //   fallos: failedEmails,
-    // });
+    console.log(JSON.stringify(debtors, null, 2))
+    console.log(`Estudiantes con deuda: ${students.length}
+                Notificados: ${validEmailStudents.length}
+                Sin correo: ${problemsStudents.length}
+                Errores de envío: ${failedEmails.length}`
+                
+              );
     return NextResponse.json({
-      students: `${JSON.stringify(students, null, 2)}`,
-      notifiedStudentsMap: `${JSON.stringify(Array.from(notifiedStudentsMap.values()), null, 2)}`,
-      debtors: `${JSON.stringify(debtors, null, 2)}`,
+      totalStudentsNotified: debtors.length,
+      notifiedStudents: JSON.stringify(debtors, null, 2),
+      problemsStudents: JSON.stringify(problemsStudents, null, 2),
+      fallos: failedEmails,
     });
   } catch (error) {
     console.error("Error in end-point 'check-debts'", error);
