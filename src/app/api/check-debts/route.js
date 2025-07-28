@@ -54,39 +54,39 @@ export async function GET(request) {
 
     console.log(JSON.stringify(students, null, 2));
 
-    // const notifiedStudentsMap = new Map();
+    const notifiedStudentsMap = new Map();
 
-    // for (const student of students) {
-    //   const unpaidLessons = student.studentLessons;
-    //   const unpaidCount = unpaidLessons.length;
+    for (const student of students) {
+      const unpaidLessons = student.studentLessons;
+      const unpaidCount = unpaidLessons.length;
 
-    //   const hasOldDebts = unpaidLessons.some(
-    //     (sl) => new Date(sl.lesson.startDate) < threeWeeksAgo
-    //   );
+      const hasOldDebts = unpaidLessons.some(
+        (sl) => new Date(sl.lesson.startDate) < threeWeeksAgo
+      );
 
-    //   if (unpaidCount > 4 || hasOldDebts) {
-    //     notifiedStudentsMap.set(student.id, {
-    //       ...student,
-    //       unpaidCount,
-    //       hasOldDebts,
-    //     });
-    //   }
-    // }
+      if (unpaidCount > 4 || hasOldDebts) {
+        notifiedStudentsMap.set(student.id, {
+          ...student,
+          unpaidCount,
+          hasOldDebts,
+        });
+      }
+    }
 
-    // const debtors = Array.from(notifiedStudentsMap.values());
-    // const problemsStudents = [];
+    const debtors = Array.from(notifiedStudentsMap.values());
+    const problemsStudents = [];
 
-    // const isLimitEmails = debtors.length > 95;
+    const isLimitEmails = debtors.length > 95;
 
-    // const validEmailStudents = debtors.filter((student) => {
-    //   if (!student.personalEmail) {
-    //     problemsStudents.push(student.shortName);
-    //     return false;
-    //   }
-    //   return true;
-    // });
+    const validEmailStudents = debtors.filter((student) => {
+      if (!student.personalEmail) {
+        problemsStudents.push(student.shortName);
+        return false;
+      }
+      return true;
+    });
 
-    // const failedEmails = [];
+    const failedEmails = [];
 
     // // Envío individual de correos con delay de 525ms
     // for (const student of validEmailStudents) {
@@ -152,12 +152,16 @@ export async function GET(request) {
     //             Notificados: ${validEmailStudents.length}
     //             Sin correo: ${problemsStudents.length}
     //             Errores de envío: ${failedEmails.length}`);
+    // return NextResponse.json({
+    //   message: `Estudiantes con deuda: ${students.length} -> ${JSON.stringify(students, null, 2)}
+    //             Notificados: ${validEmailStudents.length}
+    //             Sin correo: ${problemsStudents.length}
+    //             Errores de envío: ${failedEmails.length}`,
+    //   fallos: failedEmails,
+    // });
     return NextResponse.json({
-      message: `Estudiantes con deuda: ${students.length} -> ${JSON.stringify(students, null, 2)}
-                Notificados: ${validEmailStudents.length}
-                Sin correo: ${problemsStudents.length}
-                Errores de envío: ${failedEmails.length}`,
-      fallos: failedEmails,
+      students: `${JSON.stringify(students, null, 2)}`,
+      notifiedStudentsMap: `${JSON.stringify(notifiedStudentsMap, null, 2)}`,
     });
   } catch (error) {
     console.error("Error in end-point 'check-debts'", error);
