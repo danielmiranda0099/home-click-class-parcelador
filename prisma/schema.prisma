@@ -95,11 +95,22 @@ model Schedule {
   @@unique([userId, day])
 }
 
+enum TransactionType {
+  income
+  expense
+}
+
+enum ExpenseCategory {
+  teacher
+  other
+}
+
 model Transaction {
   id        Int             @id @default(autoincrement())
   date      DateTime
   amount    Float
   type      TransactionType
+  expenseCategory ExpenseCategory?
   concept   String
   lessonId  Int?
   lesson    Lesson?         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
@@ -112,16 +123,12 @@ model Transaction {
   updatedAt DateTime        @updatedAt
 }
 
-enum TransactionType {
-  income
-  expense
-}
-
 model Debt {
   id        Int             @id @default(autoincrement())
   date      DateTime
   amount    Float
   type      TransactionType
+  expenseCategory ExpenseCategory?
   concept   String
   lessonId  Int?
   lesson    Lesson?         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
