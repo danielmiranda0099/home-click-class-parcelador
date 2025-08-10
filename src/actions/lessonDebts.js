@@ -306,6 +306,7 @@ export async function registerAndSaveLessonReportAndRegisterDebt(
             date: current_date.toISOString(),
             amount: lesson.teacherPayment,
             type: "expense",
+            expenseCategory: "teacher",
             concept: `Pago a profesor ${user.name}`,
             lessonId: lesson_id,
             userId: parseInt(user.id, 10),
@@ -369,6 +370,7 @@ export async function cancelTeacherPaymentAndRegisterDebt(lessonId, teacherId) {
           date: current_date.toISOString(), // Fecha actual
           amount: transaction.amount, // Monto de la deuda
           type: "expense", // Mismo tipo que la transacción eliminada
+          expenseCategory: transaction.expenseCategory, // Categoría de gasto
           concept: transaction.concept, // Descripción de la deuda
           lessonId: transaction.lessonId, // Asociada a la misma lección
           userId: transaction.userId, // Asociada al mismo profesor
@@ -444,6 +446,7 @@ export async function cancelStudentPaymentAndRegisterDebt(lessonId, studentId) {
             date: current_date.toISOString(), // Fecha actual
             amount: transaction.amount, // Monto de la deuda
             type: "income", // Mismo tipo que la transacción eliminada
+            expenseCategory: transaction.expenseCategory, // Categoría de gasto
             concept: transaction.concept, // Descripción de la deuda
             lessonId: transaction.lessonId, // Asociada a la misma lección
             userId: transaction.userId, // Asociada al mismo profesor

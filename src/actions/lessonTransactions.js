@@ -159,6 +159,7 @@ export async function payTeacherLessonAndRegisterTransaction(lesson_ids) {
       date: current_date.toISOString(),
       amount: lesson.teacherPayment,
       type: "expense",
+      expenseCategory: "teacher",
       concept: `Pago a profesor ${user.shortName}`,
       lessonId: lesson.id,
       userId: user_id,

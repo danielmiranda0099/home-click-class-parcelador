@@ -5,7 +5,8 @@ import { getMonth, getWeek, getYear, parse } from "date-fns";
 
 export async function createNewTransaction(prev, form_dada) {
   try {
-    const { date, amount, type, concept, userId, lessonId } = form_dada;
+    const { date, amount, type, concept, userId, lessonId, expenseCategory } =
+      form_dada;
 
     if (!date || !amount || !type) {
       return RequestResponse.error(
@@ -17,6 +18,10 @@ export async function createNewTransaction(prev, form_dada) {
       return RequestResponse.error(
         "Por favor ingrese un valor valido en el monto."
       );
+    }
+
+    if (type === "expense" && !expenseCategory) {
+      return RequestResponse.error("Para un Egreso debe indicar su tipo.");
     }
 
     if (userId) {
@@ -54,6 +59,7 @@ export async function createNewTransaction(prev, form_dada) {
         year,
         month,
         week,
+        expenseCategory: type === "expense" ? expenseCategory : null,
         ...(concept && {
           concept,
         }),
@@ -75,8 +81,16 @@ export async function createNewTransaction(prev, form_dada) {
 
 export async function updateTransaction(prev, form_dada) {
   try {
-    const { date, amount, type, concept, userId, lessonId, updateId } =
-      form_dada;
+    const {
+      date,
+      amount,
+      type,
+      concept,
+      userId,
+      lessonId,
+      updateId,
+      expenseCategory,
+    } = form_dada;
 
     if (!date || !amount || !type || !updateId) {
       return RequestResponse.error(
@@ -88,6 +102,10 @@ export async function updateTransaction(prev, form_dada) {
       return RequestResponse.error(
         "Por favor ingrese un valor valido en el monto."
       );
+    }
+
+    if (type === "expense" && !expenseCategory) {
+      return RequestResponse.error("Para un Egreso debe indicar su tipo.");
     }
 
     if (userId) {
@@ -141,6 +159,7 @@ export async function updateTransaction(prev, form_dada) {
         year,
         month,
         week,
+        expenseCategory: type === "expense" ? expenseCategory : null,
         ...(concept && {
           concept,
         }),
@@ -313,7 +332,8 @@ export async function deleteTransactions(prev, transaction_ids) {
 
 export async function createNewDebts(prev, form_dada) {
   try {
-    const { amount, type, concept, userId, lessonId } = form_dada;
+    const { amount, type, concept, userId, lessonId, expenseCategory } =
+      form_dada;
 
     if (!amount || !type) {
       return RequestResponse.error(
@@ -325,6 +345,10 @@ export async function createNewDebts(prev, form_dada) {
       return RequestResponse.error(
         "Por favor ingrese un valor valido en el monto."
       );
+    }
+
+    if (type === "expense" && !expenseCategory) {
+      return RequestResponse.error("Para un Egreso debe indicar su tipo.");
     }
 
     if (userId) {
@@ -362,6 +386,7 @@ export async function createNewDebts(prev, form_dada) {
         year,
         month,
         week,
+        expenseCategory: type === "expense" ? expenseCategory : null,
         ...(concept && {
           concept,
         }),
@@ -396,7 +421,15 @@ export async function getAllDebt() {
 
 export async function updateDebt(prev, form_dada) {
   try {
-    const { amount, type, concept, userId, lessonId, updateId } = form_dada;
+    const {
+      amount,
+      type,
+      concept,
+      userId,
+      lessonId,
+      updateId,
+      expenseCategory,
+    } = form_dada;
 
     if (!amount || !type || !updateId) {
       return RequestResponse.error(
@@ -408,6 +441,10 @@ export async function updateDebt(prev, form_dada) {
       return RequestResponse.error(
         "Por favor ingrese un valor valido en el monto."
       );
+    }
+
+    if (type === "expense" && !expenseCategory) {
+      return RequestResponse.error("Para un Egreso debe indicar su tipo.");
     }
 
     if (userId) {
@@ -461,6 +498,7 @@ export async function updateDebt(prev, form_dada) {
         year,
         month,
         week,
+        expenseCategory: type === "expense" ? expenseCategory : null,
         ...(concept && {
           concept,
         }),
@@ -556,6 +594,7 @@ export async function moveDebtToTransaction(debt_ids) {
       date: new Date().toISOString(),
       amount: debt.amount,
       type: debt.type,
+      expenseCategory: debt.type === "expense" ? debt.expenseCategory : null,
       concept: debt.concept,
       year,
       month,
