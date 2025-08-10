@@ -20,6 +20,13 @@ import { useAccountingStore } from "@/store/accountingStore";
 import { handleUpsertTransaction } from "@/actions/accounting";
 import { useCustomToast } from "@/hooks";
 import { parseCurrencyToNumber } from "@/utils/parseCurrencyToNumber";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -44,6 +51,9 @@ export function PopupFormTransaction({
 }) {
   const { editTransaction, setEditTransaction } = useAccountingStore();
   const [amount_transaction, setAmountTransaction] = useState("");
+  const [typeTransaction, setTypeTransaction] = useState(
+    editTransaction?.type || ""
+  );
 
   const [error_message_form_transaction, setErrorMessageFormTransaction] =
     useState("");
@@ -65,6 +75,7 @@ export function PopupFormTransaction({
       amount: parseCurrencyToNumber(form_data.get("amount")),
       type: form_data.get("type"),
       concept: form_data.get("concept"),
+      expenseCategory: form_data.get("expense-category"),
     };
     if (editTransaction) {
       data.operation = "update";
@@ -72,17 +83,22 @@ export function PopupFormTransaction({
     } else {
       data.operation = "create";
     }
+    console.log(data);
     dispathFormTransaction(data);
     setErrorMessageFormTransaction("");
   };
 
   useEffect(() => {
+    console.log("edit transaction", editTransaction);
     if (editTransaction) {
+      setTypeTransaction(editTransaction?.type || "");
       setAmountTransaction(editTransaction.amount.toString());
     }
   }, [editTransaction]);
 
   useEffect(() => {
+    console.log("edit transaction", editTransaction);
+
     if (form_state_form_transaction.success) {
       toastSuccess({ title: "Movimiento creado exitosamente." });
       setIsOpen(false);
@@ -130,6 +146,7 @@ export function PopupFormTransaction({
               required
               className="flex gap-3"
               defaultValue={editTransaction?.type}
+              onValueChange={(value) => setTypeTransaction(value)}
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem
@@ -148,6 +165,29 @@ export function PopupFormTransaction({
                 <Label htmlFor="option-two">Egreso</Label>
               </div>
             </RadioGroup>
+          </div>
+          <div
+            className={`space-y-1 mt-[-4px] transition-opacity ${
+              typeTransaction === "expense"
+                ? "opacity-100"
+                : "opacity-50 pointer-events-none"
+            }`}
+          >
+            <Label htmlFor="expense-category">Tipo de Egreso</Label>
+            <Select
+              name="expense-category"
+              disabled={typeTransaction !== "expense"}
+              required={typeTransaction === "expense"}
+              defaultValue={editTransaction?.expenseCategory}
+            >
+              <SelectTrigger className="" id="expense-category">
+                <SelectValue placeholder="Indique el tipo de egreso" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="other">Otros Egresos</SelectItem>
+                <SelectItem value="teacher">Profesor Egreso</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">

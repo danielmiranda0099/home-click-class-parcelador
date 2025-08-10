@@ -185,6 +185,10 @@ export function TableTransactions({
                                     amount: transaction.amount,
                                     type: transaction.type,
                                     concept: transaction.concept,
+                                    expenseCategory:
+                                      transaction.type === "expense"
+                                        ? transaction.expenseCategory
+                                        : null,
                                   });
                                   setIsOpenFormTransaction(true);
                                 }}

@@ -20,6 +20,13 @@ import { useCustomToast } from "@/hooks";
 import { parseCurrencyToNumber } from "@/utils/parseCurrencyToNumber";
 import { handleUpsertDebt } from "@/actions/accounting";
 import { useAccountingStore } from "@/store/accountingStore";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -51,11 +58,15 @@ export function PopupFormDebt({ is_open, setIsOpen, handleAction = null }) {
   );
   const [error_message_form_new_Debt, setErrorMessageFormNewDebt] =
     useState("");
+  const [typeDebt, setTypeDebt] = useState(
+    editDebt?.type || ""
+  );
 
   const onCreateNewDebt = (form_data) => {
     const data = {
       amount: parseCurrencyToNumber(form_data.get("amount")),
       type: form_data.get("type"),
+      expenseCategory: form_data.get("expense-category"),
       concept: form_data.get("concept"),
     };
     if (editDebt) {
@@ -70,6 +81,7 @@ export function PopupFormDebt({ is_open, setIsOpen, handleAction = null }) {
 
   useEffect(() => {
     if (editDebt) {
+      setTypeDebt(editDebt?.type || "");
       setAmountDebt(editDebt.amount.toString());
     }
   }, [editDebt]);
@@ -121,6 +133,7 @@ export function PopupFormDebt({ is_open, setIsOpen, handleAction = null }) {
               required
               className="flex gap-3"
               defaultValue={editDebt?.type}
+              onValueChange={(value) => setTypeDebt(value)}
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem
@@ -139,6 +152,29 @@ export function PopupFormDebt({ is_open, setIsOpen, handleAction = null }) {
                 <Label htmlFor="option-two">Egreso</Label>
               </div>
             </RadioGroup>
+          </div>
+          <div
+            className={`space-y-1 mt-[-4px] transition-opacity ${
+              typeDebt === "expense"
+                ? "opacity-100"
+                : "opacity-50 pointer-events-none"
+            }`}
+          >
+            <Label htmlFor="expense-category">Tipo de Egreso</Label>
+            <Select
+              name="expense-category"
+              disabled={typeDebt !== "expense"}
+              required={typeDebt === "expense"}
+              defaultValue={editDebt?.expenseCategory}
+            >
+              <SelectTrigger className="" id="expense-category">
+                <SelectValue placeholder="Indique el tipo de egreso" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="other">Otros Egresos</SelectItem>
+                <SelectItem value="teacher">Profesor Egreso</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-2">
             <Label htmlFor="monto">Monto</Label>

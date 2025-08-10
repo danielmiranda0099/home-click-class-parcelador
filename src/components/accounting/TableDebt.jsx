@@ -194,6 +194,10 @@ export function TableDebt({
                                     amount: debt.amount,
                                     type: debt.type,
                                     concept: debt.concept,
+                                    expenseCategory:
+                                      debt.type === "expense"
+                                        ? debt.expenseCategory
+                                        : null,
                                   });
 
                                   setIsOpenFormDebt(true);
