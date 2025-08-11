@@ -192,78 +192,113 @@ export async function handleUpsertTransaction(prev, form_dada) {
   }
 }
 
-export async function getMonhtlyTransactions(prev, form_dada) {
+/**
+ * Retrieves monthly transactions from the database, grouped by week.
+ *
+ * This function:
+ * - Separates expenses into `expenseTeacher` (category "teacher") and `expenseOther` (category "other").
+ * - Calculates total income, total expenses per category, and overall balance.
+ * - Groups transactions by week, calculating weekly income and expenses.
+ *
+ * @param {any} prev - Currently unused; kept for API consistency.
+ * @param {{ month: number, year: number }} formData - The month (1-12) and year (e.g., 2025) to query.
+ * @returns {Promise<import("@/types").RequestResponse>} - A standardized response object containing:
+ *    - all_transactions: Array of weekly transaction groups with balances.
+ *    - totalIncome: Sum of all income transactions for the month.
+ *    - expenseTeacher: Sum of all teacher-category expenses.
+ *    - expenseOther: Sum of all other-category expenses.
+ *    - totalExpense: Sum of `expenseTeacher` and `expenseOther`.
+ *    - balance: totalIncome - totalExpense.
+ *    - month, year.
+ *
+ * Edge cases considered:
+ * - If there are no transactions, all totals will be 0 and the transactions list empty.
+ * - If some expenses have no `expenseCategory`, they will not be included in either category.
+ * - Weeks without transactions are excluded from the result.
+ * - Weeks are sorted from highest to lowest number.
+ */
+export async function getMonhtlyTransactions(prev, formData) {
   try {
-    const { month, year } = form_dada;
+    const { month, year } = formData;
     if (!month || !year) {
-      throw new Error("Field problems in !month || !year");
+      throw new Error("Month and year are required.");
     }
-    const weekly_transactions = await prisma.transaction.findMany({
-      where: {
-        month,
-        year,
-      },
-      orderBy: {
-        week: "desc",
-      },
+
+    const weeklyTransactions = await prisma.transaction.findMany({
+      where: { month, year },
+      orderBy: { week: "desc" },
     });
 
-    const totals = weekly_transactions.reduce(
+    const totals = weeklyTransactions.reduce(
       (acc, transaction) => {
         if (transaction.type === "income") {
-          acc.income += transaction.amount;
+          acc.totalIncome += transaction.amount;
         } else if (transaction.type === "expense") {
-          acc.expense += transaction.amount;
+          if (transaction.expenseCategory === "teacher") {
+            acc.expenseTeacher += transaction.amount;
+          } else if (transaction.expenseCategory === "other") {
+            acc.expenseOther += transaction.amount;
+          }
         }
         return acc;
       },
-      { income: 0, expense: 0 }
+      { totalIncome: 0, expenseTeacher: 0, expenseOther: 0 }
     );
 
-    const balance = totals.income - totals.expense;
+    const totalExpense = totals.expenseTeacher + totals.expenseOther;
+    const balance = totals.totalIncome - totalExpense;
 
-    const grouped_data = weekly_transactions.reduce((acc, transaction) => {
+    const groupedData = weeklyTransactions.reduce((acc, transaction) => {
       if (!acc[transaction.week]) {
         acc[transaction.week] = {
           transactions: [],
-          income_week: 0,
-          expense_week: 0,
+          incomeWeek: 0,
+          expenseTeacherWeek: 0,
+          expenseOtherWeek: 0,
         };
       }
       acc[transaction.week].transactions.push(transaction);
 
-      // Calculamos los totales semanales
       if (transaction.type === "income") {
-        acc[transaction.week].income_week += transaction.amount;
+        acc[transaction.week].incomeWeek += transaction.amount;
       } else if (transaction.type === "expense") {
-        acc[transaction.week].expense_week += transaction.amount;
+        if (transaction.expenseCategory === "teacher") {
+          acc[transaction.week].expenseTeacherWeek += transaction.amount;
+        } else if (transaction.expenseCategory === "other") {
+          acc[transaction.week].expenseOtherWeek += transaction.amount;
+        }
       }
 
       return acc;
     }, {});
 
-    const sorted_weeks = Object.entries(grouped_data)
+    const sortedWeeks = Object.entries(groupedData)
       .map(([week, data]) => ({
         week: Number(week),
         transactions: data.transactions,
-        income: data.income_week,
-        expense: data.expense_week,
-        balance: data.income_week - data.expense_week,
+        income: data.incomeWeek,
+        expenseTeacher: data.expenseTeacherWeek,
+        expenseOther: data.expenseOtherWeek,
+        totalExpense: data.expenseTeacherWeek + data.expenseOtherWeek,
+        balance:
+          data.incomeWeek - (data.expenseTeacherWeek + data.expenseOtherWeek),
       }))
       .sort((a, b) => b.week - a.week);
 
-    const monthtly_transactions = {
-      all_transactions: sorted_weeks,
-      total_income: totals.income,
-      total_expense: totals.expense,
-      balance: balance,
-      month: month,
-      year: year,
+    const monthlyTransactions = {
+      all_transactions: sortedWeeks,
+      totalIncome: totals.totalIncome,
+      expenseTeacher: totals.expenseTeacher,
+      expenseOther: totals.expenseOther,
+      totalExpense,
+      balance,
+      month,
+      year,
     };
 
-    return RequestResponse.success(monthtly_transactions);
+    return RequestResponse.success(monthlyTransactions);
   } catch (error) {
-    console.error("Error in getWeeklyTransactions()", error);
+    console.error("Error in getMonhtlyTransactions()", error);
     return RequestResponse.error();
   }
 }
