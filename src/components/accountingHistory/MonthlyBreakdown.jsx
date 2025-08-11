@@ -54,12 +54,36 @@ function MonthlyOverview({ month }) {
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium">
-            Egresos {month && MONTHS_OF_YEAR[month.month]}
+            Profesor Egresos{month && MONTHS_OF_YEAR[month.month]}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-lg font-bold text-red-400">
-            -{formatCurrency(month.expense)}
+            -{formatCurrency(month.expenseTeacher)}
+          </div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium">
+            Otros Egresos{month && MONTHS_OF_YEAR[month.month]}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-lg font-bold text-red-400">
+            -{formatCurrency(month.expenseOther)}
+          </div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium">
+            Total Egresos{month && MONTHS_OF_YEAR[month.month]}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-lg font-bold text-red-400">
+            -{formatCurrency(month.totalExpense)}
           </div>
         </CardContent>
       </Card>
@@ -71,9 +95,9 @@ function MonthlyOverview({ month }) {
         </CardHeader>
         <CardContent>
           <div
-            className={`text-lg font-bold ${month.income - month.expense >= 0 ? "text-blue-400" : "text-red-400"}`}
+            className={`text-lg font-bold ${month.balance >= 0 ? "text-blue-400" : "text-red-400"}`}
           >
-            {formatCurrency(month.income - month.expense)}
+            {formatCurrency(month.balance)}
           </div>
         </CardContent>
       </Card>
