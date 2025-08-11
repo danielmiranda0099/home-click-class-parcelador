@@ -4,18 +4,15 @@ import { formatCurrency } from "@/utils/formatCurrency";
 
 export function CardsMontlyReport({ monhtly_transactions }) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-2">
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-2">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            Ingresos {" "}
-            {monhtly_transactions && MONTHS_OF_YEAR[monhtly_transactions.month]}
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">Ingresos</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-xl sm:text-2xl font-bold text-green-400">
             {monhtly_transactions
-              ? formatCurrency(monhtly_transactions.total_income)
+              ? formatCurrency(monhtly_transactions.totalIncome)
               : "$0"}
           </div>
         </CardContent>
@@ -23,14 +20,25 @@ export function CardsMontlyReport({ monhtly_transactions }) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
-            Egresos {" "}
-            {monhtly_transactions && MONTHS_OF_YEAR[monhtly_transactions.month]}
+            Profesor Egresos
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-xl sm:text-2xl font-bold text-red-400">
             {monhtly_transactions
-              ? formatCurrency(monhtly_transactions.total_expense)
+              ? "-" + formatCurrency(monhtly_transactions.expenseTeacher)
+              : "$0"}
+          </div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Otros Egresos</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-xl sm:text-2xl font-bold text-red-400">
+            {monhtly_transactions
+              ? "-" + formatCurrency(monhtly_transactions.expenseOther)
               : "$0"}
           </div>
         </CardContent>
@@ -38,9 +46,20 @@ export function CardsMontlyReport({ monhtly_transactions }) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
-            Balance {" "}
-            {monhtly_transactions && MONTHS_OF_YEAR[monhtly_transactions.month]}
+            Total Egresos
           </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-xl sm:text-2xl font-bold text-red-400">
+            {monhtly_transactions
+              ? "-" + formatCurrency(monhtly_transactions.totalExpense)
+              : "$0"}
+          </div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Balance</CardTitle>
         </CardHeader>
         <CardContent>
           <div
