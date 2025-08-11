@@ -657,19 +657,39 @@ export async function moveDebtToTransaction(debt_ids) {
   }
 }
 
+/**
+ * Retrieves aggregated transaction data for a given year,
+ * grouped by transaction type and expense category.
+ *
+ * @async
+ * @function yearlyTransactions
+ * @param {number} year - The year for which to retrieve transaction summaries.
+ * @returns {Promise<object>} A Promise that resolves to a standardized `RequestResponse` object:
+ *   - On success: `{ success: true, data: Array<{ year: number, type: string, expenseCategory: string|null, _sum: { amount: number } }> }`
+ *   - On failure: `{ success: false, error: any }`
+ *
+ * @example
+ * // Example return value:
+ * [
+ *   { year: 2023, type: 'income', expenseCategory: null, _sum: { amount: 1000 } },
+ *   { year: 2023, type: 'expense', expenseCategory: 'teacher', _sum: { amount: 300 } },
+ *   { year: 2023, type: 'expense', expenseCategory: 'other', _sum: { amount: 200 } }
+ * ]
+ *
+ * @throws Will log an error and return a failed `RequestResponse` if the query fails.
+ *
+ * @note
+ * - Groups transactions by: `year`, `type`, and `expenseCategory`.
+ * - Includes `_sum.amount` as the total for each group.
+ * - Orders results by `year` and `expenseCategory`.
+ */
 export async function yearlyTransactions(year) {
   try {
     const yearly_transactions = await prisma.transaction.groupBy({
-      by: ["year", "type"],
-      where: {
-        year,
-      },
-      _sum: {
-        amount: true,
-      },
-      orderBy: {
-        year: "asc",
-      },
+      by: ["year", "type", "expenseCategory"],
+      where: { year },
+      _sum: { amount: true },
+      orderBy: [{ year: "asc" }, { expenseCategory: "asc" }],
     });
 
     return RequestResponse.success(yearly_transactions);
@@ -679,19 +699,39 @@ export async function yearlyTransactions(year) {
   }
 }
 
+/**
+ * Retrieves aggregated monthly transaction data for a given year,
+ * grouped by month, transaction type, and expense category.
+ *
+ * @async
+ * @function getMonthlyTransactionsByYear
+ * @param {number} year - The year for which to retrieve monthly transaction summaries.
+ * @returns {Promise<object>} A Promise that resolves to a standardized `RequestResponse` object:
+ *   - On success: `{ success: true, data: Array<{ year: number, month: number, type: string, expenseCategory: string|null, _sum: { amount: number } }> }`
+ *   - On failure: `{ success: false, error: any }`
+ *
+ * @example
+ * // Example return value:
+ * [
+ *   { year: 2023, month: 1, type: 'income', expenseCategory: null, _sum: { amount: 500 } },
+ *   { year: 2023, month: 1, type: 'expense', expenseCategory: 'teacher', _sum: { amount: 150 } },
+ *   { year: 2023, month: 1, type: 'expense', expenseCategory: 'other', _sum: { amount: 50 } }
+ * ]
+ *
+ * @throws Will log an error and return a failed `RequestResponse` if the query fails.
+ *
+ * @note
+ * - Groups transactions by: `year`, `month`, `type`, and `expenseCategory`.
+ * - Includes `_sum.amount` as the total for each group.
+ * - Orders results by `month` and `expenseCategory`.
+ */
 export async function getMonthlyTransactionsByYear(year) {
   try {
     const monthtly_transactions = await prisma.transaction.groupBy({
-      by: ["year", "month", "type"],
-      where: {
-        year: year,
-      },
-      _sum: {
-        amount: true,
-      },
-      orderBy: {
-        month: "asc",
-      },
+      by: ["year", "month", "type", "expenseCategory"],
+      where: { year },
+      _sum: { amount: true },
+      orderBy: [{ month: "asc" }, { expenseCategory: "asc" }], // opcional
     });
 
     return RequestResponse.success(monthtly_transactions);
@@ -701,27 +741,83 @@ export async function getMonthlyTransactionsByYear(year) {
   }
 }
 
+/**
+ * Retrieves annual and monthly balances from transactions, broken down by expense categories.
+ *
+ * @param {*} prev - Unused parameter, kept for API consistency.
+ * @param {string|number} year_data - The year to calculate balances for.
+ * @returns {Promise<object>} - Success or error response with:
+ *   {
+ *     year: number,
+ *     balance: {
+ *       income: number,
+ *       expenseTeacher: number,
+ *       expenseOther: number,
+ *       totalExpense: number,
+ *       balance: number
+ *     },
+ *     months: Array<{
+ *       month: number,
+ *       income: number,
+ *       expenseTeacher: number,
+ *       expenseOther: number,
+ *       totalExpense: number,
+ *       balance: number
+ *     }>
+ *   }
+ *
+ * @throws Will throw if the year is invalid or if DB queries fail.
+ *
+ * @description
+ * - Filters `expenseTeacher` by `type === "expense"` and `expenseCategory === "teacher"`.
+ * - Filters `expenseOther` by `type === "expense"` and `expenseCategory === "other"`.
+ * - `totalExpense` = expenseTeacher + expenseOther.
+ * - `balance` = income - totalExpense.
+ *
+ * @note
+ * Edge cases considered:
+ * - No transactions found for the year (all balances default to 0).
+ * - Months without income or expense categories (default to 0 instead of null/undefined).
+ * - Transactions where `expenseCategory` is `null` or undefined (ignored from teacher/other counts).
+ */
 export async function getAnnualAndMonthlyBalance(prev, year_data) {
   try {
     const year = parseInt(year_data, 10);
-    if (typeof year !== "number" || !year) {
-      throw new Error("Invalid year, typeof year !== 'number' || !year");
+    if (isNaN(year) || year <= 0) {
+      throw new Error("Invalid year provided");
     }
 
     const yearly_transactions_response = await yearlyTransactions(year);
     const monthly_transactions_response =
       await getMonthlyTransactionsByYear(year);
 
-    const yearly_transactions = yearly_transactions_response.data;
-    const monthly_transactions = monthly_transactions_response.data;
+    const yearly_transactions = yearly_transactions_response.data ?? [];
+    const monthly_transactions = monthly_transactions_response.data ?? [];
+
+    // --- Annual balance ---
+    const income =
+      yearly_transactions.find((t) => t.type === "income")?._sum.amount ?? 0;
+    const expenseTeacher =
+      yearly_transactions.find(
+        (t) => t.type === "expense" && t.expenseCategory === "teacher"
+      )?._sum.amount ?? 0;
+    const expenseOther =
+      yearly_transactions.find(
+        (t) => t.type === "expense" && t.expenseCategory === "other"
+      )?._sum.amount ?? 0;
+
+    const totalExpense = expenseTeacher + expenseOther;
+    const balanceValue = income - totalExpense;
 
     const balance = {
-      income:
-        yearly_transactions.find((t) => t.type === "income")?._sum.amount ?? 0,
-      expense:
-        yearly_transactions.find((t) => t.type === "expense")?._sum.amount ?? 0,
+      income,
+      expenseTeacher,
+      expenseOther,
+      totalExpense,
+      balance: balanceValue,
     };
 
+    // --- Monthly breakdown ---
     const months = monthly_transactions.reduce((acc, transaction) => {
       const month = transaction.month;
 
@@ -729,15 +825,31 @@ export async function getAnnualAndMonthlyBalance(prev, year_data) {
         acc[month] = {
           month,
           income: 0,
-          expense: 0,
+          expenseTeacher: 0,
+          expenseOther: 0,
+          totalExpense: 0,
+          balance: 0,
         };
       }
 
       if (transaction.type === "income") {
-        acc[month].income = transaction._sum.amount;
-      } else {
-        acc[month].expense = transaction._sum.amount;
+        acc[month].income = transaction._sum.amount ?? 0;
+      } else if (
+        transaction.type === "expense" &&
+        transaction.expenseCategory === "teacher"
+      ) {
+        acc[month].expenseTeacher = transaction._sum.amount ?? 0;
+      } else if (
+        transaction.type === "expense" &&
+        transaction.expenseCategory === "other"
+      ) {
+        acc[month].expenseOther = transaction._sum.amount ?? 0;
       }
+
+      acc[month].totalExpense =
+        (acc[month].expenseTeacher ?? 0) + (acc[month].expenseOther ?? 0);
+
+      acc[month].balance = (acc[month].income ?? 0) - acc[month].totalExpense;
 
       return acc;
     }, {});
@@ -751,7 +863,6 @@ export async function getAnnualAndMonthlyBalance(prev, year_data) {
       balance,
       months: months_array,
     };
-
     return RequestResponse.success(annual_and_monthly_balance);
   } catch (error) {
     console.error("Error in getAnnualAndMonthlyBalance()", error);
