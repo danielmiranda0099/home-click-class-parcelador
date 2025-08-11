@@ -64,7 +64,7 @@ jobs:
             git reset --hard origin/main
 
             echo "===> Limpiando build y dependencias antiguas..."
-            rm -rf .next node_modules package-lock.json
+            rm -rf .next node_modules
 
             echo "===> Instalando dependencias..."
             npm ci
