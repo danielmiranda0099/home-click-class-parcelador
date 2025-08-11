@@ -12,6 +12,7 @@ import {
   TableTransactions,
 } from "@/components/accounting";
 import { PopupDetailLesson } from "@/components/popupDetailLesson";
+import { MONTHS_OF_YEAR } from "@/utils/constans";
 
 export default function AccountingPage() {
   const [monhtly_transactions, setMonhtlyTransactions] = useState(null);
@@ -57,26 +58,33 @@ export default function AccountingPage() {
         showFooter={false}
       />
       <main className="w-full flex-grow">
-        <div className="w-full flex flex-col items-start sm:flex-row gap-3 mb-3 sm:justify-end sm:items-end">
-          <div>
-            <Link
-              href="/admin/accounting/history"
-              className="pb-[0.08rem] border-b-2 border-gray-700 hover:text-blue-500 hover:border-blue-500 hover:bg-gray-200"
-            >
-              Ver todos los movimientos
-            </Link>
+        <div className="w-full flex flex-col items-start sm:flex-row gap-3 mb-3 sm:justify-between sm:items-end">
+          <div className="">
+            <h2 className="text-xl">
+              {"Balance " + MONTHS_OF_YEAR[new Date().getMonth() + 1]}
+            </h2>
           </div>
-          <div className="flex gap-3 mt-3 sm:mt-0">
-            <PopupFormTransaction
-              is_open={is_open_form_transaction}
-              setIsOpen={setIsOpenFormTransaction}
-              handleAction={handleGetMonhtlyTransactions}
-            />
-            <PopupFormDebt
-              is_open={is_open_form_debt}
-              setIsOpen={setIsOpenFormDebt}
-              handleAction={handleGetAllDebt}
-            />
+          <div className="flex flex-col items-start sm:flex-row gap-3 mb-3 sm:justify-end sm:items-end">
+            <div>
+              <Link
+                href="/admin/accounting/history"
+                className="pb-[0.08rem] border-b-2 border-gray-700 hover:text-blue-500 hover:border-blue-500 hover:bg-gray-200"
+              >
+                Ver todos los movimientos
+              </Link>
+            </div>
+            <div className="flex gap-3 mt-3 sm:mt-0">
+              <PopupFormTransaction
+                is_open={is_open_form_transaction}
+                setIsOpen={setIsOpenFormTransaction}
+                handleAction={handleGetMonhtlyTransactions}
+              />
+              <PopupFormDebt
+                is_open={is_open_form_debt}
+                setIsOpen={setIsOpenFormDebt}
+                handleAction={handleGetAllDebt}
+              />
+            </div>
           </div>
         </div>
 
