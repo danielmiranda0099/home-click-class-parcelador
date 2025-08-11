@@ -5,8 +5,9 @@ module.exports = {
     {
       name: "myapp",
       script: "npm",
+      instances: '2',
       args: "start",
-      watch: true,
+      watch: false,
       env: {
         NODE_ENV: "production",
         DB_USER: process.env.DB_USER,
