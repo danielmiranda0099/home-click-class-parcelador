@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MONTHS_OF_YEAR } from "@/utils/constans";
 import { formatCurrency } from "@/utils/formatCurrency";
 
 export function CardsMontlyReport({ monhtly_transactions }) {
