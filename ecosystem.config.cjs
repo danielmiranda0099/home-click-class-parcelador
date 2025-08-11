@@ -5,7 +5,7 @@ module.exports = {
     {
       name: "myapp",
       script: "npm",
-      instances: '2',
+      instances: "2",
       args: "start",
       watch: false,
       env: {
