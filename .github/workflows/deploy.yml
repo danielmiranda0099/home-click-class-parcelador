@@ -49,20 +49,35 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} << 'EOF'
-            # Cargar nvm para asegurarse de que npm y pm2 estén disponibles
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-            
-            # Asegurarse de que los binarios estén en el PATH
             export PATH=$PATH:/home/ubuntu/.nvm/versions/node/v22.11.0/bin
 
-            # Comandos de despliegue
             cd home-click-class-parcelador/
+
+            echo "===> Deteniendo y eliminando instancia previa..."
+            pm2 delete myapp || true
+
+            echo "===> Actualizando código..."
             git fetch origin main
             git reset --hard origin/main
+
+            echo "===> Limpiando build y dependencias antiguas..."
+            rm -rf .next node_modules package-lock.json
+
+            echo "===> Instalando dependencias..."
             npm ci
+
+            echo "===> Migrando base de datos..."
             npx prisma migrate deploy
+
+            echo "===> Compilando aplicación..."
             npm run build
-            pm2 restart ecosystem.config.cjs
+
+            echo "===> Iniciando con PM2..."
+            pm2 start ecosystem.config.cjs --update-env
+
+            echo "===> Guardando configuración de PM2..."
+            pm2 save
           EOF
