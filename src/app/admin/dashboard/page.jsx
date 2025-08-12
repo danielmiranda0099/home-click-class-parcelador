@@ -27,7 +27,9 @@ export default async function DashboardPage() {
     unpaidStudentLessons: 0,
     unpaidStudentTotal: 0,
     scheduledAndPaidLessons: 0,
-    totalProfit: 0,
+    totalScheduledAndPaid: 0,
+    totalIncome: 0,
+    totalExpenseTeacher: 0,
     teacherCount: 0,
     studentCount: 0,
     weeklyClasses: nextSevenDaysDataDefault,
@@ -43,23 +45,8 @@ export default async function DashboardPage() {
 
   return (
     <div className="p-0 sm:p-4 space-y-6 bg-gray-50 min-h-screen">
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 sm:gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
-            <CardTitle className="text-sm font-medium text-gray-600">
-              Clases Agendadas
-            </CardTitle>
-            <CalendarIcon size="2rem" color="#3b82f6" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-3xl font-bold text-blue-400">
-              {data.scheduledLessons}
-            </div>
-            
-          </CardContent>
-        </Card>
-
-        <Card>
+      <div className="flex justify-center md:justify-start  gap-2 sm:gap-4 flex-wrap">
+        <Card className="w-44 lg:w-64">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-gray-600">
               Pendientes (Profesores)
@@ -70,16 +57,14 @@ export default async function DashboardPage() {
             <p className="text-xl sm:text-2xl font-bold text-red-400">
               {formatCurrency(data.unpaidTeacherTotal)}
             </p>
-            <p >
-              {data.unpaidTeacherLessons} clases
-            </p>
+            <p>{data.unpaidTeacherLessons} clases</p>
             <p className="text-xs text-gray-500 mt-1">
               Total por pagar a profesores
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="w-44 lg:w-64">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-gray-600">
               Pendientes (Estudiantes)
@@ -90,16 +75,14 @@ export default async function DashboardPage() {
             <p className="text-xl sm:text-2xl font-bold text-yellow-500">
               {formatCurrency(data.unpaidStudentTotal)}
             </p>
-            <p >
-              {data.unpaidStudentLessons} clases
-            </p>
+            <p>{data.unpaidStudentLessons} clases</p>
             <p className="text-xs text-gray-500 mt-1">
               Total a cobrar a estudiantes
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="w-44 lg:w-64">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-gray-600">
               Agendadas y Pagadas
@@ -108,18 +91,27 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <p className="text-xl sm:text-2xl font-bold text-blue-600">
-              {formatCurrency(data.totalProfit)}
+              {formatCurrency(data.totalScheduledAndPaid)}
             </p>
-            <p >
-              {data.scheduledAndPaidLessons} clases
-            </p>
-            <p className="text-xs text-gray-500 mt-1">
-              Total abonado
-            </p>
+            <p>{data.scheduledAndPaidLessons} clases</p>
+            <p className="text-xs text-gray-500 mt-1">Total abonado</p>
+          </CardContent>
+        </Card>
+        <Card className="w-44 lg:w-64">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Clases Agendadas
+            </CardTitle>
+            <CalendarIcon size="2rem" color="#3b82f6" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-xl sm:text-3xl font-bold text-blue-400">
+              {data.scheduledLessons}
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <Card className="w-44 lg:w-64">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-gray-600">
               Profesores
@@ -134,7 +126,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <Card className="w-44 lg:w-64">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
             <CardTitle className="text-sm font-medium text-gray-600">
               Estudiantes
@@ -146,6 +138,34 @@ export default async function DashboardPage() {
               {data.studentCount}
             </div>
             <p className="text-xs text-gray-500 mt-1">Estudiantes activos</p>
+          </CardContent>
+        </Card>
+
+        <Card className="w-44 lg:w-64">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Total Ingresos
+            </CardTitle>
+            <DollarIcon size="2rem" className="text-green-400" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-xl sm:text-2xl font-bold text-green-400">
+              {formatCurrency(data.totalIncome)}
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="w-44 lg:w-64">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
+            <CardTitle className="text-sm font-medium text-gray-600">
+              Total Egresos Profesor
+            </CardTitle>
+            <DollarIcon size="2rem" className="text-red-400" />
+          </CardHeader>
+          <CardContent>
+            <p className="text-xl sm:text-2xl font-bold text-red-400">
+              {formatCurrency(data.totalExpenseTeacher)}
+            </p>
           </CardContent>
         </Card>
       </div>
