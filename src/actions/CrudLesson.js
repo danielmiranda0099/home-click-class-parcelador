@@ -754,6 +754,20 @@ export async function deleteLessons(prev, ids) {
   }
 }
 
+/**
+ * Retrieves an overview of lessons and payments for a teacher.
+ *
+ * @async
+ * @function overViewLessonTeacher
+ * @param {string|number} id - The teacher's ID.
+ * @returns {Promise<Object>} An object containing:
+ * - {number} averageScore - The rounded displayed average score (max 10).
+ * - {number} completed - Number of completed lessons (scheduled, confirmed, registered).
+ * - {number} scheduled - Number of scheduled but not confirmed/registered lessons.
+ * - {number} debt - Total unpaid amount owed to the teacher.
+ * - {number} averageScoreReal - The actual stored average score.
+ * - {number} totalPaid - Total amount already paid to the teacher.
+ */
 export async function overViewLessonTeacher(id) {
   try {
     if (!id) return RequestResponse.error();
@@ -771,13 +785,16 @@ export async function overViewLessonTeacher(id) {
         averageScore: true,
       },
     });
+
     let data = {
       averageScore: 0,
       completed: 0,
       scheduled: 0,
       debt: 0,
       averageScoreReal: 0,
+      totalPaid: 0,
     };
+
     if (!teacher) return RequestResponse.error();
 
     data.averageScore = Math.min(Math.ceil(teacher.averageScore + 0.6), 10);
@@ -818,10 +835,15 @@ export async function overViewLessonTeacher(id) {
         0
       );
 
+      const totalPaid = teacherLessonsData.teacherLessons
+        .filter((lesson) => lesson.isTeacherPaid)
+        .reduce((sum, lesson) => sum + (lesson.teacherPayment || 0), 0);
+
       data.completed = completedLessons;
       data.debt = totalDebt;
       data.scheduled = scheduledLessons;
       data.averageScoreReal = teacher.averageScore;
+      data.totalPaid = totalPaid;
     }
 
     return RequestResponse.success(data);
@@ -831,6 +853,18 @@ export async function overViewLessonTeacher(id) {
   }
 }
 
+/**
+ * Retrieves an overview of lessons and payments for a student.
+ *
+ * @async
+ * @function overViewLessonStudent
+ * @param {string|number} id - The student's ID.
+ * @returns {Promise<Object>} An object containing:
+ * - {number} completed - Number of completed lessons (scheduled and confirmed).
+ * - {number} scheduled - Number of scheduled but not confirmed/registered lessons.
+ * - {number} debt - Total unpaid amount owed by the student.
+ * - {number} totalPaid - Total amount already paid by the student.
+ */
 export async function overViewLessonStudent(id) {
   try {
     if (!id) return RequestResponse.error();
@@ -873,6 +907,7 @@ export async function overViewLessonStudent(id) {
       completed: 0,
       scheduled: 0,
       debt: 0,
+      totalPaid: 0,
     };
 
     if (student_lessons_data) {
@@ -889,7 +924,16 @@ export async function overViewLessonStudent(id) {
         (sl) => sl.isConfirmed && !sl.isStudentPaid
       );
 
+      const paidLessons = student_lessons_data.studentLessons.filter(
+        (sl) => sl.isStudentPaid
+      );
+
       const totalDebt = unpaidLessons.reduce(
+        (sum, sl) => sum + (sl.studentFee || 0),
+        0
+      );
+
+      const totalPaid = paidLessons.reduce(
         (sum, sl) => sum + (sl.studentFee || 0),
         0
       );
@@ -897,11 +941,12 @@ export async function overViewLessonStudent(id) {
       data.completed = completedLessons;
       data.scheduled = scheduledLessons;
       data.debt = totalDebt;
+      data.totalPaid = totalPaid;
     }
 
     return RequestResponse.success(data);
   } catch (error) {
-    console.error("Error in overViewLessonTeacher()", error);
+    console.error("Error in overViewLessonStudent()", error);
     return RequestResponse.error();
   }
 }
