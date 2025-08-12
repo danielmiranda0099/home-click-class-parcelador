@@ -22,6 +22,7 @@ export function CardOverView({ role, id }) {
     scheduled: 0,
     debt: 0,
     averageScoreReal: 0,
+    totalPaid: 0,
   });
 
   const { lessons } = useLessonsStore();
@@ -58,7 +59,9 @@ export function CardOverView({ role, id }) {
           Estado de cuenta y horarios
         </CardTitle>
       </CardHeader>
-      <CardContent className="grid gap-2 sm:gap-8 md:gap-10 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+      <CardContent
+        className={`grid gap-2 sm:gap-8 md:gap-10 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 ${user_session?.user.role.includes("admin") ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}
+      >
         {role === "teacher" && (
           <div className="flex items-center justify-start gap-3">
             <div className="flex items-center justify-center gap-2">
@@ -113,6 +116,19 @@ export function CardOverView({ role, id }) {
             {formatCurrency(data?.debt.toString())}
           </h2>
         </div>
+        {user_session?.user.role.includes("admin") && (
+          <div className="flex justify-start gap-3">
+            <div className="flex items-center justify-center gap-2">
+              <DollarSignIcon size="1.5rem" className="text-muted-foreground" />
+              <span className="text-lg sm:text-xl font-medium text-muted-foreground block">
+                Pagado:
+              </span>
+            </div>
+            <h2 className="text-lg font-bold">
+              {formatCurrency(data?.totalPaid.toString())}
+            </h2>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
