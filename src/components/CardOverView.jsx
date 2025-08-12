@@ -55,76 +55,76 @@ export function CardOverView({ role, id }) {
   return (
     <Card className="min-w-fit max-w-full">
       <CardHeader>
-        <CardTitle className="text-xl sm:text-2xl">
+        <CardTitle className="text-xl sm:text-xl">
           Estado de cuenta y horarios
         </CardTitle>
       </CardHeader>
       <CardContent
-        className={`grid gap-2 sm:gap-8 md:gap-10 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 ${user_session?.user.role.includes("admin") ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}
+        className={`grid gap-2 sm:gap-6 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 ${user_session?.user.role.includes("admin") ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}
       >
         {role === "teacher" && (
-          <div className="flex items-center justify-start gap-3">
+          <div className="flex items-center justify-start gap-2">
             <div className="flex items-center justify-center gap-2">
               <RatingIcon size="1.5rem" className="text-muted-foreground" />
-              <span className="text-lg sm:text-xl font-medium text-muted-foreground block">
+              <span className="text-md sm:text-xl font-medium text-muted-foreground block">
                 Puntaje:
               </span>
             </div>
             <div className="flex items-center sm:mr-28">
               {user_session?.user.role.includes("admin") && (
                 <>
-                  <h2 className="text-lg font-bold">
+                  <h2 className="text-md font-bold">
                     {data?.averageScoreReal.toFixed(2)}
                     <span className="text-xs">Real</span>
                   </h2>
-                  <h2 className="text-lg font-bold">/</h2>
+                  <h2 className="text-md font-bold">/</h2>
                 </>
               )}
-              <h2 className="text-lg font-bold">{data?.averageScore}</h2>
+              <h2 className="text-md font-bold">{data?.averageScore}</h2>
             </div>
           </div>
         )}
 
-        <div className="flex justify-start gap-3">
+        <div className="flex justify-start gap-2">
           <div className="flex items-center justify-center gap-2">
             <BookOpenIcon size="1.5rem" className="text-muted-foreground" />
-            <span className="text-lg sm:text-xl font-medium text-muted-foreground block">
+            <span className="text-md sm:text-xl font-medium text-muted-foreground block">
               Completadas:
             </span>
           </div>
-          <h2 className="text-lg font-bold">{data?.completed}</h2>
+          <h2 className="text-md font-bold">{data?.completed}</h2>
         </div>
 
-        <div className="flex justify-start gap-3">
+        <div className="flex justify-start gap-2">
           <div className="flex items-center justify-center gap-2">
             <CalendarIcon size="1.5rem" className="text-muted-foreground" />
-            <span className="text-lg sm:text-xl font-medium text-muted-foreground block">
+            <span className="text-md sm:text-xl font-medium text-muted-foreground block">
               Agendadas:
             </span>
           </div>
-          <h2 className="text-lg font-bold">{data?.scheduled}</h2>
+          <h2 className="text-md font-bold">{data?.scheduled}</h2>
         </div>
 
-        <div className="flex justify-start gap-3">
+        <div className="flex justify-start gap-2">
           <div className="flex items-center justify-center gap-2">
             <DollarSignIcon size="1.5rem" className="text-muted-foreground" />
-            <span className="text-lg sm:text-xl font-medium text-muted-foreground block">
+            <span className="text-md sm:text-xl font-medium text-muted-foreground block">
               {role === "teacher" ? "Cobro:" : "Deuda:"}
             </span>
           </div>
-          <h2 className="text-lg font-bold text-red-600">
+          <h2 className="text-md font-bold text-red-600">
             {formatCurrency(data?.debt.toString())}
           </h2>
         </div>
         {user_session?.user.role.includes("admin") && (
-          <div className="flex justify-start gap-3">
+          <div className="flex justify-start gap-2">
             <div className="flex items-center justify-center gap-2">
               <DollarSignIcon size="1.5rem" className="text-muted-foreground" />
-              <span className="text-lg sm:text-xl font-medium text-muted-foreground block">
+              <span className="text-md sm:text-xl font-medium text-muted-foreground block">
                 Pagado:
               </span>
             </div>
-            <h2 className="text-lg font-bold">
+            <h2 className="text-md font-bold">
               {formatCurrency(data?.totalPaid.toString())}
             </h2>
           </div>
