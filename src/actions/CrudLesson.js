@@ -958,10 +958,11 @@ export async function overViewLessonStudent(id) {
  * - Lessons that are scheduled but no estudiante ha pagado aún.
  * - Lessons donde el profesor aún no ha sido pagado.
  * - StudentLessons confirmadas pero no pagadas.
- * - Lessons pagadas por estudiantes.
- * - Totales de pagos pendientes y ganancia acumulada.
+ * - Lessons pagadas por estudiantes que están agendadas y el pago se hizo por adelantado.
+ * - Totales de pagos pendientes a profesores y pagos pendientes de estudiantes.
  * - Conteo de usuarios activos por rol.
  * - Conteo de clases programadas para la semana.
+ * - Totales globales de ingresos y egresos desde la tabla Transaction.
  *
  * @async
  * @function dataDashboard
@@ -974,7 +975,9 @@ export async function overViewLessonStudent(id) {
  * @property {number} unpaidStudentLessons - Número de clases confirmadas por el estudiante pero **no pagadas**.
  * @property {number} unpaidStudentTotal - Total acumulado que los estudiantes deben pagar.
  * @property {number} scheduledAndPaidLessons - Número de clases agendadas **pagadas por al menos un estudiante**.
- * @property {number} totalProfit - Suma total de lo abonado por estudiantes (usado como ganancia/profit).
+ * @property {number} totalScheduledAndPaid - Monto total pagado por estudiantes en clases que están agendadas (pago adelantado).
+ * @property {number} totalIncome - Suma total de todos los ingresos (`Transaction.type = "income"`).
+ * @property {number} totalExpenseTeacher - Suma total de todos los egresos (`Transaction.type = "expense"`).
  * @property {number} teacherCount - Número de profesores activos.
  * @property {number} studentCount - Número de estudiantes activos.
  * @property {Array<{day: string, classes: number}>} weeklyClasses - Lista de objetos donde cada objeto representa un día y el número de clases programadas.
@@ -991,7 +994,9 @@ export async function overViewLessonStudent(id) {
  * //   unpaidStudentLessons: 15,
  * //   unpaidStudentTotal: 720,
  * //   scheduledAndPaidLessons: 40,
- * //   totalProfit: 1300,
+ * //   totalScheduledAndPaid: 1300,
+ * //   totalIncome: 5000,
+ * //   totalExpenseTeacher: 2700,
  * //   teacherCount: 12,
  * //   studentCount: 58,
  * //   weeklyClasses: [
@@ -1014,9 +1019,7 @@ export async function dataDashboard(current_date) {
           },
         },
       },
-      select: {
-        id: true,
-      },
+      select: { id: true },
     });
     const scheduledLessons = scheduledLessonsData.length;
 
@@ -1025,9 +1028,7 @@ export async function dataDashboard(current_date) {
         isRegistered: true,
         isTeacherPaid: false,
       },
-      select: {
-        teacherPayment: true,
-      },
+      select: { teacherPayment: true },
     });
 
     const unpaidStudentData = await prisma.studentLesson.findMany({
@@ -1035,9 +1036,7 @@ export async function dataDashboard(current_date) {
         isConfirmed: true,
         isStudentPaid: false,
       },
-      select: {
-        studentFee: true,
-      },
+      select: { studentFee: true },
     });
 
     const paidStudentLessons = await prisma.studentLesson.findMany({
@@ -1049,34 +1048,33 @@ export async function dataDashboard(current_date) {
           isCanceled: false,
         },
       },
-      select: {
-        studentFee: true,
-      },
+      select: { studentFee: true },
     });
 
     const scheduledAndPaidLessons = paidStudentLessons.length;
-    const totalProfit = paidStudentLessons.reduce(
+    const totalScheduledAndPaid = paidStudentLessons.reduce(
       (sum, l) => sum + (l.studentFee ?? 0),
       0
     );
 
     const teacherCount = await prisma.user.count({
-      where: {
-        isActive: true,
-        role: {
-          has: "teacher",
-        },
-      },
+      where: { isActive: true, role: { has: "teacher" } },
     });
 
     const studentCount = await prisma.user.count({
-      where: {
-        isActive: true,
-        role: {
-          has: "student",
-        },
-      },
+      where: { isActive: true, role: { has: "student" } },
     });
+
+    const [totalIncome, totalExpenseTeacher] = await Promise.all([
+      prisma.transaction.aggregate({
+        _sum: { amount: true },
+        where: { type: "income" },
+      }),
+      prisma.transaction.aggregate({
+        _sum: { amount: true },
+        where: { type: "expense", expenseCategory: "teacher" },
+      }),
+    ]);
 
     const weekly_classes = await getWeeklyClasses(current_date);
 
@@ -1093,7 +1091,9 @@ export async function dataDashboard(current_date) {
         0
       ),
       scheduledAndPaidLessons,
-      totalProfit,
+      totalScheduledAndPaid,
+      totalIncome: totalIncome._sum.amount ?? 0,
+      totalExpenseTeacher: totalExpenseTeacher._sum.amount ?? 0,
       teacherCount,
       studentCount,
       weeklyClasses: weekly_classes,
