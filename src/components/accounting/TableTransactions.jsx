@@ -263,7 +263,7 @@ export function TableTransactions({
                     >
                       {formatCurrency(
                         monhtly_transactions.all_transactions[current_page]
-                          .expense
+                          .totalExpense
                       )}
                     </p>
                   </div>
