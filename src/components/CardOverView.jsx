@@ -129,6 +129,22 @@ export function CardOverView({ role, id }) {
             </h2>
           </div>
         )}
+
+        {(role === "student" || user_session?.user.role.includes("admin")) && (
+          <div className="flex justify-start gap-2">
+            <div className="flex items-center justify-center gap-2">
+              <DollarSignIcon size="1.5rem" className="text-muted-foreground" />
+              <span className="text-md sm:text-xl font-medium text-muted-foreground block">
+                Abono:
+              </span>
+            </div>
+            <h2
+              className={`text-md font-bold ${data?.prepaid > 0 ? "text-green-600" : ""}`}
+            >
+              {data?.prepaid} clases
+            </h2>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
