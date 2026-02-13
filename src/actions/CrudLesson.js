@@ -908,6 +908,7 @@ export async function overViewLessonStudent(id) {
       scheduled: 0,
       debt: 0,
       totalPaid: 0,
+      prepaid: 0,
     };
 
     if (student_lessons_data) {
@@ -938,10 +939,19 @@ export async function overViewLessonStudent(id) {
         0
       );
 
+      const prepaidLessons = student_lessons_data.studentLessons.filter(
+        (sl) =>
+          sl.lesson.isScheduled &&
+          sl.isStudentPaid &&
+          !sl.isConfirmed && 
+          !sl.lesson.isRegistered,
+      ).length;
+
       data.completed = completedLessons;
       data.scheduled = scheduledLessons;
       data.debt = totalDebt;
       data.totalPaid = totalPaid;
+      data.prepaid = prepaidLessons;
     }
 
     return RequestResponse.success(data);
