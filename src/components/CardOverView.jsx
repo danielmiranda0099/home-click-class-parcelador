@@ -63,14 +63,12 @@ export function CardOverView({ role, id }) {
         className={`grid gap-2 sm:gap-6 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 ${user_session?.user.role.includes("admin") ? "lg:grid-cols-5" : "lg:grid-cols-4"}`}
       >
         {role === "teacher" && (
-          <div className="flex items-center justify-start gap-2">
-            <div className="flex items-center justify-center gap-2">
-              <RatingIcon size="1.5rem" className="text-muted-foreground" />
-              <span className="text-md sm:text-xl font-medium text-muted-foreground block">
-                Puntaje:
-              </span>
-            </div>
-            <div className="flex items-center sm:mr-28">
+          <div className="flex items-center gap-2">
+            <RatingIcon size="1rem" className="text-muted-foreground" />
+            <span className="text-md font-medium text-muted-foreground">
+              Puntaje:
+            </span>
+            <div className="flex items-center">
               {user_session?.user.role.includes("admin") && (
                 <>
                   <h2 className="text-md font-bold">
@@ -85,45 +83,38 @@ export function CardOverView({ role, id }) {
           </div>
         )}
 
-        <div className="flex justify-start gap-2">
-          <div className="flex items-center justify-center gap-2">
-            <BookOpenIcon size="1.5rem" className="text-muted-foreground" />
-            <span className="text-md sm:text-xl font-medium text-muted-foreground block">
-              Completadas:
-            </span>
-          </div>
+        <div className="flex items-center gap-2">
+          <BookOpenIcon size="1rem" className="text-muted-foreground" />
+          <span className="text-md font-medium text-muted-foreground">
+            Completadas:
+          </span>
           <h2 className="text-md font-bold">{data?.completed}</h2>
         </div>
 
-        <div className="flex justify-start gap-2">
-          <div className="flex items-center justify-center gap-2">
-            <CalendarIcon size="1.5rem" className="text-muted-foreground" />
-            <span className="text-md sm:text-xl font-medium text-muted-foreground block">
-              Agendadas:
-            </span>
-          </div>
+        <div className="flex items-center gap-2">
+          <CalendarIcon size="1rem" className="text-muted-foreground" />
+          <span className="text-md font-medium text-muted-foreground">
+            Agendadas:
+          </span>
           <h2 className="text-md font-bold">{data?.scheduled}</h2>
         </div>
 
-        <div className="flex justify-start gap-2">
-          <div className="flex items-center justify-center gap-2">
-            <DollarSignIcon size="1.5rem" className="text-muted-foreground" />
-            <span className="text-md sm:text-xl font-medium text-muted-foreground block">
-              {role === "teacher" ? "Cobro:" : "Deuda:"}
-            </span>
-          </div>
+        <div className="flex items-center gap-2">
+          <DollarSignIcon size="1rem" className="text-muted-foreground" />
+          <span className="text-md font-medium text-muted-foreground">
+            {role === "teacher" ? "Cobro:" : "Deuda:"}
+          </span>
           <h2 className="text-md font-bold text-red-600">
             {formatCurrency(data?.debt.toString())}
           </h2>
         </div>
+
         {user_session?.user.role.includes("admin") && (
-          <div className="flex justify-start gap-2">
-            <div className="flex items-center justify-center gap-2">
-              <DollarSignIcon size="1.5rem" className="text-muted-foreground" />
-              <span className="text-md sm:text-xl font-medium text-muted-foreground block">
-                Pagado:
-              </span>
-            </div>
+          <div className="flex items-center gap-2">
+            <DollarSignIcon size="1rem" className="text-muted-foreground" />
+            <span className="text-md font-medium text-muted-foreground">
+              Pagado:
+            </span>
             <h2 className="text-md font-bold">
               {formatCurrency(data?.totalPaid.toString())}
             </h2>
@@ -131,19 +122,17 @@ export function CardOverView({ role, id }) {
         )}
 
         {(role === "student" || user_session?.user.role.includes("admin")) && (
-          <div className="flex justify-start gap-2">
-            <div className="flex items-center justify-center gap-2">
-              <DollarSignIcon size="1.5rem" className="text-muted-foreground" />
-              <span className="text-md sm:text-xl font-medium text-muted-foreground block">
-                Abono:
-              </span>
-            </div>
+          <div className="flex items-center gap-2">
+            <DollarSignIcon size="1rem" className="text-muted-foreground" />
+            <span className="text-md font-medium text-muted-foreground">
+              Abono:
+            </span>
             <h2
-              className={`text-md font-bold ${data?.prepaid > 0 ? "text-green-600" : ""}`}
+              className={`text-md font-bold leading-tight ${data?.prepaid > 0 ? "text-green-600" : ""}`}
             >
-              {data?.prepaid} clases
+              <span className="block">{data?.prepaid} clases</span>
               {data?.prepaid > 0 && (
-                <span className="text-xs font-normal ml-1">
+                <span className="block text-sm font-bold">
                   ({formatCurrency(data?.prepaidAmount.toString())})
                 </span>
               )}
