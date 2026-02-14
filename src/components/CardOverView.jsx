@@ -142,6 +142,11 @@ export function CardOverView({ role, id }) {
               className={`text-md font-bold ${data?.prepaid > 0 ? "text-green-600" : ""}`}
             >
               {data?.prepaid} clases
+              {data?.prepaid > 0 && (
+                <span className="text-xs font-normal ml-1">
+                  ({formatCurrency(data?.prepaidAmount.toString())})
+                </span>
+              )}
             </h2>
           </div>
         )}
